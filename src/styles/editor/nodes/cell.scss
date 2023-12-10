@@ -1,0 +1,36 @@
+@use "../../variables";
+@use "../../mixins";
+
+.cell.node {
+  .title {
+    padding: 3px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .contents {
+    border-radius: 5px;
+  }
+  &.selected,
+  &.selecting {
+    .title {
+      background-color: var(--accentLightFadedColor);
+      @media (prefers-color-scheme: dark) {
+        background-color: var(--accentDarkFadedColor);
+      }
+    }
+    .label {
+      &:not(:focus:not([readonly])) {
+        color: white;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+#App[data-focus="false"] {
+  .cell.node.selected .title,
+  .cell.node.selecting .title {
+    background-color: variables.$accent-color-blurred;
+  }
+}

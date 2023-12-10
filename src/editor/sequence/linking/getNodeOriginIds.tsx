@@ -1,4 +1,4 @@
-import { getProject } from "../../../data/dataStore";
+import { getStore } from "../../../data/dataStore";
 
 /**
  * Retrieves a list of any links that point to a particular node.
@@ -13,7 +13,8 @@ export default function getNodeOriginIds(
     id: string;
     branchId?: string;
   };
-  const projectData = getProject();
+  const store = getStore();
+  const projectData = store.project;
   const nodeOrigins: Array<NodeOrigin> = [];
   projectData.sequences.forEach((sequence: any) => {
     sequence.nodes.forEach((node: any) => {

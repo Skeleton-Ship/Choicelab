@@ -1,10 +1,12 @@
 import { getNode } from "./getData";
+import { Store, Sequence, AnyNode, Stem } from "../typings";
 
-function deleteSequenceFromData(sequenceId: string, data: any) {
-  let correctSequenceIndex: any = false;
+function deleteSequenceFromData(sequenceId: string, store: Store) {
+  const project = store.project;
+  let correctSequenceIndex: number | false = false;
   // Find sequence
   let sequenceIndex: number = 0;
-  data.sequences.forEach((sequence: any) => {
+  project.sequences.forEach((sequence: Sequence) => {
     if (sequence.id === sequenceId) {
       correctSequenceIndex = sequenceIndex;
     }
@@ -12,19 +14,20 @@ function deleteSequenceFromData(sequenceId: string, data: any) {
   });
   // Delete it
   if (correctSequenceIndex !== false) {
-    data.sequences.splice(correctSequenceIndex, 1);
+    project.sequences.splice(correctSequenceIndex, 1);
   }
-  return data;
+  return store;
 }
 
-function deleteNodeFromData(nodeId: string, data: any) {
-  let correctSequenceIndex: any = false,
-    correctNodeIndex: any = false;
+function deleteNodeFromData(nodeId: string, store: Store) {
+  const project = store.project;
+  let correctSequenceIndex: number | false = false,
+    correctNodeIndex: number | false = false;
   // Find sequence + node
   let sequenceIndex: number = 0;
-  data.sequences.forEach((sequence: any) => {
+  project.sequences.forEach((sequence: Sequence) => {
     let nodeIndex: number = 0;
-    sequence.nodes.forEach((node: any) => {
+    sequence.nodes.forEach((node: AnyNode) => {
       if (node.id === nodeId) {
         correctSequenceIndex = sequenceIndex;
         correctNodeIndex = nodeIndex;
@@ -35,16 +38,18 @@ function deleteNodeFromData(nodeId: string, data: any) {
   });
   // Delete it
   if (correctSequenceIndex !== false && correctNodeIndex !== false) {
-    data.sequences[correctSequenceIndex].nodes.splice(correctNodeIndex, 1);
+    project.sequences[correctSequenceIndex].nodes.splice(correctNodeIndex, 1);
   }
-  return data;
+  return store;
 }
 
-function deleteStemFromData(stemId: string, branchId: string, data: any) {
-  const branch: any = getNode(branchId, data);
-  let correctStemIndex: any = false,
+function deleteStemFromData(stemId: string, branchId: string, store: Store) {
+  const branch: AnyNode | undefined = getNode(branchId, store);
+  if (typeof branch === "undefined") return;
+  let correctStemIndex: number | false = false,
     stemIndex: number = 0;
-  branch.stems.forEach((stem: any) => {
+  if (typeof branch.stems === "undefined") return;
+  branch.stems.forEach((stem: Stem) => {
     if (stem.id === stemId) {
       correctStemIndex = stemIndex;
     }
@@ -53,7 +58,7 @@ function deleteStemFromData(stemId: string, branchId: string, data: any) {
   if (correctStemIndex !== false) {
     branch.stems.splice(correctStemIndex, 1);
   }
-  return data;
+  return store;
 }
 
 export { deleteSequenceFromData, deleteNodeFromData, deleteStemFromData };

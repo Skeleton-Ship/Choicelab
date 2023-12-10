@@ -1,5 +1,6 @@
 import { getStore } from "../../../data/dataStore";
 import getArrow from "./getArrow";
+import { AnyNode } from "../../../typings";
 
 // Remove arrows that don't apply anymore
 function clearAbandonedArrows() {
@@ -37,12 +38,12 @@ function clearAbandonedArrows() {
 }
 
 function createOrModifyArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
-  const arrowEls = <any>[];
+  const arrowEls: Array<Element> = [];
   // Nodes
   const links = nodesEl.querySelectorAll("#sequence .nodes *[data-link-to]");
-  links.forEach((linkOrigin: any) => {
+  links.forEach((linkOrigin) => {
     const destinationId = linkOrigin.getAttribute("data-link-to");
-    const linkDestination: HTMLElement | null = nodesEl.querySelector(
+    const linkDestination: Element | null = nodesEl.querySelector(
       `.node[data-id="${destinationId}"]`
     );
     if (linkDestination !== null) {
@@ -55,9 +56,9 @@ function createOrModifyArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
 
   // Branches + stems
   const branches = nodesEl.querySelectorAll("#sequence .branch.node");
-  branches.forEach((branch: any) => {
+  branches.forEach((branch: Element) => {
     const stems = branch.querySelectorAll(".stems .stem");
-    stems.forEach((stem: HTMLElement) => {
+    stems.forEach((stem: Element) => {
       const arrow = getArrow(branch, stem, false, "stem-line");
       if (arrow) {
         arrowEls.push(arrow);
@@ -66,7 +67,7 @@ function createOrModifyArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
   });
 
   // Append all arrows
-  arrowEls.forEach((arrowEl: any) => {
+  arrowEls.forEach((arrowEl: Element) => {
     arrowEl.classList.add("animate");
     svgEl.appendChild(arrowEl);
     setTimeout(() => {
@@ -84,12 +85,17 @@ export default function drawArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
   }, 400);
   // Highlight arrows for selected elements
   const arrows = document.querySelectorAll(`#arrows g`);
-  const selectedNodes = getStore("selectedNodes");
+  const store = getStore();
+  const selectedNodes = store.selectedNodes;
   arrows.forEach((arrow) => {
     arrow.classList.remove("highlight");
     const dataFrom = arrow.getAttribute("data-from");
     const dataTo = arrow.getAttribute("data-to");
-    const nodeIds = selectedNodes.map((node: any) => {
+    if (dataFrom === null || dataTo === null) {
+      console.error("From and to properties not found.");
+      return;
+    }
+    const nodeIds = selectedNodes.map((node: AnyNode) => {
       return node.id;
     });
     if (nodeIds.includes(dataFrom) || nodeIds.includes(dataTo)) {

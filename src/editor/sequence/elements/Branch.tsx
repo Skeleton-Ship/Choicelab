@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useState } from "preact/hooks";
 import { getNode } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createBranchStem } from "../../../data/createNode";
 import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
-import BranchStem from "./BranchStem";
-import Label from "./Label";
+import BranchStemEl from "./BranchStem";
 
 /**
  * A node that allows the flowchart to "branch off" into one or more possible directions. By default, all branches include a "no match" stem, and usually (though optionally) can add additional branch *stems* to test for possible values in the branch's variable.
  *
  */
-export default function Branch(props: {
+export default function BranchEl(props: {
   id: string;
   onClick: Function;
-  setProjectData: Function;
+  update: Function;
   x: number;
   y: number;
   left: number;
@@ -22,36 +21,35 @@ export default function Branch(props: {
   width: number;
   height: number;
 }) {
-  const projectData = getProject();
-  const branch: any = getNode(props.id, projectData);
+  const store = getStore();
+  const branch: any = getNode(props.id, store);
+  // @ts-ignore
   const [previousEvaluatorName, setPreviousEvaluatorName] = useState(
     branch.evaluator.name
   );
   function handleSelectBranch(e: any) {
     if (elementIsStem(e.target)) return;
     // Un-set stem selection
-    setStore({
-      selectedStem: false,
-    });
-    props.onClick(getNode(props.id, projectData));
+    store.selectedStem = false;
+    setStore(store);
+    props.onClick(getNode(props.id, store));
   }
   function handleSelectStem() {
-    props.onClick(getNode(props.id, projectData));
+    props.onClick(getNode(props.id, store));
   }
   function addBranchStem() {
-    const branch: any = getNode(props.id, projectData);
+    const branch: any = getNode(props.id, store);
     if (typeof branch === "undefined") return;
     const stem = createBranchStem("value");
     if (branch.stems) {
       branch.stems.push(stem);
     }
-    props.setProjectData(projectData);
+    props.update();
   }
-  const selectedNodes = getStore("selectedNodes");
+  const selectedNodes = store.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
-  const selectedStem = getStore("selectedStem");
   const branchClass = `branch node ${selectedClass}`;
   // Iterate through links
   const stems: any = branch.stems;
@@ -59,13 +57,13 @@ export default function Branch(props: {
   let stemIndex = 0;
   stems.forEach((stem: any) => {
     const stemEl = (
-      <BranchStem
+      <BranchStemEl
         key={stem.id}
         id={stem.id}
         index={stemIndex}
         nodeId={props.id}
         onClick={handleSelectStem}
-        setProjectData={props.setProjectData}
+        setProjectData={props.update}
       />
     );
     stemEls.push(stemEl);
@@ -87,18 +85,11 @@ export default function Branch(props: {
       data-position-y={props.y}
       data-element="branch"
       style={style}
-      draggable
     >
       <div className="contents">
         <span className="node-id">{props.id}</span>
         <div className="evaluator-name">
-          <Label
-            text={branch.evaluator.name}
-            textProp="evaluator.name"
-            placeholder="variable"
-            nodeId={props.id}
-            setProjectData={props.setProjectData}
-          />
+          <span>Evaluator goes here</span>
         </div>
         <button
           disabled={stemButtonDisabled}

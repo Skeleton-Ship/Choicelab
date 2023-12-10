@@ -46,7 +46,8 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
   });
   // Now, try to find the correct stem
   branch.stems.forEach((stem: Stem) => {
-    if (typeof selectedStem === "undefined") return;
+    if (selectedStem === false) return;
+    if (typeof selectedStem.id === "undefined") return;
     if (stem.id === selectedStem.id) {
       foundStem = stem;
     }
@@ -56,8 +57,10 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
 
 function getNoMatchStem(branchId: string, data: Store): Stem | undefined {
   let foundStem;
-  const branch: any = getNode(branchId, data);
-  branch.stems.forEach((stem: any) => {
+  const branch: AnyNode | undefined = getNode(branchId, data);
+  if (typeof branch === "undefined") return;
+  if (typeof branch.stems === "undefined") return;
+  branch.stems.forEach((stem: Stem) => {
     if (stem.type === "noMatch") {
       foundStem = stem;
     }
@@ -71,8 +74,15 @@ function getBranchStem(
   data: Store
 ): Stem | undefined {
   let foundStem;
-  const branch: any = getNode(branchId, data);
-  branch.stems.forEach((stem: any) => {
+  const branch: AnyNode | undefined = getNode(branchId, data);
+  if (typeof branch === "undefined") {
+    console.error("Branch stem not found.");
+    return;
+  }
+  if (typeof branch.stems === "undefined") {
+    return;
+  }
+  branch.stems.forEach((stem: Stem) => {
     if (stem.id === id) {
       foundStem = stem;
     }
@@ -83,11 +93,12 @@ function getBranchStem(
 function getStemParent(stemId: string, data: Store): Branch | undefined {
   let foundBranch;
   const project = data.project;
-  project.sequences.forEach((sequence: any) => {
-    sequence.nodes.forEach((node: any) => {
+  project.sequences.forEach((sequence: Sequence) => {
+    sequence.nodes.forEach((node: AnyNode) => {
       if (node.type !== "branch") return;
       const stems = node.stems;
-      stems.forEach((stem: any) => {
+      if (typeof stems === "undefined") return;
+      stems.forEach((stem: Stem) => {
         if (stem.id === stemId) {
           foundBranch = node;
         }

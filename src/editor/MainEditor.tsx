@@ -10,6 +10,7 @@ import { appWindow } from "@tauri-apps/api/window";
 import { resolve } from "@tauri-apps/api/path";
 import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
+import SequenceEl from "./sequence/Sequence";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -92,6 +93,7 @@ export default function MainEditor() {
   if (typeof sequence === "undefined") {
     return <div>No sequence loaded</div>;
   }
+  const sequenceId = sequence.id;
 
   // TEMP: List sequence nodes
   let nodes: Array<preact.JSX.Element> = [];
@@ -103,7 +105,8 @@ export default function MainEditor() {
   return (
     <div id="editor">
       <Toolbar update={handleUpdate} />
-      {nodes}
+      {/* {nodes} */}
+      <SequenceEl id={sequenceId} update={handleUpdate} />
       {/* {flowchartContents} */}
     </div>
   );

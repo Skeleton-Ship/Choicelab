@@ -1,13 +1,13 @@
-function elStemCheck(el: any) {
+function elStemCheck(el: Element) {
   if (el.classList.contains("stem") && el.hasAttribute("data-id")) {
     return true;
   }
   return false;
 }
 
-function traverseForStem(el: any): any {
-  const parentNode = el.parentNode;
-  if (parentNode === document.body) {
+function traverseForStem(el: Element) {
+  const parentNode = el.parentNode as Element;
+  if (parentNode === document.body || parentNode === null) {
     return false;
   } else {
     if (elStemCheck(parentNode)) {
@@ -18,7 +18,7 @@ function traverseForStem(el: any): any {
   }
 }
 
-export default function elementIsStem(el: any) {
+export default function elementIsStem(el: Element) {
   if (elStemCheck(el)) {
     return el;
   } else {

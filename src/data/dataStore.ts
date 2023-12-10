@@ -25,7 +25,7 @@ export default function createDataStore(
     targetMode: "",
     shiftDown: false,
     selectedNodes: [],
-    selectedStem: undefined,
+    selectedStem: false,
     clipboardListener: false,
     inTextElement: false,
     focus: false,

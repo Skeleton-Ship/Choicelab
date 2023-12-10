@@ -1,5 +1,5 @@
 import { getSequence, getNode } from "../../../data/getData";
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore } from "../../../data/dataStore";
 
 const CELL_WIDTH = 225;
 const CELL_HEIGHT = 100;
@@ -48,30 +48,19 @@ function getNodeCoordinates(
 /**
  * Looks at a node and positions it on an x/y axis. If the node is linked to a cell or branch, it runs the positioner again on that node.
  *
- * @param {int} x - The x coordinate to place the current node on.
- * @param {int} y - The y coordinate to place the current node on.
- * @param {string} nodeId - The ID of the node to position.
- * @param {string} sequenceId - The ID of the current sequence (used in calls for checking conflicts).
- * @param {any} projectData - The project data to use.
  */
 function positionNode(
   x: number,
   y: number,
   nodeId: string,
   sequenceId: string,
-  projectData: any
+  store: any
 ): any {
-  const node: any = getNode(nodeId, projectData);
+  const node: any = getNode(nodeId, store);
   let nodeCoordinates;
   // First, see if the current node isn't positioned
   if (node.position.x === null || node.position.y === null) {
-    nodeCoordinates = getNodeCoordinates(
-      x,
-      y,
-      node.id,
-      sequenceId,
-      projectData
-    );
+    nodeCoordinates = getNodeCoordinates(x, y, node.id, sequenceId, store);
     // Set size of node
     if (node.type === "cell") {
       node.position.width = CELL_WIDTH;
@@ -93,48 +82,44 @@ function positionNode(
   //
   if (node.type === "cell" || node.type === "start") {
     if (node.link.to !== "") {
-      const linkedNode: any = getNode(node.link.to, projectData);
+      const linkedNode: any = getNode(node.link.to, store);
       if (linkedNode.position.x === null || linkedNode.position.y === null) {
         return positionNode(
           nodeCoordinates.x,
           nodeCoordinates.y + 1,
           node.link.to,
           sequenceId,
-          projectData
+          store
         );
       }
     }
     // For branches, take each stem and run positionNode on it
   } else if (node.type === "branch") {
-    nodeCoordinates = getNodeCoordinates(
-      x,
-      y + 1,
-      node.id,
-      sequenceId,
-      projectData
-    );
+    nodeCoordinates = getNodeCoordinates(x, y + 1, node.id, sequenceId, store);
     for (var i = 0; i < node.stems.length; i++) {
       var stem = node.stems[i];
-      // Set left position
+      /*
+	  // Set left position
       const position = {
         relativeX: i,
         left: i * CELL_WIDTH,
       };
+	  */
       // Get linked node
       if (stem.link.to === "") continue;
-      const linkedNode: any = getNode(stem.link.to, projectData);
+      const linkedNode: any = getNode(stem.link.to, store);
       if (linkedNode.position.x === null || linkedNode.position.y === null) {
         positionNode(
           nodeCoordinates.x + i,
           nodeCoordinates.y,
           stem.link.to,
           sequenceId,
-          projectData
+          store
         );
       }
     }
   }
-  return projectData;
+  return store;
 }
 
 /**
@@ -143,8 +128,8 @@ function positionNode(
  * @param {string} sequenceId - The ID of the sequence containing nodes to arrange.
  */
 export default function positionNodes(sequenceId: string): any {
-  let projectData = getProject();
-  const sequence: any = getSequence(sequenceId, projectData);
+  let store = getStore();
+  const sequence: any = getSequence(sequenceId, store);
   if (!sequence) return;
   // First, find the start node, so we have a definitive point to begin positioning from
   let startingNode: any;
@@ -159,7 +144,7 @@ export default function positionNodes(sequenceId: string): any {
     }
   });
   // Position the start node and traverse down
-  projectData = positionNode(0, 0, startingNode.id, sequenceId, projectData);
+  store = positionNode(0, 0, startingNode.id, sequenceId, store);
   // Finally, position abandoned nodes up top along the X axis
   let abandonIndex = 0;
   sequence.nodes.forEach((node: any) => {
@@ -174,5 +159,5 @@ export default function positionNodes(sequenceId: string): any {
       node.position.abandoned = true;
     }
   });
-  return projectData;
+  return store;
 }

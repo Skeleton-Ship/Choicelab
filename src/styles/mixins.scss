@@ -1,0 +1,9 @@
+@mixin invert-icon() {
+  filter: brightness(0) invert(1);
+}
+
+@mixin target-mode() {
+  #App[data-target-mode]:not([data-target-mode=""]) {
+    @content;
+  }
+}

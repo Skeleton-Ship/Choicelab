@@ -25,6 +25,14 @@ export interface AnyNode {
   media?: Media;
   link?: Link;
   stems?: Array<Stem>;
+  position?: {
+    x: number;
+    y: number;
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
 }
 export interface Cell {
   id: string;
@@ -72,7 +80,7 @@ export interface Store {
   targetMode: string;
   shiftDown: boolean;
   selectedNodes: Array<AnyNode>;
-  selectedStem: Stem | undefined;
+  selectedStem: Stem | false;
   clipboardListener: boolean;
   inTextElement: boolean;
   focus: boolean;

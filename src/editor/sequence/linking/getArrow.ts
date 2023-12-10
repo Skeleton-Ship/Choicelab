@@ -1,4 +1,3 @@
-import elementIsStem from "../general/elementIsStem";
 import getElementOffset from "../general/getElementOffset";
 
 /**
@@ -7,10 +6,7 @@ import getElementOffset from "../general/getElementOffset";
  * @param {HTMLElement} fromElement - The originating node or stem.
  * @param {HTMLElement} toElement - The destination node or stem.
  */
-function getPathDimensions(
-  fromElement: HTMLElement,
-  toElement: HTMLElement
-): string {
+function getPathDimensions(fromElement: Element, toElement: Element): string {
   // fromElement position
   const fromOffset = getElementOffset(fromElement);
   const fromLeft = fromOffset.left;
@@ -76,8 +72,8 @@ function getArrowhead(): SVGMarkerElement {
  * @param {string} arrowType - The name of a class that should be attached to the resulting arrow element.
  */
 export default function getArrow(
-  fromElement: HTMLElement,
-  toElement: HTMLElement,
+  fromElement: Element,
+  toElement: Element,
   arrowhead: boolean = true,
   arrowType: string = ""
 ): any {

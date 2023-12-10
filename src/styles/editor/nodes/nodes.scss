@@ -1,0 +1,161 @@
+@use "../../variables";
+@use "../../mixins";
+
+.nodes {
+  position: relative;
+  margin: 0;
+}
+
+#arrows {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.node,
+.stem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  list-style: none;
+  animation: node-appear 0.2s ease;
+  .contents {
+    position: relative;
+    width: 100%;
+    border-color: white;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
+  }
+  &.selected,
+  &.selecting {
+    .contents {
+      border-color: var(--accentLightFadedColor);
+      @media (prefers-color-scheme: dark) {
+        border-color: var(--accentDarkFadedColor);
+      }
+    }
+  }
+  &.drop-zone {
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: -30px;
+      width: 100%;
+      height: 5px;
+      border-radius: 99px;
+      background-color: var(--accentDarkFadedColor);
+    }
+  }
+}
+
+@keyframes node-appear {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.node,
+.contents {
+  transition: top 0.4s ease, left 0.4s ease;
+}
+.node {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  .target-mode {
+    position: fixed;
+    top: calc(var(--toolbar-height) + 15px);
+    left: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(99px);
+    width: 350px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px;
+    height: 51px;
+    z-index: 9;
+    p {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    button:not(:last-of-type) {
+      margin-right: 8px;
+    }
+  }
+  .node-id,
+  .to-id {
+    position: absolute;
+    width: 200px;
+    left: -3px;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: white;
+    border-radius: 50px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 1px;
+    color: rgb(97, 97, 97);
+    font-family: variables.$fonts-mono;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    height: 19px;
+    display: none;
+    padding: 2px 5px;
+  }
+  .node-id {
+    top: -32px;
+  }
+  .to-id {
+    bottom: -45px;
+  }
+  .link {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    button.linker {
+      height: 15px;
+      width: 15px;
+      border-radius: 100px;
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: none;
+      background-color: var(--accentColor);
+      border: 1px solid var(--accentDarkColor);
+      transition: width 0.2s ease, height 0.2s ease, bottom 0.2s ease;
+      span {
+        display: none;
+      }
+      &:hover {
+        height: 18px;
+        width: 18px;
+        bottom: -22px;
+      }
+      &:active {
+        background-color: var(--accentDarkColor);
+      }
+    }
+  }
+}
+
+#App[data-focus="false"] {
+  .node.selected,
+  .node.selecting {
+    border-color: variables.$accent-color-blurred;
+  }
+}
+
+@include mixins.target-mode {
+  .node:not([data-target-mode-enabled]):hover {
+    border-color: rgb(167, 73, 255);
+  }
+}

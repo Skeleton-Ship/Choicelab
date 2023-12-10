@@ -1,4 +1,4 @@
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import {
   deleteNodeFromData,
   deleteStemFromData,
@@ -14,32 +14,29 @@ import { getActiveBranchStem } from "../../../data/getData";
  * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
 function handleDeleteNodes(setProjectData: Function) {
-  const projectData = getProject();
-  const selectedNodesUnsorted = getStore("selectedNodes");
+  let store = getStore();
+  const selectedNodesUnsorted = store.selectedNodes;
   // First, arrange order of selected nodes, in case there is one
   const selectedNodes = sortSelectedNodes(selectedNodesUnsorted);
   // Remove node from data, resolve connections
-  let updatedData = projectData;
   selectedNodes.forEach((node: any) => {
     if (node.type === "cell") {
-      updatedData = deleteNodeFromData(node.id, projectData);
-      updatedData = resolveConnections(updatedData, node.link.to);
+      store = deleteNodeFromData(node.id, store);
+      store = resolveConnections(store, node.link.to);
     } else if (node.type === "branch") {
       // First, grab the active stem link; then delete and resolve
-      const activeStem: any = getActiveBranchStem(node.id, updatedData);
+      const activeStem: any = getActiveBranchStem(node.id, store);
       const activeStemLink = activeStem.link.to;
-      updatedData = deleteNodeFromData(node.id, projectData);
-      updatedData = resolveConnections(updatedData, activeStemLink);
+      store = deleteNodeFromData(node.id, store);
+      store = resolveConnections(store, activeStemLink);
     }
   });
   // Run resolveConnections one more time without any attempt to re-connect
-  updatedData = resolveConnections(updatedData, "");
+  store = resolveConnections(store, "");
   // Remove nodes from selection array
-  setStore({
-    selectedNodes: [],
-  });
-  // Update project data
-  setProjectData(updatedData);
+  store.selectedNodes = [];
+  setStore(store);
+  setProjectData();
 }
 
 /**
@@ -54,12 +51,10 @@ function handleDeleteStem(
   nodeId: string,
   setProjectData: Function
 ) {
-  const projectData = getProject();
-  const updatedData = deleteStemFromData(stemId, nodeId, projectData);
+  const store = getStore();
+  const updatedData = deleteStemFromData(stemId, nodeId, store);
   setProjectData(updatedData);
-  setStore({
-    selectedStem: false,
-  });
+  setStore(store);
 }
 
 /**
@@ -69,8 +64,8 @@ function handleDeleteStem(
  * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
 function handleDeleteSequence(sequenceId: string, setProjectData: Function) {
-  const projectData = getProject();
-  const updatedData = deleteSequenceFromData(sequenceId, projectData);
+  const store = getStore();
+  const updatedData = deleteSequenceFromData(sequenceId, store);
   setProjectData(updatedData);
 }
 

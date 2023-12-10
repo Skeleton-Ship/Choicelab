@@ -1,23 +1,29 @@
 import { getNode, getActiveBranchStem } from "../../../data/getData";
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore } from "../../../data/dataStore";
+import { AnyNode, Stem } from "../../../typings";
 
 /**
  * Handler for disconnecting links.
  */
-export default function handleDisconnectLinks(
-  sequenceId: string,
-  setProjectData: Function
-) {
-  const selectedNodes = getStore("selectedNodes");
-  const projectData = getProject();
-  selectedNodes.forEach((nodeRef: any) => {
+export default function handleDisconnectLinks(setProjectData: Function) {
+  const store = getStore();
+  const selectedNodes = store.selectedNodes;
+  const projectData = store.project;
+  selectedNodes.forEach((nodeRef: AnyNode) => {
     let linkObj;
     if (nodeRef.type === "cell" || nodeRef.type === "start") {
-      const node: any = getNode(nodeRef.id, projectData);
+      const node: AnyNode | undefined = getNode(nodeRef.id, store);
+      if (typeof node === "undefined") {
+        console.error("Node not found.");
+        return;
+      }
       linkObj = node.link;
     } else if (nodeRef.type === "branch") {
-      const activeStem: any = getActiveBranchStem(nodeRef.id, projectData);
-      if (activeStem) {
+      const activeStem: Stem | undefined = getActiveBranchStem(
+        nodeRef.id,
+        store
+      );
+      if (typeof activeStem !== "undefined") {
         linkObj = activeStem.link;
       }
     }

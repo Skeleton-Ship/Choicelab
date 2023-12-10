@@ -1,16 +1,13 @@
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import getElementOffset from "../general/getElementOffset";
 import { getNode } from "../../../data/getData";
-
-// Merge two arrays, removing duplicate items
-function mergeArrays(arr1: any[], arr2: any[]): any[] {
-  const mergedArray = arr1.concat(arr2);
-  const uniqueArray = Array.from(new Set(mergedArray));
-  return uniqueArray;
-}
+import { AnyNode } from "../../../typings";
 
 // Check whether two elements overlap
-function checkOverlap(elementToCheck: any, selectionArea: any): boolean {
+function checkOverlap(
+  elementToCheck: { left: number; top: number; width: number; height: number },
+  selectionArea: { left: number; top: number; width: number; height: number }
+): boolean {
   const xOverlap =
     elementToCheck.left < selectionArea.left + selectionArea.width &&
     elementToCheck.left + elementToCheck.width > selectionArea.left;
@@ -22,10 +19,10 @@ function checkOverlap(elementToCheck: any, selectionArea: any): boolean {
 
 function setSelectionArea(
   selectionArea: HTMLElement,
-  sequenceEl: HTMLElement,
-  setProjectData: Function
+  sequenceEl: HTMLElement
 ): void {
-  const selectionProps = getStore("selection");
+  const store = getStore();
+  const selectionProps = store.selection;
   var x3 = Math.min(selectionProps.x1, selectionProps.x2); // Smaller X
   var x4 = Math.max(selectionProps.x1, selectionProps.x2); // Larger X
   var y3 = Math.min(selectionProps.y1, selectionProps.y2); // Smaller Y
@@ -34,12 +31,10 @@ function setSelectionArea(
   selectionArea.style.top = y3 - selectionProps.offsetTop + "px";
   selectionArea.style.width = x4 - x3 + "px";
   selectionArea.style.height = y4 - y3 + "px";
-  const projectData = getProject();
-  const selectedNodes: Array<any> = [];
+  const selectedNodes: Array<AnyNode> = [];
   // Figure out what elements are in the selection area
   const nodeEls = document.querySelectorAll("#sequence .nodes .node");
-  const selectedEls: Array<any> = [];
-  nodeEls.forEach((nodeEl: any) => {
+  nodeEls.forEach((nodeEl: Element) => {
     const offset = getElementOffset(nodeEl);
     offset.top = offset.top + sequenceEl.offsetTop;
     const overlap = checkOverlap(offset, {
@@ -51,108 +46,103 @@ function setSelectionArea(
     if (overlap === true) {
       nodeEl.classList.add("selecting");
       const nodeId = nodeEl.getAttribute("data-id");
-      const node = getNode(nodeId, projectData);
+      if (nodeId === null) {
+        console.error("Node ID not found.");
+        return;
+      }
+      const node = getNode(nodeId, store);
+      if (typeof node === "undefined") return;
       selectedNodes.push(node);
     } else {
       nodeEl.classList.remove("selecting");
     }
   });
   //  Add selected nodes to temp selection array
-  setStore({
-    selection: {
-      nodesInSelection: selectedNodes,
-    },
-  });
+  store.selection.nodesInSelection = selectedNodes;
+  setStore(store);
 }
 
-export default function enableSelectionArea(setProjectData: Function) {
-  const selectionProps = getStore("selection");
+export default function enableSelectionArea(update: Function) {
+  const store = getStore();
+  const selectionProps = store.selection;
   // Don't run if already active
   if (selectionProps.listenersActive === true) return;
-  setStore({
-    selection: {
-      listenersActive: true,
-    },
-  });
-  const selectionArea: any = document.querySelector("#selection-area");
+  store.selection.listenersActive = true;
+  setStore(store);
+  const selectionArea: HTMLElement | null =
+    document.querySelector("#selection-area");
+  if (selectionArea === null) return;
   selectionArea.style.display = "none";
-  const sequenceEl: any = document.querySelector("#sequence");
+  const sequenceEl: HTMLElement | null = document.querySelector("#sequence");
+  if (sequenceEl === null) return;
 
   // Mouse down events
   sequenceEl.addEventListener("mousedown", (e: MouseEvent) => {
     if (e.target !== sequenceEl) return;
-    const shiftDown = getStore("shiftDown");
+    const store = getStore();
+    const shiftDown = store.shiftDown;
     let selectedNodes: Array<any>;
     if (shiftDown === false) {
       selectedNodes = [];
-      setStore({
-        selectedNodes: selectedNodes,
-        selectedStem: false,
-        selection: {
-          keepExistingSelection: false,
-        },
-      });
-      setProjectData(false);
+      store.selectedNodes = selectedNodes;
+      store.selectedStem = false;
+      store.selection.keepExistingSelection = false;
+      setStore(store);
+      update(false);
     } else {
-      selectedNodes = getStore("selectedNodes");
-      setStore({
-        selection: {
-          keepExistingSelection: true,
-        },
-      });
+      selectedNodes = store.selectedNodes;
+      store.selection.keepExistingSelection = true;
+      setStore(store);
     }
     selectionArea.style.display = "block";
-    setStore({
-      selection: {
-        x1: e.clientX + sequenceEl.scrollLeft,
-        y1: e.clientY + sequenceEl.scrollTop,
-        offsetTop: sequenceEl.offsetTop,
-        offsetLeft: sequenceEl.offsetLeft,
-      },
-    });
-    setStore({
-      selection: {
-        selecting: true,
-      },
-    });
-    setSelectionArea(selectionArea, sequenceEl, setProjectData);
+    store.selection.x1 = e.clientX + sequenceEl.scrollLeft;
+    store.selection.y1 = e.clientY + sequenceEl.scrollTop;
+    store.selection.offsetTop = sequenceEl.offsetTop;
+    store.selection.offsetLeft = sequenceEl.offsetLeft;
+    store.selection.selecting = true;
+    setStore(store);
+    setSelectionArea(selectionArea, sequenceEl);
   });
 
   // Mouse move events
   sequenceEl.addEventListener("mousemove", (e: MouseEvent) => {
-    const selection = getStore("selection");
-    setStore({
-      selection: {
-        x2: e.clientX + sequenceEl.scrollLeft,
-        y2: e.clientY + sequenceEl.scrollTop,
-      },
-    });
+    const store = getStore();
+    const selection = store.selection;
+    selection.x2 = e.clientX + sequenceEl.scrollLeft;
+    selection.y2 = e.clientY + sequenceEl.scrollTop;
+    setStore(store);
     if (selection.selecting === true) {
-      setSelectionArea(selectionArea, sequenceEl, setProjectData);
+      setSelectionArea(selectionArea, sequenceEl);
     }
   });
 
   // Mouse up events
-  sequenceEl.addEventListener("mouseup", (e: MouseEvent) => {
+  sequenceEl.addEventListener("mouseup", () => {
+    const store = getStore();
     // Add nodes to selected nodes
-    const selection = getStore("selection");
+    const selection = store.selection;
     if (selection.selecting === false) return;
-    let existingNodes = [];
+    let existingNodes: Array<AnyNode> = [];
     if (selection.keepExistingSelection === true) {
-      existingNodes = getStore("selectedNodes");
+      existingNodes = store.selectedNodes;
     }
-    setStore({
-      selectedNodes: mergeArrays(existingNodes, selection.nodesInSelection),
+    const newSelection: Array<AnyNode> = [];
+    selection.nodesInSelection.forEach((node: AnyNode) => {
+      if (newSelection.includes(node)) return;
+      newSelection.push(node);
     });
-    setProjectData(false);
+    existingNodes.forEach((node: AnyNode) => {
+      if (newSelection.includes(node)) return;
+      newSelection.push(node);
+    });
+    store.selectedNodes = newSelection;
+    setStore(store);
+    update(false);
     // Reset state
     selectionArea.style.display = "none";
-    setStore({
-      selection: {
-        selecting: false,
-        keepExistingSelection: false,
-        nodesInSelection: [],
-      },
-    });
+    store.selection.selecting = false;
+    store.selection.keepExistingSelection = false;
+    store.selection.nodesInSelection = [];
+    setStore(store);
   });
 }

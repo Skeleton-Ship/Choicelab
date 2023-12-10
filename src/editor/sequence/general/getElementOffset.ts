@@ -3,7 +3,7 @@
  *
  * @param {HTMLElement} el - The element to get the position for.
  */
-export default function getElementOffset(el: HTMLElement): {
+export default function getElementOffset(el: Element): {
   left: number;
   top: number;
   width: number;
@@ -29,9 +29,11 @@ export default function getElementOffset(el: HTMLElement): {
         const branchTop = parseInt(
           branchStyle.getPropertyValue("top").replace("px", "")
         );
+        /*
         const branchWidth = parseInt(
           branchStyle.getPropertyValue("width").replace("px", "")
         );
+		*/
         const branchHeight = parseInt(
           branchStyle.getPropertyValue("height").replace("px", "")
         );

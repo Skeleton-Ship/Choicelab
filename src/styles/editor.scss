@@ -1,0 +1,86 @@
+@use "./editor/toolbar";
+@use "./editor/sequence";
+@use "./editor/elements/label";
+@use "./variables";
+@use "./mixins";
+
+:root {
+  --toolbar-height: 51px;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  color: variables.$text-light;
+  button {
+    color: variables.$text-light;
+    @media (prefers-color-scheme: dark) {
+      color: variables.$text-dark;
+    }
+  }
+  &[data-focus="false"] {
+    #toolbar {
+      .title,
+      button {
+        opacity: 0.5;
+      }
+    }
+    #sequences-pane {
+      button {
+        opacity: 0.5;
+      }
+    }
+  }
+  #sequence,
+  #sequences-pane {
+    top: 51px;
+    height: calc(100% - 51px);
+    position: relative;
+  }
+  #sequences-pane {
+    top: 51px;
+    border-right: 1px solid variables.$pane-border-light;
+    width: 225px;
+    z-index: 2;
+    @media (prefers-color-scheme: dark) {
+      border-color: variables.$pane-border-dark;
+    }
+    ul {
+      padding: 0;
+      margin: 0;
+      margin-top: 10px;
+      li {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        button {
+          background-color: transparent;
+          display: block;
+          cursor: auto;
+          width: 95%;
+          font-size: 13px;
+          padding: 5px 10px;
+          border-radius: 5px;
+          text-align: left;
+          border: none;
+          user-select: none;
+          &.selected {
+            background-color: rgba(25, 25, 25, 0.13);
+            @media (prefers-color-scheme: dark) {
+              background-color: rgba(255, 255, 255, 0.2);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@include mixins.target-mode {
+  #editor {
+    background-color: #ccc;
+  }
+}

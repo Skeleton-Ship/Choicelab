@@ -1,0 +1,49 @@
+$arrow-color: #aaa;
+
+#arrows {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  overflow: visible;
+  marker {
+    fill: $arrow-color;
+    animation: arrow 0.9s ease;
+  }
+  path {
+    stroke: $arrow-color;
+  }
+  .highlight {
+    .line {
+      stroke: #555;
+    }
+    marker {
+      fill: #555;
+    }
+  }
+  .animate path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash 1.6s ease;
+  }
+  .animate-change path {
+    transition: d 0.2s ease;
+  }
+}
+
+@keyframes arrow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

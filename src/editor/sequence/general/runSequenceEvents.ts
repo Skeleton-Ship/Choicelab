@@ -1,64 +1,65 @@
-import { getStore, setStore, getProject } from "../../../data/dataStore";
-import { getStemParent } from "../../../data/getData";
-import onEventFromMain from "../../../ipc/onEventFromMain";
-import elementIsNode from "./elementIsNode";
-import enableNodeDragging from "../dragging/enableNodeDragging";
-import handleCreateNode from "./handleCreateNode";
-import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
-import handleDisconnectLinks from "./handleDisconnectLinks";
+import { getStore, setStore } from "../../../data/dataStore";
 import setSequenceHeight from "./setSequenceHeight";
 import enableSelectionArea from "../selecting/enableSelectionArea";
+//
+// Imports for menu listeners (to be added later)
+//
+// import { getStemParent } from "../../../data/getData";
+// import onEventFromMain from "../../../ipc/onEventFromMain";
+// import handleCreateNode from "./handleCreateNode";
+// import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
+// import handleDisconnectLinks from "./handleDisconnectLinks";
 
 /**
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.
- *
- * @param {string} id - The ID of the sequence.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
 export default function runSequenceEvents(props: {
   id: string;
-  setProjectData: Function;
+  update: Function;
 }) {
-  const projectData = getProject();
-  const projectId = projectData.id;
-
-  // Set drag, height, selection events
-  enableNodeDragging();
+  // Set height, selection events
   setSequenceHeight();
-  enableSelectionArea(props.setProjectData);
+  enableSelectionArea(props.update);
 
   // Set shift key events
   document.addEventListener("keydown", (e) => {
     if (e.key === "Shift") {
-      setStore({
-        shiftDown: true,
-      });
+      const store = getStore();
+      store.shiftDown = true;
+      setStore(store);
     }
   });
   document.addEventListener("keyup", (e) => {
     if (e.key === "Shift") {
-      setStore({
-        shiftDown: false,
-      });
+      const store = getStore();
+      store.shiftDown = false;
+      setStore(store);
     }
   });
+  /*
+   * TODO: Rewrite as Tauri menu listeners
+   */
+  /*
+  const store = getStore();
+  const projectId = project.id;
   onEventFromMain("createCell", projectId, () => {
-    handleCreateNode("cell", props.id, props.setProjectData);
+    handleCreateNode("cell", props.id, props.update);
   });
   onEventFromMain("createBranch", projectId, () => {
-    handleCreateNode("branch", props.id, props.setProjectData);
+    handleCreateNode("branch", props.id, props.update);
   });
   onEventFromMain("disconnectLinks", projectId, () => {
-    handleDisconnectLinks(props.id, props.setProjectData);
+    handleDisconnectLinks(props.update);
   });
-  onEventFromMain("deleteNodes", projectData.id, () => {
-    const projectData = getProject();
-    const selectedStem = getStore("selectedStem");
+  onEventFromMain("deleteNodes", projectId, () => {
+    const store = getStore();
+    const selectedStem = store.selectedStem;
     if (selectedStem !== false) {
-      const parentBranch: any = getStemParent(selectedStem.id, projectData);
-      handleDeleteStem(selectedStem.id, parentBranch.id, props.setProjectData);
+      const parentBranch: any = getStemParent(selectedStem.id, store);
+      handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
     } else {
-      handleDeleteNodes(props.setProjectData);
+      handleDeleteNodes(props.update);
     }
   });
+  */
 }

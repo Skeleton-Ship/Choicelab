@@ -1,20 +1,15 @@
-import { useState } from "react";
 import { getNode } from "../../../data/getData";
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
-import Label from "./Label";
 import Link from "./Link";
+import { AnyNode } from "../../../typings";
 
 /**
  * A node that supports actions, in which the content of the Choicelab sequence lives.
- *
- * @param {string} id - The ID of the cell.
- * @param {Function} onClick - A React handler when the cell is clicked. Selects the cell.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
-export default function Cell(props: {
+export default function CellEl(props: {
   id: string;
-  setProjectData: Function;
+  update: Function;
   x: number;
   y: number;
   left: number;
@@ -23,16 +18,22 @@ export default function Cell(props: {
   height: number;
   onClick: Function;
 }) {
-  const projectData = getProject();
-  const cell: any = getNode(props.id, projectData);
-  const [previousLabelValue, setPreviousLabelValue] = useState("");
-  function handleSelectCell() {
-    setStore({
-      selectedStem: false,
-    });
-    props.onClick(getNode(props.id, projectData));
+  const store = getStore();
+  const cell: AnyNode | undefined = getNode(props.id, store);
+  const defaultEl = <div>No cell found</div>;
+  if (typeof cell === "undefined") {
+    return defaultEl;
   }
-  const selectedNodes = getStore("selectedNodes");
+  if (typeof cell.link === "undefined") {
+    return defaultEl;
+  }
+  function handleSelectCell() {
+    const store = getStore();
+    store.selectedStem = false;
+    setStore(store);
+    props.onClick(cell);
+  }
+  const selectedNodes = store.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
@@ -53,23 +54,12 @@ export default function Cell(props: {
       data-position-y={props.y}
       onClick={handleSelectCell}
       style={style}
-      draggable
     >
       <div className="contents">
         <span className="node-id">{props.id}</span>
-        <div className="title">
-          <Label
-            text={cell.label}
-            nodeId={props.id}
-            setProjectData={props.setProjectData}
-          />
-        </div>
+        <div className="title">{props.id}</div>
       </div>
-      <Link
-        origin="cell"
-        nodeId={props.id}
-        setProjectData={props.setProjectData}
-      />
+      <Link origin="cell" nodeId={props.id} update={props.update} />
     </li>
   );
 }

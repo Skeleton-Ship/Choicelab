@@ -8,7 +8,7 @@ import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
-import "./styles/index.scss";
+import "./styles/style.scss";
 
 async function init() {
   // New + open project listeners
@@ -57,7 +57,11 @@ async function init() {
 	});
 	*/
 
-  const appDOM = <div id="App">{elements}</div>;
+  const appDOM = (
+    <div id="App" data-focus="true">
+      {elements}
+    </div>
+  );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
   /*

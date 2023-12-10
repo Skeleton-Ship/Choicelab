@@ -1,18 +1,14 @@
-import {
-  getSequence,
-  getNode,
-  getActiveBranchStem,
-} from "../../../data/getData";
+import { getNode } from "../../../data/getData";
+import { Store, Sequence, AnyNode, Stem } from "../../../typings";
 
 /**
  *  Given a node, figures out if the node it's linking to still exists.
- * @param {string} nodeId - The ID of the node to test.
  */
-function linkStillExists(nodeId: string, projectData: any): boolean {
+function linkStillExists(nodeId: string, store: Store): boolean {
   // Ignore (and pass) blank entries
   if (nodeId === "") return true;
   // See if node exists
-  const node = getNode(nodeId, projectData);
+  const node = getNode(nodeId, store);
   if (typeof node === "undefined") {
     return false;
   }
@@ -21,28 +17,28 @@ function linkStillExists(nodeId: string, projectData: any): boolean {
 
 /**
  * Upon deletion/removal of a node, removes any links to the deleted node and attempts to automatically resolve connections.
- *
- * @param {ChoicelabProjectData} projectData - The project data that should be evaluated.
- * @param {string} reconnectionId - If a broken link is found, the node ID that should replace the broken one. (Typically, the deleted node/stem's link destination.)
  */
 export default function resolveConnections(
-  projectData: any,
+  store: Store,
   reconnectionId: string = ""
-): any {
-  projectData.sequences.forEach((sequence: any) => {
-    sequence.nodes.forEach((node: any) => {
+) {
+  const project = store.project;
+  project.sequences.forEach((sequence: Sequence) => {
+    sequence.nodes.forEach((node: AnyNode) => {
       if (node.type === "cell" || node.type === "start") {
+        if (typeof node.link === "undefined") return;
         if (
-          !linkStillExists(node.link.to, projectData) &&
+          !linkStillExists(node.link.to, store) &&
           node.id !== reconnectionId
         ) {
           node.link.to = reconnectionId;
         }
       } else if (node.type === "branch") {
         const stems = node.stems;
-        stems.forEach((stem: any) => {
+        if (typeof stems === "undefined") return;
+        stems.forEach((stem: Stem) => {
           if (
-            !linkStillExists(stem.link.to, projectData) &&
+            !linkStillExists(stem.link.to, store) &&
             node.id !== reconnectionId
           ) {
             stem.link.to = reconnectionId;
@@ -51,5 +47,5 @@ export default function resolveConnections(
       }
     });
   });
-  return projectData;
+  return store;
 }

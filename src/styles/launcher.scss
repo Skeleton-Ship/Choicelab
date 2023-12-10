@@ -1,0 +1,19 @@
+#launcher {
+  width: 100%;
+  height: 100%;
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  h1 {
+    font-size: 36px;
+    margin-bottom: 14px;
+    font-weight: 300;
+  }
+  button {
+    -webkit-app-region: no-drag;
+    &:not(:last-of-type) {
+      margin-right: 10px;
+    }
+  }
+}

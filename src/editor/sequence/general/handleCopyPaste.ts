@@ -1,16 +1,17 @@
-import { getStore, setStore, setProject } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import isObject from "../../../utils/isObject";
 import { v4 as uuidv4 } from "uuid";
-import handleCreateNode from "./handleCreateNode";
+import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
 import isJson from "../../../utils/isJson";
+import { AnyNode } from "../../../typings";
 
 /**
  * Given an object, regenerates the `id` property, and clears the `link` property. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
  *
  * @param {object} obj - The object to check.
  */
-function regenerateIdsAndLinks(obj: any): any {
+function regenerateIdsAndLinks(obj: AnyNode) {
   const keys = Object.keys(obj);
   keys.forEach((key: string) => {
     // Change ID
@@ -19,11 +20,15 @@ function regenerateIdsAndLinks(obj: any): any {
     }
     // Change link
     if (key === "link") {
-      obj[key].to = "";
+      if (typeof obj.link === "undefined") return;
+      if (typeof obj.link.to === "undefined") return;
+      obj.link.to = "";
     }
     // Check nested props
+    // @ts-ignore
     const value = obj[key];
     if (isObject(value)) {
+      // @ts-ignore
       obj[key] = regenerateIdsAndLinks(value);
     }
     if (Array.isArray(value)) {
@@ -44,10 +49,7 @@ function regenerateIdsAndLinks(obj: any): any {
  * @param {object} obj - The object to clone.
  * @param {string} excludedProperty - The property to exclude (optional).
  */
-function cloneObjectWithExclusion(
-  obj: any,
-  excludedProperty: string = ""
-): any {
+function cloneObjectWithExclusion(obj: any, excludedProperty: string = "") {
   const clonedObj: any = {};
   const keys = Object.keys(obj);
   keys.forEach((key: string) => {
@@ -69,10 +71,11 @@ function cloneObjectWithExclusion(
  * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
 function handleCutCopy(action: string, setProjectData: Function) {
-  const inTextElement = getStore("inTextElement");
+  const store = getStore();
+  const inTextElement = store.inTextElement;
   if (inTextElement === true) return;
   // Create the string sent to the clipboard, then write it
-  const selectedNodes = getStore("selectedNodes");
+  const selectedNodes = store.selectedNodes;
   let clipboardContents = {
     ChoicelabNodes: selectedNodes,
   };
@@ -109,17 +112,14 @@ function handlePaste(setProjectData: Function): void {
       processedNodes.push(newNode);
     });
     // Create new nodes
-    const sequenceId = getStore("currentSequenceId");
-    let updatedData;
+    const store = getStore();
     processedNodes.forEach((node: any) => {
-      updatedData = handleCreateNode(node, sequenceId, false);
-      setProject(updatedData);
+      insertNewNode(node, setProjectData);
     });
     // Finally, set selection to processed nodes
-    setProjectData(updatedData);
-    setStore({
-      selectedNodes: processedNodes,
-    });
+    setProjectData();
+    store.selectedNodes = processedNodes;
+    setStore(store);
   });
 }
 

@@ -1,17 +1,13 @@
-import Label from "./Label";
 import Link from "./Link";
 import { getBranchStem } from "../../../data/getData";
-import { getStore, setStore, getProject } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
+import { Stem } from "../../../typings";
 
 /**
  * A single path in a branch. If the stem is a "value" type, it will test for the given value. A "noMatch" type stem is the fallback if all other stems fail.
  *
- * @param {string} id - The ID of the branch stem.
- * @param {string} nodeId - The ID of the parent branch.
- * @param {Function} onClick - A React handler when the stem is clicked. Selects the stem.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
  */
-export default function BranchStem(props: {
+export default function BranchStemEl(props: {
   id: string;
   index: number;
   nodeId: string;
@@ -19,28 +15,35 @@ export default function BranchStem(props: {
   setProjectData: Function;
 }) {
   function handleSelectStem() {
-    const projectData = getProject();
-    const branchStem = getBranchStem(props.id, props.nodeId, projectData);
-    setStore({ selectedStem: branchStem });
+    const store = getStore();
+    const branchStem: Stem | undefined = getBranchStem(
+      props.id,
+      props.nodeId,
+      store
+    );
+    if (typeof branchStem === "undefined") return;
+    store.selectedStem = branchStem;
+    setStore(store);
     props.onClick(branchStem);
   }
 
-  const projectData = getProject();
-  const selectedStem = getStore("selectedStem");
+  const store = getStore();
+  const selectedStem = store.selectedStem;
   let selectedClass = "";
   if (selectedStem !== false) {
     if (selectedStem.id === props.id) {
       selectedClass = "selected";
     }
   }
-  const stem: any = getBranchStem(props.id, props.nodeId, projectData);
+  const stem: Stem | undefined = getBranchStem(props.id, props.nodeId, store);
+  if (typeof stem === "undefined") return <></>;
   let contents;
   let link = (
     <Link
       origin="branchStem"
       nodeId={props.nodeId}
       stemId={props.id}
-      setProjectData={props.setProjectData}
+      update={props.setProjectData}
     />
   );
   if (stem.type === "noMatch") {
@@ -57,14 +60,6 @@ export default function BranchStem(props: {
       <>
         <span className="node-id">{stem.id}</span>
         <span>=&nbsp;</span>
-        <Label
-          text={stem.value}
-          nodeId={props.nodeId}
-          stemId={props.id}
-          placeholder="value"
-          textProp="value"
-          setProjectData={props.setProjectData}
-        />
         {link}
       </>
     );

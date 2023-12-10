@@ -1,3 +1,5 @@
+import { Stem } from "../../../typings";
+
 function isLinkInSelection(nodeId: string, selectedNodes: Array<any>) {
   let nodeInSelection = -1;
   for (var i = 0; i < selectedNodes.length; i++) {
@@ -39,7 +41,7 @@ export default function sortSelectedNodes(
       }
     }
     if (node.type === "branch") {
-      node.stems.forEach((stem: any) => {
+      node.stems.forEach((stem: Stem) => {
         nodeInSelection = isLinkInSelection(stem.link.to, selectedNodes);
         if (nodeInSelection > -1) {
           newSelection = moveItemAfterIndex(selectedNodes, nodeInSelection);

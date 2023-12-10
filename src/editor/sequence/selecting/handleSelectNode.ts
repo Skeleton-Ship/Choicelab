@@ -1,4 +1,5 @@
 import { getStore, setStore } from "../../../data/dataStore";
+import { AnyNode } from "../../../typings";
 
 /**
  * Handler for selecting a node.
@@ -6,12 +7,13 @@ import { getStore, setStore } from "../../../data/dataStore";
  * @param {object} node - A node object.
  * @param {Function} setter - The React state function to call once selected.
  */
-export default function handleSelectNode(node: any, setter: Function) {
-  const targetMode = getStore("targetMode");
+export default function handleSelectNode(node: AnyNode, setter: Function) {
+  const store = getStore();
+  const targetMode = store.targetMode;
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
   if (typeof node === "undefined" || targetMode !== "") return;
-  let selectedNodes = getStore("selectedNodes");
-  const shiftDown = getStore("shiftDown");
+  let selectedNodes = store.selectedNodes;
+  const shiftDown = store.shiftDown;
   let removeFromSelection = -1;
   // If shift key isn't being held, clear the existing selection
   if (shiftDown === false) {
@@ -33,7 +35,5 @@ export default function handleSelectNode(node: any, setter: Function) {
   }
   // Update data
   setter(selectedNodes);
-  setStore({
-    selectedNodes: selectedNodes,
-  });
+  setStore(store);
 }

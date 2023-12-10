@@ -7,7 +7,7 @@ import { AnyNode } from "../../../typings";
  * A node that represents the start point of the sequence. Only its link can be set; it otherwise cannot be changed, moved, or deleted.
  *
  */
-export default function Start(props: {
+export default function StartEl(props: {
   id: string;
   x: number;
   y: number;
@@ -37,7 +37,7 @@ export default function Start(props: {
         <span className="node-id">{props.id}</span>
         <div className="title">Start</div>
       </div>
-      <Link origin="cell" nodeId={props.id} setProjectData={props.update} />
+      <Link origin="cell" nodeId={props.id} update={props.update} />
     </li>
   );
 }
