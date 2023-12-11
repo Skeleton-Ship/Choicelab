@@ -1,4 +1,4 @@
-import { getSequence, getNode } from "../../../data/getData";
+import { getSequence, getNode, getSequenceStart } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 import { AnyNode, Store, Sequence } from "../../../typings";
 
@@ -182,26 +182,12 @@ export default function positionNodes(sequenceId: string) {
     return store;
   }
   // First, find the start node, so we have a definitive point to begin positioning from
-  let startingNode: AnyNode | undefined;
-  sequence.nodes.forEach((node: AnyNode) => {
-    // Set initial position
-    node.position = {
-      x: -1,
-      y: -1,
-      xSize: -1,
-      ySize: -1,
-      width: -1,
-      height: -1,
-      top: -1,
-      left: -1,
-    };
-    if (node.type === "start") {
-      startingNode = node;
-    }
-  });
-  // Position the start node and traverse down
-  if (typeof startingNode === "undefined") {
-    console.error("No starting node found.");
+  let startingNode = getSequenceStart(sequenceId, store);
+  if (!startingNode) {
+    console.error(
+      "No starting node found in this sequence. Returning store as-is.",
+      sequenceId
+    );
     return store;
   }
   store = positionNode(0, 0, startingNode.id, sequenceId, store);

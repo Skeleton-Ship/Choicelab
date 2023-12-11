@@ -1,4 +1,12 @@
-import { Sequence, Stem, Cell, Branch, AnyNode, Store } from "../typings";
+import {
+  Sequence,
+  Stem,
+  Cell,
+  Branch,
+  AnyNode,
+  StartNode,
+  Store,
+} from "../typings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
@@ -32,6 +40,25 @@ function getCell(id: string, data: Store): Cell | undefined {
         foundNode = node as Cell;
       }
     });
+  });
+  return foundNode;
+}
+
+function getSequenceStart(
+  sequenceId: string,
+  data: Store
+): StartNode | undefined {
+  let foundNode;
+  const sequence: Sequence | undefined = getSequence(sequenceId, data);
+  if (!sequence) {
+    console.error("No sequence found:", sequenceId);
+    return;
+  }
+  const sequenceNodes = sequence.nodes;
+  sequenceNodes.forEach((node: AnyNode) => {
+    if (node.type === "start") {
+      foundNode = node as Cell;
+    }
   });
   return foundNode;
 }
@@ -150,6 +177,7 @@ function nodeExists(id: string, data: Store) {
 export {
   getSequence,
   getNode,
+  getSequenceStart,
   getCell,
   getBranch,
   getBranchStem,

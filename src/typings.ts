@@ -37,6 +37,11 @@ export interface AnyNode {
     abandoned?: boolean;
   };
 }
+export interface StartNode {
+  id: string;
+  type: string;
+  link: Link;
+}
 export interface Cell {
   id: string;
   type: string;

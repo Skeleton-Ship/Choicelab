@@ -27,7 +27,6 @@ export default function handleSelectNode(node: AnyNode, setter: Function) {
       }
     }
   }
-  // @ts-ignore
   if (removeFromSelection > -1) {
     selectedNodes.splice(removeFromSelection, 1);
   } else {
