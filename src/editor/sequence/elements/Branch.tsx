@@ -1,10 +1,11 @@
 import { useState } from "preact/hooks";
-import { getNode } from "../../../data/getData";
+import { getBranch } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createBranchStem } from "../../../data/createNode";
 import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
 import BranchStemEl from "./BranchStem";
+import { Branch, Stem } from "../../../typings";
 
 /**
  * A node that allows the flowchart to "branch off" into one or more possible directions. By default, all branches include a "no match" stem, and usually (though optionally) can add additional branch *stems* to test for possible values in the branch's variable.
@@ -22,24 +23,33 @@ export default function BranchEl(props: {
   height: number;
 }) {
   const store = getStore();
-  const branch: any = getNode(props.id, store);
+  const branch: Branch | undefined = getBranch(props.id, store);
+  if (!branch) {
+    console.error("Branch not found.");
+    return <></>;
+  }
   // @ts-ignore
   const [previousEvaluatorName, setPreviousEvaluatorName] = useState(
     branch.evaluator.name
   );
-  function handleSelectBranch(e: any) {
-    if (elementIsStem(e.target)) return;
+  function handleSelectBranch(e: MouseEvent) {
+    let target;
+    if (e.target !== null) {
+      target = e.target as Element;
+    }
+    if (!target) return;
+    if (elementIsStem(target)) return;
     // Un-set stem selection
     store.selectedStem = false;
     setStore(store);
-    props.onClick(getNode(props.id, store));
+    props.onClick(getBranch(props.id, store));
   }
   function handleSelectStem() {
-    props.onClick(getNode(props.id, store));
+    props.onClick(getBranch(props.id, store));
   }
   function addBranchStem() {
-    const branch: any = getNode(props.id, store);
-    if (typeof branch === "undefined") return;
+    const branch: Branch | undefined = getBranch(props.id, store);
+    if (!branch) return;
     const stem = createBranchStem("value");
     if (branch.stems) {
       branch.stems.push(stem);
@@ -52,10 +62,10 @@ export default function BranchEl(props: {
     : "";
   const branchClass = `branch node ${selectedClass}`;
   // Iterate through links
-  const stems: any = branch.stems;
-  const stemEls: any = [];
+  const stems: Array<Stem> = branch.stems;
+  const stemEls: Array<preact.JSX.Element> = [];
   let stemIndex = 0;
-  stems.forEach((stem: any) => {
+  stems.forEach((stem: Stem) => {
     const stemEl = (
       <BranchStemEl
         key={stem.id}

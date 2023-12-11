@@ -104,8 +104,8 @@ function handlePaste(setProjectData: Function): void {
     if (!data.ChoicelabNodes) return;
     const nodes = data.ChoicelabNodes;
     // Process nodes: remove the `position` prop, and re-generate IDs and links
-    const processedNodes: Array<any> = [];
-    nodes.forEach((node: any) => {
+    const processedNodes: Array<AnyNode> = [];
+    nodes.forEach((node: AnyNode) => {
       // Clone node, removing the `position` prop
       let newNode = cloneObjectWithExclusion(node, "position");
       newNode = regenerateIdsAndLinks(newNode);
@@ -113,7 +113,7 @@ function handlePaste(setProjectData: Function): void {
     });
     // Create new nodes
     const store = getStore();
-    processedNodes.forEach((node: any) => {
+    processedNodes.forEach((node: AnyNode) => {
       insertNewNode(node, setProjectData);
     });
     // Finally, set selection to processed nodes

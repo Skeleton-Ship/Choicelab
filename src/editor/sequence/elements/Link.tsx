@@ -13,7 +13,7 @@ export default function LinkEl(props: {
   nodeId: string;
   stemId?: string;
   update: Function;
-}): JSX.Element {
+}) {
   // Get link property
   function getLinkProps(store: Store) {
     const node: AnyNode | undefined = getNode(props.nodeId, store);
@@ -112,7 +112,7 @@ export default function LinkEl(props: {
       app.setAttribute("data-target-mode", "");
     }
   }
-  let targetModeListener = (window as any).Choicelab.targetModeListener;
+  let targetModeListener = window.__CHOICELAB_TARGET_MODE__;
   useEffect(() => {
     const store = getStore();
     if (targetModeListener !== false) return;
@@ -124,15 +124,23 @@ export default function LinkEl(props: {
       if (props.origin === "branchStem") {
         if (targetMode !== props.stemId) return;
       }
-      const selectedNode = elementIsNode(e.target);
-      if (selectedNode) {
-        const destinationId = selectedNode.getAttribute("data-id");
-        if (destinationId !== props.nodeId) {
-          const link = getLinkProps(store);
-          link.to = destinationId;
-          setStore(store);
-          props.update();
-          exitTargetMode();
+      let target;
+      if (e.target !== null) {
+        target = e.target as Element;
+      }
+      if (target) {
+        const selectedNode = elementIsNode(target);
+        if (selectedNode) {
+          const destinationId = selectedNode.getAttribute("data-id");
+          if (destinationId && destinationId !== props.nodeId) {
+            const link = getLinkProps(store);
+            if (link) {
+              link.to = destinationId;
+              setStore(store);
+              props.update();
+              exitTargetMode();
+            }
+          }
         }
       }
     });
@@ -170,13 +178,14 @@ export default function LinkEl(props: {
   }
   // Get current to destination
   const link = getLinkProps(store);
+  let toId = link && link.to ? link.to : "";
   return (
     <div className="link">
       <button className="linker" onClick={enterTargetMode}>
         <span>Connect</span>
       </button>
       {targetModeContents}
-      <div className="to-id">{link.to}</div>
+      <div className="to-id">{toId}</div>
     </div>
   );
 }

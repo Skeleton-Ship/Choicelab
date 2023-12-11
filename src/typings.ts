@@ -28,10 +28,13 @@ export interface AnyNode {
   position?: {
     x: number;
     y: number;
+    xSize: number;
+    ySize: number;
     top: number;
     left: number;
     width: number;
     height: number;
+    abandoned?: boolean;
   };
 }
 export interface Cell {
@@ -84,26 +87,11 @@ export interface Store {
   clipboardListener: boolean;
   inTextElement: boolean;
   focus: boolean;
-  selection: {
-    listenersActive: boolean;
-    selecting: boolean;
-    keepExistingSelection: boolean;
-    nodesInSelection: Array<AnyNode>;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    offsetTop: number;
-    offsetLeft: number;
-  };
-  dragging: {
-    listenersActive: boolean;
-    nodeToChange: string;
-  };
   saved: boolean;
 }
 declare global {
   interface Window {
     __CHOICELAB_DATA__: Store;
+    __CHOICELAB_TARGET_MODE__: void | false;
   }
 }

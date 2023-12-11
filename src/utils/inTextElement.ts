@@ -1,5 +1,6 @@
 export default function inTextElement() {
-  const activeEl: any = document.activeElement;
+  const activeEl: Element | null = document.activeElement;
+  if (activeEl === null) return false;
   const tagName = activeEl.tagName.toLowerCase();
   let inTextElement = false;
   if (

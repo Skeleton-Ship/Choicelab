@@ -58,7 +58,7 @@ async function init() {
 	*/
 
   const appDOM = (
-    <div id="App" data-focus="true">
+    <div id="App" data-target-mode="">
       {elements}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Sequence, Stem, Branch, AnyNode, Store } from "../typings";
+import { Sequence, Stem, Cell, Branch, AnyNode, Store } from "../typings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
@@ -17,6 +17,32 @@ function getNode(id: string, data: Store): AnyNode | undefined {
     sequenceNodes.forEach((node: AnyNode) => {
       if (node.id === id) {
         foundNode = node;
+      }
+    });
+  });
+  return foundNode;
+}
+
+function getCell(id: string, data: Store): Cell | undefined {
+  let foundNode;
+  data.project.sequences.forEach((sequence: Sequence) => {
+    const sequenceNodes = sequence.nodes;
+    sequenceNodes.forEach((node: AnyNode) => {
+      if (node.id === id && node.type === "cell") {
+        foundNode = node as Cell;
+      }
+    });
+  });
+  return foundNode;
+}
+
+function getBranch(id: string, data: Store): Branch | undefined {
+  let foundNode;
+  data.project.sequences.forEach((sequence: Sequence) => {
+    const sequenceNodes = sequence.nodes;
+    sequenceNodes.forEach((node: AnyNode) => {
+      if (node.id === id && node.type === "branch") {
+        foundNode = node as Branch;
       }
     });
   });
@@ -124,6 +150,8 @@ function nodeExists(id: string, data: Store) {
 export {
   getSequence,
   getNode,
+  getCell,
+  getBranch,
   getBranchStem,
   getActiveBranchStem,
   getStemParent,

@@ -18,7 +18,7 @@ import { Sequence, AnyNode } from "../../typings";
 export default function SequenceEl(props: { id: string; update: Function }) {
   // Set up selection
   // @ts-ignore
-  const [selectedNodes, setSelectedNodes] = useState<any[]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<AnyNode[]>([]);
   ("");
   // Listeners for arrows
   const arrowsRef = useRef(null);
@@ -85,7 +85,6 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         {nodeEls}
       </ul>
       <svg id="arrows" ref={svgRef}></svg>
-      <div id="selection-area"></div>
     </div>
   );
 }

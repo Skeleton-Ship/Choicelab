@@ -1,4 +1,5 @@
 import { getStore } from "../../../data/dataStore";
+import { AnyNode, Sequence, Stem } from "../../../typings";
 
 /**
  * Retrieves a list of any links that point to a particular node.
@@ -16,11 +17,11 @@ export default function getNodeOriginIds(
   const store = getStore();
   const projectData = store.project;
   const nodeOrigins: Array<NodeOrigin> = [];
-  projectData.sequences.forEach((sequence: any) => {
-    sequence.nodes.forEach((node: any) => {
-      if (node.type === "branch") {
+  projectData.sequences.forEach((sequence: Sequence) => {
+    sequence.nodes.forEach((node: AnyNode) => {
+      if (node.type === "branch" && node.stems) {
         const stems = node.stems;
-        stems.forEach((stem: any) => {
+        stems.forEach((stem: Stem) => {
           if (stem.link.to === linkedNodeId) {
             nodeOrigins.push({
               type: "stem",
@@ -30,7 +31,7 @@ export default function getNodeOriginIds(
           }
         });
       } else {
-        if (node.link.to === linkedNodeId) {
+        if (node.link && node.link.to === linkedNodeId) {
           nodeOrigins.push({
             type: node.type,
             id: node.id,

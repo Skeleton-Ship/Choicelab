@@ -1,6 +1,6 @@
-import { Stem } from "../../../typings";
+import { AnyNode, Stem } from "../../../typings";
 
-function isLinkInSelection(nodeId: string, selectedNodes: Array<any>) {
+function isLinkInSelection(nodeId: string, selectedNodes: Array<AnyNode>) {
   let nodeInSelection = -1;
   for (var i = 0; i < selectedNodes.length; i++) {
     var node = selectedNodes[i];
@@ -28,19 +28,21 @@ function moveItemAfterIndex<T>(array: T[], index: number): T[] {
  * @param {Array} selectedNodes - The selected nodes (usually passed from getStore).
  */
 export default function sortSelectedNodes(
-  selectedNodes: Array<any>
-): Array<any> {
+  selectedNodes: Array<AnyNode>
+): Array<AnyNode> {
   let nodeInSelection = -1;
   let newSelection = selectedNodes;
   for (var i = 0; i < selectedNodes.length; i++) {
     var node = selectedNodes[i];
     if (node.type === "cell" || node.type === "start") {
-      nodeInSelection = isLinkInSelection(node.link.to, selectedNodes);
-      if (nodeInSelection > -1) {
-        newSelection = moveItemAfterIndex(selectedNodes, nodeInSelection);
+      if (node.link) {
+        nodeInSelection = isLinkInSelection(node.link.to, selectedNodes);
+        if (nodeInSelection > -1) {
+          newSelection = moveItemAfterIndex(selectedNodes, nodeInSelection);
+        }
       }
     }
-    if (node.type === "branch") {
+    if (node.type === "branch" && node.stems) {
       node.stems.forEach((stem: Stem) => {
         nodeInSelection = isLinkInSelection(stem.link.to, selectedNodes);
         if (nodeInSelection > -1) {

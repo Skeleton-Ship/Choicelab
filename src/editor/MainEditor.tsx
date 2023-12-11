@@ -1,7 +1,7 @@
 import { ask } from "@tauri-apps/api/dialog";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
-import { AnyNode, Sequence } from "../typings";
+import { Sequence } from "../typings";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
 import Toolbar from "./toolbar/Toolbar";
@@ -90,24 +90,16 @@ export default function MainEditor() {
 
   // Load sequence
   const sequence: Sequence | undefined = getCurrentSequence(store);
-  if (typeof sequence === "undefined") {
-    return <div>No sequence loaded</div>;
+  let flowchartContents = <div>No sequence selected</div>;
+  if (sequence) {
+    const sequenceId = sequence.id;
+    flowchartContents = <SequenceEl id={sequenceId} update={handleUpdate} />;
   }
-  const sequenceId = sequence.id;
-
-  // TEMP: List sequence nodes
-  let nodes: Array<preact.JSX.Element> = [];
-  sequence.nodes.forEach((thisNode: AnyNode) => {
-    const nodeTempEl = <div>{thisNode.id}</div>;
-    nodes.push(nodeTempEl);
-  });
 
   return (
     <div id="editor">
       <Toolbar update={handleUpdate} />
-      {/* {nodes} */}
-      <SequenceEl id={sequenceId} update={handleUpdate} />
-      {/* {flowchartContents} */}
+      {flowchartContents}
     </div>
   );
 }

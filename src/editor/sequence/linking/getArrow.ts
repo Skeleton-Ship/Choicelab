@@ -76,26 +76,32 @@ export default function getArrow(
   toElement: Element,
   arrowhead: boolean = true,
   arrowType: string = ""
-): any {
+) {
   const pathDimensions = getPathDimensions(fromElement, toElement);
   const fromId = fromElement.getAttribute("data-id");
   const toId = toElement.getAttribute("data-id");
-  let group: any, line;
+  let group: Element | null = null,
+    line;
   if (fromId && toId) {
     group = document.querySelector(
       `#arrows g[data-from="${fromId}"][data-to="${toId}"]`
     );
   }
-  if (group) {
+  if (group !== null) {
     line = group.querySelector(".line");
     if (line) {
       // line.setAttribute("d", pathDimensions);
       const existingDimensions = line.getAttribute("d");
-      if (existingDimensions.trim() !== pathDimensions.trim()) {
+      if (
+        existingDimensions !== null &&
+        existingDimensions.trim() !== pathDimensions.trim()
+      ) {
         group.classList.add("animate-change");
         line.setAttribute("d", pathDimensions);
         setTimeout(() => {
-          group.classList.remove("animate-change");
+          if (group !== null) {
+            group.classList.remove("animate-change");
+          }
         }, 1000);
       }
     }

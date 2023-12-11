@@ -7,6 +7,7 @@ import {
 import resolveConnections from "../linking/resolveConnections";
 import sortSelectedNodes from "../selecting/sortSelectedNodes";
 import { getActiveBranchStem } from "../../../data/getData";
+import { AnyNode, Stem } from "../../../typings";
 
 /**
  * Handler for deleting the selected nodes in a sequence.
@@ -19,16 +20,18 @@ function handleDeleteNodes(setProjectData: Function) {
   // First, arrange order of selected nodes, in case there is one
   const selectedNodes = sortSelectedNodes(selectedNodesUnsorted);
   // Remove node from data, resolve connections
-  selectedNodes.forEach((node: any) => {
-    if (node.type === "cell") {
+  selectedNodes.forEach((node: AnyNode) => {
+    if (node.type === "cell" && node.link) {
       store = deleteNodeFromData(node.id, store);
       store = resolveConnections(store, node.link.to);
     } else if (node.type === "branch") {
       // First, grab the active stem link; then delete and resolve
-      const activeStem: any = getActiveBranchStem(node.id, store);
-      const activeStemLink = activeStem.link.to;
-      store = deleteNodeFromData(node.id, store);
-      store = resolveConnections(store, activeStemLink);
+      const activeStem: Stem | undefined = getActiveBranchStem(node.id, store);
+      if (activeStem) {
+        const activeStemLink = activeStem.link.to;
+        store = deleteNodeFromData(node.id, store);
+        store = resolveConnections(store, activeStemLink);
+      }
     }
   });
   // Run resolveConnections one more time without any attempt to re-connect

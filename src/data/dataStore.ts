@@ -29,22 +29,6 @@ export default function createDataStore(
     clipboardListener: false,
     inTextElement: false,
     focus: false,
-    selection: {
-      listenersActive: false,
-      selecting: false,
-      keepExistingSelection: false,
-      nodesInSelection: [],
-      x1: 0,
-      y1: 0,
-      x2: 0,
-      y2: 0,
-      offsetTop: 0,
-      offsetLeft: 0,
-    },
-    dragging: {
-      listenersActive: false,
-      nodeToChange: "",
-    },
     saved: true,
   };
   window.__CHOICELAB_DATA__ = store;

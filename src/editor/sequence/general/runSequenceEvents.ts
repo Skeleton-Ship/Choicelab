@@ -1,6 +1,5 @@
 import { getStore, setStore } from "../../../data/dataStore";
 import setSequenceHeight from "./setSequenceHeight";
-import enableSelectionArea from "../selecting/enableSelectionArea";
 //
 // Imports for menu listeners (to be added later)
 //
@@ -19,7 +18,6 @@ export default function runSequenceEvents(props: {
 }) {
   // Set height, selection events
   setSequenceHeight();
-  enableSelectionArea(props.update);
 
   // Set shift key events
   document.addEventListener("keydown", (e) => {
@@ -55,8 +53,10 @@ export default function runSequenceEvents(props: {
     const store = getStore();
     const selectedStem = store.selectedStem;
     if (selectedStem !== false) {
-      const parentBranch: any = getStemParent(selectedStem.id, store);
-      handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
+      const parentBranch: Branch | undefined = getStemParent(selectedStem.id, store);
+	  if(parentBranch) {
+    	  handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
+  		}
     } else {
       handleDeleteNodes(props.update);
     }

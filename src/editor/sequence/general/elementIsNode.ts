@@ -1,12 +1,12 @@
-function elNodeCheck(el: HTMLElement) {
+function elNodeCheck(el: Element) {
   if (el.classList.contains("node") && el.hasAttribute("data-id")) {
     return true;
   }
   return false;
 }
 
-function traverseForNode(el: HTMLElement) {
-  const parentNode = el.parentNode as HTMLElement;
+function traverseForNode(el: Element) {
+  const parentNode = el.parentNode as Element;
   if (parentNode === document.body) {
     return false;
   }
@@ -18,7 +18,7 @@ function traverseForNode(el: HTMLElement) {
   }
 }
 
-export default function elementIsNode(el: HTMLElement) {
+export default function elementIsNode(el: Element) {
   if (elNodeCheck(el)) {
     return el;
   } else {

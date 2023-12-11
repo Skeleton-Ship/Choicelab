@@ -1,6 +1,8 @@
+import { AnyNode } from "../../../typings";
+
 export default function isNodeSelected(
   thisId: string,
-  selectedNodes: Array<any>
+  selectedNodes: Array<AnyNode>
 ) {
   let selected = false;
   selectedNodes.forEach((node) => {

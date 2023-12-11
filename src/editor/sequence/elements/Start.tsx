@@ -16,7 +16,7 @@ export default function StartEl(props: {
   width: number;
   height: number;
   update: Function;
-}): JSX.Element {
+}) {
   const store = getStore();
   const cell: AnyNode | undefined = getNode(props.id, store);
   const defaultEl = <div>No start found</div>;
