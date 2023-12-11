@@ -41,10 +41,7 @@ $max-stems: 10;
       border-color: transparent;
       &.selected,
       &.selecting {
-        border-color: var(--accentLightFadedColor);
-        @media (prefers-color-scheme: dark) {
-          border-color: var(--accentDarkFadedColor);
-        }
+        border-color: variables.$accent-color;
       }
     }
   }

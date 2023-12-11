@@ -14,10 +14,7 @@
   &.selected,
   &.selecting {
     .title {
-      background-color: var(--accentLightFadedColor);
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--accentDarkFadedColor);
-      }
+      background-color: variables.$accent-color;
     }
     .label {
       &:not(:focus:not([readonly])) {
