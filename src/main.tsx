@@ -31,6 +31,7 @@ async function init() {
     elements = <Launcher />;
   }
   if (windowType === "project") {
+    // Get project path
     const projectPathRaw: string = urlParams.get("project_path") || "";
     const projectPath = decodeURIComponent(projectPathRaw);
     if (projectPath === "") return;
@@ -64,18 +65,6 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
-  /*
-  render(
-    <div
-      id="App"
-      //		data-focus={getStore("focus")}
-      //		data-target-mode={getStore("targetMode")}
-      //		data-platform={windowData.platform}
-    >
-      {elements}
-    </div>
-  );
-  */
 }
 
 init();
