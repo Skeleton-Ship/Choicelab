@@ -32,6 +32,7 @@ export default function createDataStore(
     saved: true,
   };
   window.__CHOICELAB_DATA__ = store;
+  window.__CHOICELAB_TARGET_MODE__ = false;
 }
 
 export { getStore, setStore, createDataStore };

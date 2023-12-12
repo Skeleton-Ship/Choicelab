@@ -62,13 +62,14 @@ export default function LinkEl(props: {
       return;
     }
     store.targetMode = targetModeId;
-    setStore(store);
-    // Update data
-    props.update(false);
+    // Update app attribute
     const app = document.querySelector("#App");
     if (app) {
       app.setAttribute("data-target-mode", targetModeId);
     }
+    // Update data
+    setStore(store);
+    props.update(false);
   }
   function exitTargetMode(action: string = "") {
     const store = getStore();
@@ -114,9 +115,9 @@ export default function LinkEl(props: {
   }
   let targetModeListener = window.__CHOICELAB_TARGET_MODE__;
   useEffect(() => {
-    const store = getStore();
     if (targetModeListener !== false) return;
     targetModeListener = document.addEventListener("click", (e) => {
+      const store = getStore();
       const targetMode = store.targetMode;
       if (props.origin === "cell" || props.origin === "start") {
         if (targetMode !== props.nodeId) return;
