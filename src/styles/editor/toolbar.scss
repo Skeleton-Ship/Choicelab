@@ -15,6 +15,7 @@
   border-left-width: 0;
   border-right-width: 0;
   width: 100%;
+  padding-left: 7px;
   height: variables.$toolbar-height;
   z-index: 3;
   @media (prefers-color-scheme: dark) {
