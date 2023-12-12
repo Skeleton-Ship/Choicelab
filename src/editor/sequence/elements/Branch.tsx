@@ -54,6 +54,7 @@ export default function BranchEl(props: {
     if (branch.stems) {
       branch.stems.push(stem);
     }
+    setStore(store);
     props.update();
   }
   const selectedNodes = store.selectedNodes;
