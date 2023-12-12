@@ -79,7 +79,7 @@ export default function drawArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
   setTimeout(() => {
     clearAbandonedArrows();
     createOrModifyArrows(nodesEl, svgEl);
-  }, 205);
+  }, 300);
   // Highlight arrows for selected elements
   const arrows = document.querySelectorAll(`#arrows g`);
   const store = getStore();
