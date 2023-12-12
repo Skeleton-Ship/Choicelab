@@ -34,14 +34,7 @@ function getNodeCoordinates(
     };
   }
   sequence.nodes.forEach((node: AnyNode) => {
-    if (typeof node.position === "undefined") {
-      console.error("Node position not defined.");
-      return {
-        x: x,
-        y: y,
-      };
-    }
-    if (node.position.y === y && node.id !== nodeId) {
+    if (node.position && node.position.y === y && node.id !== nodeId) {
       if (
         node.position.x === x ||
         node.position.x + node.position.xSize - 1 >= x
@@ -76,11 +69,8 @@ function positionNode(
     console.error("Node not found:", nodeId);
     return store;
   }
-  let nodeCoordinates = {
-    x: -1,
-    y: -1,
-  };
   // First, see if the current node isn't positioned
+  let nodeCoordinates;
   if (typeof node.position === "undefined") {
     node.position = {
       x: -1,
@@ -92,13 +82,9 @@ function positionNode(
       left: -1,
       top: -1,
     };
-  }
-  console.log("Beginning to check node:", node);
-  if (node.position.x === -1 || node.position.y === -1) {
-    console.log("Positioning this node:", node);
     nodeCoordinates = getNodeCoordinates(x, y, node.id, sequenceId, store);
     // Set size of node
-    if (node.type === "cell") {
+    if (node.type === "cell" || node.type === "start") {
       node.position.width = CELL_WIDTH;
       node.position.height = CELL_HEIGHT;
     }
@@ -119,19 +105,14 @@ function positionNode(
   if (node.type === "cell" || node.type === "start") {
     if (node.link && node.link.to !== "") {
       const linkedNode: AnyNode | undefined = getNode(node.link.to, store);
-      if (linkedNode && linkedNode.position) {
-        if (
-          (linkedNode && linkedNode.position.x === null) ||
-          linkedNode.position.y === null
-        ) {
-          return positionNode(
-            nodeCoordinates.x,
-            nodeCoordinates.y + 1,
-            node.link.to,
-            sequenceId,
-            store
-          );
-        }
+      if (linkedNode && nodeCoordinates && !linkedNode.position) {
+        return positionNode(
+          nodeCoordinates.x,
+          nodeCoordinates.y + 1,
+          node.link.to,
+          sequenceId,
+          store
+        );
       }
     }
     // For branches, take each stem and run positionNode on it
@@ -143,26 +124,17 @@ function positionNode(
     }
     for (var i = 0; i < node.stems.length; i++) {
       var stem = node.stems[i];
-      /*
-	  // Set left position
-      const position = {
-        relativeX: i,
-        left: i * CELL_WIDTH,
-      };
-	  */
       // Get linked node
       if (stem.link.to === "") continue;
       const linkedNode: AnyNode | undefined = getNode(stem.link.to, store);
-      if (linkedNode && linkedNode.position) {
-        if (linkedNode.position.x === null || linkedNode.position.y === null) {
-          positionNode(
-            nodeCoordinates.x + i,
-            nodeCoordinates.y,
-            stem.link.to,
-            sequenceId,
-            store
-          );
-        }
+      if (linkedNode && !linkedNode.position) {
+        positionNode(
+          nodeCoordinates.x + i,
+          nodeCoordinates.y,
+          stem.link.to,
+          sequenceId,
+          store
+        );
       }
     }
   }
@@ -194,17 +166,25 @@ export default function positionNodes(sequenceId: string) {
   // Finally, position abandoned nodes up top along the X axis
   let abandonIndex = 0;
   sequence.nodes.forEach((node: AnyNode) => {
-    if (node.position) {
-      if (node.position.x === -1 || node.position.y === -1) {
-        abandonIndex++;
-        node.position.y = 0;
-        node.position.x = abandonIndex;
-        node.position.left = abandonIndex * CELL_WIDTH;
-        node.position.top = 0;
-        node.position.width = CELL_WIDTH;
-        node.position.height = CELL_HEIGHT;
-        node.position.abandoned = true;
+    if (!node.position) {
+      abandonIndex++;
+      node.position = {
+        y: 0,
+        x: abandonIndex,
+        left: abandonIndex * CELL_WIDTH,
+        top: 0,
+        xSize: -1,
+        ySize: 1,
+        width: CELL_WIDTH,
+        height: CELL_HEIGHT,
+        abandoned: true,
+      };
+      // Get x-size of branch stems
+      let xSize = 1;
+      if (node.type === "branch" && node.stems) {
+        xSize = node.stems.length;
       }
+      node.position.xSize = xSize;
     }
   });
   return store;
