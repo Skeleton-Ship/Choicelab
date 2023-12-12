@@ -88,7 +88,7 @@ fn create_app_menu() -> Menu {
 	.add_item(CustomMenuItem::new("new_branch", "New Branch").accelerator("Cmd+B"))
 	.add_native_item(MenuItem::Separator)
 	.add_item(CustomMenuItem::new("disconnect_link", "Disconnect Link").accelerator("Cmd+D"))	
-	.add_item(CustomMenuItem::new("delete_nodes", "Delete Nodes").accelerator("Cmd+Delete"))	
+	.add_item(CustomMenuItem::new("delete_nodes", "Delete Items").accelerator("Cmd+Delete"))	
 );
 	// Build and return it
 	let menu = Menu::new()

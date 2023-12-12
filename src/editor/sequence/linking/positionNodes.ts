@@ -175,8 +175,8 @@ export default function positionNodes(sequenceId: string) {
       node.position = {
         y: 0,
         x: abandonIndex,
-        left: abandonIndex * CELL_WIDTH,
-        top: 0,
+        left: abandonIndex * (CELL_WIDTH + 20) + 35,
+        top: 50,
         xSize: -1,
         ySize: 1,
         width: CELL_WIDTH,

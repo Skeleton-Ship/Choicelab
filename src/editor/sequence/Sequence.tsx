@@ -26,9 +26,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
   // On mount...
   useEffect(() => {
     // Run sequence events
-    runSequenceEvents({
-      update: props.update,
-    });
+    runSequenceEvents(props.update);
   }, []);
   // On each refresh...
   useEffect(() => {

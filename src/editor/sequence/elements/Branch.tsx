@@ -74,7 +74,7 @@ export default function BranchEl(props: {
         index={stemIndex}
         nodeId={props.id}
         onClick={handleSelectStem}
-        setProjectData={props.update}
+        update={props.update}
       />
     );
     stemEls.push(stemEl);

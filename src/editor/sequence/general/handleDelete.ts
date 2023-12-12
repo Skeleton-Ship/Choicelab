@@ -12,9 +12,9 @@ import { AnyNode, Stem } from "../../../typings";
 /**
  * Handler for deleting the selected nodes in a sequence.
  *
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteNodes(setProjectData: Function) {
+function handleDeleteNodes(update: Function) {
   let store = getStore();
   const selectedNodesUnsorted = store.selectedNodes;
   // First, arrange order of selected nodes, in case there is one
@@ -39,7 +39,7 @@ function handleDeleteNodes(setProjectData: Function) {
   // Remove nodes from selection array
   store.selectedNodes = [];
   setStore(store);
-  setProjectData();
+  update();
 }
 
 /**
@@ -47,16 +47,12 @@ function handleDeleteNodes(setProjectData: Function) {
  *
  * @param {string} stemId - The id of the branch stem.
  * @param {string} nodeId - The id of the node.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteStem(
-  stemId: string,
-  nodeId: string,
-  setProjectData: Function
-) {
+function handleDeleteStem(stemId: string, nodeId: string, update: Function) {
   const store = getStore();
   const updatedData = deleteStemFromData(stemId, nodeId, store);
-  setProjectData(updatedData);
+  update(updatedData);
   setStore(store);
 }
 
@@ -64,12 +60,12 @@ function handleDeleteStem(
  * Handler for deleting a sequence.
  *
  * @param {string} sequenceId - The id of the sequence.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteSequence(sequenceId: string, setProjectData: Function) {
+function handleDeleteSequence(sequenceId: string, update: Function) {
   const store = getStore();
   const updatedData = deleteSequenceFromData(sequenceId, store);
-  setProjectData(updatedData);
+  update(updatedData);
 }
 
 export { handleDeleteNodes, handleDeleteStem, handleDeleteSequence };

@@ -68,9 +68,9 @@ function cloneObjectWithExclusion(obj: any, excludedProperty: string = "") {
  * Add the selected nodes to the clipboard. If cutting, delete the nodes from the sequence as well.
  *
  * @param {string} action - Whether it's a cut or a copy.
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleCutCopy(action: string, setProjectData: Function) {
+function handleCutCopy(action: string, update: Function) {
   const store = getStore();
   const inTextElement = store.inTextElement;
   if (inTextElement === true) return;
@@ -86,16 +86,16 @@ function handleCutCopy(action: string, setProjectData: Function) {
   navigator.clipboard.write(data);
   // If cutting, delete the nodes from screen
   if (action === "cut") {
-    handleDeleteNodes(setProjectData);
+    handleDeleteNodes(update);
   }
 }
 
 /**
  * Checks the clipboard for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links, then runs `handleCreateNode` to add them to the current sequence.
  *
- * @param {Function} setProjectData - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handlePaste(setProjectData: Function): void {
+function handlePaste(update: Function): void {
   navigator.clipboard.readText().then((clipText) => {
     // Ignore things that aren't JSON
     if (!isJson(clipText)) return;
@@ -114,10 +114,10 @@ function handlePaste(setProjectData: Function): void {
     // Create new nodes
     const store = getStore();
     processedNodes.forEach((node: AnyNode) => {
-      insertNewNode(node, setProjectData);
+      insertNewNode(node, update);
     });
     // Finally, set selection to processed nodes
-    setProjectData();
+    update();
     store.selectedNodes = processedNodes;
     setStore(store);
   });

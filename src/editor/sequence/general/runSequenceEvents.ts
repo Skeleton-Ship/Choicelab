@@ -11,7 +11,7 @@ import { Branch } from "../../../typings";
 /**
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.
  */
-export default function runSequenceEvents(props: { update: Function }) {
+export default function runSequenceEvents(update: Function) {
   // Set shift key events
   document.addEventListener("keydown", (e) => {
     if (e.key === "Shift") {
@@ -33,13 +33,13 @@ export default function runSequenceEvents(props: { update: Function }) {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
     const newCell = createCell();
-    insertNewNode(newCell, props.update);
+    insertNewNode(newCell, update);
   });
   listen("menu-new-branch", async () => {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
     const newBranch = createBranch();
-    insertNewNode(newBranch, props.update);
+    insertNewNode(newBranch, update);
   });
   listen("menu-delete-nodes", async () => {
     const focused = await appWindow.isFocused();
@@ -52,15 +52,15 @@ export default function runSequenceEvents(props: { update: Function }) {
         store
       );
       if (parentBranch && selectedStem.type !== "noMatch") {
-        handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
+        handleDeleteStem(selectedStem.id, parentBranch.id, update);
       }
     } else {
-      handleDeleteNodes(props.update);
+      handleDeleteNodes(update);
     }
   });
   listen("menu-disconnect-link", async () => {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
-    handleDisconnectLinks(props.update);
+    handleDisconnectLinks(update);
   });
 }

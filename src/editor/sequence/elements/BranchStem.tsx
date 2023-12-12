@@ -12,7 +12,7 @@ export default function BranchStemEl(props: {
   index: number;
   nodeId: string;
   onClick: Function;
-  setProjectData: Function;
+  update: Function;
 }) {
   function handleSelectStem() {
     const store = getStore();
@@ -43,7 +43,7 @@ export default function BranchStemEl(props: {
       origin="branchStem"
       nodeId={props.nodeId}
       stemId={props.id}
-      update={props.setProjectData}
+      update={props.update}
     />
   );
   if (stem.type === "noMatch") {
