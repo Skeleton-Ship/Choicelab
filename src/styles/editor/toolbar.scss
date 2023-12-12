@@ -9,7 +9,7 @@
   align-items: center;
   border-style: solid;
   border-top-color: rgba(25, 25, 25, 0.14);
-  border-bottom-color: rgba(25, 25, 25, 0.16);
+  border-bottom-color: rgba(25, 25, 25, 0.14);
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-left-width: 0;
@@ -62,6 +62,8 @@
       img {
         max-width: 100%;
         height: auto;
+        position: relative;
+        top: -2px;
       }
       @media (prefers-color-scheme: dark) {
         @include mixins.invert-icon;
