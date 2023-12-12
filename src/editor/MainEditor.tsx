@@ -53,8 +53,8 @@ export default function MainEditor() {
         {
           title: "Quit before saving?",
           type: "warning",
-          okLabel: "Go back",
-          cancelLabel: "Quit without saving",
+          okLabel: "Go Back",
+          cancelLabel: "Quit Without Saving",
         }
       );
       if (confirm === false) {
