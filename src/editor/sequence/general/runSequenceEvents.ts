@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createCell, createBranch } from "../../../data/createNode";
 import insertNewNode from "./insertNewNode";
-import setSequenceDimensions from "./setSequenceHeight";
+import setSequenceDimensions from "./setSequenceDimensions";
 import handleDisconnectLinks from "./handleDisconnectLinks";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";

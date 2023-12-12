@@ -8,7 +8,7 @@ import runSequenceEvents from "./general/runSequenceEvents";
 import handleSelectNode from "./selecting/handleSelectNode";
 import positionNodes from "./linking/positionNodes";
 import drawArrows from "./linking/drawArrows";
-import setSequenceHeight from "./general/setSequenceHeight";
+import setSequenceDimensions from "./general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../../typings";
 
 /**
@@ -38,7 +38,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
       drawArrows(arrowsRef.current, svgRef.current);
     }
     // Set height of sequence
-    setSequenceHeight();
+    setSequenceDimensions();
   });
   // Get sequence
   const positionedData = positionNodes(props.id);

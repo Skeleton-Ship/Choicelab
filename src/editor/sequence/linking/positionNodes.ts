@@ -70,7 +70,7 @@ function positionNode(
     return store;
   }
   // First, see if the current node isn't positioned
-  let nodeCoordinates;
+  let nodeCoordinates: { x: number; y: number } | undefined = { x: -1, y: -1 };
   if (typeof node.position === "undefined") {
     node.position = {
       x: -1,
