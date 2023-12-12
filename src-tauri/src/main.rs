@@ -72,7 +72,7 @@ fn create_app_menu() -> Menu {
 	);
 	// File menu
 	let file_menu = Submenu::new("File", Menu::new()
-	.add_item(CustomMenuItem::new("new_project", "New Project").accelerator("Cmd+N"))
+	.add_item(CustomMenuItem::new("new_project", "New Project").accelerator("Cmd+Shift+N"))
 	.add_item(CustomMenuItem::new("open_project", "Open Project").accelerator("Cmd+O"))
 	.add_native_item(MenuItem::Separator)
 	.add_item(CustomMenuItem::new("save_project", "Save").accelerator("Cmd+S"))
@@ -83,11 +83,19 @@ fn create_app_menu() -> Menu {
 	.add_item(CustomMenuItem::new("undo", "Undo").accelerator("Cmd+Z").disabled())
 	.add_item(CustomMenuItem::new("redo", "Redo").accelerator("Cmd+Shift+Z").disabled())
 	);
+	let project_menu = Submenu::new("Project", Menu::new()
+	.add_item(CustomMenuItem::new("new_cell", "New Cell").accelerator("Cmd+N"))
+	.add_item(CustomMenuItem::new("new_branch", "New Branch").accelerator("Cmd+B"))
+	.add_native_item(MenuItem::Separator)
+	.add_item(CustomMenuItem::new("disconnect_link", "Disconnect Link").accelerator("Cmd+D"))	
+	.add_item(CustomMenuItem::new("delete_nodes", "Delete Nodes").accelerator("Cmd+Delete"))	
+);
 	// Build and return it
 	let menu = Menu::new()
 	.add_submenu(app_menu)
 	.add_submenu(file_menu)
-	.add_submenu(edit_menu);
+	.add_submenu(edit_menu)
+	.add_submenu(project_menu);
 	return menu;
 }
 
@@ -112,8 +120,20 @@ fn main() {
 		  }
 		  "redo" => {
 			  event.window().emit("menu-redo", ()).unwrap();
-			}
-		_ => {}
+		  }
+		  "new_cell" => {
+			  event.window().emit("menu-new-cell", ()).unwrap();
+		  }		 
+		  "new_branch" => {
+			  event.window().emit("menu-new-branch", ()).unwrap();
+		  }		  
+		  "delete_nodes" => {
+			  event.window().emit("menu-delete-nodes", ()).unwrap();
+		  }
+		  "disconnect_link" => {
+			  event.window().emit("menu-disconnect-link", ()).unwrap();
+		  }		  
+		  _ => {}
 	  }
 	})
 	.setup(|app| {

@@ -1,13 +1,13 @@
+import { appWindow } from "@tauri-apps/api/window";
+import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
-import setSequenceHeight from "./setSequenceHeight";
-//
-// Imports for menu listeners (to be added later)
-//
-// import { getStemParent } from "../../../data/getData";
-// import onEventFromMain from "../../../ipc/onEventFromMain";
-// import handleCreateNode from "./handleCreateNode";
-// import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
-// import handleDisconnectLinks from "./handleDisconnectLinks";
+import { createCell, createBranch } from "../../../data/createNode";
+import insertNewNode from "./insertNewNode";
+import setSequenceDimensions from "./setSequenceHeight";
+import handleDisconnectLinks from "./handleDisconnectLinks";
+import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
+import { getStemParent } from "../../../data/getData";
+import { Branch } from "../../../typings";
 
 /**
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.
@@ -17,7 +17,7 @@ export default function runSequenceEvents(props: {
   update: Function;
 }) {
   // Set height, selection events
-  setSequenceHeight();
+  setSequenceDimensions();
 
   // Set shift key events
   document.addEventListener("keydown", (e) => {
@@ -34,32 +34,40 @@ export default function runSequenceEvents(props: {
       setStore(store);
     }
   });
-  /*
-   * TODO: Rewrite as Tauri menu listeners
-   */
-  /*
-  const store = getStore();
-  const projectId = project.id;
-  onEventFromMain("createCell", projectId, () => {
-    handleCreateNode("cell", props.id, props.update);
+
+  // Set menu bar events
+  listen("menu-new-cell", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
+    const newCell = createCell();
+    insertNewNode(newCell, props.update);
   });
-  onEventFromMain("createBranch", projectId, () => {
-    handleCreateNode("branch", props.id, props.update);
+  listen("menu-new-branch", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
+    const newBranch = createBranch();
+    insertNewNode(newBranch, props.update);
   });
-  onEventFromMain("disconnectLinks", projectId, () => {
-    handleDisconnectLinks(props.update);
-  });
-  onEventFromMain("deleteNodes", projectId, () => {
+  listen("menu-delete-nodes", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
     const store = getStore();
     const selectedStem = store.selectedStem;
     if (selectedStem !== false) {
-      const parentBranch: Branch | undefined = getStemParent(selectedStem.id, store);
-	  if(parentBranch) {
-    	  handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
-  		}
+      const parentBranch: Branch | undefined = getStemParent(
+        selectedStem.id,
+        store
+      );
+      if (parentBranch && selectedStem.type !== "noMatch") {
+        handleDeleteStem(selectedStem.id, parentBranch.id, props.update);
+      }
     } else {
       handleDeleteNodes(props.update);
     }
   });
-  */
+  listen("menu-disconnect-link", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
+    handleDisconnectLinks(props.update);
+  });
 }

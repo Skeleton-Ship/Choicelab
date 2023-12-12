@@ -1,14 +1,13 @@
 import { getNode, getActiveBranchStem } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import { AnyNode, Stem } from "../../../typings";
 
 /**
  * Handler for disconnecting links.
  */
-export default function handleDisconnectLinks(setProjectData: Function) {
+export default function handleDisconnectLinks(update: Function) {
   const store = getStore();
   const selectedNodes = store.selectedNodes;
-  const projectData = store.project;
   selectedNodes.forEach((nodeRef: AnyNode) => {
     let linkObj;
     if (nodeRef.type === "cell" || nodeRef.type === "start") {
@@ -31,5 +30,6 @@ export default function handleDisconnectLinks(setProjectData: Function) {
       linkObj.to = "";
     }
   });
-  setProjectData(projectData);
+  setStore(store);
+  update();
 }
