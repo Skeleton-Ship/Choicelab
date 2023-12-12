@@ -53,7 +53,6 @@ function getArrowhead(): SVGMarkerElement {
   marker.setAttribute("refX", "9");
   marker.setAttribute("refY", "3");
   marker.setAttribute("orient", "auto");
-
   const arrowheadPath = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "path"

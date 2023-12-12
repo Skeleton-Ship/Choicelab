@@ -7,43 +7,21 @@ $arrow-color: #aaa;
   overflow: visible;
   marker {
     fill: $arrow-color;
-    animation: arrow 0.9s ease;
   }
-  path {
+  path.line {
     stroke: $arrow-color;
   }
+  .stem-line {
+    stroke-dasharray: 4;
+  }
   .highlight {
-    .line {
+    path.line {
       stroke: #555;
+      stroke-width: 1;
     }
-    marker {
+    marker path {
       fill: #555;
+      stroke-width: 0;
     }
-  }
-  .animate path {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: dash 1.6s ease;
-  }
-  .animate-change path {
-    transition: d 0.2s ease;
-  }
-}
-
-@keyframes arrow {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes dash {
-  from {
-    stroke-dashoffset: 1000;
-  }
-  to {
-    stroke-dashoffset: 0;
   }
 }

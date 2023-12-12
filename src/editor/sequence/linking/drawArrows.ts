@@ -30,8 +30,9 @@ function clearAbandonedArrows() {
         }
       }
       if (deleteArrow === true) {
-        // @ts-ignore
-        arrowEl.parentNode.removeChild(arrowEl);
+        if (arrowEl.parentNode) {
+          arrowEl.parentNode.removeChild(arrowEl);
+        }
       }
     }
   });
@@ -68,21 +69,17 @@ function createOrModifyArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
 
   // Append all arrows
   arrowEls.forEach((arrowEl: Element) => {
-    arrowEl.classList.add("animate");
     svgEl.appendChild(arrowEl);
-    setTimeout(() => {
-      arrowEl.classList.remove("animate");
-    }, 1000);
   });
 }
 
 export default function drawArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
   // Clear out old arrows
-  clearAbandonedArrows();
   // Add or modify existing arrows, on a delay to allow visual transitions to finish
   setTimeout(() => {
+    clearAbandonedArrows();
     createOrModifyArrows(nodesEl, svgEl);
-  }, 400);
+  }, 205);
   // Highlight arrows for selected elements
   const arrows = document.querySelectorAll(`#arrows g`);
   const store = getStore();
