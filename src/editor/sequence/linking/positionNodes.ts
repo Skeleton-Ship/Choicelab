@@ -98,6 +98,10 @@ function positionNode(
     node.position.y = nodeCoordinates.y;
     node.position.left = CELL_MARGIN_LEFT * nodeCoordinates.x;
     node.position.top = CELL_MARGIN_TOP * nodeCoordinates.y;
+    if (node.type === "start") {
+      node.position.top += 50;
+      node.position.height = 70;
+    }
   }
   //
   // Next, find the next node and run positionNode on that

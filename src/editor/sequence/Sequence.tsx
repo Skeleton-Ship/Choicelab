@@ -32,7 +32,6 @@ export default function SequenceEl(props: { id: string; update: Function }) {
   }, []);
   // On each refresh...
   useEffect(() => {
-    console.log("refresh");
     // Draw arrows
     if (arrowsRef.current && svgRef.current) {
       drawArrows(arrowsRef.current, svgRef.current);

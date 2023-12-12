@@ -26,12 +26,19 @@ export default function StartEl(props: {
   if (typeof cell.link === "undefined") {
     return defaultEl;
   }
+  const style = {
+    top: props.top + "px",
+    left: props.left + "px",
+    width: props.width + "px",
+    height: props.height + "px",
+  };
   return (
     <li
       className="start node"
       data-id={props.id}
       data-element="start"
       data-link-to={cell.link.to}
+      style={style}
     >
       <div className="contents">
         <span className="node-id">{props.id}</span>
