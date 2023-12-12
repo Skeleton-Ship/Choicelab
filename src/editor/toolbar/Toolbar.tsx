@@ -3,7 +3,7 @@ import insertNewNode from "../sequence/general/insertNewNode";
 
 function Toolbar(props: { update: Function }) {
   return (
-    <div id="toolbar">
+    <div id="toolbar" data-tauri-drag-region>
       <button
         title="Add Cell"
         onClick={() => {
