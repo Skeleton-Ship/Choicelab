@@ -11,5 +11,5 @@ export default function setSequenceHeight() {
     }
   });
   // @ts-ignore
-  sequenceEl.style.height = height + 30 + "px";
+  sequenceEl.style.height = height + 50 + "px";
 }

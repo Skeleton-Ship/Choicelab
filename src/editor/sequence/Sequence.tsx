@@ -80,11 +80,13 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     nodeEls.push(nodeEl);
   });
   return (
-    <div id="sequence" key={props.id}>
-      <ul className="nodes" ref={arrowsRef}>
-        {nodeEls}
-      </ul>
-      <svg id="arrows" ref={svgRef}></svg>
+    <div id="sequence-wrap">
+      <div id="sequence" key={props.id}>
+        <ul className="nodes" ref={arrowsRef}>
+          {nodeEls}
+        </ul>
+        <svg id="arrows" ref={svgRef}></svg>
+      </div>
     </div>
   );
 }
