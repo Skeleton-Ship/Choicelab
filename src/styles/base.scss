@@ -4,6 +4,7 @@ body {
   height: 100%;
   background: transparent;
   font-size: 14px;
+  overscroll-behavior-y: none;
 }
 body {
   border: 1px solid rgba(255, 255, 255, 0.14);
