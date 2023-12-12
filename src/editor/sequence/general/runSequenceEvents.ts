@@ -3,7 +3,6 @@ import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createCell, createBranch } from "../../../data/createNode";
 import insertNewNode from "./insertNewNode";
-import setSequenceDimensions from "./setSequenceDimensions";
 import handleDisconnectLinks from "./handleDisconnectLinks";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";
@@ -12,13 +11,7 @@ import { Branch } from "../../../typings";
 /**
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.
  */
-export default function runSequenceEvents(props: {
-  id: string;
-  update: Function;
-}) {
-  // Set height, selection events
-  setSequenceDimensions();
-
+export default function runSequenceEvents(props: { update: Function }) {
   // Set shift key events
   document.addEventListener("keydown", (e) => {
     if (e.key === "Shift") {
