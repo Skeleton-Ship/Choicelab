@@ -74,12 +74,9 @@ function createOrModifyArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
 }
 
 export default function drawArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
-  // Clear out old arrows
-  // Add or modify existing arrows, on a delay to allow visual transitions to finish
-  setTimeout(() => {
-    clearAbandonedArrows();
-    createOrModifyArrows(nodesEl, svgEl);
-  }, 300);
+  // Re-draw arrows
+  clearAbandonedArrows();
+  createOrModifyArrows(nodesEl, svgEl);
   // Highlight arrows for selected elements
   const arrows = document.querySelectorAll(`#arrows g`);
   const store = getStore();
