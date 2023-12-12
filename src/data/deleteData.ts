@@ -1,5 +1,5 @@
-import { getNode } from "./getData";
-import { Store, Sequence, AnyNode, Stem } from "../typings";
+import { getBranch } from "./getData";
+import { Store, Sequence, AnyNode, Stem, Branch } from "../typings";
 
 function deleteSequenceFromData(sequenceId: string, store: Store) {
   const project = store.project;
@@ -44,11 +44,10 @@ function deleteNodeFromData(nodeId: string, store: Store) {
 }
 
 function deleteStemFromData(stemId: string, branchId: string, store: Store) {
-  const branch: AnyNode | undefined = getNode(branchId, store);
+  const branch: Branch | undefined = getBranch(branchId, store);
   if (typeof branch === "undefined") return;
   let correctStemIndex: number | false = false,
     stemIndex: number = 0;
-  if (typeof branch.stems === "undefined") return;
   branch.stems.forEach((stem: Stem) => {
     if (stem.id === stemId) {
       correctStemIndex = stemIndex;

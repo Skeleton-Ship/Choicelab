@@ -78,7 +78,7 @@ function getBranch(id: string, data: Store): Branch | undefined {
 
 function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
   let foundStem;
-  const branch: AnyNode | undefined = getNode(branchId, data);
+  const branch: Branch | undefined = getBranch(branchId, data);
   if (typeof branch === "undefined") {
     console.error(
       `Could not get branch stem in this data with the ID ${branchId}`,
@@ -88,10 +88,6 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
   }
   const selectedStem = data.selectedStem;
   // First, find the no-match branch
-  if (typeof branch.stems === "undefined") {
-    console.error("This node does not have a stems property:", branch);
-    return;
-  }
   branch.stems.forEach((stem: Stem) => {
     if (stem.type === "noMatch") {
       foundStem = stem;
@@ -110,9 +106,8 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
 
 function getNoMatchStem(branchId: string, data: Store): Stem | undefined {
   let foundStem;
-  const branch: AnyNode | undefined = getNode(branchId, data);
+  const branch: Branch | undefined = getBranch(branchId, data);
   if (typeof branch === "undefined") return;
-  if (typeof branch.stems === "undefined") return;
   branch.stems.forEach((stem: Stem) => {
     if (stem.type === "noMatch") {
       foundStem = stem;
@@ -127,12 +122,9 @@ function getBranchStem(
   data: Store
 ): Stem | undefined {
   let foundStem;
-  const branch: AnyNode | undefined = getNode(branchId, data);
+  const branch: Branch | undefined = getBranch(branchId, data);
   if (typeof branch === "undefined") {
     console.error("Branch stem not found.");
-    return;
-  }
-  if (typeof branch.stems === "undefined") {
     return;
   }
   branch.stems.forEach((stem: Stem) => {

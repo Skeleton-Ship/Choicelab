@@ -1,8 +1,8 @@
-import { getNode } from "../../../data/getData";
+import { getCell } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
 import Link from "./Link";
-import { AnyNode } from "../../../typings";
+import { Cell } from "../../../typings";
 
 /**
  * A node that supports actions, in which the content of the Choicelab sequence lives.
@@ -19,12 +19,9 @@ export default function CellEl(props: {
   onClick: Function;
 }) {
   const store = getStore();
-  const cell: AnyNode | undefined = getNode(props.id, store);
+  const cell: Cell | undefined = getCell(props.id, store);
   const defaultEl = <div>No cell found</div>;
   if (typeof cell === "undefined") {
-    return defaultEl;
-  }
-  if (typeof cell.link === "undefined") {
     return defaultEl;
   }
   function handleSelectCell() {
