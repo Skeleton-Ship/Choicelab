@@ -4,6 +4,7 @@ export default function loadProject(projectPath: string) {
   const projectPathEncoded = encodeURIComponent(projectPath);
   const webview = new WebviewWindow("project", {
     url: `index.html?window_type=project&project_path=${projectPathEncoded}`,
+    titleBarStyle: "overlay",
   });
   webview.once("tauri://created", function () {});
   // webview.once("tauri://error", function () {});
