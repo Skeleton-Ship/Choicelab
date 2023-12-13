@@ -1,4 +1,4 @@
-#view-sliders {
+#view-slider {
   position: fixed;
   left: 20px;
   bottom: 20px;
@@ -15,12 +15,9 @@
     opacity: 0.8;
     height: auto;
     display: block;
-    margin-right: 5px;
+    margin-right: 8px;
   }
-  .view-slider {
-    width: 80px;
-    &:not(:last-of-type) {
-      margin-right: 15px;
-    }
+  input[type="range"] {
+    width: 100px;
   }
 }
