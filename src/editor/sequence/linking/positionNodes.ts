@@ -2,11 +2,6 @@ import { getSequence, getNode, getSequenceStart } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 import { AnyNode, Store, Sequence } from "../../../typings";
 
-const CELL_WIDTH = 225;
-const CELL_HEIGHT = 100;
-const CELL_MARGIN_LEFT = CELL_WIDTH + 50;
-const CELL_MARGIN_TOP = CELL_HEIGHT + 175;
-
 /**
  * Given a node and its position, determine if it conflicts with another node's position.
  * If it does, run again by incrementing the x position by 1.
@@ -83,10 +78,11 @@ function positionNode(
       top: -1,
     };
     nodeCoordinates = getNodeCoordinates(x, y, node.id, sequenceId, store);
+    const viewSettings = store.viewSettings;
     // Set size of node
     if (node.type === "cell" || node.type === "start") {
-      node.position.width = CELL_WIDTH;
-      node.position.height = CELL_HEIGHT;
+      node.position.width = viewSettings.cellWidth;
+      node.position.height = viewSettings.cellHeight;
     }
     node.position.xSize = 1;
     node.position.ySize = 1;
@@ -96,8 +92,8 @@ function positionNode(
     // Set left and top position
     node.position.x = nodeCoordinates.x;
     node.position.y = nodeCoordinates.y;
-    node.position.left = CELL_MARGIN_LEFT * nodeCoordinates.x;
-    node.position.top = CELL_MARGIN_TOP * nodeCoordinates.y;
+    node.position.left = viewSettings.cellMarginLeft * nodeCoordinates.x;
+    node.position.top = viewSettings.cellMarginTop * nodeCoordinates.y;
     if (node.type === "start") {
       node.position.top += 50;
       node.position.height = 70;
@@ -167,6 +163,7 @@ export default function positionNodes(sequenceId: string) {
     return store;
   }
   store = positionNode(0, 0, startingNode.id, sequenceId, store);
+  const viewSettings = store.viewSettings;
   // Finally, position abandoned nodes up top along the X axis
   let abandonIndex = 0;
   sequence.nodes.forEach((node: AnyNode) => {
@@ -175,12 +172,12 @@ export default function positionNodes(sequenceId: string) {
       node.position = {
         y: 0,
         x: abandonIndex,
-        left: abandonIndex * (CELL_WIDTH + 20) + 35,
+        left: abandonIndex * (viewSettings.cellWidth + 20) + 35,
         top: 50,
         xSize: -1,
         ySize: 1,
-        width: CELL_WIDTH,
-        height: CELL_HEIGHT,
+        width: viewSettings.cellWidth,
+        height: viewSettings.cellHeight,
         abandoned: true,
       };
       // Get x-size of branch stems

@@ -1,7 +1,7 @@
 export default function setSequenceDimensions() {
   const sequenceEl = document.querySelector("#sequence");
   if (!sequenceEl) return;
-  const sequenceEls = sequenceEl.querySelectorAll("#sequence *");
+  const sequenceEls = sequenceEl.querySelectorAll("#sequence .nodes .node");
   let width = 0,
     height = 0;
   sequenceEls.forEach((el: Element) => {

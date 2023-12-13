@@ -10,6 +10,7 @@ import positionNodes from "./linking/positionNodes";
 import drawArrows from "./linking/drawArrows";
 import setSequenceDimensions from "./general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../../typings";
+import ViewSliders from "./ViewSliders";
 
 /**
  * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes, which can be found in runSequenceEvents.
@@ -84,6 +85,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         </ul>
         <svg id="arrows" ref={svgRef}></svg>
       </div>
+      <ViewSliders update={props.update} />
     </div>
   );
 }

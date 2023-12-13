@@ -30,6 +30,12 @@ export default function createDataStore(
     inTextElement: false,
     focus: false,
     saved: true,
+    viewSettings: {
+      cellWidth: 225,
+      cellHeight: 100,
+      cellMarginLeft: 275,
+      cellMarginTop: 275,
+    },
   };
   window.__CHOICELAB_DATA__ = store;
   window.__CHOICELAB_TARGET_MODE__ = false;

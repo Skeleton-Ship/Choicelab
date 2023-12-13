@@ -93,6 +93,12 @@ export interface Store {
   inTextElement: boolean;
   focus: boolean;
   saved: boolean;
+  viewSettings: {
+    cellWidth: number;
+    cellHeight: number;
+    cellMarginLeft: number;
+    cellMarginTop: number;
+  };
 }
 declare global {
   interface Window {

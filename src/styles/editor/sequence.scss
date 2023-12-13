@@ -3,6 +3,7 @@
 @use "nodes/branch";
 @use "nodes/start";
 @use "elements/arrows";
+@use "./view-sliders";
 @use "../mixins";
 
 #sequence-wrap {
