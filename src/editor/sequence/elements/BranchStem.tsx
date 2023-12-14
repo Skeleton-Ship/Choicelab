@@ -65,8 +65,9 @@ export default function BranchStemEl(props: {
     );
   }
   // Styles
+  const viewSettings = store.viewSettings;
   const style = {
-    left: 240 * props.index + "px",
+    left: viewSettings.stemMarginLeft * props.index + "px",
     top: 100 + "px",
   };
   return (

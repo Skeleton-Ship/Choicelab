@@ -45,15 +45,12 @@ export default function MainEditor() {
     });
     // Set up cut/copy listener
     listen("menu-cut", async () => {
-      console.log("Cut emitted");
       handleCutCopy("cut", handleUpdate);
     });
     listen("menu-copy", async () => {
-      console.log("Copy emitted");
       handleCutCopy("copy", handleUpdate);
     });
     listen("menu-paste", async () => {
-      console.log("Paste emitted");
       handlePaste(handleUpdate);
     });
 

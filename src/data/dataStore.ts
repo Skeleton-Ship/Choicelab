@@ -35,6 +35,7 @@ export default function createDataStore(
       cellHeight: 100,
       cellMarginLeft: 275,
       cellMarginTop: 275,
+      stemMarginLeft: 240,
     },
   };
   window.__CHOICELAB_DATA__ = store;

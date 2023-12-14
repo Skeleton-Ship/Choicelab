@@ -98,6 +98,7 @@ export interface Store {
     cellHeight: number;
     cellMarginLeft: number;
     cellMarginTop: number;
+    stemMarginLeft: number;
   };
 }
 declare global {

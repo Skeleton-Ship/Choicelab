@@ -19,7 +19,8 @@ export default function ViewSlider(props: { update: Function }) {
     viewSettings.cellHeight = heightNum;
     viewSettings.cellMarginTop = heightNum + valueNum;
     if (viewSettings.cellMarginTop > 500) viewSettings.cellMarginTop = 500;
-
+    // Set stem size
+    viewSettings.stemMarginLeft = viewSettings.cellWidth + 15;
     setStore(store);
     setSequenceDimensions();
     props.update(false);
@@ -32,8 +33,8 @@ export default function ViewSlider(props: { update: Function }) {
         id="cell-width"
         name="cell-width"
         value={viewSettings.cellWidth}
-        min="150"
-        max="600"
+        min="120"
+        max="500"
         onInput={(e) => {
           setView(e.target);
         }}

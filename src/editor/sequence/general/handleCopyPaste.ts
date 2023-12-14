@@ -99,7 +99,6 @@ function handlePaste(update: Function): void {
   navigator.clipboard.readText().then((clipText) => {
     // Ignore things that aren't JSON
     if (!isJson(clipText)) return;
-    console.log("Validated paste");
     const data = JSON.parse(clipText);
     // If JSON didn't originate from Choicelab, ignore
     if (!data.ChoicelabNodes) return;
