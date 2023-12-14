@@ -82,6 +82,10 @@ fn create_app_menu() -> Menu {
 	let edit_menu = Submenu::new("Edit", Menu::new()
 	.add_item(CustomMenuItem::new("undo", "Undo").accelerator("Cmd+Z").disabled())
 	.add_item(CustomMenuItem::new("redo", "Redo").accelerator("Cmd+Shift+Z").disabled())
+	.add_native_item(MenuItem::Separator)
+	.add_item(CustomMenuItem::new("cut", "Cut").accelerator("Cmd+X"))
+	.add_item(CustomMenuItem::new("copy", "Copy").accelerator("Cmd+C"))
+	.add_item(CustomMenuItem::new("paste", "Paste").accelerator("Cmd+V"))
 	);
 	let project_menu = Submenu::new("Project", Menu::new()
 	.add_item(CustomMenuItem::new("new_cell", "New Cell").accelerator("Cmd+N"))
@@ -120,6 +124,15 @@ fn main() {
 		  }
 		  "redo" => {
 			  event.window().emit("menu-redo", ()).unwrap();
+		  }
+		  "cut" => {
+			  event.window().emit("menu-cut", ()).unwrap();
+		  }
+		  "copy" => {
+			  event.window().emit("menu-copy", ()).unwrap();
+		  }
+		  "paste" => {
+			  event.window().emit("menu-paste", ()).unwrap();
 		  }
 		  "new_cell" => {
 			  event.window().emit("menu-new-cell", ()).unwrap();

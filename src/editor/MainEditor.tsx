@@ -11,6 +11,7 @@ import { resolve } from "@tauri-apps/api/path";
 import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
 import SequenceEl from "./sequence/Sequence";
+import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -42,6 +43,20 @@ export default function MainEditor() {
       setStore(newStore);
       handleUpdate(false);
     });
+    // Set up cut/copy listener
+    listen("menu-cut", async () => {
+      console.log("Cut emitted");
+      handleCutCopy("cut", handleUpdate);
+    });
+    listen("menu-copy", async () => {
+      console.log("Copy emitted");
+      handleCutCopy("copy", handleUpdate);
+    });
+    listen("menu-paste", async () => {
+      console.log("Paste emitted");
+      handlePaste(handleUpdate);
+    });
+
     appWindow.listen("tauri://close-requested", async () => {
       const store = getStore();
       if (store.saved) {

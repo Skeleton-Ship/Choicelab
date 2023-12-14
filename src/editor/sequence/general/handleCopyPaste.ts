@@ -99,6 +99,7 @@ function handlePaste(update: Function): void {
   navigator.clipboard.readText().then((clipText) => {
     // Ignore things that aren't JSON
     if (!isJson(clipText)) return;
+    console.log("Validated paste");
     const data = JSON.parse(clipText);
     // If JSON didn't originate from Choicelab, ignore
     if (!data.ChoicelabNodes) return;
@@ -112,14 +113,14 @@ function handlePaste(update: Function): void {
       processedNodes.push(newNode);
     });
     // Create new nodes
-    const store = getStore();
     processedNodes.forEach((node: AnyNode) => {
       insertNewNode(node, update);
     });
     // Finally, set selection to processed nodes
-    update();
+    const store = getStore();
     store.selectedNodes = processedNodes;
     setStore(store);
+    update();
   });
 }
 
