@@ -66,12 +66,9 @@ export default function BranchStemEl(props: {
   }
   // Styles
   const style = {
-    left: 270 * props.index + "px",
+    left: 240 * props.index + "px",
     top: 100 + "px",
   };
-  if (props.index === 0) {
-    style.left = "40.5px";
-  }
   return (
     <li
       className={`stem ${selectedClass}`}
