@@ -6,22 +6,50 @@ $stem-margin: $stem-width + 175;
 $max-stems: 10;
 
 .branch.node {
+  width: 201px;
+  height: 71px;
+  &.selected,
+  &.selecting {
+    > .contents {
+      border-color: transparent;
+    }
+    .branch-background {
+      path {
+        stroke: #308ee5;
+        stroke-width: 10;
+      }
+    }
+  }
   > .contents {
-    height: 60px;
+    background-color: transparent;
+    box-shadow: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .branch-background {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    path {
+      fill: #ffffff;
+    }
   }
   .evaluator-name {
-    display: flex;
-    align-items: center;
-    width: 155px;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
-    .label {
-      width: 100%;
-      text-align: center;
+    width: 100%;
+    padding-top: 23px;
+    span {
       font-family: variables.$fonts-mono;
-      display: inline;
-      font-size: 12px;
+      font-size: 11px;
+      text-align: center;
+      display: block;
+      margin: 0 auto;
+      width: 155px;
     }
   }
   .stems {
@@ -33,7 +61,7 @@ $max-stems: 10;
       list-style: none;
       width: $stem-width;
       margin-top: 29px;
-      height: 45px;
+      height: 40px;
       border-radius: 100px;
       border-color: white;
       border-width: 2px;

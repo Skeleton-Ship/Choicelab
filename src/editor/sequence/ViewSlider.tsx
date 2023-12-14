@@ -17,8 +17,8 @@ export default function ViewSlider(props: { update: Function }) {
     // Set height
     const heightNum = valueNum * 0.7;
     viewSettings.cellHeight = heightNum;
-    viewSettings.cellMarginTop = heightNum + valueNum * 1.75;
-    if (viewSettings.cellMarginTop > 600) viewSettings.cellMarginTop = 600;
+    viewSettings.cellMarginTop = heightNum + valueNum;
+    if (viewSettings.cellMarginTop > 500) viewSettings.cellMarginTop = 500;
 
     setStore(store);
     setSequenceDimensions();

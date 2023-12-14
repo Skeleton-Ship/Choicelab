@@ -66,7 +66,7 @@ export default function BranchStemEl(props: {
   }
   // Styles
   const style = {
-    left: 275 * props.index + "px",
+    left: 270 * props.index + "px",
     top: 100 + "px",
   };
   return (

@@ -111,6 +111,20 @@ export default function BranchEl(props: {
         </button>
       </div>
       <ul className="stems">{stemEls}</ul>
+      <svg
+        class="branch-background"
+        width="866"
+        height="302"
+        viewBox="0 0 866 302"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          id="Path"
+          fill-rule="evenodd"
+          stroke-linecap="round"
+          d="M 428.703125 4.203125 L 435.84375 6.15625 L 853.609375 146.765625 L 859.96875 149.53125 L 858.84375 150.15625 L 847.625 154.3125 L 431.28125 296.34375 L 427.609375 296.984375 L 425.28125 296.890625 L 422.1875 296.171875 L 10.484375 152.28125 L 5.75 150.03125 L 5.03125 149.453125 L 6.59375 148.359375 L 9.5625 147.03125 L 422.0625 4.859375 L 425.09375 4.1875 Z"
+        />
+      </svg>
     </li>
   );
 }
