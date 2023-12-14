@@ -1,0 +1,18 @@
+.pane {
+  position: relative;
+  width: 300px;
+  .resizer {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: -9999px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  &.right {
+    .resizer {
+      left: 0;
+      cursor: col-resize;
+    }
+  }
+}

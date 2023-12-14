@@ -11,6 +11,7 @@ import { resolve } from "@tauri-apps/api/path";
 import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
 import SequenceEl from "./sequence/Sequence";
+import ActionPane from "./ActionPane";
 import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
 
 export default function MainEditor() {
@@ -111,7 +112,10 @@ export default function MainEditor() {
   return (
     <div id="editor">
       <Toolbar update={handleUpdate} />
-      {flowchartContents}
+      <div id="editor-contents">
+        {flowchartContents}
+        <ActionPane update={handleUpdate} />
+      </div>
     </div>
   );
 }

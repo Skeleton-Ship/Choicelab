@@ -95,7 +95,7 @@ function positionNode(
     node.position.left = viewSettings.cellMarginLeft * nodeCoordinates.x;
     node.position.top = viewSettings.cellMarginTop * nodeCoordinates.y;
     if (node.type === "start") {
-      node.position.top += 50;
+      // node.position.top += 50;
       node.position.height = 70;
     }
   }

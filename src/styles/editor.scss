@@ -1,5 +1,6 @@
 @use "./editor/toolbar";
 @use "./editor/sequence";
+@use "./editor/panes";
 @use "./editor/elements/label";
 @use "./variables";
 @use "./mixins";
@@ -33,6 +34,13 @@
         opacity: 0.5;
       }
     }
+  }
+  #editor-contents {
+    width: 100%;
+    height: calc(100% - #{variables.$toolbar-height});
+    position: relative;
+    top: variables.$toolbar-height;
+    display: flex;
   }
   #sequences-pane {
     top: 51px;
