@@ -87,19 +87,27 @@ fn create_app_menu() -> Menu {
 	.add_item(CustomMenuItem::new("copy", "Copy").accelerator("Cmd+C"))
 	.add_item(CustomMenuItem::new("paste", "Paste").accelerator("Cmd+V"))
 	);
+	let view_menu = Submenu::new("View", Menu::new()
+	.add_native_item(MenuItem::EnterFullScreen)
+	);
 	let project_menu = Submenu::new("Project", Menu::new()
 	.add_item(CustomMenuItem::new("new_cell", "New Cell").accelerator("Cmd+N"))
 	.add_item(CustomMenuItem::new("new_branch", "New Branch").accelerator("Cmd+B"))
 	.add_native_item(MenuItem::Separator)
 	.add_item(CustomMenuItem::new("disconnect_link", "Disconnect Link").accelerator("Cmd+D"))	
 	.add_item(CustomMenuItem::new("delete_nodes", "Delete Items").accelerator("Cmd+Delete"))	
-);
+	);
+	let window_menu = Submenu::new("Window", Menu::new()
+	.add_native_item(MenuItem::Minimize)
+	);
 	// Build and return it
 	let menu = Menu::new()
 	.add_submenu(app_menu)
 	.add_submenu(file_menu)
 	.add_submenu(edit_menu)
-	.add_submenu(project_menu);
+	.add_submenu(view_menu)
+	.add_submenu(project_menu)
+	.add_submenu(window_menu);
 	return menu;
 }
 
