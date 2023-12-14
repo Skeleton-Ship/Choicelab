@@ -69,6 +69,9 @@ export default function BranchStemEl(props: {
     left: 270 * props.index + "px",
     top: 100 + "px",
   };
+  if (props.index === 0) {
+    style.left = "40.5px";
+  }
   return (
     <li
       className={`stem ${selectedClass}`}
