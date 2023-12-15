@@ -6,8 +6,9 @@
   background-color: white;
   overflow: scroll;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px;
   h4 {
-    font-size: 13px;
+    font-size: 11px;
     margin: 0;
     padding: 8px;
     opacity: 0.65;
@@ -21,11 +22,10 @@
     cursor: pointer;
     padding: 8px;
     font-size: 13px;
-    &:hover {
-      background-color: #d6e2ed !important;
-    }
-    &:active {
-      background-color: #b9cde0 !important;
+    border-radius: 5px;
+    &.selected {
+      background-color: variables.$accent-color !important;
+      color: white;
     }
   }
   li {

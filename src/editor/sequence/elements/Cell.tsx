@@ -41,6 +41,12 @@ export default function CellEl(props: {
     width: props.width + "px",
     height: props.height + "px",
   };
+  // TEMP: Show action names
+  let actionsText = "";
+  cell.actions.forEach((action) => {
+    actionsText += action.name;
+    console.log(action);
+  });
   return (
     <li
       className={cellClass}
@@ -53,8 +59,8 @@ export default function CellEl(props: {
       style={style}
     >
       <div className="contents">
-        <span className="node-id">{props.id}</span>
         <div className="title">{props.id}</div>
+        <div className="actions"></div>
       </div>
       <Link origin="cell" nodeId={props.id} update={props.update} />
     </li>
