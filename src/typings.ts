@@ -67,6 +67,10 @@ export interface Variable {
 export interface Project {
   name: string;
   id: string;
+  actions: {
+    name: string;
+    path: string;
+  };
   variables: {
     [key: string]: Variable;
   };
@@ -100,6 +104,30 @@ export interface Store {
     cellMarginTop: number;
     stemMarginLeft: number;
   };
+}
+export interface ActionProp {
+  name: string;
+  control: string;
+  default?: any;
+  required?: boolean;
+  options?: Array<ActionPropDropdownOption>;
+}
+export interface ActionPropDropdownOption {
+  value: string;
+  label: string;
+}
+export interface ActionDef {
+  name: string;
+  label: string;
+  description: string;
+  props: Array<ActionProp>;
+  extendable?: boolean;
+  timedElement?: boolean;
+  mediaElement?: boolean;
+}
+export interface ActionDefs {
+  label: string;
+  actions: Array<ActionDef>;
 }
 declare global {
   interface Window {
