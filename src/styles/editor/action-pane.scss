@@ -1,0 +1,39 @@
+@use "../variables";
+
+#available-actions {
+  padding: 0;
+  max-height: 300px;
+  background-color: white;
+  overflow: scroll;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  h4 {
+    font-size: 13px;
+    margin: 0;
+    padding: 8px;
+    opacity: 0.65;
+  }
+  button {
+    appearance: none;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 13px;
+    &:hover {
+      background-color: #d6e2ed !important;
+    }
+    &:active {
+      background-color: #b9cde0 !important;
+    }
+  }
+  li {
+    list-style: none;
+    &:nth-child(even) {
+      button {
+        background-color: #f4f4f4;
+      }
+    }
+  }
+}

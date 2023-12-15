@@ -64,7 +64,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
       height: node.position.height,
       update: props.update,
       onClick: () => {
-        handleSelectNode(node, setSelectedNodes);
+        handleSelectNode(node, props.update);
       },
     };
     let nodeEl: preact.JSX.Element = <></>;

@@ -5,9 +5,9 @@ const internalActionDefs: ActionDefs = {
   actions: [
     {
       name: "text",
-      label: "Text Block",
+      label: "Text",
       description:
-        "Show a block of text, which can appear instantly or be associated with a media element.",
+        "A block of text that can appear instantly or be associated with a media action.",
       extendable: true,
       timedElement: true,
       props: [
@@ -77,7 +77,8 @@ const internalActionDefs: ActionDefs = {
     {
       name: "image",
       label: "Image",
-      description: "Show an image file.",
+      description:
+        "An image file that can appear instantly or be associated with a media action.",
       extendable: true,
       mediaElement: false,
       props: [
