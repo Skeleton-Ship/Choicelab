@@ -3,6 +3,8 @@ import { getCell, getActionDef } from "../../data/getData";
 import { Cell, Action } from "../../typings";
 import internalActionDefs from "./internalActionDefs";
 import TextField from "./propControls/TextField";
+import Dropdown from "./propControls/Dropdown";
+import Checkbox from "./propControls/Checkbox";
 
 export default function ActionsEditor(props: { update: Function }) {
   const store = getStore();
@@ -24,8 +26,8 @@ export default function ActionsEditor(props: { update: Function }) {
 		TODO: Add control types
 		☑️ text
 		☑️ textarea
-		boolean
-		dropdown
+		☑️ boolean
+		☑️ dropdown
 		audio
 		video
 		captions
@@ -33,6 +35,16 @@ export default function ActionsEditor(props: { update: Function }) {
 		variable
 		variableValue
 		*/
+      // Figure out the initial value for the element
+      let initialValue: any;
+      const storedValue = action.props[defProp.name];
+      if (typeof storedValue !== "undefined") {
+        initialValue = storedValue;
+      } else {
+        if (typeof defProp.default !== "undefined") {
+          initialValue = defProp.default;
+        }
+      }
       switch (defProp.control) {
         case "text":
           propControl = (
@@ -40,6 +52,7 @@ export default function ActionsEditor(props: { update: Function }) {
               action={action}
               actionDef={actionDef}
               propDef={defProp}
+              initialValue={initialValue}
               store={store}
               fieldType="text"
               update={props.update}
@@ -52,8 +65,33 @@ export default function ActionsEditor(props: { update: Function }) {
               action={action}
               actionDef={actionDef}
               propDef={defProp}
+              initialValue={initialValue}
               store={store}
               fieldType="textarea"
+              update={props.update}
+            />
+          );
+          break;
+        case "dropdown":
+          propControl = (
+            <Dropdown
+              action={action}
+              actionDef={actionDef}
+              propDef={defProp}
+              initialValue={initialValue}
+              store={store}
+              update={props.update}
+            />
+          );
+          break;
+        case "boolean":
+          propControl = (
+            <Checkbox
+              action={action}
+              actionDef={actionDef}
+              propDef={defProp}
+              initialValue={initialValue}
+              store={store}
               update={props.update}
             />
           );
