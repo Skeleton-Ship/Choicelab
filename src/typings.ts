@@ -7,9 +7,6 @@ export interface Stem {
   value: string;
   link: Link;
 }
-export interface Action {
-  [key: string]: any;
-}
 export interface Media {
   [key: string]: any;
 }
@@ -105,9 +102,14 @@ export interface Store {
     stemMarginLeft: number;
   };
 }
+export interface Action {
+  [key: string]: any;
+}
 export interface ActionProp {
   name: string;
+  label: string;
   control: string;
+  value?: any;
   default?: any;
   required?: boolean;
   options?: Array<ActionPropDropdownOption>;

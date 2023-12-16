@@ -2,7 +2,7 @@ import { getStore } from "../data/dataStore";
 import AvailableActions from "./nodePane/AvailableActions";
 import ActionsEditor from "./nodePane/ActionsEditor";
 
-export default function ActionPane(props: { update: Function }) {
+export default function NodePane(props: { update: Function }) {
   let contents = <></>;
   const store = getStore();
   if (store.selectedNodes.length <= 0) {
@@ -13,7 +13,6 @@ export default function ActionPane(props: { update: Function }) {
     contents = <p class="placeholder">Multiple Nodes Selected</p>;
   } else {
     const node = store.selectedNodes[0];
-    console.log(node);
     if (node.type === "cell") {
       contents = (
         <>

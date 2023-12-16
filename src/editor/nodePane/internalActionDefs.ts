@@ -14,12 +14,14 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "contents",
+          label: "Contents",
           control: "textarea",
           default: "",
           required: true,
         },
         {
           name: "tag",
+          label: "HTML Tag",
           control: "dropdown",
           default: "p",
           options: [
@@ -49,11 +51,13 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "media",
+          label: "Media",
           control: "audio",
           required: true,
         },
         {
           name: "captions",
+          label: "Caption File",
           control: "caption",
         },
       ],
@@ -67,11 +71,13 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "media",
+          label: "Video File",
           control: "video",
           required: true,
         },
         {
           name: "captions",
+          label: "Caption File",
           control: "caption",
         },
       ],
@@ -86,11 +92,13 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "source",
+          label: "Image File",
           control: "image",
           required: true,
         },
         {
           name: "alt",
+          label: "Alt Text",
           control: "textarea",
           default: "",
         },
@@ -105,26 +113,31 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "label",
+          label: "Label",
           control: "text",
           required: true,
           default: "",
         },
         {
           name: "varToSet",
+          label: "Variable",
           control: "variable",
           required: true,
         },
         {
           name: "value",
+          label: "Value to Set",
           control: "variableValue",
           required: true,
         },
         {
           name: "response",
+          label: "Response Audio",
           control: "audio",
         },
         {
           name: "saveInputs",
+          label: "Save Inputs When Clicked",
           control: "boolean",
           default: true,
         },
@@ -139,6 +152,7 @@ const internalActionDefs: ActionDefs = {
       props: [
         {
           name: "type",
+          label: "Field",
           control: "dropdown",
           default: "text",
           options: [
@@ -158,6 +172,7 @@ const internalActionDefs: ActionDefs = {
         },
         {
           name: "varToSet",
+          label: "Variable to Set",
           control: "variable",
           required: true,
         },

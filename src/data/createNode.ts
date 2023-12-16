@@ -4,7 +4,7 @@ function createCell() {
   const cell = {
     id: uuidv4(),
     type: "cell",
-    label: "New Cell",
+    label: "",
     actions: [],
     media: { type: "" },
     link: {

@@ -6,6 +6,9 @@ import {
   AnyNode,
   StartNode,
   Store,
+  Action,
+  ActionDef,
+  ActionDefs,
 } from "../typings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
@@ -166,6 +169,36 @@ function nodeExists(id: string, data: Store) {
   return true;
 }
 
+function getAction(id: string, data: Store): Action | undefined {
+  let foundAction;
+  data.project.sequences.forEach((sequence: Sequence) => {
+    const sequenceNodes = sequence.nodes;
+    sequenceNodes.forEach((node: AnyNode) => {
+      if (node.actions) {
+        node.actions.forEach((action: Action) => {
+          if (action.id === id) {
+            foundAction = action;
+          }
+        });
+      }
+    });
+  });
+  return foundAction;
+}
+
+function getActionDef(
+  name: string,
+  actionDefs: ActionDefs
+): ActionDef | undefined {
+  let thisActionDef;
+  actionDefs.actions.forEach((actionDef: ActionDef) => {
+    if (actionDef.name === name) {
+      thisActionDef = actionDef;
+    }
+  });
+  return thisActionDef;
+}
+
 export {
   getSequence,
   getNode,
@@ -178,4 +211,6 @@ export {
   getNoMatchStem,
   getCurrentSequence,
   nodeExists,
+  getAction,
+  getActionDef,
 };
