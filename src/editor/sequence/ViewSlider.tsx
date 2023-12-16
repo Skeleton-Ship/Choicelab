@@ -33,7 +33,7 @@ export default function ViewSlider(props: { update: Function }) {
         id="cell-width"
         name="cell-width"
         value={viewSettings.cellWidth}
-        min="120"
+        min="105"
         max="500"
         onInput={(e) => {
           setView(e.target);

@@ -1,6 +1,6 @@
 import { getStore } from "../data/dataStore";
-import AvailableActions from "./actionPane/AvailableActions";
-import ActionsEditor from "./actionPane/ActionsEditor";
+import AvailableActions from "./nodePane/AvailableActions";
+import ActionsEditor from "./nodePane/ActionsEditor";
 
 export default function ActionPane(props: { update: Function }) {
   let contents = <></>;
@@ -12,12 +12,18 @@ export default function ActionPane(props: { update: Function }) {
     // If multiple nodes are selected
     contents = <p class="placeholder">Multiple Nodes Selected</p>;
   } else {
-    contents = (
-      <>
-        <AvailableActions update={props.update} />
-        <ActionsEditor update={props.update} />
-      </>
-    );
+    const node = store.selectedNodes[0];
+    console.log(node);
+    if (node.type === "cell") {
+      contents = (
+        <>
+          <AvailableActions update={props.update} />
+          <ActionsEditor update={props.update} />
+        </>
+      );
+    } else if (node.type === "branch") {
+      contents = <p class="placeholder">Branch editor goes here</p>;
+    }
   }
   return (
     <div id="action-pane" class="pane right">

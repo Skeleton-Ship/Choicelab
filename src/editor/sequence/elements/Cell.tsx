@@ -44,7 +44,7 @@ export default function CellEl(props: {
   // TEMP: Show action names
   let actionsText = "";
   cell.actions.forEach((action) => {
-    actionsText += action.name;
+    actionsText += action.name + " ";
   });
   return (
     <li
