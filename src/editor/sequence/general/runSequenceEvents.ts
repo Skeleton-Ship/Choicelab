@@ -19,7 +19,7 @@ export default function runSequenceEvents(update: Function) {
       const store = getStore();
       store.shiftDown = true;
       setStore(store);
-      update();
+      update(false);
     }
   });
   document.addEventListener("keyup", (e) => {
@@ -27,7 +27,7 @@ export default function runSequenceEvents(update: Function) {
       const store = getStore();
       store.shiftDown = false;
       setStore(store);
-      update();
+      update(false);
     }
   });
 
