@@ -2,6 +2,7 @@ use tauri::Window;
 use tauri::Manager;
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
 use tauri::AboutMetadata;
+use std::fs;
 use std::fs::File;
 use std::error::Error;
 use std::io::{self, Write, Read};
@@ -28,6 +29,15 @@ fn write_to_file(file_name: &str, contents: &str, path: &str) -> io::Result<()> 
 
 	// println!("File '{}' successfully written to '{}'", file_name, full_path);
 
+	Ok(())
+}
+
+fn write_directory(directory_name: &str, path: &str) -> io::Result<()> {
+	
+	let full_path = format!("{}/{}", path, directory_name);
+	// Create the directory
+	fs::create_dir(&full_path)?;
+	
 	Ok(())
 }
 
@@ -164,6 +174,9 @@ fn main() {
 		
 		let handle_menu = app.handle();
 		let handle_history = app.handle();
+		let handle_request_project = app.handle();
+		let handle_text_file = app.handle();
+		let handle_project_dir = app.handle();
 		
 		// Listen to menu item enable/disable
 		app.listen_global("enable-menu-item", move |event| {
@@ -188,7 +201,7 @@ fn main() {
 		});
 		
 		// listen to text file saves (emitted on any window)
-		app.listen_global("save-text-file", |event| {
+		app.listen_global("save-text-file", move |event| {
 			let json_raw = event.payload().unwrap();
 			let json_value: Result<Value, _> = from_str(json_raw);
 			match json_value {
@@ -197,11 +210,61 @@ fn main() {
 					let contents = json["contents"].as_str().unwrap_or("N/A");
 					let project_path = json["projectPath"].as_str().unwrap_or("N/A");
 					let _ = write_to_file(name, contents, project_path);
+					// Do callback
+					let callback = json["callback"].as_str().unwrap_or("N/A");
+					if callback != "N/A" && callback != "" {
+  						let main_window = handle_text_file.get_focused_window().unwrap();
+  						main_window.emit(callback, Payload { message: "success".to_string() }).unwrap();			  
+					}
 				}
 				Err(e) => {
 					eprintln!("Error parsing JSON: {}", e);
 				}
 			}
+		  });
+		  
+		  // listen to directory creation requests
+		  app.listen_global("create-directory", move |event| {
+			  let json_raw = event.payload().unwrap();
+			  let json_value: Result<Value, _> = from_str(json_raw);
+			  match json_value {
+			  Ok(json) => {
+				  let name = json["name"].as_str().unwrap_or("N/A");
+				  let path = json["path"].as_str().unwrap_or("N/A");
+				  let _ = write_directory(name, path);
+				  // Do callback
+				  let callback = json["callback"].as_str().unwrap_or("N/A");
+				  if callback != "N/A" && callback != "" {
+					  let main_window = handle_project_dir.get_focused_window().unwrap();
+					  main_window.emit(callback, Payload { message: "success".to_string() }).unwrap();			  
+				  }
+			  }
+			  Err(e) => {
+				  eprintln!("Error parsing JSON: {}", e);
+			  }
+		  }
+		  });
+		  
+		  app.listen_global("request-project-file", move |event| {
+			  let json_raw = event.payload().unwrap();
+				let json_value: Result<Value, _> = from_str(json_raw);
+				match json_value {
+					Ok(json) => {
+						let version_path = json["path"].as_str().unwrap_or("N/A");
+						match read_file(version_path) {
+							Ok(contents) => {
+								let main_window = handle_request_project.get_focused_window().unwrap();
+							  main_window.emit("receive-project-file", Payload { message: contents }).unwrap();			  
+							}
+							Err(e) => {
+								eprintln!("Error parsing version: {}", e);
+							}
+						}
+					}
+					Err(e) => {
+						eprintln!("Error parsing JSON: {}", e);
+					}
+				}
 		  });
 		  
 		  // listen for 

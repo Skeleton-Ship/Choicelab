@@ -6,6 +6,7 @@ import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
+import { Project } from "./typings";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import "./styles/style.scss";
@@ -34,9 +35,16 @@ async function init() {
     // Get project path
     const projectPathRaw: string = urlParams.get("project_path") || "";
     const projectPath = decodeURIComponent(projectPathRaw);
-    if (projectPath === "") return;
+    if (projectPath === "") {
+      console.error("No project path found.");
+      return;
+    }
+    // Load project data
     const projectData = await loadProjectData(projectPath);
-    if (typeof projectData === "undefined") return false;
+    if (typeof projectData === "undefined") {
+      console.error("No project data found.");
+      return;
+    }
     // Create data store
     createDataStore(projectData, projectPath);
     // Load store
@@ -49,15 +57,6 @@ async function init() {
     // Create editor
     elements = <MainEditor />;
   }
-  /*[
-	onEventFromMain("focus", "", () => {
-	  updateFocus(true);
-	});
-	onEventFromMain("blur", "", () => {
-	  updateFocus(false);
-	});
-	*/
-
   const appDOM = (
     <div id="App" data-target-mode="">
       {elements}
