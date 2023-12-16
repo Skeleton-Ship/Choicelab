@@ -96,6 +96,7 @@ fn create_app_menu() -> Menu {
 	.add_item(CustomMenuItem::new("cut", "Cut").accelerator("Cmd+X"))
 	.add_item(CustomMenuItem::new("copy", "Copy").accelerator("Cmd+C"))
 	.add_item(CustomMenuItem::new("paste", "Paste").accelerator("Cmd+V"))
+	.add_native_item(MenuItem::SelectAll)
 	);
 	let view_menu = Submenu::new("View", Menu::new()
 	.add_native_item(MenuItem::EnterFullScreen)
