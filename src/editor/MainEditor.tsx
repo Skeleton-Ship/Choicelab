@@ -36,7 +36,7 @@ export default function MainEditor() {
       const newStore = getStore();
       emit("save-text-file", {
         name: "project.json",
-        contents: JSON.stringify(newStore.project),
+        contents: JSON.stringify(newStore.project, null, 2),
         projectPath: await resolve(newStore.projectPath),
       });
       newStore.saved = true;

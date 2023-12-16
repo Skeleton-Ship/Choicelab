@@ -13,6 +13,6 @@ export default function createProjectFile(name: string) {
     variables: {},
     sequences: [createSequence()],
   };
-  const blankProjectStr = JSON.stringify(blankProject);
+  const blankProjectStr = JSON.stringify(blankProject, null, 2);
   return blankProjectStr;
 }

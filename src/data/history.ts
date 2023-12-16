@@ -25,7 +25,7 @@ async function saveHistoryVersion(initial: boolean = false) {
   // Write to fs
   emit("save-text-file", {
     name: versionId,
-    contents: JSON.stringify(store.project),
+    contents: JSON.stringify(store.project, null, 2),
     projectPath: await resolve(store.projectPath, "undo"),
   });
 }
