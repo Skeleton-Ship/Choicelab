@@ -253,8 +253,8 @@ fn main() {
 						let version_path = json["path"].as_str().unwrap_or("N/A");
 						match read_file(version_path) {
 							Ok(contents) => {
-								let main_window = handle_request_project.get_focused_window().unwrap();
-							  main_window.emit("receive-project-file", Payload { message: contents }).unwrap();			  
+								let project_window = handle_request_project.get_window("project").unwrap();
+							  project_window.emit("receive-project-file", Payload { message: contents }).unwrap();			  
 							}
 							Err(e) => {
 								eprintln!("Error parsing version: {}", e);
@@ -276,7 +276,7 @@ fn main() {
 					  let version_path = json["versionPath"].as_str().unwrap_or("N/A");
 					  match read_file(version_path) {
 						  Ok(contents) => {
-					  		let main_window = handle_history.get_focused_window().unwrap();
+					  		let main_window = handle_history.get_window("project").unwrap();
 							main_window.emit("receive-history-version", Payload { message: contents }).unwrap();			  
 						  }
 						  Err(e) => {

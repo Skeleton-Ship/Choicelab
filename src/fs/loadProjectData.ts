@@ -19,5 +19,10 @@ export default async function loadProjectData(
         resolveData(data);
       }
     );
+    setTimeout(() => {
+      if (!data) {
+        window.location.reload();
+      }
+    }, 500);
   });
 }

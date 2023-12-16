@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createCell, createBranch } from "../../../data/createNode";
 import insertNewNode from "./insertNewNode";
+import inTextElement from "../../../utils/inTextElement";
 import handleDisconnectLinks from "./handleDisconnectLinks";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";
@@ -14,17 +15,19 @@ import { Branch } from "../../../typings";
 export default function runSequenceEvents(update: Function) {
   // Set shift key events
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Shift") {
+    if (e.key === "Shift" && inTextElement() === false) {
       const store = getStore();
       store.shiftDown = true;
       setStore(store);
+      update();
     }
   });
   document.addEventListener("keyup", (e) => {
-    if (e.key === "Shift") {
+    if (e.key === "Shift" && inTextElement() === false) {
       const store = getStore();
       store.shiftDown = false;
       setStore(store);
+      update();
     }
   });
 

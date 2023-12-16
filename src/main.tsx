@@ -6,7 +6,6 @@ import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
-import { Project } from "./typings";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import "./styles/style.scss";
