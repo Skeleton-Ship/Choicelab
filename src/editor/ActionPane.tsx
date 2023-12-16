@@ -1,5 +1,6 @@
 import { getStore } from "../data/dataStore";
 import AvailableActions from "./actionPane/AvailableActions";
+import ActionsEditor from "./actionPane/ActionsEditor";
 
 export default function ActionPane(props: { update: Function }) {
   let contents = <></>;
@@ -11,19 +12,10 @@ export default function ActionPane(props: { update: Function }) {
     // If multiple nodes are selected
     contents = <p class="placeholder">Multiple Nodes Selected</p>;
   } else {
-    // 1 node is selected
-    const selectedNode = store.selectedNodes[0];
-    console.log(selectedNode);
-    let actionsStr = "";
-    if (selectedNode.actions) {
-      selectedNode.actions.forEach((action) => {
-        actionsStr += action.name;
-      });
-    }
     contents = (
       <>
         <AvailableActions update={props.update} />
-        <ul id="slotted-actions">{actionsStr}</ul>
+        <ActionsEditor update={props.update} />
       </>
     );
   }

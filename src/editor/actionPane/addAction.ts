@@ -22,5 +22,6 @@ export default function addAction(actionDef: ActionDef, update: Function) {
   };
   cell.actions.push(action);
   setStore(store);
+  update();
   handleSelectNode(cell, update);
 }

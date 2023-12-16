@@ -1,6 +1,7 @@
 import { ActionDefs } from "../../typings";
 
 const internalActionDefs: ActionDefs = {
+  name: "__CHOICELAB__STANDARD__",
   label: "Choicelab Standard",
   actions: [
     {

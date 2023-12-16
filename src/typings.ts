@@ -126,6 +126,7 @@ export interface ActionDef {
   mediaElement?: boolean;
 }
 export interface ActionDefs {
+  name: string;
   label: string;
   actions: Array<ActionDef>;
 }
