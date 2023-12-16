@@ -33,6 +33,6 @@ export default function handleSelectNode(node: AnyNode, setter: Function) {
     selectedNodes.push(node);
   }
   // Update data
-  setter(selectedNodes);
   setStore(store);
+  setter(false);
 }
