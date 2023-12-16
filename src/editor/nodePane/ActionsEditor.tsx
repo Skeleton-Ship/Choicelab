@@ -68,12 +68,16 @@ export default function ActionsEditor(props: { update: Function }) {
     });
     // Finally, make an editor el
     const editorEl = (
-      <li>
+      <li key={action.id}>
         <h5>{actionDef.label}</h5>
         {propEls}
       </li>
     );
     editorEls.push(editorEl);
   });
-  return <ul id="actions-editor">{editorEls}</ul>;
+  return (
+    <ul id="actions-editor">
+      <div class="inner">{editorEls}</div>
+    </ul>
+  );
 }

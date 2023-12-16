@@ -1,6 +1,8 @@
 .pane {
   position: relative;
-  width: 300px;
+  width: 350px;
+  height: 100%;
+  overflow: hidden;
   .resizer {
     width: 1px;
     height: 100%;

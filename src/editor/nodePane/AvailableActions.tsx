@@ -30,8 +30,10 @@ export default function AvailableActions(props: { update: Function }) {
   });
   return (
     <ul id="available-actions">
-      <h4>Add an Action:</h4>
-      {actions}
+      <div class="inner">
+        <h4>Add an Action:</h4>
+        {actions}
+      </div>
     </ul>
   );
 }

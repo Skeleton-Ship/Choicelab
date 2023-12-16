@@ -34,7 +34,7 @@ export default function TextField(props: {
       name={propElName}
       type="text"
       value={initialValue}
-      onInput={(e) => {
+      onChange={(e) => {
         handleChange(e.target);
       }}
     />
@@ -43,7 +43,7 @@ export default function TextField(props: {
     fieldEl = (
       <textarea
         name={propElName}
-        onInput={(e) => {
+        onChange={(e) => {
           handleChange(e.target);
         }}
       >
