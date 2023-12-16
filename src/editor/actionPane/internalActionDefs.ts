@@ -20,6 +20,7 @@ const internalActionDefs: ActionDefs = {
         {
           name: "tag",
           control: "dropdown",
+          default: "p",
           options: [
             {
               value: "p",
@@ -90,6 +91,7 @@ const internalActionDefs: ActionDefs = {
         {
           name: "alt",
           control: "textarea",
+          default: "",
         },
       ],
     },
@@ -104,6 +106,7 @@ const internalActionDefs: ActionDefs = {
           name: "label",
           control: "text",
           required: true,
+          default: "",
         },
         {
           name: "varToSet",

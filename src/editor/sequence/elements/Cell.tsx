@@ -60,7 +60,7 @@ export default function CellEl(props: {
     >
       <div className="contents">
         <div className="title">{props.id}</div>
-        <div className="actions"></div>
+        <div className="actions">{actionsText}</div>
       </div>
       <Link origin="cell" nodeId={props.id} update={props.update} />
     </li>

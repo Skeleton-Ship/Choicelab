@@ -3,10 +3,12 @@
 
 .cell.node {
   .title {
+    display: none;
     padding: 3px 5px;
-    display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: variables.$fonts-mono;
+    font-size: 11px;
   }
   .contents {
     border-radius: 5px;
@@ -15,6 +17,7 @@
   &.selecting {
     .title {
       background-color: variables.$accent-color;
+      color: white;
     }
     .label {
       &:not(:focus:not([readonly])) {

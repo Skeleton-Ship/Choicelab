@@ -14,10 +14,16 @@ export default function ActionPane(props: { update: Function }) {
     // 1 node is selected
     const selectedNode = store.selectedNodes[0];
     console.log(selectedNode);
+    let actionsStr = "";
+    if (selectedNode.actions) {
+      selectedNode.actions.forEach((action) => {
+        actionsStr += action.name;
+      });
+    }
     contents = (
       <>
         <AvailableActions update={props.update} />
-        <ul id="slotted-actions"></ul>
+        <ul id="slotted-actions">{actionsStr}</ul>
       </>
     );
   }
