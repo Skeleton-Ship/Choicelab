@@ -13,6 +13,12 @@ button {
   line-height: 1;
   vertical-align: middle;
   box-shadow: rgb(0 0 0 / 44%) 0 0.5px 1.5px;
+  &.large {
+    font-size: 15px;
+    padding-left: 12px;
+    padding-right: 12px;
+    height: 28px;
+  }
   &:active {
     background-color: #eee;
   }

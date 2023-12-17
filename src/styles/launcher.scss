@@ -3,17 +3,43 @@
   height: 100%;
   -webkit-app-region: drag;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
+  .contents {
+    width: 100%;
+    position: relative;
+    top: 25%;
+    max-width: 300px;
+    padding: 1rem;
+  }
   h1 {
-    font-size: 36px;
-    margin-bottom: 14px;
-    font-weight: 300;
+    font-size: 42px;
+    margin-bottom: 15px;
+    font-weight: 200;
   }
   button {
     -webkit-app-region: no-drag;
     &:not(:last-of-type) {
       margin-right: 10px;
+    }
+  }
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  #alpha-alert {
+    background-color: #fff8de;
+    padding: 14px;
+    display: flex;
+    margin-top: 20px;
+    border-radius: 10px;
+    .icon {
+      display: block;
+      margin-right: 5px;
+    }
+    p {
+      margin: 0;
+      font-size: 11px;
     }
   }
 }

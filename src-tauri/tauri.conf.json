@@ -21,9 +21,6 @@
         "open": true,
         "save": true
       },
-      "fs": {
-        "all": true
-      },
       "path": {
         "all": true
       },

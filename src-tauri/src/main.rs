@@ -1,5 +1,6 @@
 use tauri::Window;
 use tauri::Manager;
+use tauri::TitleBarStyle;
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
 use tauri::AboutMetadata;
 use std::fs;
@@ -59,7 +60,8 @@ fn create_launcher(app: &tauri::App) -> Window {
 	.minimizable(false)
 	.maximizable(false)
 	.resizable(false)
-	.title("Choicelab")
+	.title_bar_style(TitleBarStyle::Overlay.clone())
+	.title("")
 	.build()
 	.unwrap();
 	
