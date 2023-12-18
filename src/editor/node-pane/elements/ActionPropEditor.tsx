@@ -1,4 +1,4 @@
-import { Action, ActionDef, ActionProp, Store } from "../../typings";
+import { Action, ActionDef, ActionProp, Store } from "../../../typings";
 import TextField from "./prop-controls/TextField";
 import Dropdown from "./prop-controls/Dropdown";
 import Checkbox from "./prop-controls/Checkbox";

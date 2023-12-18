@@ -1,5 +1,5 @@
-import { setStore } from "../../../data/dataStore";
-import { Action, ActionDef, ActionProp, Store } from "../../../typings";
+import { setStore } from "../../../../data/dataStore";
+import { Action, ActionDef, ActionProp, Store } from "../../../../typings";
 
 export default function TextField(props: {
   action: Action;

@@ -1,4 +1,4 @@
-import { ActionDefs } from "../../typings";
+import { ActionDefs } from "../../../typings";
 
 const internalActionDefs: ActionDefs = {
   name: "__CHOICELAB__STANDARD__",

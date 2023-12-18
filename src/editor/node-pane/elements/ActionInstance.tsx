@@ -1,11 +1,11 @@
-import { setStore } from "../../data/dataStore";
-import { getActionDef } from "../../data/getData";
-import { Action, Store } from "../../typings";
-import internalActionDefs from "./internalActionDefs";
+import { setStore } from "../../../data/dataStore";
+import { getActionDef } from "../../../data/getData";
+import { Action, Store } from "../../../typings";
+import internalActionDefs from "../functions/internalActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
-import IconDelete from "../../assets/icon-delete.svg";
-import IconActionEnabled from "../../assets/icon-action-enabled.svg";
-import IconActionDisabled from "../../assets/icon-action-disabled.svg";
+import IconDelete from "../../../assets/icon-delete.svg";
+import IconActionEnabled from "../../../assets/icon-action-enabled.svg";
+import IconActionDisabled from "../../../assets/icon-action-disabled.svg";
 
 export default function ActionInstance(props: {
   instance: Action;

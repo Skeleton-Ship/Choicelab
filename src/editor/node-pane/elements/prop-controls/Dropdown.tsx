@@ -1,11 +1,11 @@
-import { setStore } from "../../../data/dataStore";
+import { setStore } from "../../../../data/dataStore";
 import {
   Action,
   ActionDef,
   ActionProp,
   ActionPropDropdownOption,
   Store,
-} from "../../../typings";
+} from "../../../../typings";
 
 export default function Dropdown(props: {
   action: Action;

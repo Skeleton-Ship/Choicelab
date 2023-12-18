@@ -1,7 +1,7 @@
-import { ActionDef, Cell } from "../../typings";
-import { getCell } from "../../data/getData";
-import { getStore, setStore } from "../../data/dataStore";
-import handleSelectNode from "../sequence/selecting/handleSelectNode";
+import { ActionDef, Cell } from "../../../typings";
+import { getCell } from "../../../data/getData";
+import { getStore, setStore } from "../../../data/dataStore";
+import handleSelectNode from "../../sequence/selecting/handleSelectNode";
 import { v4 as uuidv4 } from "uuid";
 type GenericObject = { [key: string]: any };
 

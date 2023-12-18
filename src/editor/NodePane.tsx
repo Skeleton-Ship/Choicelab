@@ -1,8 +1,7 @@
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 import { getStore } from "../data/dataStore";
-import AvailableActions from "./nodePane/AvailableActions";
-import ActionsEditor from "./nodePane/ActionsEditor";
+import ActionsPane from "./node-pane/ActionsPane";
 
 function makeResizable(el: HTMLElement) {
   const resizer = el.querySelector(".resizer");
@@ -51,8 +50,7 @@ export default function NodePane(props: { update: Function }) {
     if (node.type === "cell") {
       contents = (
         <>
-          <AvailableActions update={props.update} />
-          <ActionsEditor update={props.update} />
+          <ActionsPane update={props.update} />
         </>
       );
     } else if (node.type === "branch") {

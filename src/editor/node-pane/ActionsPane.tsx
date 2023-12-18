@@ -1,0 +1,76 @@
+import { useState } from "preact/hooks";
+import { getStore } from "../../data/dataStore";
+import { getCell } from "../../data/getData";
+import { Cell, Action, ActionDef } from "../../typings";
+import addAction from "./functions/addAction";
+import internalActionDefs from "./functions/internalActionDefs";
+import ActionInstance from "./elements/ActionInstance";
+
+function AvailableActions(props: { update: Function }) {
+  const [selectedDef, selectDef] = useState("");
+  function handleAddAction(actionDef: ActionDef) {
+    addAction(actionDef, props.update);
+  }
+  // Get names of action defs
+  const actions = internalActionDefs.actions.map((def: ActionDef) => {
+    const selectedClass = selectedDef === def.name ? "selected" : "";
+    return (
+      <li>
+        <button
+          class={selectedClass}
+          title={def.description}
+          onClick={() => {
+            selectDef(def.name);
+          }}
+          onDblClick={() => {
+            handleAddAction(def);
+          }}
+        >
+          {def.label}
+        </button>
+      </li>
+    );
+  });
+  return (
+    <ul id="available-actions">
+      <div class="inner">
+        <h4>Add an Action:</h4>
+        {actions}
+      </div>
+    </ul>
+  );
+}
+
+function ActionsEditor(props: { update: Function }) {
+  const store = getStore();
+  // 1 node is selected
+  const selectedNodeId = store.selectedNodes[0].id;
+  const node: Cell | undefined = getCell(selectedNodeId, store);
+  if (!node) return <></>;
+  let editorEls: Array<preact.JSX.Element> = [];
+  node.actions.forEach((action: Action) => {
+    const actionKey = `action_${action.id}`;
+    editorEls.push(
+      <ActionInstance
+        instance={action}
+        key={actionKey}
+        store={store}
+        update={props.update}
+      />
+    );
+  });
+  return (
+    <ul id="actions-editor">
+      <div class="inner">{editorEls}</div>
+    </ul>
+  );
+}
+
+export default function ActionsPane(props: { update: Function }) {
+  return (
+    <>
+      <AvailableActions update={props.update} />
+      <ActionsEditor update={props.update} />
+    </>
+  );
+}
