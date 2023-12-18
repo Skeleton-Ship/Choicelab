@@ -13,6 +13,7 @@ import { saveHistoryVersion } from "../data/history";
 import SequenceEl from "./sequence/Sequence";
 import NodePane from "./NodePane";
 import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
+import { getFocusedRegion } from "../utils/focusedRegion";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -45,16 +46,24 @@ export default function MainEditor() {
       handleUpdate(false);
     });
     // Set up cut/copy listener
-    listen("menu-cut", async () => {
-      handleCutCopy("cut", handleUpdate);
+    window.addEventListener("cut", (e) => {
+      if (getFocusedRegion() === "sequence") {
+        e.preventDefault();
+        handleCutCopy("cut", handleUpdate);
+      }
     });
-    listen("menu-copy", async () => {
-      handleCutCopy("copy", handleUpdate);
+    window.addEventListener("copy", (e) => {
+      if (getFocusedRegion() === "sequence") {
+        e.preventDefault();
+        handleCutCopy("copy", handleUpdate);
+      }
     });
-    listen("menu-paste", async () => {
-      handlePaste(handleUpdate);
+    window.addEventListener("paste", (e) => {
+      if (getFocusedRegion() === "sequence") {
+        e.preventDefault();
+        handlePaste(handleUpdate);
+      }
     });
-
     appWindow.listen("tauri://close-requested", async () => {
       const store = getStore();
       if (store.saved) {

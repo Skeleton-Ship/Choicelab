@@ -8,6 +8,7 @@ import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
+import { setFocusedRegion } from "./utils/focusedRegion";
 import "./styles/style.scss";
 
 async function init() {
@@ -21,6 +22,16 @@ async function init() {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
     openProject();
+  });
+  // Region focus listeners
+  window.addEventListener("click", (e) => {
+    const targetEl = e.target as HTMLElement;
+    setFocusedRegion(targetEl);
+  });
+  window.addEventListener("keyup", () => {
+    if (document.activeElement !== null) {
+      setFocusedRegion(document.activeElement);
+    }
   });
 
   let elements = <></>;
@@ -57,7 +68,7 @@ async function init() {
     elements = <MainEditor />;
   }
   const appDOM = (
-    <div id="App" data-target-mode="">
+    <div id="App" data-target-mode="" data-focused-region="">
       {elements}
     </div>
   );
