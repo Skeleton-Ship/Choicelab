@@ -10,6 +10,11 @@
   input[type="text"],
   textarea {
     width: 100%;
+    max-width: 550px;
     display: block;
+  }
+  textarea {
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 1px;
   }
 }

@@ -18,6 +18,7 @@ export default function addAction(actionDef: ActionDef, update: Function) {
   const action = {
     name: actionDef.name,
     id: uuidv4(),
+    enabled: true,
     props: actionProps,
   };
   cell.actions.push(action);
