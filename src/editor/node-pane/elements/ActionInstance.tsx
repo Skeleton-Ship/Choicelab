@@ -1,6 +1,7 @@
 import { setStore } from "../../../data/dataStore";
 import { getActionDef } from "../../../data/getData";
-import { Action, Store } from "../../../typings";
+import { deleteActionFromData } from "../../../data/deleteData";
+import { Action, Store, Cell } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
 import IconDelete from "../../../assets/icon-delete.svg";
@@ -9,13 +10,14 @@ import IconActionDisabled from "../../../assets/icon-action-disabled.svg";
 
 export default function ActionInstance(props: {
   instance: Action;
+  cell: Cell;
   store: Store;
   update: Function;
 }) {
   const action = props.instance;
   const actionDef = getActionDef(action.name, internalActionDefs);
   if (!actionDef) return <></>;
-  // Bind enabled
+  // Enable/disable action
   function setEnabled() {
     if (action.enabled === true) {
       action.enabled = false;
@@ -23,6 +25,16 @@ export default function ActionInstance(props: {
       action.enabled = true;
     }
     setStore(props.store);
+    props.update();
+  }
+  // Delete action
+  function handleDelete() {
+    const newStore = deleteActionFromData(
+      action.id,
+      props.cell.id,
+      props.store
+    );
+    setStore(newStore);
     props.update();
   }
   // Create an editor for each prop
@@ -57,7 +69,7 @@ export default function ActionInstance(props: {
           <button onClick={setEnabled}>
             <img src={iconEnabled} />
           </button>
-          <button>
+          <button onClick={handleDelete}>
             <img src={IconDelete} />
           </button>
         </div>

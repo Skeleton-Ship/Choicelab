@@ -52,8 +52,9 @@ function ActionsEditor(props: { update: Function }) {
     const actionKey = `action_${action.id}`;
     editorEls.push(
       <ActionInstance
-        instance={action}
         key={actionKey}
+        instance={action}
+        cell={node}
         store={store}
         update={props.update}
       />
