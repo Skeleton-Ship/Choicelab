@@ -1,10 +1,10 @@
 import { setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionProp, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 
 export default function Checkbox(props: {
   action: Action;
   actionDef: ActionDef;
-  propDef: ActionProp;
+  propDef: ActionDefProp;
   initialValue: boolean;
   store: Store;
   update: Function;

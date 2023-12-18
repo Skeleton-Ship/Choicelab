@@ -2,15 +2,15 @@ import { setStore } from "../../../../data/dataStore";
 import {
   Action,
   ActionDef,
-  ActionProp,
-  ActionPropDropdownOption,
+  ActionDefProp,
+  ActionDefPropDropdownOption,
   Store,
 } from "../../../../typings";
 
 export default function Dropdown(props: {
   action: Action;
   actionDef: ActionDef;
-  propDef: ActionProp;
+  propDef: ActionDefProp;
   initialValue: string;
   store: Store;
   update: Function;
@@ -29,7 +29,7 @@ export default function Dropdown(props: {
   const optionEls: Array<preact.JSX.Element> = [];
   const options = props.propDef.options;
   if (!options) return <></>;
-  options.forEach((option: ActionPropDropdownOption) => {
+  options.forEach((option: ActionDefPropDropdownOption) => {
     const optionEl = <option value={option.value}>{option.label}</option>;
     optionEls.push(optionEl);
   });

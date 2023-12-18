@@ -1,4 +1,4 @@
-import { Action, ActionDef, ActionProp, Store } from "../../../typings";
+import { Action, ActionDef, ActionDefProp, Store } from "../../../typings";
 import TextField from "./prop-controls/TextField";
 import Dropdown from "./prop-controls/Dropdown";
 import Checkbox from "./prop-controls/Checkbox";
@@ -6,7 +6,7 @@ import Checkbox from "./prop-controls/Checkbox";
 export default function ActionPropEditor(props: {
   instance: Action;
   def: ActionDef;
-  defProp: ActionProp;
+  defProp: ActionDefProp;
   store: Store;
   update: Function;
 }) {

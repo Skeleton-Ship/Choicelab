@@ -103,29 +103,34 @@ export interface Store {
   };
 }
 export interface Action {
-  [key: string]: any;
+  name: string;
+  id: string;
+  enabled: boolean;
+  props: {
+    [key: string]: any;
+  };
 }
-export interface ActionProp {
+export interface ActionDef {
+  name: string;
+  label: string;
+  description: string;
+  props: Array<ActionDefProp>;
+  extendable?: boolean;
+  timedElement?: boolean;
+  mediaElement?: boolean;
+}
+export interface ActionDefProp {
   name: string;
   label: string;
   control: string;
   value?: any;
   default?: any;
   required?: boolean;
-  options?: Array<ActionPropDropdownOption>;
+  options?: Array<ActionDefPropDropdownOption>;
 }
-export interface ActionPropDropdownOption {
+export interface ActionDefPropDropdownOption {
   value: string;
   label: string;
-}
-export interface ActionDef {
-  name: string;
-  label: string;
-  description: string;
-  props: Array<ActionProp>;
-  extendable?: boolean;
-  timedElement?: boolean;
-  mediaElement?: boolean;
 }
 export interface ActionDefs {
   name: string;
