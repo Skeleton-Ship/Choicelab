@@ -20,7 +20,7 @@ function makeResizable(el: HTMLElement) {
   }
 
   function doDrag(e: MouseEvent) {
-    el.style.width = window.screen.width - e.clientX + "px";
+    el.style.width = window.innerWidth - e.clientX + "px";
   }
 
   function stopDrag() {
