@@ -1,5 +1,5 @@
 import { setStore } from "../../../data/dataStore";
-import { getActionDef } from "../../../data/getData";
+import { getActionDef, getCell } from "../../../data/getData";
 import { deleteActionFromData } from "../../../data/deleteData";
 import { Action, Store, Cell } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
@@ -7,6 +7,24 @@ import ActionPropEditor from "./ActionPropEditor";
 import IconDelete from "../../../assets/icon-delete.svg";
 import IconActionEnabled from "../../../assets/icon-action-enabled.svg";
 import IconActionDisabled from "../../../assets/icon-action-disabled.svg";
+
+function moveAction(arr: Array<any>, old_index: number, new_index: number) {
+  if (new_index >= arr.length) {
+    var k = new_index - arr.length + 1;
+    while (k--) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+  const newActions: Array<any> = [];
+  arr.forEach((item: any) => {
+    if (typeof item === "undefined") {
+      return;
+    }
+    newActions.push(item);
+  });
+  return newActions;
+}
 
 export default function ActionInstance(props: {
   instance: Action;
@@ -37,6 +55,29 @@ export default function ActionInstance(props: {
     setStore(newStore);
     props.update();
   }
+  // Update position
+  function updateArrayPosition(relativePosition: number) {
+    const cell: Cell | undefined = getCell(props.cell.id, props.store);
+    if (!cell) return;
+    const actions = cell.actions;
+    let existingPosition = -1;
+    let iterator = 0;
+    actions.forEach((thisAction: Action) => {
+      if (props.instance.id === thisAction.id) {
+        existingPosition = iterator;
+      }
+      iterator++;
+    });
+    if (actions.length > 1) {
+      moveAction(
+        actions,
+        existingPosition,
+        existingPosition + relativePosition
+      );
+      setStore(props.store);
+      props.update();
+    }
+  }
   // Create an editor for each prop
   let propEls: Array<preact.JSX.Element> = [];
   const defProps = actionDef.props;
@@ -64,8 +105,20 @@ export default function ActionInstance(props: {
       <div class="action-toolbar">
         <h5 class="action-name">{actionDef.label}</h5>
         <div class="controls">
-          <button>▲</button>
-          <button>▼</button>
+          <button
+            onClick={() => {
+              updateArrayPosition(-1);
+            }}
+          >
+            ▲
+          </button>
+          <button
+            onClick={() => {
+              updateArrayPosition(1);
+            }}
+          >
+            ▼
+          </button>
           <button onClick={setEnabled}>
             <img src={iconEnabled} />
           </button>
