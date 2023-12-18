@@ -60,7 +60,7 @@ export default function NodePane(props: { update: Function }) {
     }
   }
   return (
-    <div id="action-pane" class="pane right" ref={ref}>
+    <div id="node-pane" class="pane right" ref={ref}>
       <div class="resizer"></div>
       <div class="pane-contents">{contents}</div>
     </div>
