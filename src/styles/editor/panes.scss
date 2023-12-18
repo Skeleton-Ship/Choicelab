@@ -1,20 +1,41 @@
 .pane {
   position: relative;
-  width: 350px;
-  height: 100%;
   overflow: hidden;
+  flex-grow: 0;
+  flex-shrink: 0;
   .resizer {
-    width: 1px;
+    width: 6px;
     height: 100%;
     top: 0;
     left: -9999px;
+    z-index: 2;
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.2);
+    &:before {
+      content: "";
+      background-color: rgba(0, 0, 0, 0.2);
+      width: 1px;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 3px;
+    }
+  }
+  .pane-contents {
+    z-index: 1;
+    position: relative;
   }
   &.right {
+    min-width: 300px;
+    max-width: 80%;
+    width: 350px;
+    height: 100%;
     .resizer {
-      left: 0;
       cursor: col-resize;
+      left: 0;
+    }
+    .pane-contents {
+      left: 3px;
+      width: calc(100% - 3px);
     }
   }
   p.placeholder {

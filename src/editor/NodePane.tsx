@@ -1,8 +1,43 @@
+import { createRef } from "preact";
+import { useEffect } from "preact/hooks";
 import { getStore } from "../data/dataStore";
 import AvailableActions from "./nodePane/AvailableActions";
 import ActionsEditor from "./nodePane/ActionsEditor";
 
+function makeResizable(el: HTMLElement) {
+  const resizer = el.querySelector(".resizer");
+  if (!resizer) return;
+
+  // let startX: number, startWidth: number;
+
+  resizer.addEventListener("mousedown", () => {
+    initDrag();
+  });
+
+  function initDrag() {
+    window.addEventListener("mousemove", doDrag, false);
+    window.addEventListener("mouseup", stopDrag, false);
+  }
+
+  function doDrag(e: MouseEvent) {
+    el.style.width = window.screen.width - e.clientX + "px";
+  }
+
+  function stopDrag() {
+    window.removeEventListener("mousemove", doDrag, false);
+    window.removeEventListener("mouseup", stopDrag, false);
+  }
+}
+
 export default function NodePane(props: { update: Function }) {
+  // Make resizable
+  const ref = createRef();
+  useEffect(() => {
+    if (!ref.current) return;
+    makeResizable(ref.current);
+  }, []);
+
+  // Contents
   let contents = <></>;
   const store = getStore();
   if (store.selectedNodes.length <= 0) {
@@ -25,9 +60,9 @@ export default function NodePane(props: { update: Function }) {
     }
   }
   return (
-    <div id="action-pane" class="pane right">
+    <div id="action-pane" class="pane right" ref={ref}>
       <div class="resizer"></div>
-      {contents}
+      <div class="pane-contents">{contents}</div>
     </div>
   );
 }
