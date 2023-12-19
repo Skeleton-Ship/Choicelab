@@ -11,6 +11,11 @@ const internalActionDefs: ActionDefs = {
         "A block of text that can appear instantly or be associated with a media action.",
       extendable: true,
       timedElement: true,
+      editor: {
+        iconName: "text-left",
+        iconColor: "#2f2f52",
+        iconBackgroundColor: "#FFC300",
+      },
       props: [
         {
           name: "contents",
@@ -48,6 +53,11 @@ const internalActionDefs: ActionDefs = {
       description: "Play an audio file.",
       extendable: false,
       mediaElement: true,
+      editor: {
+        iconName: "volume-up-fill",
+        iconColor: "white",
+        iconBackgroundColor: "#FE334F",
+      },
       props: [
         {
           name: "media",
@@ -68,6 +78,11 @@ const internalActionDefs: ActionDefs = {
       description: "Play a video file.",
       extendable: false,
       mediaElement: true,
+      editor: {
+        iconName: "film",
+        iconColor: "white",
+        iconBackgroundColor: "#27CD8B",
+      },
       props: [
         {
           name: "media",
@@ -89,6 +104,11 @@ const internalActionDefs: ActionDefs = {
         "An image file that can appear instantly or be associated with a media action.",
       extendable: true,
       mediaElement: false,
+      editor: {
+        iconName: "image",
+        iconColor: "white",
+        iconBackgroundColor: "#AF53DE",
+      },
       props: [
         {
           name: "source",
@@ -110,6 +130,11 @@ const internalActionDefs: ActionDefs = {
       description: "A button that, when pressed, advances to the next node.",
       extendable: true,
       mediaElement: false,
+      editor: {
+        iconName: "app",
+        iconColor: "white",
+        iconBackgroundColor: "#FF9502",
+      },
       props: [
         {
           name: "label",
@@ -149,6 +174,11 @@ const internalActionDefs: ActionDefs = {
       description: "A fill-in-the-blank field for entering information.",
       extendable: true,
       mediaElement: false,
+      editor: {
+        iconName: "input-cursor-text",
+        iconColor: "#027AFF",
+        iconBackgroundColor: "#E9F2FF",
+      },
       props: [
         {
           name: "type",

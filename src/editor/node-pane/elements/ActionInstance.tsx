@@ -7,6 +7,7 @@ import ActionPropEditor from "./ActionPropEditor";
 import IconDelete from "../../../assets/icon-delete.svg";
 import IconActionEnabled from "../../../assets/icon-action-enabled.svg";
 import IconActionDisabled from "../../../assets/icon-action-disabled.svg";
+import ActionIcon from "./ActionIcon";
 
 function moveAction(arr: Array<any>, old_index: number, new_index: number) {
   if (new_index >= arr.length) {
@@ -103,7 +104,10 @@ export default function ActionInstance(props: {
   return (
     <li class={liClass} key={action.id}>
       <div class="action-toolbar">
-        <h5 class="action-name">{actionDef.label}</h5>
+        <h5 class="action-name">
+          <ActionIcon def={actionDef} />
+          {actionDef.label}
+        </h5>
         <div class="controls">
           <button
             onClick={() => {

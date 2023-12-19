@@ -36,9 +36,13 @@
     padding: 8px;
     font-size: 13px;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
     &.selected {
       background-color: variables.$accent-color !important;
-      color: white;
+      .action-label {
+        color: white;
+      }
     }
   }
   li {
@@ -79,7 +83,7 @@
       .action-name {
         margin: 0;
         display: inline;
-        font-size: 15px;
+        font-size: 14px;
       }
       .controls {
         position: absolute;
@@ -104,5 +108,18 @@
     &:last-of-type {
       border-bottom-width: 0;
     }
+  }
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 7px;
+  i {
+    font-size: 12px;
   }
 }

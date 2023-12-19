@@ -5,6 +5,7 @@ import { Cell, Action, ActionDef } from "../../typings";
 import addAction from "./functions/addAction";
 import internalActionDefs from "./functions/internalActionDefs";
 import ActionInstance from "./elements/ActionInstance";
+import ActionIcon from "./elements/ActionIcon";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -26,7 +27,8 @@ function AvailableActions(props: { update: Function }) {
             handleAddAction(def);
           }}
         >
-          {def.label}
+          <ActionIcon def={def} />
+          <span class="action-label">{def.label}</span>
         </button>
       </li>
     );

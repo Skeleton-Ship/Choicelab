@@ -113,6 +113,11 @@ export interface Action {
 export interface ActionDef {
   name: string;
   label: string;
+  editor?: {
+    iconName: string;
+    iconColor: string;
+    iconBackgroundColor: string;
+  };
   description: string;
   props: Array<ActionDefProp>;
   extendable?: boolean;
