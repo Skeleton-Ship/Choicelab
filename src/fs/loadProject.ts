@@ -8,6 +8,8 @@ export default function loadProject(projectPath: string) {
     titleBarStyle: "overlay",
     width: 1000,
     height: 700,
+    minWidth: 600,
+    minHeight: 360,
   });
   webview.once("tauri://created", function () {});
   // webview.once("tauri://error", function () {});
