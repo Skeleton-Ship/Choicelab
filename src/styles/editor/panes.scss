@@ -1,8 +1,12 @@
+/**
+ * General (and very broad) pane styles
+ */
+
 .pane {
   position: relative;
   flex-grow: 0;
   flex-shrink: 0;
-  border-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.1);
   border-style: solid;
   border-width: 0;
   .resizer {
