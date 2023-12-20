@@ -127,6 +127,8 @@ export default function ActionInstance(props: {
       <></>
     );
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
+  const enableButtonAlt =
+    action.enabled === true ? "Disable Action" : "Enable Action";
   const liClass = `action ${actionDef.name} ${enabledClass}`;
   const canMove = canMoveAction(action.id);
   const upDisabled = canMove.up === true ? false : true;
@@ -141,6 +143,7 @@ export default function ActionInstance(props: {
         </h5>
         <div class="controls">
           <button
+            title="Move Up"
             disabled={upDisabled}
             onClick={() => {
               updateArrayPosition(-1);
@@ -149,6 +152,7 @@ export default function ActionInstance(props: {
             ▲
           </button>
           <button
+            title="Move Down"
             disabled={downDisabled}
             onClick={() => {
               updateArrayPosition(1);
@@ -156,10 +160,10 @@ export default function ActionInstance(props: {
           >
             ▼
           </button>
-          <button onClick={setEnabled}>
+          <button title={enableButtonAlt} onClick={setEnabled}>
             <img src={iconEnabled} />
           </button>
-          <button onClick={handleDelete}>
+          <button title="Delete Action" onClick={handleDelete}>
             <img src={IconDelete} />
           </button>
         </div>

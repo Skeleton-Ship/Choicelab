@@ -38,8 +38,6 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
-    user-drag: none;
-    -webkit-user-drag: none;
     &.selected {
       background-color: variables.$accent-color !important;
       .action-label {
@@ -116,6 +114,8 @@
         img {
           width: 18px;
           height: auto;
+          user-drag: none;
+          -webkit-user-drag: none;
         }
         &.heading {
           width: auto;
