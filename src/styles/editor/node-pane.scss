@@ -86,6 +86,10 @@
         display: inline;
         font-size: 14px;
       }
+      .disabled-text {
+        font-weight: 300;
+        opacity: 0.5;
+      }
       .controls {
         position: absolute;
         right: 0;

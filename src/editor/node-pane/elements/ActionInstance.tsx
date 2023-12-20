@@ -120,6 +120,12 @@ export default function ActionInstance(props: {
   // Finally, make an editor el
   const iconEnabled =
     action.enabled === true ? IconActionEnabled : IconActionDisabled;
+  const disabledLabel =
+    action.enabled === false ? (
+      <span class="disabled-text"> (disabled)</span>
+    ) : (
+      <></>
+    );
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
   const liClass = `action ${actionDef.name} ${enabledClass}`;
   const canMove = canMoveAction(action.id);
@@ -131,6 +137,7 @@ export default function ActionInstance(props: {
         <h5 class="action-name">
           <ActionIcon def={actionDef} />
           {actionDef.label}
+          {disabledLabel}
         </h5>
         <div class="controls">
           <button
