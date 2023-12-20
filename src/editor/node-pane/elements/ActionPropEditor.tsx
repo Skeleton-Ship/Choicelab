@@ -2,6 +2,7 @@ import { Action, ActionDef, ActionDefProp, Store } from "../../../typings";
 import TextField from "./prop-controls/TextField";
 import Dropdown from "./prop-controls/Dropdown";
 import Checkbox from "./prop-controls/Checkbox";
+import File from "./prop-controls/File";
 
 export default function ActionPropEditor(props: {
   instance: Action;
@@ -70,6 +71,21 @@ export default function ActionPropEditor(props: {
           action={action}
           actionDef={actionDef}
           propDef={defProp}
+          initialValue={initialValue}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "image":
+      propControl = (
+        <File
+          type="binary"
+          accept="image/png, image/jpeg, image/gif"
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          filePropName="path"
           initialValue={initialValue}
           store={props.store}
           update={props.update}

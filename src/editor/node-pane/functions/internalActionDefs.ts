@@ -32,7 +32,7 @@ const internalActionDefs: ActionDefs = {
           options: [
             {
               value: "p",
-              label: "Body text",
+              label: "Body Text",
             },
 
             {
