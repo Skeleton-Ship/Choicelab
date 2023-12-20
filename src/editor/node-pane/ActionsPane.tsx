@@ -1,4 +1,5 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
+import { getFocusedRegion } from "../../utils/focusedRegion";
 import { getStore } from "../../data/dataStore";
 import { getCell } from "../../data/getData";
 import { Cell, Action, ActionDef } from "../../typings";
@@ -9,6 +10,13 @@ import ActionIcon from "./elements/ActionIcon";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
+  useEffect(() => {
+    document.addEventListener("pointerup", () => {
+      if (getFocusedRegion() !== "available-actions") {
+        selectDef("");
+      }
+    });
+  }, []);
   function handleAddAction(actionDef: ActionDef) {
     addAction(actionDef, props.update);
   }

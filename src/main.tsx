@@ -24,7 +24,7 @@ async function init() {
     openProject();
   });
   // Region focus listeners
-  window.addEventListener("click", (e) => {
+  window.addEventListener("pointerdown", (e) => {
     const targetEl = e.target as HTMLElement;
     setFocusedRegion(targetEl);
   });
