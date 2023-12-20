@@ -17,17 +17,21 @@ export default function runSequenceEvents(update: Function) {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Shift" && inTextElement() === false) {
       const store = getStore();
-      store.shiftDown = true;
-      setStore(store);
-      update(false);
+      if (store.focus === true) {
+        store.shiftDown = true;
+        setStore(store);
+        update(false);
+      }
     }
   });
   document.addEventListener("keyup", (e) => {
     if (e.key === "Shift" && inTextElement() === false) {
       const store = getStore();
-      store.shiftDown = false;
-      setStore(store);
-      update(false);
+      if (store.focus === true) {
+        store.shiftDown = false;
+        setStore(store);
+        update(false);
+      }
     }
   });
 

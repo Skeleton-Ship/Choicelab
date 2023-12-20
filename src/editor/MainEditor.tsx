@@ -64,6 +64,18 @@ export default function MainEditor() {
         handlePaste(handleUpdate);
       }
     });
+    window.addEventListener("focus", () => {
+      const store = getStore();
+      store.focus = true;
+      document.querySelector("#App")?.setAttribute("data-focus", "true");
+      setStore(store);
+    });
+    window.addEventListener("blur", () => {
+      const store = getStore();
+      store.focus = false;
+      document.querySelector("#App")?.setAttribute("data-focus", "false");
+      setStore(store);
+    });
     appWindow.listen("tauri://close-requested", async () => {
       const store = getStore();
       if (store.saved) {
