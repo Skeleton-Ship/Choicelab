@@ -17,9 +17,8 @@ function Launcher() {
         <aside id="alpha-alert">
           <span class="icon">⚠️</span>
           <p>
-            Choicelab is <strong>alpha software</strong> that may cause crashes
-            or data loss. Use with caution and back up your information
-            regularly.
+            Choicelab is <strong>alpha software</strong>. Use with caution and
+            back up your data regularly.
           </p>
         </aside>
       </div>
