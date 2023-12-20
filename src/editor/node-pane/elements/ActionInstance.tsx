@@ -79,6 +79,27 @@ export default function ActionInstance(props: {
       props.update();
     }
   }
+  function canMoveAction(actionId: string) {
+    const cell = props.cell;
+    const actions = cell.actions;
+    let up = true,
+      down = true;
+    for (var i = 0; i < actions.length; i++) {
+      var action = actions[i];
+      if (action.id === actionId) {
+        if (i === 0) {
+          up = false;
+        }
+        if (i === actions.length - 1) {
+          down = false;
+        }
+      }
+    }
+    return {
+      up: up,
+      down: down,
+    };
+  }
   // Create an editor for each prop
   let propEls: Array<preact.JSX.Element> = [];
   const defProps = actionDef.props;
@@ -101,6 +122,9 @@ export default function ActionInstance(props: {
     action.enabled === true ? IconActionEnabled : IconActionDisabled;
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
   const liClass = `action ${actionDef.name} ${enabledClass}`;
+  const canMove = canMoveAction(action.id);
+  const upDisabled = canMove.up === true ? false : true;
+  const downDisabled = canMove.down === true ? false : true;
   return (
     <li class={liClass} key={action.id}>
       <div class="action-toolbar">
@@ -110,6 +134,7 @@ export default function ActionInstance(props: {
         </h5>
         <div class="controls">
           <button
+            disabled={upDisabled}
             onClick={() => {
               updateArrayPosition(-1);
             }}
@@ -117,6 +142,7 @@ export default function ActionInstance(props: {
             ▲
           </button>
           <button
+            disabled={downDisabled}
             onClick={() => {
               updateArrayPosition(1);
             }}

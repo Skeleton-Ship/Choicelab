@@ -38,6 +38,8 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
+    user-drag: none;
+    -webkit-user-drag: none;
     &.selected {
       background-color: variables.$accent-color !important;
       .action-label {
@@ -48,7 +50,7 @@
   li {
     &:nth-child(even) {
       button {
-        background-color: #f4f4f4;
+        background-color: #f7f7f7;
       }
     }
   }
@@ -58,13 +60,12 @@
   height: calc(100% - 260px);
   .action {
     padding: 16px;
-    border-style: solid;
-    border-color: rgba(0, 0, 0, 0.3);
-    border-top-width: 0;
-    border-bottom-width: 1px;
-    border-left-width: 0;
-    border-right-width: 0;
+    background-color: white;
+    margin: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 2px 10px;
     &.disabled {
+      background-color: rgba(255, 255, 255, 0.5);
       .props {
         opacity: 0.5;
       }
@@ -96,6 +97,18 @@
         width: 30px;
         height: 30px;
         line-height: 1;
+        opacity: 0.7;
+        border-radius: 5px;
+        &:hover:not(:disabled) {
+          background-color: rgba(50, 50, 50, 0.1);
+        }
+        &:active:not(:disabled) {
+          opacity: 1;
+          background-color: rgba(50, 50, 50, 0.15);
+        }
+        &:disabled {
+          opacity: 0.3;
+        }
         img {
           width: 18px;
           height: auto;
@@ -104,6 +117,9 @@
           width: auto;
         }
       }
+    }
+    &:not(:last-of-type) {
+      margin-bottom: 25px;
     }
     &:last-of-type {
       border-bottom-width: 0;
