@@ -21,8 +21,8 @@ export default function ViewSlider(props: { update: Function }) {
     if (viewSettings.cellMarginTop > 500) viewSettings.cellMarginTop = 500;
     // Set stem size
     viewSettings.stemMarginLeft = viewSettings.cellWidth + 15;
-    setStore(store);
     setSequenceDimensions();
+    setStore(store);
     props.update(false);
   }
   return (

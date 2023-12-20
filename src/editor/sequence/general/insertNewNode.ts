@@ -13,7 +13,7 @@ import { AnyNode } from "../../../typings";
  * Handler for inserting a newly created node into the current sequence.
  *
  * @param {string} newNode - The node object to be added to the sequence
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh. If `false` is passed, data store is returned instead of updated upstream in the app.
+ * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
 export default function insertNewNode(newNode: AnyNode, update: Function) {
   // Add the new node to the sequence

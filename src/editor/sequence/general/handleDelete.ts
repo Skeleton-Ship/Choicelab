@@ -52,8 +52,10 @@ function handleDeleteNodes(update: Function) {
 function handleDeleteStem(stemId: string, nodeId: string, update: Function) {
   const store = getStore();
   const updatedData = deleteStemFromData(stemId, nodeId, store);
-  update(updatedData);
-  setStore(store);
+  if (updatedData) {
+    setStore(updatedData);
+    update();
+  }
 }
 
 /**
@@ -65,7 +67,10 @@ function handleDeleteStem(stemId: string, nodeId: string, update: Function) {
 function handleDeleteSequence(sequenceId: string, update: Function) {
   const store = getStore();
   const updatedData = deleteSequenceFromData(sequenceId, store);
-  update(updatedData);
+  if (updatedData) {
+    setStore(updatedData);
+    update();
+  }
 }
 
 export { handleDeleteNodes, handleDeleteStem, handleDeleteSequence };

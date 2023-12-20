@@ -91,8 +91,8 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
         location: stepIndex,
         versions: projectHistory.versions,
       };
-      setStore(store);
       markUnsaved();
+      setStore(store);
       update(false);
     }
   );

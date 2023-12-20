@@ -5,9 +5,9 @@ import { AnyNode } from "../../../typings";
  * Handler for selecting a node.
  *
  * @param {object} node - A node object.
- * @param {Function} setter - The React state function to call once selected.
+ * @param {Function} update - The React state function to call once selected.
  */
-export default function handleSelectNode(node: AnyNode, setter: Function) {
+export default function handleSelectNode(node: AnyNode, update: Function) {
   const store = getStore();
   const targetMode = store.targetMode;
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
@@ -34,5 +34,5 @@ export default function handleSelectNode(node: AnyNode, setter: Function) {
   }
   // Update data
   setStore(store);
-  setter(false);
+  update(false);
 }
