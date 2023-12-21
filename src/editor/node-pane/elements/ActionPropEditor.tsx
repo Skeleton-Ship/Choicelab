@@ -107,6 +107,21 @@ export default function ActionPropEditor(props: {
         />
       );
       break;
+    case "audio":
+      propControl = (
+        <File
+          type="binary"
+          accept="audio/mp3"
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          filePropName="source"
+          initialValue={initialValue}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
     default:
       propControl = <div>{defProp.name}</div>;
   }

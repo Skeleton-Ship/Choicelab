@@ -6,6 +6,7 @@ export default function getBase64Prefix(fileName: string) {
     gif: "image/gif",
     mp4: "video/mp4",
     webm: "video/webm",
+    mp3: "audio/mpeg",
   };
   let fileType = "";
   let extension: string | undefined = fileName.split(".").pop()?.toLowerCase();

@@ -5,10 +5,50 @@ import {
   readTextFile,
   BaseDirectory,
 } from "@tauri-apps/api/fs";
-// @ts-ignore
-import { encode } from "uint8-to-base64";
 import { getStore } from "../../../data/dataStore";
 import getBase64Prefix from "./getBase64Prefix";
+
+function uint8ToBase64(arr: Uint8Array): string {
+  return btoa(
+    Array(arr.length)
+      .fill("")
+      .map((_, i) => String.fromCharCode(arr[i]))
+      .join("")
+  );
+}
+
+function readFileContents(
+  fileName: string,
+  fileType: string,
+  localKey: string,
+  iteration: number
+) {
+  return new Promise((resolve) => {
+    if (fileType === "binary") {
+      readBinaryFile(fileName, {
+        dir: BaseDirectory.AppCache,
+      }).then(async (file) => {
+        const prefix = getBase64Prefix(fileName);
+        console.log("Encoding file...", fileName);
+        let fileSrc = uint8ToBase64(file);
+        if (!fileSrc || (fileSrc === "" && iteration < 50)) {
+          return readFileContents(fileName, fileType, localKey, iteration + 1);
+        } else if (fileSrc && fileSrc !== "") {
+          fileSrc = prefix + uint8ToBase64(file);
+          resolve(fileSrc);
+        } else {
+          resolve("");
+        }
+      });
+    } else if (fileType === "text") {
+      readTextFile(fileName, {
+        dir: BaseDirectory.AppCache,
+      }).then(async (fileSrc) => {
+        resolve(fileSrc);
+      });
+    }
+  });
+}
 
 /**
  * Given an already-stored file, return its contents
@@ -21,7 +61,6 @@ async function storeCachedAsset(
   return new Promise((resolve, reject) => {
     try {
       const store = getStore();
-      const storage = window.__CHOICELAB_ASSET_CACHE__;
       path_resolve(store.projectPath, "./assets", fileName).then(
         async (filePath) => {
           const cachePath = await appCacheDir();
@@ -30,23 +69,19 @@ async function storeCachedAsset(
             cachePath: cachePath,
           });
           once("asset-ready", async () => {
-            if (fileType === "binary") {
-              readBinaryFile(fileName, {
-                dir: BaseDirectory.AppCache,
-              }).then(async (file) => {
-                const prefix = getBase64Prefix(fileName);
-                const fileSrc = prefix + encode(file);
-                storage.storeFileContents(localKey, fileSrc);
-                resolve(fileSrc);
-              });
-            } else if (fileType === "text") {
-              readTextFile(fileName, {
-                dir: BaseDirectory.AppCache,
-              }).then(async (fileSrc) => {
-                storage.storeFileContents(localKey, fileSrc);
-                resolve(fileSrc);
-              });
+            const fileSrc = await readFileContents(
+              fileName,
+              fileType,
+              localKey,
+              0
+            );
+            if (fileSrc === "") {
+              console.log("Blank file source");
+            } else {
+              const storage = window.__CHOICELAB_ASSET_CACHE__;
+              storage.storeFileContents(localKey, fileSrc);
             }
+            resolve(fileSrc);
           });
         }
       );

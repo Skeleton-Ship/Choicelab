@@ -29,7 +29,7 @@ export default function getAssetPreviewElement(
     case "audio":
       previewEl = (
         <>
-          <audio src={fileSrc} controls></audio>
+          <audio class="media-preview" src={fileSrc} controls></audio>
           {loadingEl}
         </>
       );
