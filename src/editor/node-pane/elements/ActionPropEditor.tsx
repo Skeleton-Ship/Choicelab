@@ -134,7 +134,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="text"
-          accept="text/vtt"
+          accept="text/vtt, text/srt"
           filePropName="captions"
           action={action}
           actionDef={actionDef}
