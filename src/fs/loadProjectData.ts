@@ -10,7 +10,7 @@ export default async function loadProjectData(
     path: dataPath,
   });
   return new Promise((resolveData) => {
-    let data;
+    let data: any;
     once(
       "receive-project-file",
       async (event: { payload: { message: string } }) => {

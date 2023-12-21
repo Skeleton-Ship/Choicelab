@@ -146,5 +146,6 @@ declare global {
   interface Window {
     __CHOICELAB_DATA__: Store;
     __CHOICELAB_TARGET_MODE__: void | false;
+    __CHOICELAB_ASSET_CACHE__: any;
   }
 }

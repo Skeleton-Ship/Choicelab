@@ -85,7 +85,22 @@ export default function ActionPropEditor(props: {
           action={action}
           actionDef={actionDef}
           propDef={defProp}
-          filePropName="path"
+          filePropName="source"
+          initialValue={initialValue}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "video":
+      propControl = (
+        <File
+          type="binary"
+          accept="video/webm, video/mp4"
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          filePropName="source"
           initialValue={initialValue}
           store={props.store}
           update={props.update}

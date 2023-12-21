@@ -79,15 +79,6 @@ fn read_text_file(file_path: &str) -> Result<String, Box<dyn Error>> {
 	Ok(contents)
 }
 
-fn create_directory(directory_name: &str, path: &str) -> io::Result<()> {
-	
-	let full_path = format!("{}/{}", path, directory_name);
-	// Create the directory
-	fs::create_dir(&full_path)?;
-	
-	Ok(())
-}
-
 fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
 	// Check if the source file exists
 	if !Path::new(src_path).exists() {
@@ -105,6 +96,15 @@ fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
 	fs::copy(src_path, &dest_path)?;
 
 	Ok(dest_path.to_str().unwrap().to_string())
+}
+
+fn create_directory(directory_name: &str, path: &str) -> io::Result<()> {
+	
+	let full_path = format!("{}/{}", path, directory_name);
+	// Create the directory
+	fs::create_dir(&full_path)?;
+	
+	Ok(())
 }
 
 fn create_launcher(app: &tauri::App) -> Window {
@@ -236,7 +236,7 @@ fn main() {
 			let json_value: Result<Value, _> = from_str(json_raw);
 			match json_value {
 				Ok(json) => {
-					let main_window = handle_menu.get_focused_window().unwrap();
+					let main_window = handle_menu.get_window("project").unwrap();
 					let menu_handle = main_window.menu_handle();
 					let item_name = json["item"].as_str().unwrap_or("N/A");
 					let item_state = json["state"].as_str().unwrap_or("N/A");
@@ -345,6 +345,7 @@ fn main() {
 						  }
 					  }
 				  	}
+					  // TODO: Add text file creation
 				  }
 				  Err(e) => {
 					  eprintln!("Error parsing JSON: {}", e);
@@ -359,8 +360,8 @@ fn main() {
 			  let json_value: Result<Value, _> = from_str(json_raw);
 			  match json_value {
 					Ok(json) => {
-						let asset_path = json["asset_path"].as_str().unwrap_or("N/A");
-						let dest_path = json["temp_path"].as_str().unwrap_or("N/A");
+						let asset_path = json["assetPath"].as_str().unwrap_or("N/A");
+						let dest_path = json["cachePath"].as_str().unwrap_or("N/A");
 						match copy_file(asset_path, dest_path) {
 							Ok(_success) => {
 								let project_window = handle_read_asset.get_window("project").unwrap();

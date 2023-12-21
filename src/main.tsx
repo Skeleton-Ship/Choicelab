@@ -2,6 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
+import IndexedDB from "./editor/node-pane/functions/indexedDB";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
@@ -33,6 +34,8 @@ async function init() {
       setFocusedRegion(document.activeElement);
     }
   });
+  // create asset manager
+  window.__CHOICELAB_ASSET_CACHE__ = new IndexedDB("AssetCache", "Assets");
 
   let elements = <></>;
 

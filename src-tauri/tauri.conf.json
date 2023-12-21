@@ -21,6 +21,11 @@
         "open": true,
         "save": true
       },
+      "fs": {
+        "readFile": true,
+        "exists": true,
+        "scope": ["$APPCACHE/*"]
+      },
       "path": {
         "all": true
       },

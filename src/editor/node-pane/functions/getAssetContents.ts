@@ -1,0 +1,85 @@
+import { resolve as path_resolve, appCacheDir } from "@tauri-apps/api/path";
+import { emit, once } from "@tauri-apps/api/event";
+import {
+  readBinaryFile,
+  readTextFile,
+  BaseDirectory,
+} from "@tauri-apps/api/fs";
+// @ts-ignore
+import { encode } from "uint8-to-base64";
+import { getStore } from "../../../data/dataStore";
+import getBase64Prefix from "./getBase64Prefix";
+
+/**
+ * Given an already-stored file, return its contents
+ */
+async function storeCachedAsset(
+  fileName: string,
+  fileType: string,
+  localKey: string
+) {
+  return new Promise((resolve, reject) => {
+    try {
+      const store = getStore();
+      const storage = window.__CHOICELAB_ASSET_CACHE__;
+      path_resolve(store.projectPath, "./assets", fileName).then(
+        async (filePath) => {
+          const cachePath = await appCacheDir();
+          emit("read-asset", {
+            assetPath: filePath,
+            cachePath: cachePath,
+          });
+          once("asset-ready", async () => {
+            if (fileType === "binary") {
+              readBinaryFile(fileName, {
+                dir: BaseDirectory.AppCache,
+              }).then(async (file) => {
+                const prefix = getBase64Prefix(fileName);
+                const fileSrc = prefix + encode(file);
+                storage.storeFileContents(localKey, fileSrc);
+                resolve(fileSrc);
+              });
+            } else if (fileType === "text") {
+              readTextFile(fileName, {
+                dir: BaseDirectory.AppCache,
+              }).then(async (fileSrc) => {
+                storage.storeFileContents(localKey, fileSrc);
+                resolve(fileSrc);
+              });
+            }
+          });
+        }
+      );
+    } catch (e) {
+      reject();
+    }
+  });
+}
+
+export default async function getAssetContents(
+  fileName: string,
+  fileType: string
+) {
+  return new Promise((resolve, reject) => {
+    const storage = window.__CHOICELAB_ASSET_CACHE__;
+    const localKey = encodeURIComponent(`choicelab_asset_${fileName}`);
+    try {
+      storage.openDatabase().then(async () => {
+        let contents;
+        try {
+          contents = await storage.getFileContents(localKey);
+          if (contents === null) {
+            contents = await storeCachedAsset(fileName, fileType, localKey);
+          }
+          resolve(contents);
+        } catch (e) {
+          contents = await storeCachedAsset(fileName, fileType, localKey);
+          resolve(contents);
+        }
+      });
+    } catch (e) {
+      console.error("Failed to open local asset cache.");
+      reject();
+    }
+  });
+}

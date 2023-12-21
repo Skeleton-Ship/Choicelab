@@ -60,8 +60,8 @@ const internalActionDefs: ActionDefs = {
       },
       props: [
         {
-          name: "media",
-          label: "Media",
+          name: "source",
+          label: "Audio File",
           control: "audio",
           required: true,
         },
@@ -85,7 +85,7 @@ const internalActionDefs: ActionDefs = {
       },
       props: [
         {
-          name: "media",
+          name: "source",
           label: "Video File",
           control: "video",
           required: true,
@@ -114,6 +114,7 @@ const internalActionDefs: ActionDefs = {
           name: "source",
           label: "Image File",
           control: "image",
+          default: "",
           required: true,
         },
         {
