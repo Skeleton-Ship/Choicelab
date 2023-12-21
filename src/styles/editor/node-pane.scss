@@ -1,6 +1,5 @@
 @use "../variables";
 @use "./action-pane/prop-controls";
-@use "./action-pane/specific-actions";
 
 #available-actions,
 #actions-editor {
@@ -62,7 +61,8 @@
   .action {
     padding: 16px;
     background-color: white;
-    margin: 15px;
+    margin: 5%;
+    // margin: 15px;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.1) 0 2px 10px;
     &.disabled {
@@ -130,7 +130,7 @@
       }
     }
     &:not(:last-of-type) {
-      margin-bottom: 25px;
+      margin-bottom: 5%;
     }
     &:last-of-type {
       border-bottom-width: 0;

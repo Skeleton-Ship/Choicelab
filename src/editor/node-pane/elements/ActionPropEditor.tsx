@@ -19,6 +19,7 @@ export default function ActionPropEditor(props: {
   const actionDef = props.def;
   const defProp = props.defProp;
   const storedValue = action.props[defProp.name];
+  const className = defProp.className ? defProp.className : "";
   if (typeof storedValue !== "undefined") {
     initialValue = storedValue;
   } else {
@@ -30,12 +31,13 @@ export default function ActionPropEditor(props: {
     case "text":
       propControl = (
         <TextField
+          fieldType="text"
           action={action}
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          className={className}
           store={props.store}
-          fieldType="text"
           update={props.update}
         />
       );
@@ -43,12 +45,13 @@ export default function ActionPropEditor(props: {
     case "textarea":
       propControl = (
         <TextField
+          fieldType="textarea"
           action={action}
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          className={className}
           store={props.store}
-          fieldType="textarea"
           update={props.update}
         />
       );
@@ -60,6 +63,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          className={className}
           store={props.store}
           update={props.update}
         />
@@ -72,6 +76,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          className={className}
           store={props.store}
           update={props.update}
         />
@@ -82,11 +87,12 @@ export default function ActionPropEditor(props: {
         <File
           type="binary"
           accept="image/png, image/jpeg, image/gif"
+          filePropName="source"
           action={action}
           actionDef={actionDef}
           propDef={defProp}
-          filePropName="source"
           initialValue={initialValue}
+          className={className}
           store={props.store}
           update={props.update}
         />
@@ -97,11 +103,12 @@ export default function ActionPropEditor(props: {
         <File
           type="binary"
           accept="video/webm, video/mp4"
+          filePropName="source"
           action={action}
           actionDef={actionDef}
           propDef={defProp}
-          filePropName="source"
           initialValue={initialValue}
+          className={className}
           store={props.store}
           update={props.update}
         />
@@ -112,11 +119,28 @@ export default function ActionPropEditor(props: {
         <File
           type="binary"
           accept="audio/mp3"
+          filePropName="source"
           action={action}
           actionDef={actionDef}
           propDef={defProp}
-          filePropName="source"
           initialValue={initialValue}
+          className={className}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "captions":
+      propControl = (
+        <File
+          type="text"
+          accept="text/vtt"
+          filePropName="captions"
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          initialValue={initialValue}
+          className={className}
           store={props.store}
           update={props.update}
         />

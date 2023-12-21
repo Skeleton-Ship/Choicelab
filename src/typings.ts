@@ -131,6 +131,7 @@ export interface ActionDefProp {
   value?: any;
   default?: any;
   required?: boolean;
+  className?: string;
   options?: Array<ActionDefPropDropdownOption>;
 }
 export interface ActionDefPropDropdownOption {

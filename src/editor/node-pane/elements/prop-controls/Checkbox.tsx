@@ -6,6 +6,7 @@ export default function Checkbox(props: {
   actionDef: ActionDef;
   propDef: ActionDefProp;
   initialValue: boolean;
+  className: string;
   store: Store;
   update: Function;
 }) {
@@ -20,8 +21,9 @@ export default function Checkbox(props: {
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
   const initialChecked = props.initialValue === true ? true : false;
+  const className = `action-prop checkbox ${props.className}`;
   return (
-    <div class="action-prop checkbox">
+    <div class={className}>
       <input
         type="checkbox"
         name={propElName}

@@ -1,5 +1,25 @@
 .action-prop {
   margin-bottom: 10px;
+  // Visually hide, showing only for screen readers
+  &.hide-label {
+    .label {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      visibility: hidden;
+      overflow: hidden;
+      width: 0;
+      height: 0;
+    }
+  }
+  &.large {
+    input[type="text"],
+    textarea {
+      font-size: 16px;
+      min-height: 150px;
+    }
+  }
+  // Label
   .label {
     font-weight: 500;
     font-size: 11px;
@@ -7,6 +27,7 @@
       display: block;
     }
   }
+  // Text
   input[type="text"],
   textarea {
     width: 100%;
@@ -18,6 +39,7 @@
     border: none;
     box-shadow: rgba(0, 0, 0, 0.2) 0 1px 1px;
   }
+  // File
   &.file {
     padding-top: 5px;
     margin-bottom: 15px;

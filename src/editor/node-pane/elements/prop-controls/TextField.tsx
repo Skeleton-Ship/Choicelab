@@ -5,9 +5,10 @@ export default function TextField(props: {
   action: Action;
   actionDef: ActionDef;
   propDef: ActionDefProp;
-  initialValue: string;
-  store: Store;
   fieldType: string;
+  initialValue: string;
+  className: string;
+  store: Store;
   update: Function;
 }) {
   function handleChange(target: EventTarget | null) {
@@ -20,6 +21,7 @@ export default function TextField(props: {
   const action = props.action;
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
+  const className = `action-prop text-field ${props.className}`;
   let fieldEl = (
     <input
       name={propElName}
@@ -44,7 +46,7 @@ export default function TextField(props: {
     );
   }
   return (
-    <div class="action-prop text-field">
+    <div class={className}>
       <label class="label break-line" for={propElName}>
         {propDef.label}
       </label>

@@ -12,6 +12,7 @@ export default function Dropdown(props: {
   actionDef: ActionDef;
   propDef: ActionDefProp;
   initialValue: string;
+  className: string;
   store: Store;
   update: Function;
 }) {
@@ -33,8 +34,9 @@ export default function Dropdown(props: {
     const optionEl = <option value={option.value}>{option.label}</option>;
     optionEls.push(optionEl);
   });
+  const className = `action-prop dropdown ${props.className}`;
   return (
-    <div class="action-prop dropdown">
+    <div class={className}>
       <label class="label break-line" for={propElName}>
         {propDef.label}
       </label>
