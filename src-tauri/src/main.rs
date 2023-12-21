@@ -344,7 +344,17 @@ fn main() {
 							  eprintln!("Error creating asset");
 						  }
 					  }
-				  	}
+				  	} else if file_type == "text" {
+						  match create_text_file(file_name, contents, assets_dir) {
+								Ok(_success) => {
+									let project_window = handle_create_asset.get_window("project").unwrap();
+									let _ = project_window.emit("asset-created", Payload { message: "Asset created successfully".to_string() } );
+								}
+								Err(_e) => {
+									eprintln!("Error creating asset");
+								}
+							}
+					  }
 					  // TODO: Add text file creation
 				  }
 				  Err(e) => {

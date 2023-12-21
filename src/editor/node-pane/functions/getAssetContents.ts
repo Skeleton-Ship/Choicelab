@@ -29,7 +29,6 @@ function readFileContents(
         dir: BaseDirectory.AppCache,
       }).then(async (file) => {
         const prefix = getBase64Prefix(fileName);
-        console.log("Encoding file...", fileName);
         let fileSrc = uint8ToBase64(file);
         if (!fileSrc || (fileSrc === "" && iteration < 50)) {
           return readFileContents(fileName, fileType, localKey, iteration + 1);
