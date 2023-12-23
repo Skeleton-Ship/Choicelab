@@ -6,27 +6,26 @@ import {
 import { Store } from "../../../typings";
 
 function getHighestNodeInView() {
-  const viewportHeight = window.innerHeight;
+  // const viewportHeight = window.innerHeight;
   const elements = document.querySelectorAll("#sequence .node");
 
   let highestElement: Element | undefined;
-  let highestElementTop = -Infinity;
+  let highestElementTop: number | undefined;
 
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     const rect = element.getBoundingClientRect();
     const elementTop = rect.top;
-
+    if (elementTop < 0) continue;
     if (
-      elementTop >= 0 &&
-      elementTop < viewportHeight &&
-      elementTop > highestElementTop
+      !highestElementTop ||
+      (elementTop < highestElementTop &&
+        element.getAttribute("data-link-to") !== "")
     ) {
       highestElement = element;
       highestElementTop = elementTop;
     }
   }
-
   return highestElement;
 }
 
