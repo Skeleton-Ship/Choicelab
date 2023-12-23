@@ -74,9 +74,7 @@ async function storeCachedAsset(
               localKey,
               0
             );
-            if (fileSrc === "") {
-              console.log("Blank file source");
-            } else {
+            if (fileSrc !== "") {
               const storage = window.__CHOICELAB_ASSET_CACHE__;
               storage.storeFileContents(localKey, fileSrc);
             }
