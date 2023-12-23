@@ -5,6 +5,8 @@ import { appWindow } from "@tauri-apps/api/window";
 import inTextElement from "../utils/inTextElement";
 import { getStore, setStore } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
+import { getNode } from "./getData";
+import { AnyNode } from "../typings";
 
 /**
  * Create a history instance.
@@ -91,6 +93,16 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
         location: stepIndex,
         versions: projectHistory.versions,
       };
+      // See if selected nodes need to be updated
+      const newSelectedNodes: Array<AnyNode> = [];
+      store.selectedNodes.forEach((node) => {
+        const existingNode: AnyNode | undefined = getNode(node.id, store);
+        if (existingNode) {
+          newSelectedNodes.push(node);
+        }
+      });
+      store.selectedNodes = newSelectedNodes;
+      // Handle final calls
       markUnsaved();
       setStore(store);
       update(false);
