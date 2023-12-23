@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "preact/hooks";
 import StartEl from "./elements/Start";
 import CellEl from "./elements/Cell";
 import BranchEl from "./elements/Branch";
-// import { getStore, setStore } from "../../data/dataStore";
 import { getSequence } from "../../data/getData";
 import runSequenceEvents from "./general/runSequenceEvents";
 import handleSelectNode from "./selecting/handleSelectNode";
