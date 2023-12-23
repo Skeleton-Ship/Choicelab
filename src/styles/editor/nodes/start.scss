@@ -1,14 +1,11 @@
 .start.node {
   width: 100px;
   height: 45px;
-  border: 1px dashed #aaa;
-  border-radius: 5px;
   .contents {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: transparent;
-    box-shadow: none;
+    border-radius: 5px;
   }
   .title {
     font-weight: 600;

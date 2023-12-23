@@ -19,6 +19,10 @@ function handleDeleteNodes(update: Function) {
   const selectedNodesUnsorted = store.selectedNodes;
   // First, arrange order of selected nodes, in case there is one
   const selectedNodes = sortSelectedNodes(selectedNodesUnsorted);
+  // If all that's selected is start, then exit
+  if (selectedNodes.length === 1 && selectedNodes[0].type === "start") {
+    return;
+  }
   // Remove node from data, resolve connections
   selectedNodes.forEach((node: AnyNode) => {
     if (node.type === "cell" && node.link) {

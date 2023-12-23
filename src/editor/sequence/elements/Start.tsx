@@ -1,7 +1,8 @@
 import { getNode } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, setStore } from "../../../data/dataStore";
 import Link from "./Link";
 import { AnyNode } from "../../../typings";
+import isNodeSelected from "../selecting/isNodeSelected";
 
 /**
  * A node that represents the start point of the sequence. Only its link can be set; it otherwise cannot be changed, moved, or deleted.
@@ -16,6 +17,7 @@ export default function StartEl(props: {
   width: number;
   height: number;
   update: Function;
+  onClick: Function;
 }) {
   const store = getStore();
   const cell: AnyNode | undefined = getNode(props.id, store);
@@ -26,6 +28,17 @@ export default function StartEl(props: {
   if (typeof cell.link === "undefined") {
     return defaultEl;
   }
+  function handleSelectStart() {
+    const store = getStore();
+    store.selectedStem = false;
+    setStore(store);
+    props.onClick(cell);
+  }
+  const selectedNodes = store.selectedNodes;
+  const selectedClass = isNodeSelected(props.id, selectedNodes)
+    ? "selected"
+    : "";
+  const cellClass = `start node ${selectedClass}`;
   const style = {
     top: props.top + "px",
     left: props.left + "px",
@@ -34,11 +47,12 @@ export default function StartEl(props: {
   };
   return (
     <li
-      className="start node"
+      className={cellClass}
       data-id={props.id}
       data-element="start"
       data-link-to={cell.link.to}
       style={style}
+      onClick={handleSelectStart}
     >
       <div className="contents">
         <span className="node-id">{props.id}</span>
