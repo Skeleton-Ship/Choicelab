@@ -6,7 +6,6 @@ import {
 import { Store } from "../../../typings";
 
 function getHighestNodeInView() {
-  // const viewportHeight = window.innerHeight;
   const elements = document.querySelectorAll("#sequence .node");
 
   let highestElement: Element | undefined;

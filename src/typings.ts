@@ -64,6 +64,7 @@ export interface Variable {
 export interface Project {
   name: string;
   id: string;
+  appVersion: string;
   actions: {
     name: string;
     path: string;

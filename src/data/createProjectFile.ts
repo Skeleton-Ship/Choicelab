@@ -1,11 +1,14 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { Project } from "../typings";
 import { v4 as uuidv4 } from "uuid";
 import createSequence from "./createSequence";
 
-export default function createProjectFile(name: string) {
+export default async function createProjectFile(name: string) {
+  const appVersion = await getVersion();
   const blankProject: Project = {
     name: name,
     id: uuidv4(),
+    appVersion: appVersion,
     actions: {
       name: "__CHOICELAB_STANDARD__",
       path: "__INTERNAL__",

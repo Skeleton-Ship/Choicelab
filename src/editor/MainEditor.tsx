@@ -1,19 +1,23 @@
+// Libraries
 import { ask } from "@tauri-apps/api/dialog";
-import { v4 as uuidv4 } from "uuid";
-import { useEffect, useState } from "preact/hooks";
-import { Sequence } from "../typings";
-import { getStore, setStore } from "../data/dataStore";
-import { getCurrentSequence } from "../data/getData";
-import Toolbar from "./toolbar/Toolbar";
+import { getVersion } from "@tauri-apps/api/app";
 import { listen, emit } from "@tauri-apps/api/event";
 import { appWindow } from "@tauri-apps/api/window";
 import { resolve } from "@tauri-apps/api/path";
+import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "preact/hooks";
+// App functions
+import { Sequence } from "../typings";
+import { getStore, setStore } from "../data/dataStore";
+import { getCurrentSequence } from "../data/getData";
 import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
-import SequenceEl from "./sequence/Sequence";
-import NodePane from "./NodePane";
 import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
+// App elements
+import Toolbar from "./toolbar/Toolbar";
+import SequenceEl from "./sequence/Sequence";
+import NodePane from "./NodePane";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -35,6 +39,10 @@ export default function MainEditor() {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
       const newStore = getStore();
+      // Update app version
+      const appVersion = await getVersion();
+      newStore.project.appVersion = appVersion;
+      // Pass to back-end
       emit("save-text-file", {
         name: "project.json",
         contents: JSON.stringify(newStore.project, null, 2),
