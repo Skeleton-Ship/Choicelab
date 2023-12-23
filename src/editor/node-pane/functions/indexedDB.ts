@@ -41,7 +41,6 @@ export default class IndexedDBExample {
       };
 
       request.onerror = (event: any) => {
-        console.log(event);
         reject(`Failed to store file contents: ${event}`);
       };
     });
