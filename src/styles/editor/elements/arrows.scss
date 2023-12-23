@@ -10,6 +10,7 @@ $arrow-color: #aaa;
   }
   path.line {
     stroke: $arrow-color;
+    fill: none;
   }
   .stem-line {
     stroke-dasharray: 6;

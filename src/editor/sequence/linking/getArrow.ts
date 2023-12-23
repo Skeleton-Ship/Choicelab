@@ -29,6 +29,10 @@ function getPathDimensions(fromElement: Element, toElement: Element): string {
     fromY = fromTop + fromHeight;
     fromX = fromX - 5;
     toY = toTop + toHeight;
+    // Add a subtle curve using a Bezier curve (C command)
+    const curveControlX = (fromX + toX) / 2;
+    const curveControlY = fromY + 40; // Adjust the curve height as needed
+    return `M ${fromX} ${fromY} C ${curveControlX} ${curveControlY} ${curveControlX} ${curveControlY} ${toX} ${toY}`;
   } else if (fromTop > toTop) {
     fromY = fromTop;
     fromX = fromX - 5;
