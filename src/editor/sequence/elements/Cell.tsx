@@ -9,13 +9,13 @@ import { Cell } from "../../../typings";
  */
 export default function CellEl(props: {
   id: string;
-  update: Function;
   x: number;
   y: number;
   left: number;
   top: number;
   width: number;
   height: number;
+  update: Function;
   onClick: Function;
 }) {
   const store = getStore();
