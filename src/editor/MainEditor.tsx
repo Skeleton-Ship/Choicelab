@@ -17,7 +17,7 @@ import { getFocusedRegion } from "../utils/focusedRegion";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./sequence/Sequence";
-import NodePane from "./NodePane";
+import Inspector from "./Inspector";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function MainEditor() {
       <Toolbar update={handleUpdate} />
       <div id="editor-contents">
         {flowchartContents}
-        <NodePane update={handleUpdate} />
+        <Inspector update={handleUpdate} />
       </div>
     </div>
   );

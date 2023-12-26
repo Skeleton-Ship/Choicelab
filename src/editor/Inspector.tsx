@@ -1,13 +1,12 @@
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 import { getStore } from "../data/dataStore";
-import ActionsPane from "./node-pane/ActionsPane";
+import ActionsPane from "./inspector/ActionsPane";
+import VariablesPane from "./inspector/VariablesPane";
 
 function makeResizable(el: HTMLElement) {
   const resizer = el.querySelector(".resizer");
   if (!resizer) return;
-
-  // let startX: number, startWidth: number;
 
   resizer.addEventListener("mousedown", () => {
     initDrag();
@@ -28,7 +27,7 @@ function makeResizable(el: HTMLElement) {
   }
 }
 
-export default function NodePane(props: { update: Function }) {
+export default function Inspector(props: { update: Function }) {
   // Make resizable
   const ref = createRef();
   useEffect(() => {
@@ -39,23 +38,29 @@ export default function NodePane(props: { update: Function }) {
   // Contents
   let contents = <></>;
   const store = getStore();
-  if (store.selectedNodes.length <= 0) {
-    // If no node is selected
-    contents = <p class="placeholder">No Node Selected</p>;
-  } else if (store.selectedNodes.length > 1) {
-    // If multiple nodes are selected
-    contents = <p class="placeholder">Multiple Nodes Selected</p>;
-  } else {
-    const node = store.selectedNodes[0];
-    if (node.type === "cell") {
-      contents = (
-        <>
-          <ActionsPane update={props.update} />
-        </>
-      );
-    } else if (node.type === "branch") {
-      contents = <p class="placeholder">Branch editor goes here</p>;
+  // First, see what view we're in
+  const paneInView = store.viewSettings.paneInView;
+  if (paneInView === "node-editor") {
+    if (store.selectedNodes.length <= 0) {
+      // If no node is selected
+      contents = <p class="placeholder">No Node Selected</p>;
+    } else if (store.selectedNodes.length > 1) {
+      // If multiple nodes are selected
+      contents = <p class="placeholder">Multiple Nodes Selected</p>;
+    } else {
+      const node = store.selectedNodes[0];
+      if (node.type === "cell") {
+        contents = (
+          <>
+            <ActionsPane update={props.update} />
+          </>
+        );
+      } else if (node.type === "branch") {
+        contents = <p class="placeholder">Branch editor goes here</p>;
+      }
     }
+  } else if (paneInView === "variables") {
+    contents = <VariablesPane update={props.update} />;
   }
   return (
     <div id="node-pane" class="pane right" ref={ref}>

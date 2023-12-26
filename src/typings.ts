@@ -101,6 +101,7 @@ export interface Store {
     cellMarginLeft: number;
     cellMarginTop: number;
     stemMarginLeft: number;
+    paneInView: string;
   };
 }
 export interface Action {

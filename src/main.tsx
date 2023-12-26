@@ -2,7 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
-import IndexedDB from "./editor/node-pane/functions/indexedDB";
+import IndexedDB from "./editor/inspector/functions/indexedDB";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
