@@ -37,6 +37,17 @@ function getPathDimensions(fromElement: Element, toElement: Element): string {
     fromY = fromTop;
     fromX = fromX - 5;
     toY = toTop + toHeight;
+    // Add a subtle curve to the left or right based on the relative horizontal position
+    const curveControlX = (fromX + toX) / 2;
+    const curveControlY = fromY + 40; // Adjust the curve height as needed
+    // Check if 'fromElement' is to the left or right of 'toElement'
+    if (fromLeft <= toLeft) {
+      // 'fromElement' is to the left, so curve to the left
+      return `M ${fromX} ${fromY} Q ${curveControlX} ${curveControlY} ${toX} ${toY}`;
+    } else {
+      // 'fromElement' is to the right, so curve to the right
+      return `M ${fromX} ${fromY} Q ${toX} ${curveControlY} ${toX} ${toY}`;
+    }
   }
 
   const pathDimensions = `M ${fromX} ${fromY} L ${toX} ${toY}`;
