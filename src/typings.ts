@@ -59,7 +59,11 @@ export interface Sequence {
   nodes: Array<AnyNode>;
 }
 export interface Variable {
-  type: string;
+  name: string;
+  id: string;
+  description: string;
+  varType: string;
+  startingValue: string | number | boolean;
 }
 export interface Project {
   name: string;
@@ -70,7 +74,7 @@ export interface Project {
     path: string;
   };
   variables: {
-    [key: string]: Variable;
+    items: Array<Variable>;
   };
   sequences: Array<Sequence>;
 }
