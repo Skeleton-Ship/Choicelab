@@ -1,5 +1,10 @@
 @use "../variables";
+@use "../mixins";
 @use "./action-pane/prop-controls";
+
+#node-pane {
+  @include mixins.vibrant-bg-light();
+}
 
 #available-actions,
 #actions-editor {

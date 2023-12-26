@@ -10,6 +10,7 @@ export default function loadProject(projectPath: string) {
     height: 700,
     minWidth: 600,
     minHeight: 360,
+    transparent: true,
   });
   webview.once("tauri://created", function () {});
   // webview.once("tauri://error", function () {});
