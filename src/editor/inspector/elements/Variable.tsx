@@ -2,6 +2,7 @@ import { Variable } from "../../../typings";
 import { getVariable } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
+import IconDelete from "../../../assets/icon-delete.svg";
 
 export default function VariableEl(props: {
   instance: Variable;
@@ -128,7 +129,7 @@ export default function VariableEl(props: {
    */
   return (
     <li class="variable">
-      <div>
+      <div class="var-name field">
         <label for={nameField}>Name:</label>
         <input
           type="text"
@@ -139,18 +140,7 @@ export default function VariableEl(props: {
           }}
         />
       </div>
-      <div>
-        <label for={descField}>Description:</label>
-        <input
-          type="text"
-          id={descField}
-          value={variable.description}
-          onChange={(e) => {
-            handleChange("description", e.target);
-          }}
-        />
-      </div>
-      <div>
+      <div class="var-type field">
         <label for={typeField}>Type:</label>
         <select
           id={typeField}
@@ -164,12 +154,24 @@ export default function VariableEl(props: {
           <option value="number">Number</option>
         </select>
       </div>
-      <div>
-        <label for={startingValField}>Starting value:</label>
+      <div class="var-starting-value field">
+        <label for={startingValField}>Starting Value:</label>
         {startingValueInput}
       </div>
-      <div>
-        <button onClick={handleDelete}>Delete Variable</button>
+      <div class="var-description field">
+        <label for={descField}>Description:</label>
+        <textarea
+          id={descField}
+          value={variable.description}
+          onChange={(e) => {
+            handleChange("description", e.target);
+          }}
+        />
+      </div>
+      <div class="delete field">
+        <button onClick={handleDelete} title="Delete Variable">
+          <img src={IconDelete} />
+        </button>
       </div>
     </li>
   );

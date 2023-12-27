@@ -1,0 +1,98 @@
+$pane-padding: 14px;
+
+#variables-toolbar,
+#variables-list {
+  padding-left: $pane-padding;
+  padding-right: $pane-padding;
+}
+
+#variables-toolbar {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  button {
+    font-size: 12px;
+  }
+}
+#variables-list {
+  max-width: 100%;
+  height: calc(100% - 40px);
+  overflow: scroll;
+  margin: 0;
+  .field-names,
+  .variable {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    min-width: min-content;
+    max-width: none;
+    align-items: center;
+  }
+  .field-names {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 6px;
+    li {
+      list-style: none;
+      font-weight: 600;
+      font-size: 11px;
+    }
+  }
+  .field {
+    width: 23%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding-right: 10px;
+    &.var-name {
+      min-width: 120px;
+    }
+    &.var-type {
+      width: 10%;
+      min-width: 100px;
+    }
+    &.var-starting-value {
+      min-width: 120px;
+    }
+    &.var-description {
+      min-width: 160px;
+    }
+    &.delete {
+      width: 5%;
+      min-width: 30px;
+    }
+  }
+  .variable {
+    background-color: white;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 10px;
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      font-size: 11px;
+      width: 100%;
+    }
+    label {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      visibility: hidden;
+    }
+    .delete.field {
+      button {
+        appearance: none;
+        border: none;
+        background: none;
+        width: 30px;
+        top: -3px;
+        position: relative;
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+      }
+    }
+  }
+}
