@@ -9,6 +9,7 @@ import {
   Action,
   ActionDef,
   ActionDefs,
+  Variable,
 } from "../typings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
@@ -19,6 +20,16 @@ function getSequence(id: string, data: Store): Sequence | undefined {
     }
   });
   return foundSequence;
+}
+
+function getVariable(id: string, data: Store): Variable | undefined {
+  let foundVariable;
+  data.project.variables.items.forEach((variable: Variable) => {
+    if (variable.id === id) {
+      foundVariable = variable;
+    }
+  });
+  return foundVariable;
 }
 
 function getNode(id: string, data: Store): AnyNode | undefined {
@@ -201,6 +212,7 @@ function getActionDef(
 
 export {
   getSequence,
+  getVariable,
   getNode,
   getSequenceStart,
   getCell,

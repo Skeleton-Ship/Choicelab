@@ -1,5 +1,13 @@
 import { getBranch } from "./getData";
-import { Store, Sequence, AnyNode, Stem, Branch, Action } from "../typings";
+import {
+  Store,
+  Sequence,
+  AnyNode,
+  Stem,
+  Branch,
+  Action,
+  Variable,
+} from "../typings";
 
 function deleteSequenceFromData(sequenceId: string, store: Store) {
   const project = store.project;
@@ -15,6 +23,24 @@ function deleteSequenceFromData(sequenceId: string, store: Store) {
   // Delete it
   if (correctSequenceIndex !== false) {
     project.sequences.splice(correctSequenceIndex, 1);
+  }
+  return store;
+}
+
+function deleteVariableFromData(variableId: string, store: Store) {
+  const variables = store.project.variables;
+  let correctVariableIndex: number | false = false;
+  // Find sequence
+  let variableIndex: number = 0;
+  variables.items.forEach((variable: Variable) => {
+    if (variable.id === variableId) {
+      correctVariableIndex = variableIndex;
+    }
+    variableIndex++;
+  });
+  // Delete it
+  if (correctVariableIndex !== false) {
+    variables.items.splice(correctVariableIndex, 1);
   }
   return store;
 }
@@ -103,6 +129,7 @@ function deleteActionFromData(actionId: string, nodeId: string, store: Store) {
 
 export {
   deleteSequenceFromData,
+  deleteVariableFromData,
   deleteNodeFromData,
   deleteStemFromData,
   deleteActionFromData,

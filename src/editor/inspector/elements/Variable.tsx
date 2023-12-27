@@ -1,30 +1,175 @@
 import { Variable } from "../../../typings";
+import { getVariable } from "../../../data/getData";
+import { getStore, setStore } from "../../../data/dataStore";
+import { deleteVariableFromData } from "../../../data/deleteData";
 
 export default function VariableEl(props: {
   instance: Variable;
   update: Function;
 }) {
+  /*
+   * Methods for updating, deleting
+   */
+  function setVariableName(rawName: string) {
+    const components = rawName.split(/[\s\.\-_]/g);
+    let newName = "";
+    for (var i = 0; i < components.length; i++) {
+      var component = components[i];
+      if (i === 0) {
+        component = component.charAt(0).toLowerCase() + component.slice(1);
+      }
+      if (i > 0) {
+        component = component.charAt(0).toUpperCase() + component.slice(1);
+      }
+      newName += component;
+    }
+    return newName;
+  }
+  function handleDelete() {
+    const store = getStore();
+    const newStore = deleteVariableFromData(props.instance.id, store);
+    setStore(newStore);
+    props.update();
+  }
+  function handleChange(
+    field: "name" | "varType" | "description" | "startingValue",
+    target: EventTarget | null
+  ) {
+    if (target === null) return;
+    // Get var in store
+    const store = getStore();
+    const varInStore: Variable | undefined = getVariable(
+      props.instance.id,
+      store
+    );
+    if (!varInStore) {
+      console.error("Variable not found in store.");
+      return;
+    }
+    // Figure out what kind of change we're making, and cast values as needed
+    let value: any;
+    let rawValue = (target as HTMLInputElement).value;
+    switch (field) {
+      case "name":
+        value = setVariableName(rawValue);
+        break;
+      case "startingValue":
+        if (varInStore.varType === "number") {
+          value = parseFloat(rawValue);
+        } else if (varInStore.varType === "boolean") {
+          value = rawValue === "true" ? true : false;
+        }
+        break;
+      // If changing var type, reset the value too
+      case "varType":
+        value = rawValue;
+        if (rawValue === "boolean") {
+          varInStore.startingValue = true;
+        } else if (rawValue === "string") {
+          varInStore.startingValue = "";
+        }
+        break;
+      default:
+        value = rawValue;
+    }
+    // Update and save
+    varInStore[field] = value;
+    setStore(store);
+    props.update();
+  }
+
+  /*
+   * Front-end display
+   */
   const variable = props.instance;
+  // Get names of fields
   const nameField = `name_${variable.id}`;
   const typeField = `varType_${variable.id}`;
-  const descField = `description_${variable.description}`;
+  const descField = `description_${variable.id}`;
+  const startingValField = `starting_value_${variable.id}`;
+  // Get starting value field based on var type
+  const startingValue: any = variable.startingValue; // `any` isn't ideal here, but we're enforcing the type above
+  let startingValueInput = (
+    <input
+      type="text"
+      value={startingValue}
+      onChange={(e) => {
+        handleChange("startingValue", e.target);
+      }}
+    />
+  );
+  if (variable.varType === "number") {
+    startingValueInput = (
+      <input
+        id={startingValField}
+        type="number"
+        value={startingValue}
+        onChange={(e) => {
+          handleChange("startingValue", e.target);
+        }}
+      />
+    );
+  } else if (variable.varType === "boolean") {
+    startingValueInput = (
+      <select
+        id={startingValField}
+        value={startingValue}
+        onChange={(e) => {
+          handleChange("startingValue", e.target);
+        }}
+      >
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+    );
+  }
+  /*
+   * Return JSX
+   */
   return (
     <li class="variable">
       <div>
         <label for={nameField}>Name:</label>
-        <input type="text" id={nameField} value={variable.name} />
+        <input
+          type="text"
+          id={nameField}
+          value={variable.name}
+          onChange={(e) => {
+            handleChange("name", e.target);
+          }}
+        />
       </div>
       <div>
         <label for={descField}>Description:</label>
-        <input type="text" id={descField} value={variable.description} />
+        <input
+          type="text"
+          id={descField}
+          value={variable.description}
+          onChange={(e) => {
+            handleChange("description", e.target);
+          }}
+        />
       </div>
       <div>
         <label for={typeField}>Type:</label>
-        <select id={typeField} value={variable.varType}>
+        <select
+          id={typeField}
+          value={variable.varType}
+          onChange={(e) => {
+            handleChange("varType", e.target);
+          }}
+        >
           <option value="string">String</option>
           <option value="boolean">Boolean</option>
           <option value="number">Number</option>
         </select>
+      </div>
+      <div>
+        <label for={startingValField}>Starting value:</label>
+        {startingValueInput}
+      </div>
+      <div>
+        <button onClick={handleDelete}>Delete Variable</button>
       </div>
     </li>
   );
