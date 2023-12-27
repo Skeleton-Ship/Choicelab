@@ -25,6 +25,33 @@
   }
   .toolbar-region {
     display: flex;
+    &.button-group {
+      &:hover {
+        button {
+          background-color: rgba(0, 0, 0, 0.08);
+          &:not(:first-of-type):not(:last-of-type) {
+            border-radius: 0;
+          }
+          &:first-of-type {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+          &:last-of-type {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+          &.selected {
+            background-color: rgba(0, 0, 0, 0.15);
+          }
+          &:active:not(:disabled):not(.selected) {
+            background-color: rgba(0, 0, 0, 0.15);
+          }
+          &.selected:active {
+            background-color: rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+    }
   }
   button {
     -webkit-app-region: no-drag;

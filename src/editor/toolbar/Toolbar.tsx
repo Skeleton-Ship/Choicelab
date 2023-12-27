@@ -53,7 +53,7 @@ function Toolbar(props: { update: Function }) {
           </div>
         </button>
       </div>
-      <div class="toolbar-region panes right">
+      <div class="toolbar-region button-group panes right">
         <button
           title="Node Editor"
           class={nodeEditorClass}
