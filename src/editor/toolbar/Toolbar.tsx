@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { emit } from "@tauri-apps/api/event";
 import { createCell, createBranch } from "../../data/createNode";
 import insertNewNode from "../sequence/general/insertNewNode";
 import iconBranch from "../../assets/icon-add-branch.svg";
@@ -7,13 +7,21 @@ import { getStore, setStore } from "../../data/dataStore";
 
 function Toolbar(props: { update: Function }) {
   function handleSelectPane(paneName: string) {
-    setPane(paneName);
     store.viewSettings.paneInView = paneName;
     setStore(store);
     props.update(false);
+    // Send updates to menu
+    const selectItems =
+      paneName === "node-editor" ? ["show_actions"] : ["show_variables"];
+    const deselectItems =
+      paneName === "node-editor" ? ["show_variables"] : ["show_actions"];
+    emit("select-menu-items", {
+      selectItems: selectItems,
+      deselectItems: deselectItems,
+    });
   }
   const store = getStore();
-  const [paneInView, setPane] = useState(store.viewSettings.paneInView);
+  const paneInView = store.viewSettings.paneInView;
   const nodeEditorSelectedClass =
     paneInView === "node-editor" ? "selected" : "";
   const variablesSelectedClass = paneInView === "variables" ? "selected" : "";

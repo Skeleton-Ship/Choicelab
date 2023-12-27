@@ -33,6 +33,9 @@ pub fn create_app_menu() -> Menu {
 	.add_native_item(MenuItem::SelectAll)
 	);
 	let view_menu = Submenu::new("View", Menu::new()
+	.add_item(CustomMenuItem::new("show_actions", "Show Actions").accelerator("Cmd+E").disabled())
+	.add_item(CustomMenuItem::new("show_variables", "Show Variables").accelerator("Cmd+R").disabled())
+	.add_native_item(MenuItem::Separator)
 	.add_native_item(MenuItem::EnterFullScreen)
 	);
 	let project_menu = Submenu::new("Project", Menu::new()

@@ -1,6 +1,8 @@
 use tauri::WindowMenuEvent;
 
 pub fn bind_menu_events(event: WindowMenuEvent) {
+	let window = event.window();
+	let menu_handle = window.menu_handle();
 	match event.menu_item_id() {
 		  "new_project" => {
 			  event.window().emit("menu-new-project", ()).unwrap();
@@ -37,7 +39,17 @@ pub fn bind_menu_events(event: WindowMenuEvent) {
 		  }
 		  "disconnect_link" => {
 			  event.window().emit("menu-disconnect-link", ()).unwrap();
-		  }		  
-		  _ => {}
+		  }	
+		  "show_actions" => {
+			  event.window().emit("menu-show-actions", ()).unwrap();
+			  let _ = menu_handle.get_item("show_actions").set_selected(true);
+			  let _ = menu_handle.get_item("show_variables").set_selected(false);
+		  }	  
+		  "show_variables" => {
+			  event.window().emit("menu-show-variables", ()).unwrap();
+			  let _ = menu_handle.get_item("show_actions").set_selected(false);
+			  let _ = menu_handle.get_item("show_variables").set_selected(true);
+		  }	 
+		_ => {}
 	  }
 }

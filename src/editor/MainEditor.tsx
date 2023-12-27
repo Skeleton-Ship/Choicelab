@@ -23,6 +23,23 @@ export default function MainEditor() {
   useEffect(() => {
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
+    // Set up actions/variables view listeners
+    listen("menu-show-actions", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const store = getStore();
+      store.viewSettings.paneInView = "node-editor";
+      setStore(store);
+      handleUpdate(false);
+    });
+    listen("menu-show-variables", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const store = getStore();
+      store.viewSettings.paneInView = "variables";
+      setStore(store);
+      handleUpdate(false);
+    });
     // Set up undo/redo listeners
     listen("menu-undo", async () => {
       const focused = await appWindow.isFocused();

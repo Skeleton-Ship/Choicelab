@@ -1,7 +1,7 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { appWindow } from "@tauri-apps/api/window";
-import { listen } from "@tauri-apps/api/event";
+import { listen, emit } from "@tauri-apps/api/event";
 import IndexedDB from "./editor/inspector/functions/indexedDB";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
@@ -58,6 +58,8 @@ async function init() {
       console.error("No project data found.");
       return;
     }
+    // Let Rust know that the project was opened
+    emit("project-opened");
     // Create data store
     createDataStore(projectData, projectPath);
     // Load store

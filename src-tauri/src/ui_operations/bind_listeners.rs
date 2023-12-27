@@ -1,3 +1,4 @@
+use tauri::Window;
 use tauri::Manager;
 use serde::{Serialize, Deserialize};
 use serde_json::{Value, from_str};
@@ -8,6 +9,7 @@ use crate::file_operations::{
 	copy_file,
 	create_directory,
 };
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
@@ -22,7 +24,56 @@ struct Response {
 	path: Option<String>,
 }
 
+fn apply_project_vibrancy(window: Window) {
+	#[cfg(target_os = "macos")]
+	apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None).expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");	
+}
+
 pub fn bind_listeners(app: &tauri::App) {
+	// Listen to vibrancy
+	let handle_project_open = app.handle();
+	let handle_enable_items = app.handle();
+	app.listen_global("project-opened", move |_event| {
+		// Set vibrancy
+		let project_window = handle_project_open.get_window("project").unwrap();
+		let _ = handle_project_open.run_on_main_thread( || apply_project_vibrancy(project_window) );
+		// Enable editor menu items
+		let project_window_menu = handle_enable_items.get_window("project").unwrap();
+		let menu = project_window_menu.menu_handle();
+		let _ = menu.get_item("show_actions").set_enabled(true);
+		let _ = menu.get_item("show_variables").set_enabled(true);
+		let _ = menu.get_item("show_actions").set_selected(true);
+		let _ = menu.get_item("show_variables").set_selected(false);
+	});
+	// Listen to menu item select/deselect
+	let handle_select_menu = app.handle();	
+	app.listen_global("select-menu-items", move |event| {
+		let json_raw = event.payload().unwrap();
+		let json_value: Result<Value, _> = from_str(json_raw);
+		match json_value {
+			Ok(json) => {
+				let main_window = handle_select_menu.get_window("project").unwrap();
+				let menu_handle = main_window.menu_handle();
+				if let Some(select_items) = json["selectItems"].as_array() {
+					for select_item in select_items {
+						if let Some(select_item_str) = select_item.as_str() {
+							let _ = menu_handle.get_item(select_item_str).set_selected(true);
+						}
+					}
+				}
+				if let Some(deselect_items) = json["deselectItems"].as_array() {
+					for deselect_item in deselect_items {
+						if let Some(deselect_item_str) = deselect_item.as_str() {
+							let _ = menu_handle.get_item(deselect_item_str).set_selected(false);
+						}
+					}
+				}
+			}
+			Err(e) => {
+				eprintln!("Error parsing JSON: {}", e);
+			}
+		}
+	});
 	// Listen to menu item enable/disable
 	let handle_menu = app.handle();
 	app.listen_global("enable-menu-item", move |event| {
@@ -45,7 +96,6 @@ pub fn bind_listeners(app: &tauri::App) {
 			}
 		}
 	});
-	
 	// listen to text file saves (emitted on any window)
 	let handle_text_file = app.handle();
 	app.listen_global("save-text-file", move |event| {
