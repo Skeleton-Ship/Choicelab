@@ -2,6 +2,8 @@
 
 #branch-editor {
   padding: 0;
+  height: 100%;
+  overflow: scroll;
   .stem-index {
     @include mixins.stem-index(20);
   }

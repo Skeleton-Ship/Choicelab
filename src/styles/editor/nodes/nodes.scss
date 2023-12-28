@@ -114,6 +114,8 @@
     position: absolute;
     bottom: 12px;
     width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     button.linker {
       height: 15px;
       width: 15px;
