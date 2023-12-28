@@ -26,7 +26,7 @@ export default function ViewSlider(props: { update: Function }) {
     props.update(false);
   }
   return (
-    <div id="view-slider">
+    <div id="view-slider" tabindex={-1}>
       <img src={IconSlider} />
       <input
         type="range"

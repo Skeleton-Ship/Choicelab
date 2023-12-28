@@ -182,7 +182,7 @@ export default function LinkEl(props: {
   let toId = link && link.to ? link.to : "";
   return (
     <div className="link">
-      <button className="linker" onClick={enterTargetMode}>
+      <button className="linker" onClick={enterTargetMode} tabindex={-1}>
         <span>Connect</span>
       </button>
       {targetModeContents}

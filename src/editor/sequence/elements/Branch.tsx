@@ -106,6 +106,7 @@ export default function BranchEl(props: {
           disabled={stemButtonDisabled}
           onClick={addBranchStem}
           className="add-stem"
+          tabindex={-1}
         >
           +
         </button>

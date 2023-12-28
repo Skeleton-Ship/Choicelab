@@ -80,7 +80,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     nodeEls.push(nodeEl);
   });
   return (
-    <div id="sequence-wrap">
+    <div id="sequence-wrap" tabindex={0}>
       <div id="sequence" key={props.id}>
         <ul className="nodes" ref={arrowsRef}>
           {nodeEls}

@@ -51,6 +51,8 @@ export default function StartEl(props: {
       data-id={props.id}
       data-element="start"
       data-link-to={cell.link.to}
+      data-position-x={props.x}
+      data-position-y={props.y}
       style={style}
       onClick={handleSelectStart}
     >

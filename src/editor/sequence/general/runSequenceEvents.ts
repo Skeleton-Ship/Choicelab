@@ -2,9 +2,11 @@ import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createCell, createBranch } from "../../../data/createNode";
+import { getFocusedRegion } from "../../../utils/focusedRegion";
 import insertNewNode from "./insertNewNode";
 import inTextElement from "../../../utils/inTextElement";
 import handleDisconnectLinks from "./handleDisconnectLinks";
+import handleKeyNavigation from "./handleKeyNavigation";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";
 import { Branch } from "../../../typings";
@@ -13,7 +15,7 @@ import { Branch } from "../../../typings";
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.
  */
 export default function runSequenceEvents(update: Function) {
-  // Set shift key events
+  // Set shift, arrow key events
   document.addEventListener("keydown", (e) => {
     if (e.key === "Shift" && inTextElement() === false) {
       const store = getStore();
@@ -22,6 +24,15 @@ export default function runSequenceEvents(update: Function) {
         setStore(store);
         update(false);
       }
+    } else if (
+      getFocusedRegion() === "sequence" &&
+      (e.key === "ArrowUp" ||
+        e.key === "ArrowDown" ||
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight")
+    ) {
+      e.preventDefault();
+      handleKeyNavigation(e.key, update);
     }
   });
   document.addEventListener("keyup", (e) => {
