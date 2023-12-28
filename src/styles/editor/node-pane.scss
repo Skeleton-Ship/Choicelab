@@ -3,7 +3,7 @@
 @use "./action-pane/prop-controls";
 
 #node-pane {
-  @include mixins.vibrant-bg-light();
+  background-color: rgba(228, 228, 228, 0.7);
 }
 
 #available-actions,
