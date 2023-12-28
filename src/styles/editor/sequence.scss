@@ -14,6 +14,9 @@
   position: relative;
   overflow: scroll;
   background-color: rgba(239, 239, 239, 0.95);
+  &:focus {
+    outline: none;
+  }
 }
 
 #sequence {
