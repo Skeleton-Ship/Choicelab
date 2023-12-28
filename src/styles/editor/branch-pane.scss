@@ -1,0 +1,8 @@
+@use "../mixins";
+
+#branch-editor {
+  padding: 0;
+  .stem-index {
+    @include mixins.stem-index(20);
+  }
+}

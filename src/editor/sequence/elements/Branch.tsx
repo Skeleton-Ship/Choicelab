@@ -28,10 +28,6 @@ export default function BranchEl(props: {
     console.error("Branch not found.");
     return <></>;
   }
-  // @ts-ignore
-  const [previousEvaluatorName, setPreviousEvaluatorName] = useState(
-    branch.evaluator.name
-  );
   function handleSelectBranch(e: MouseEvent) {
     let target;
     if (e.target !== null) {
@@ -99,9 +95,6 @@ export default function BranchEl(props: {
     >
       <div className="contents">
         <span className="node-id">{props.id}</span>
-        <div className="evaluator-name">
-          <span>Evaluator goes here</span>
-        </div>
         <button
           disabled={stemButtonDisabled}
           onClick={addBranchStem}

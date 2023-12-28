@@ -1,23 +1,25 @@
 export interface Link {
   to: string;
 }
+export interface Condition {
+  id: string;
+  operator: string;
+  value: string | number | boolean;
+}
 export interface Stem {
   id: string;
   type: string;
-  value: string;
+  match: string;
+  conditions: Array<Condition>;
   link: Link;
 }
 export interface Media {
-  [key: string]: any;
-}
-export interface Evaluator {
   [key: string]: any;
 }
 export interface AnyNode {
   id: string;
   type: string;
   label?: string;
-  evaluator?: Evaluator;
   actions?: Array<Action>;
   media?: Media;
   link?: Link;
@@ -50,7 +52,6 @@ export interface Cell {
 export interface Branch {
   id: string;
   type: string;
-  evaluator: Evaluator;
   stems: Array<Stem>;
 }
 export interface Sequence {

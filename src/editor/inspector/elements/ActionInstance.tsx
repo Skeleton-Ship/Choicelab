@@ -136,7 +136,7 @@ export default function ActionInstance(props: {
   return (
     <li class={liClass} key={action.id}>
       <div class="item-toolbar">
-        <h5 class="action-name">
+        <h5 class="item-heading">
           <ActionIcon def={actionDef} />
           {actionDef.label}
           {disabledLabel}

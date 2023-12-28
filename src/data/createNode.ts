@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
+import { Cell, Branch, Stem, StartNode } from "../typings";
 
-function createCell() {
+function createCell(): Cell {
   const cell = {
     id: uuidv4(),
     type: "cell",
@@ -14,24 +15,24 @@ function createCell() {
   return cell;
 }
 
-function createBranch() {
+function createBranch(): Branch {
   const branch = {
     id: uuidv4(),
     type: "branch",
-    evaluator: {
-      type: "varName",
-      name: "",
-    },
     stems: [createBranchStem("noMatch")],
   };
   return branch;
 }
 
-function createBranchStem(linkType = "value") {
+function createBranchStem(
+  type: string = "noMatch",
+  match: string = "all"
+): Stem {
   const stem = {
     id: uuidv4(),
-    type: linkType,
-    value: "",
+    type: type,
+    match: match,
+    conditions: [],
     link: {
       to: "",
     },
@@ -39,7 +40,7 @@ function createBranchStem(linkType = "value") {
   return stem;
 }
 
-function createStart() {
+function createStart(): StartNode {
   const start = {
     id: uuidv4(),
     type: "start",

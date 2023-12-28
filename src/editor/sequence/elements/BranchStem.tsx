@@ -54,12 +54,11 @@ export default function BranchStemEl(props: {
         {link}
       </>
     );
-  }
-  if (stem.type === "value") {
+  } else if (stem.type === "value") {
     contents = (
       <>
         <span className="node-id">{stem.id}</span>
-        <span>=&nbsp;</span>
+        <span class="stem-index">{props.index}</span>
         {link}
       </>
     );

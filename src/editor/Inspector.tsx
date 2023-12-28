@@ -3,6 +3,7 @@ import { useEffect } from "preact/hooks";
 import { getStore } from "../data/dataStore";
 import ActionsPane from "./inspector/ActionsPane";
 import VariablesPane from "./inspector/VariablesPane";
+import BranchPane from "./inspector/BranchPane";
 
 function makeResizable(el: HTMLElement) {
   const resizer = el.querySelector(".resizer");
@@ -56,7 +57,11 @@ export default function Inspector(props: { update: Function }) {
           </>
         );
       } else if (node.type === "branch") {
-        contents = <p class="placeholder">Branch editor goes here</p>;
+        contents = (
+          <>
+            <BranchPane update={props.update} />
+          </>
+        );
       }
     }
   } else if (paneInView === "variables") {
