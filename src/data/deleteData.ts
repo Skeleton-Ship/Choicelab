@@ -71,7 +71,10 @@ function deleteNodeFromData(nodeId: string, store: Store) {
 
 function deleteStemFromData(stemId: string, branchId: string, store: Store) {
   const branch: Branch | undefined = getBranch(branchId, store);
-  if (typeof branch === "undefined") return;
+  if (typeof branch === "undefined") {
+    console.error("No branch found.");
+    return store;
+  }
   let correctStemIndex: number | false = false,
     stemIndex: number = 0;
   branch.stems.forEach((stem: Stem) => {
