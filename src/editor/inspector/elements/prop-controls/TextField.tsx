@@ -21,7 +21,7 @@ export default function TextField(props: {
   const action = props.action;
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
-  const className = `action-prop text-field ${props.className}`;
+  const className = `inspector-prop text-field ${props.className}`;
   let fieldEl = (
     <input
       name={propElName}

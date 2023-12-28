@@ -22,16 +22,7 @@ export default function VariablesPane(props: { update: Function }) {
       <div id="variables-toolbar">
         <button onClick={handleCreateVariable}>New Variable</button>
       </div>
-      <ul id="variables-list">
-        <ul class="field-names" aria-hidden="true">
-          <li class="var-name field">Name</li>
-          <li class="var-type field">Type</li>
-          <li class="var-starting-value field">Starting Value</li>
-          <li class="var-description field">Description</li>
-          <li class="delete field"></li>
-        </ul>
-        {varEls}
-      </ul>
+      <ul id="variables-list">{varEls}</ul>
     </>
   );
 }

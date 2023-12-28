@@ -11,9 +11,6 @@
   overflow: scroll;
   padding: 0;
   margin: 0;
-  li {
-    list-style: none;
-  }
 }
 
 #available-actions {
@@ -52,6 +49,7 @@
     }
   }
   li {
+    list-style: none;
     &:nth-child(even) {
       button {
         background-color: #f7f7f7;
@@ -63,84 +61,6 @@
 #actions-editor {
   z-index: 2;
   height: calc(100% - 260px);
-  .action {
-    padding: 16px;
-    background-color: white;
-    margin: 5%;
-    // margin: 15px;
-    border-radius: 15px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 2px 10px;
-    &.disabled {
-      background-color: rgba(255, 255, 255, 0.5);
-      .props {
-        opacity: 0.5;
-      }
-      .action-icon {
-        filter: saturate(0);
-        opacity: 0.8;
-      }
-    }
-    &.collapsed {
-      .props {
-        display: none;
-      }
-    }
-    .action-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      position: relative;
-      margin-bottom: 9px;
-      .action-name {
-        margin: 0;
-        display: inline;
-        font-size: 14px;
-      }
-      .disabled-text {
-        font-weight: 300;
-        opacity: 0.5;
-      }
-      .controls {
-        position: absolute;
-        right: 0;
-      }
-      button {
-        appearance: none;
-        border: none;
-        background-color: transparent;
-        width: 30px;
-        height: 30px;
-        line-height: 1;
-        opacity: 0.7;
-        border-radius: 5px;
-        &:hover:not(:disabled) {
-          background-color: rgba(50, 50, 50, 0.1);
-        }
-        &:active:not(:disabled) {
-          opacity: 1;
-          background-color: rgba(50, 50, 50, 0.15);
-        }
-        &:disabled {
-          opacity: 0.3;
-        }
-        img {
-          width: 18px;
-          height: auto;
-          user-drag: none;
-          -webkit-user-drag: none;
-        }
-        &.heading {
-          width: auto;
-        }
-      }
-    }
-    &:not(:last-of-type) {
-      margin-bottom: 5%;
-    }
-    &:last-of-type {
-      border-bottom-width: 0;
-    }
-  }
 }
 
 .action-icon {
@@ -153,5 +73,107 @@
   margin-right: 7px;
   i {
     font-size: 12px;
+  }
+}
+
+.inspector-item {
+  padding: 16px;
+  background-color: white;
+  margin: 5%;
+  border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 10px;
+  list-style: none;
+  &.disabled {
+    background-color: rgba(255, 255, 255, 0.5);
+    .props {
+      opacity: 0.5;
+    }
+    .action-icon {
+      filter: saturate(0);
+      opacity: 0.8;
+    }
+  }
+  &.collapsed {
+    .props {
+      display: none;
+    }
+  }
+  // Visually hide, showing only for screen readers
+  .aria-only,
+  .hide-label label {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    visibility: hidden;
+    overflow: hidden;
+    width: 0;
+    height: 0;
+  }
+  .item-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    margin-bottom: 9px;
+    .action-name {
+      margin: 0;
+      display: inline;
+      font-size: 14px;
+    }
+    .disabled-text {
+      font-weight: 300;
+      opacity: 0.5;
+    }
+    .controls {
+      position: absolute;
+      right: 0;
+    }
+    button {
+      appearance: none;
+      border: none;
+      background-color: transparent;
+      width: 30px;
+      height: 30px;
+      line-height: 1;
+      opacity: 0.7;
+      border-radius: 5px;
+      &:hover:not(:disabled) {
+        background-color: rgba(50, 50, 50, 0.1);
+      }
+      &:active:not(:disabled) {
+        opacity: 1;
+        background-color: rgba(50, 50, 50, 0.15);
+      }
+      &:disabled {
+        opacity: 0.3;
+      }
+      img {
+        width: 18px;
+        height: auto;
+        user-drag: none;
+        -webkit-user-drag: none;
+      }
+      &.heading {
+        width: auto;
+      }
+    }
+  }
+  .field-group {
+    display: flex;
+    width: 100%;
+    &.two-col > * {
+      flex-basis: 50%;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+    > *:not(:last-of-type) {
+      margin-right: 10px;
+    }
+  }
+  &:not(:last-of-type) {
+    margin-bottom: 5%;
+  }
+  &:last-of-type {
+    border-bottom-width: 0;
   }
 }

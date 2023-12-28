@@ -95,7 +95,7 @@ export default function File(props: {
   const inputId = `file_${props.action.id}_${props.propDef.name}`;
   const setClass = fileIsSet === true ? "file-set" : "file-not-set";
   const loadingClass = isLoading === true ? "is-loading" : "loaded";
-  const elementClass = `action-prop file ${setClass} ${loadingClass} ${props.className}`;
+  const elementClass = `inspector-prop file ${setClass} ${loadingClass} ${props.className}`;
   const previewEl = getAssetPreviewElement(
     props.propDef.control,
     existingFile,

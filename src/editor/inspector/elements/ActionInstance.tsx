@@ -129,13 +129,13 @@ export default function ActionInstance(props: {
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
   const enableButtonAlt =
     action.enabled === true ? "Disable Action" : "Enable Action";
-  const liClass = `action ${actionDef.name} ${enabledClass}`;
+  const liClass = `inspector-item action ${actionDef.name} ${enabledClass}`;
   const canMove = canMoveAction(action.id);
   const upDisabled = canMove.up === true ? false : true;
   const downDisabled = canMove.down === true ? false : true;
   return (
     <li class={liClass} key={action.id}>
-      <div class="action-toolbar">
+      <div class="item-toolbar">
         <h5 class="action-name">
           <ActionIcon def={actionDef} />
           {actionDef.label}

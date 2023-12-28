@@ -1,15 +1,17 @@
+@use "../variables";
+
 $pane-padding: 14px;
 
-#variables-toolbar,
-#variables-list {
-  padding-left: $pane-padding;
-  padding-right: $pane-padding;
-}
-
 #variables-toolbar {
+  background-color: rgba(255, 255, 255, 0.8);
   height: 45px;
   display: flex;
   align-items: center;
+  padding-left: 5%;
+  padding-right: 5%;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 1px 3px;
+  position: relative;
+  z-index: 4;
   button {
     font-size: 12px;
   }
@@ -19,79 +21,18 @@ $pane-padding: 14px;
   height: calc(100% - 40px);
   overflow: scroll;
   margin: 0;
-  .field-names,
+  padding: 0;
+  position: relative;
+  z-index: 2;
   .variable {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-    min-width: min-content;
-    max-width: none;
-    align-items: center;
-  }
-  .field-names {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 6px;
-    li {
-      list-style: none;
-      font-weight: 600;
-      font-size: 11px;
-    }
-  }
-  .field {
-    width: 23%;
-    flex-grow: 0;
-    flex-shrink: 0;
-    padding-right: 10px;
-    &.var-name {
-      min-width: 120px;
-    }
-    &.var-type {
-      width: 10%;
-      min-width: 100px;
-    }
-    &.var-starting-value {
-      min-width: 120px;
-    }
-    &.var-description {
-      min-width: 160px;
-    }
-    &.delete {
-      width: 5%;
-      min-width: 30px;
-    }
-  }
-  .variable {
-    background-color: white;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 10px;
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      font-size: 11px;
-      width: 100%;
-    }
-    label {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      visibility: hidden;
-    }
-    .delete.field {
-      button {
-        appearance: none;
-        border: none;
-        background: none;
-        width: 30px;
-        top: -3px;
-        position: relative;
-        img {
-          max-width: 100%;
-          height: auto;
-        }
+    .var-name {
+      font-family: variables.$fonts-mono;
+      font-size: 13px;
+      width: calc(100% - 50px);
+      margin-bottom: 0;
+      input {
+        width: 100%;
+        color: rgb(238, 66, 141);
       }
     }
   }

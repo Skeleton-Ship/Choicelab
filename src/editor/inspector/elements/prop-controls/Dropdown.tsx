@@ -34,7 +34,7 @@ export default function Dropdown(props: {
     const optionEl = <option value={option.value}>{option.label}</option>;
     optionEls.push(optionEl);
   });
-  const className = `action-prop dropdown ${props.className}`;
+  const className = `inspector-prop dropdown ${props.className}`;
   return (
     <div class={className}>
       <label class="label break-line" for={propElName}>

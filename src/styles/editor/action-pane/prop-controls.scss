@@ -1,17 +1,5 @@
-.action-prop {
+.inspector-prop {
   margin-bottom: 10px;
-  // Visually hide, showing only for screen readers
-  &.hide-label {
-    .label {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      visibility: hidden;
-      overflow: hidden;
-      width: 0;
-      height: 0;
-    }
-  }
   &.large {
     input[type="text"],
     textarea {
@@ -20,6 +8,7 @@
     }
   }
   // Label
+  label,
   .label {
     font-weight: 500;
     font-size: 11px;
@@ -29,13 +18,19 @@
   }
   // Text
   input[type="text"],
+  input[type="number"],
   textarea {
+    font-size: 13px;
     width: 100%;
-    padding: 0.5em;
     max-width: 550px;
     display: block;
   }
+  input[type="text"],
+  input[type="number"] {
+    padding: 1px 5px;
+  }
   textarea {
+    padding: 0.5em;
     border: none;
     box-shadow: rgba(0, 0, 0, 0.2) 0 1px 1px;
   }

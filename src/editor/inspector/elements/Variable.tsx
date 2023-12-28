@@ -24,6 +24,7 @@ export default function VariableEl(props: {
       }
       newName += component;
     }
+    newName = newName.replace(/[^a-zA-Z0-9]/g, "");
     return newName;
   }
   function handleDelete() {
@@ -128,38 +129,55 @@ export default function VariableEl(props: {
    * Return JSX
    */
   return (
-    <li class="variable">
-      <div class="var-name field">
-        <label for={nameField}>Name:</label>
-        <input
-          type="text"
-          id={nameField}
-          value={variable.name}
-          onChange={(e) => {
-            handleChange("name", e.target);
-          }}
-        />
+    <li class="variable inspector-item">
+      <div class="item-toolbar">
+        <div class="var-name inspector-prop">
+          <label class="aria-only" for={nameField}>
+            Name:
+          </label>
+          <input
+            type="text"
+            id={nameField}
+            value={variable.name}
+            onChange={(e) => {
+              handleChange("name", e.target);
+            }}
+          />
+        </div>
+        <div class="controls">
+          <button onClick={handleDelete} title="Delete Variable">
+            <img src={IconDelete} />
+          </button>
+        </div>
       </div>
-      <div class="var-type field">
-        <label for={typeField}>Type:</label>
-        <select
-          id={typeField}
-          value={variable.varType}
-          onChange={(e) => {
-            handleChange("varType", e.target);
-          }}
-        >
-          <option value="string">String</option>
-          <option value="boolean">Boolean</option>
-          <option value="number">Number</option>
-        </select>
+      <div class="field-group two-col">
+        <div class="inspector-prop">
+          <label class="break-line" for={typeField}>
+            Type:
+          </label>
+          <select
+            id={typeField}
+            value={variable.varType}
+            onChange={(e) => {
+              handleChange("varType", e.target);
+            }}
+          >
+            <option value="string">String</option>
+            <option value="boolean">Boolean</option>
+            <option value="number">Number</option>
+          </select>
+        </div>
+        <div class="inspector-prop">
+          <label class="break-line" for={startingValField}>
+            Starting Value:
+          </label>
+          {startingValueInput}
+        </div>
       </div>
-      <div class="var-starting-value field">
-        <label for={startingValField}>Starting Value:</label>
-        {startingValueInput}
-      </div>
-      <div class="var-description field">
-        <label for={descField}>Description:</label>
+      <div class="inspector-prop">
+        <label class="break-line" for={descField}>
+          Description:
+        </label>
         <textarea
           id={descField}
           value={variable.description}
@@ -167,11 +185,6 @@ export default function VariableEl(props: {
             handleChange("description", e.target);
           }}
         />
-      </div>
-      <div class="delete field">
-        <button onClick={handleDelete} title="Delete Variable">
-          <img src={IconDelete} />
-        </button>
       </div>
     </li>
   );
