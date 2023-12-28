@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @mixin invert-icon() {
   filter: brightness(0) invert(1);
 }
@@ -15,7 +17,7 @@
   line-height: 1;
   border-radius: 99px;
   font-weight: 700;
-  font-size: #{$size / 1.6 + "px"};
+  font-size: #{math.div($size, 1.6) + "px"};
   line-height: #{$size * 0.86 + "px"};
   color: #2f8ee5;
   width: #{$size + "px"};
