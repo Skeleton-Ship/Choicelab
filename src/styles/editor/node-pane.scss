@@ -83,6 +83,12 @@
   border-radius: 15px;
   box-shadow: rgba(0, 0, 0, 0.1) 0 2px 10px;
   list-style: none;
+  border-style: solid;
+  border-width: 2px;
+  border-color: transparent;
+  &.selected {
+    border-color: #2f8ee5;
+  }
   &.disabled {
     background-color: rgba(255, 255, 255, 0.5);
     .props {
@@ -172,8 +178,5 @@
   }
   &:not(:last-of-type) {
     margin-bottom: 5%;
-  }
-  &:last-of-type {
-    border-bottom-width: 0;
   }
 }

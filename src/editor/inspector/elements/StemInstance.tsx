@@ -9,8 +9,17 @@ export default function StemInstance(props: {
   indexLabel: Number;
 }) {
   const stemLabel = `Stem ${props.indexLabel}`;
+  const store = getStore();
+  let selectedClass = "";
+  const stemInStore = store.selectedStem;
+  if (stemInStore !== false) {
+    if (stemInStore.id === props.stem.id) {
+      selectedClass = "selected";
+    }
+  }
+  const itemClass = `inspector-item branch-stem ${selectedClass}`;
   return (
-    <div class="inspector-item branch-stem">
+    <div class={itemClass}>
       <div class="item-toolbar">
         <h5 class="item-heading aria-only">{stemLabel}</h5>
         <div class="stem-index">{props.indexLabel}</div>
