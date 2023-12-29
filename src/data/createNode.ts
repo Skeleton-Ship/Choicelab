@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Cell, Branch, Stem, StartNode } from "../typings";
+import { Cell, Branch, Stem, Rule, StartNode } from "../typings";
 
 function createCell(): Cell {
   const cell = {
@@ -32,12 +32,23 @@ function createBranchStem(
     id: uuidv4(),
     type: type,
     match: match,
-    conditions: [],
+    rules: [createRule()],
     link: {
       to: "",
     },
   };
   return stem;
+}
+
+function createRule(): Rule {
+  const rule = {
+    id: uuidv4(),
+    type: "variable",
+    varName: "",
+    operator: "",
+    value: "",
+  };
+  return rule;
 }
 
 function createStart(): StartNode {
@@ -51,4 +62,4 @@ function createStart(): StartNode {
   return start;
 }
 
-export { createCell, createBranch, createBranchStem, createStart };
+export { createCell, createBranch, createBranchStem, createRule, createStart };

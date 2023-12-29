@@ -5,6 +5,12 @@
   height: 100%;
   overflow: scroll;
   .stem-index {
-    @include mixins.stem-index(20);
+    @include mixins.stem-index(23);
+  }
+  .branch-stem {
+    .add-rule {
+      width: 100%;
+      font-size: 12px;
+    }
   }
 }

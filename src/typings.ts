@@ -1,20 +1,22 @@
 export interface Link {
   to: string;
 }
-export interface Condition {
-  id: string;
-  operator: string;
-  value: string | number | boolean;
-}
 export interface Stem {
   id: string;
   type: string;
   match: string;
-  conditions: Array<Condition>;
+  rules: Array<Rule>;
   link: Link;
 }
 export interface Media {
   [key: string]: any;
+}
+export interface Rule {
+  id: string;
+  type: string;
+  varName: string;
+  operator: string;
+  value: string | number | boolean;
 }
 export interface AnyNode {
   id: string;

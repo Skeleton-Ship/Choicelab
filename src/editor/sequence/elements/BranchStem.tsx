@@ -54,7 +54,7 @@ export default function BranchStemEl(props: {
         {link}
       </>
     );
-  } else if (stem.type === "value") {
+  } else if (stem.type === "rules") {
     contents = (
       <>
         <span className="node-id">{stem.id}</span>

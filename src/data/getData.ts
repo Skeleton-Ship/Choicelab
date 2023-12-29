@@ -22,6 +22,10 @@ function getSequence(id: string, data: Store): Sequence | undefined {
   return foundSequence;
 }
 
+function getVariables(data: Store): Array<Variable> {
+  return data.project.variables.items;
+}
+
 function getVariable(id: string, data: Store): Variable | undefined {
   let foundVariable;
   data.project.variables.items.forEach((variable: Variable) => {
@@ -212,6 +216,7 @@ function getActionDef(
 
 export {
   getSequence,
+  getVariables,
   getVariable,
   getNode,
   getSequenceStart,

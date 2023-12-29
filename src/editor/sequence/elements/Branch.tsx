@@ -1,4 +1,3 @@
-import { useState } from "preact/hooks";
 import { getBranch } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createBranchStem } from "../../../data/createNode";
@@ -46,7 +45,7 @@ export default function BranchEl(props: {
   function addBranchStem() {
     const branch: Branch | undefined = getBranch(props.id, store);
     if (!branch) return;
-    const stem = createBranchStem("value");
+    const stem = createBranchStem("rules");
     if (branch.stems) {
       branch.stems.push(stem);
     }

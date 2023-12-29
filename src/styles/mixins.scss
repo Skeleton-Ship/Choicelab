@@ -11,15 +11,17 @@
 }
 
 @mixin stem-index($size: 30) {
-  border: 1.5px solid #2f8ee5;
+  background-color: #e0f0ff;
+  color: #2f8ee5;
   display: inline-block;
   text-align: center;
   line-height: 1;
   border-radius: 99px;
   font-weight: 700;
   font-size: #{math.div($size, 1.6) + "px"};
-  line-height: #{$size * 0.86 + "px"};
-  color: #2f8ee5;
+  line-height: 0;
+  padding-top: #{math.div($size, 2) + "px"};
+  // line-height: #{$size * 0.86 + "px"};
   width: #{$size + "px"};
   height: #{$size + "px"};
 }
