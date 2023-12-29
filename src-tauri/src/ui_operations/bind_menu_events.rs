@@ -40,14 +40,14 @@ pub fn bind_menu_events(event: WindowMenuEvent) {
 		  "disconnect_link" => {
 			  event.window().emit("menu-disconnect-link", ()).unwrap();
 		  }	
-		  "show_actions" => {
-			  event.window().emit("menu-show-actions", ()).unwrap();
-			  let _ = menu_handle.get_item("show_actions").set_selected(true);
+		  "show_node_editor" => {
+			  event.window().emit("menu-show-node-editor", ()).unwrap();
+			  let _ = menu_handle.get_item("show_node_editor").set_selected(true);
 			  let _ = menu_handle.get_item("show_variables").set_selected(false);
 		  }	  
 		  "show_variables" => {
 			  event.window().emit("menu-show-variables", ()).unwrap();
-			  let _ = menu_handle.get_item("show_actions").set_selected(false);
+			  let _ = menu_handle.get_item("show_node_editor").set_selected(false);
 			  let _ = menu_handle.get_item("show_variables").set_selected(true);
 		  }	 
 		_ => {}

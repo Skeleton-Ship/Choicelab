@@ -24,7 +24,7 @@ export default function MainEditor() {
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Set up actions/variables view listeners
-    listen("menu-show-actions", async () => {
+    listen("menu-show-node-editor", async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
       const store = getStore();

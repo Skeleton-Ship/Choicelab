@@ -12,9 +12,9 @@ function Toolbar(props: { update: Function }) {
     props.update(false);
     // Send updates to menu
     const selectItems =
-      paneName === "node-editor" ? ["show_actions"] : ["show_variables"];
+      paneName === "node-editor" ? ["show_node_editor"] : ["show_variables"];
     const deselectItems =
-      paneName === "node-editor" ? ["show_variables"] : ["show_actions"];
+      paneName === "node-editor" ? ["show_variables"] : ["show_node_editor"];
     emit("select-menu-items", {
       selectItems: selectItems,
       deselectItems: deselectItems,

@@ -40,9 +40,9 @@ pub fn bind_listeners(app: &tauri::App) {
 		// Enable editor menu items
 		let project_window_menu = handle_enable_items.get_window("project").unwrap();
 		let menu = project_window_menu.menu_handle();
-		let _ = menu.get_item("show_actions").set_enabled(true);
+		let _ = menu.get_item("show_node_editor").set_enabled(true);
 		let _ = menu.get_item("show_variables").set_enabled(true);
-		let _ = menu.get_item("show_actions").set_selected(true);
+		let _ = menu.get_item("show_node_editor").set_selected(true);
 		let _ = menu.get_item("show_variables").set_selected(false);
 	});
 	// Listen to menu item select/deselect
