@@ -83,9 +83,22 @@ $max-stems: 10;
         color: #d87c09;
       }
       .stem-label {
+        display: inline-block;
+        margin-left: 13px;
+        position: relative;
+        z-index: 5;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background-color: white;
+        color: #444;
         font-size: 12px;
         font-weight: 500;
-        opacity: 0.7;
+        &:hover {
+          white-space: normal;
+          overflow: auto;
+        }
       }
     }
   }

@@ -28,16 +28,35 @@ export default function RuleInstance(props: {
       store
     );
     if (!rule) return;
+    let variable: Variable | undefined;
+    // If changing variable, clear the existing value and operators and try to set defaults
+    if (fieldName === "variableId") {
+      rule.operator = "";
+      rule.value = "";
+      variable = getVariable(value, store);
+      if (variable) {
+        switch (variable.varType) {
+          case "string":
+            rule.operator = "equals";
+            break;
+          case "boolean":
+            rule.operator = "equals";
+            rule.value = true;
+            break;
+          case "number":
+            rule.operator = "equals";
+            break;
+        }
+      }
+    }
     // Cast value from a string to its correct type
-    if (fieldName === "value") {
-      const variable: Variable | undefined = getVariable(
-        rule.variableId,
-        store
-      );
-      if (!variable) return;
+    if (variable && fieldName === "value") {
       switch (variable.varType) {
         case "number":
           value = parseFloat(value);
+          if (isNaN(value)) {
+            value = "";
+          }
           break;
         case "boolean":
           value = value === "true" ? true : false;
@@ -46,7 +65,6 @@ export default function RuleInstance(props: {
     }
     // @ts-ignore
     rule[fieldName] = value;
-    console.log(rule);
     setStore(store);
     props.update();
   }

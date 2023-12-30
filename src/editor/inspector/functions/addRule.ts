@@ -13,7 +13,6 @@ export default function addRule(
   const branch: Branch | undefined = getBranch(branchId, store);
   const stem: Stem | undefined = getBranchStem(stemId, branchId, store);
   if (!branch || !stem) return;
-  console.log(stem, branch);
   const rule = createRule();
   stem.rules.push(rule);
   setStore(store);

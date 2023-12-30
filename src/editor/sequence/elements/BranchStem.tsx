@@ -2,6 +2,7 @@ import Link from "./Link";
 import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { Branch, Stem } from "../../../typings";
+import getStemRulesLabel from "../general/getStemRulesLabel";
 
 /**
  * A single path in a branch. If the stem is a "value" type, it will test for the given value. A "noMatch" type stem is the fallback if all other stems fail.
@@ -59,6 +60,7 @@ export default function BranchStemEl(props: {
       </>
     );
   } else if (stem.type === "rules") {
+    const stemLabel = getStemRulesLabel(stem);
     const branch: Branch | undefined = getBranch(props.nodeId, store);
     if (branch) {
       stemIndex =
@@ -72,6 +74,7 @@ export default function BranchStemEl(props: {
       <>
         <span className="node-id">{stem.id}</span>
         {stemIndex}
+        <span class="stem-label">{stemLabel}</span>
         {link}
       </>
     );
