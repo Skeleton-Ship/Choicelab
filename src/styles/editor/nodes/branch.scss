@@ -64,8 +64,20 @@ $max-stems: 10;
       &.selecting {
         border-color: variables.$accent-color;
       }
+      .stem-index,
+      .no-match-index {
+        position: absolute;
+        top: -5px;
+        left: -10px;
+        box-shadow: rgba(0, 0, 0, 0.05) 0 1px 7px;
+      }
       .stem-index {
-        @include mixins.stem-index(20);
+        @include mixins.stem-index(23);
+      }
+      .no-match-index {
+        @include mixins.index(23);
+        background-color: #ffe0e8;
+        color: #e52f5f;
       }
     }
   }

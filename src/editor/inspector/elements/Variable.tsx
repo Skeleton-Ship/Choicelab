@@ -145,7 +145,7 @@ export default function VariableEl(props: {
           />
         </div>
         <div class="controls">
-          <button onClick={handleDelete} title="Delete Variable">
+          <button class="icon" onClick={handleDelete} title="Delete Variable">
             <img src={IconDelete} />
           </button>
         </div>

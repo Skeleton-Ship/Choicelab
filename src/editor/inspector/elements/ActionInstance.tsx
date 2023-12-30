@@ -143,6 +143,7 @@ export default function ActionInstance(props: {
         </h5>
         <div class="controls">
           <button
+            class="icon"
             title="Move Up"
             disabled={upDisabled}
             onClick={() => {
@@ -152,6 +153,7 @@ export default function ActionInstance(props: {
             ▲
           </button>
           <button
+            class="icon"
             title="Move Down"
             disabled={downDisabled}
             onClick={() => {
@@ -160,10 +162,10 @@ export default function ActionInstance(props: {
           >
             ▼
           </button>
-          <button title={enableButtonAlt} onClick={setEnabled}>
+          <button class="icon" title={enableButtonAlt} onClick={setEnabled}>
             <img src={iconEnabled} />
           </button>
-          <button title="Delete Action" onClick={handleDelete}>
+          <button class="icon" title="Delete Action" onClick={handleDelete}>
             <img src={IconDelete} />
           </button>
         </div>

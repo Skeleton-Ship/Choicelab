@@ -3,6 +3,7 @@ import {
   Stem,
   Cell,
   Branch,
+  Rule,
   AnyNode,
   StartNode,
   Store,
@@ -171,6 +172,26 @@ function getStemParent(stemId: string, data: Store): Branch | undefined {
   return foundBranch;
 }
 
+function getStemRule(
+  ruleId: string,
+  stemId: string,
+  branchId: string,
+  data: Store
+): Rule | undefined {
+  let foundRule;
+  const stem = getBranchStem(stemId, branchId, data);
+  if (!stem) {
+    console.error("Rule in branch stem not found.");
+    return;
+  }
+  stem.rules.forEach((rule: Rule) => {
+    if (rule.id === ruleId) {
+      foundRule = rule;
+    }
+  });
+  return foundRule;
+}
+
 function getCurrentSequence(data: Store): Sequence | undefined {
   const currentSequenceId: string = data.currentSequenceId;
   return getSequence(currentSequenceId, data);
@@ -225,6 +246,7 @@ export {
   getBranchStem,
   getActiveBranchStem,
   getStemParent,
+  getStemRule,
   getNoMatchStem,
   getCurrentSequence,
   nodeExists,

@@ -10,9 +10,7 @@
   }
 }
 
-@mixin stem-index($size: 30) {
-  background-color: #e0f0ff;
-  color: #2f8ee5;
+@mixin index($size: 30) {
   display: inline-block;
   text-align: center;
   line-height: 1;
@@ -21,7 +19,12 @@
   font-size: #{math.div($size, 1.6) + "px"};
   line-height: 0;
   padding-top: #{math.div($size, 2) + "px"};
-  // line-height: #{$size * 0.86 + "px"};
   width: #{$size + "px"};
   height: #{$size + "px"};
+}
+
+@mixin stem-index($size: 30) {
+  @include index($size);
+  background-color: #e0f0ff;
+  color: #2f8ee5;
 }

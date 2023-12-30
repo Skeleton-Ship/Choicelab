@@ -14,7 +14,7 @@ export interface Media {
 export interface Rule {
   id: string;
   type: string;
-  varName: string;
+  variableId: string;
   operator: string;
   value: string | number | boolean;
 }

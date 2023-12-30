@@ -1,4 +1,4 @@
-import { getBranch } from "./getData";
+import { getBranch, getBranchStem } from "./getData";
 import {
   Store,
   Sequence,
@@ -6,6 +6,7 @@ import {
   Stem,
   Branch,
   Action,
+  Rule,
   Variable,
 } from "../typings";
 
@@ -89,6 +90,31 @@ function deleteStemFromData(stemId: string, branchId: string, store: Store) {
   return store;
 }
 
+function deleteStemRuleFromData(
+  ruleId: string,
+  stemId: string,
+  branchId: string,
+  store: Store
+) {
+  const stem: Stem | undefined = getBranchStem(stemId, branchId, store);
+  if (typeof stem === "undefined") {
+    console.error("No branch stem found.");
+    return store;
+  }
+  let correctRuleIndex: number | false = false,
+    ruleIndex: number = 0;
+  stem.rules.forEach((rule: Rule) => {
+    if (rule.id === ruleId) {
+      correctRuleIndex = ruleIndex;
+    }
+    ruleIndex++;
+  });
+  if (correctRuleIndex !== false) {
+    stem.rules.splice(correctRuleIndex, 1);
+  }
+  return store;
+}
+
 function deleteActionFromData(actionId: string, nodeId: string, store: Store) {
   const project = store.project;
   let correctSequenceIndex: number | false = false,
@@ -135,5 +161,6 @@ export {
   deleteVariableFromData,
   deleteNodeFromData,
   deleteStemFromData,
+  deleteStemRuleFromData,
   deleteActionFromData,
 };

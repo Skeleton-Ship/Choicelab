@@ -44,7 +44,7 @@ function createRule(): Rule {
   const rule = {
     id: uuidv4(),
     type: "variable",
-    varName: "",
+    variableId: "",
     operator: "",
     value: "",
   };

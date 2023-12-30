@@ -5,12 +5,49 @@
   height: 100%;
   overflow: scroll;
   .stem-index {
-    @include mixins.stem-index(23);
+    @include mixins.stem-index(27);
+    position: absolute;
+    top: -23px;
+    left: -29px;
   }
-  .branch-stem {
-    .add-rule {
-      width: 100%;
-      font-size: 12px;
+  .item-toolbar {
+    align-items: flex-start;
+    .match-text {
+      margin: 0;
+      margin-top: 1px;
+      margin-left: 5px;
+      max-width: 75%;
+    }
+  }
+  .rules {
+    padding: 0;
+    .rule {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-top: 5px;
+      width: calc(100% - 30px);
+      position: relative;
+      .variables {
+        width: 33%;
+        min-width: 150px;
+      }
+      .operators {
+        width: 25%;
+        min-width: 60px;
+      }
+      .value {
+        width: 33%;
+        min-width: 100px;
+      }
+      .delete-rule {
+        position: absolute;
+        right: -30px;
+      }
+      &:not(:last-of-type) {
+        padding-bottom: 10px;
+      }
     }
   }
 }

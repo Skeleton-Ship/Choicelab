@@ -52,13 +52,13 @@ export default function StemInstance(props: {
       <option value="any">any</option>
     </select>
   );
-  let matchText = <span>Match the following rule:</span>;
+  let matchText = <span>Match this rule:</span>;
   if (props.stem.rules.length > 1) {
     matchText = (
       <>
         <span>Match </span>
         {matchDropdown}
-        <span> of the following rules:</span>
+        <span> of these rules:</span>
       </>
     );
   }
@@ -83,12 +83,20 @@ export default function StemInstance(props: {
       <div class="item-toolbar">
         <h5 class="item-heading aria-only">{stemLabel}</h5>
         <div class="stem-index">{props.indexLabel}</div>
+        <p class="match-text">{matchText}</p>
+        <div class="controls">
+          <button
+            class="add-rule icon"
+            title="Add Rule"
+            onClick={handleAddRule}
+          >
+            <span class="icon">
+              <i class="bi bi-plus-circle-fill"></i>
+            </span>
+          </button>
+        </div>
       </div>
-      <p class="match-text">{matchText}</p>
       <ul class="rules">{ruleEls}</ul>
-      <button class="add-rule" onClick={handleAddRule}>
-        Add Rule
-      </button>
     </div>
   );
 }
