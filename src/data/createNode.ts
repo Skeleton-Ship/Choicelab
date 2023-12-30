@@ -7,7 +7,6 @@ function createCell(): Cell {
     type: "cell",
     label: "",
     actions: [],
-    media: { type: "" },
     link: {
       to: "",
     },

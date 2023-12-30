@@ -8,9 +8,6 @@ export interface Stem {
   rules: Array<Rule>;
   link: Link;
 }
-export interface Media {
-  [key: string]: any;
-}
 export interface Rule {
   id: string;
   type: string;
@@ -23,7 +20,6 @@ export interface AnyNode {
   type: string;
   label?: string;
   actions?: Array<Action>;
-  media?: Media;
   link?: Link;
   stems?: Array<Stem>;
   position?: {
@@ -48,7 +44,6 @@ export interface Cell {
   type: string;
   label: string;
   actions: Array<Action>;
-  media: Media;
   link: Link;
 }
 export interface Branch {
