@@ -129,6 +129,11 @@ export interface ActionDef {
     iconColor: string;
     iconBackgroundColor: string;
   };
+  flowchart?: {
+    prop: string;
+    showAs: string;
+    className?: string;
+  };
   description: string;
   props: Array<ActionDefProp>;
   extendable?: boolean;

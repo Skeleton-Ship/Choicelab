@@ -1,4 +1,5 @@
 import { Store, Project } from "../typings";
+import setViewSettings from "../utils/setViewSettings";
 
 function getStore() {
   const store: Store = window.__CHOICELAB_DATA__;
@@ -31,16 +32,17 @@ export default function createDataStore(
     focus: false,
     saved: true,
     viewSettings: {
-      cellWidth: 225,
-      cellHeight: 100,
-      cellMarginLeft: 275,
-      cellMarginTop: 275,
-      stemWidth: 135,
-      stemHeight: 54,
-      stemMarginLeft: 240,
+      cellWidth: 0,
+      cellHeight: 0,
+      cellMarginLeft: 0,
+      cellMarginTop: 0,
+      stemWidth: 0,
+      stemHeight: 0,
+      stemMarginLeft: 0,
       paneInView: "node-editor",
     },
   };
+  store.viewSettings = setViewSettings(250, store);
   window.__CHOICELAB_DATA__ = store;
   window.__CHOICELAB_TARGET_MODE__ = false;
 }

@@ -1,5 +1,6 @@
 @use "../../variables";
 @use "../../mixins";
+@use "./internal-actions";
 
 .cell.node {
   .title {
@@ -12,6 +13,19 @@
   }
   .contents {
     border-radius: 5px;
+    padding: 8px;
+    overflow: scroll;
+    .actions {
+      padding: 0;
+      .action {
+        list-style: none;
+        margin-bottom: 10px;
+        &.no-props {
+          font-style: italic;
+          opacity: 0.75;
+        }
+      }
+    }
   }
   &.selected,
   &.selecting {

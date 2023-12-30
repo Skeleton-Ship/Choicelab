@@ -16,6 +16,11 @@ const internalActionDefs: ActionDefs = {
         iconColor: "#2f2f52",
         iconBackgroundColor: "#FFC300",
       },
+      flowchart: {
+        prop: "contents",
+        showAs: "text",
+        className: "",
+      },
       props: [
         {
           name: "contents",
@@ -139,6 +144,11 @@ const internalActionDefs: ActionDefs = {
         iconName: "app",
         iconColor: "white",
         iconBackgroundColor: "#FF9502",
+      },
+      flowchart: {
+        prop: "label",
+        showAs: "text",
+        className: "button-label",
       },
       props: [
         {

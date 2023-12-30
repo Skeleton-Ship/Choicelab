@@ -2,7 +2,9 @@ import { getCell } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
 import Link from "./Link";
-import { Cell } from "../../../typings";
+import { Cell, Action } from "../../../typings";
+import internalActionDefs from "../../inspector/functions/internalActionDefs";
+import { getActionDef } from "../../../data/getData";
 
 /**
  * A node that supports actions, in which the content of the Choicelab sequence lives.
@@ -41,10 +43,34 @@ export default function CellEl(props: {
     width: props.width + "px",
     height: props.height + "px",
   };
-  // TEMP: Show action names
-  let actionsText = "";
-  cell.actions.forEach((action) => {
-    actionsText += action.name + " ";
+  // Show action elements
+  const actionEls: Array<preact.JSX.Element> = [];
+  cell.actions.forEach((action: Action) => {
+    let actionContents = <></>,
+      actionClass = "action";
+    const actionDef = getActionDef(action.name, internalActionDefs);
+    if (!actionDef) return;
+    actionClass = actionClass + ` ${actionDef.name}`;
+    if (!actionDef.flowchart) {
+      actionClass = actionClass + " no-props";
+      actionContents = <span class="action-name">{actionDef.label}</span>;
+    } else {
+      const propToShow = actionDef.flowchart.prop;
+      const propValue = action.props[propToShow];
+      const propClass = actionDef.flowchart.className
+        ? actionDef.flowchart.className
+        : "";
+      if (propValue) {
+        actionContents = <div class={propClass}>{propValue}</div>;
+      }
+    }
+    const elKey = `action_${action.id}`;
+    const actionEl = (
+      <li key={elKey} class={actionClass} data-action={actionDef.name}>
+        {actionContents}
+      </li>
+    );
+    actionEls.push(actionEl);
   });
   return (
     <li
@@ -59,7 +85,7 @@ export default function CellEl(props: {
     >
       <div className="contents">
         <div className="title">{props.id}</div>
-        <div className="actions">{actionsText}</div>
+        <ul className="actions">{actionEls}</ul>
       </div>
       <Link origin="cell" nodeId={props.id} update={props.update} />
     </li>
