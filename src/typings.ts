@@ -107,6 +107,8 @@ export interface Store {
     cellHeight: number;
     cellMarginLeft: number;
     cellMarginTop: number;
+    stemWidth: number;
+    stemHeight: number;
     stemMarginLeft: number;
     paneInView: string;
   };

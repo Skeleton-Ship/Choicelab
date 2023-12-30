@@ -1,10 +1,6 @@
 @use "../../variables";
 @use "../../mixins";
 
-$stem-width: 120px;
-$stem-margin: $stem-width + 175;
-$max-stems: 10;
-
 .branch.node {
   width: 190px;
   height: 71px;
@@ -49,20 +45,16 @@ $max-stems: 10;
       background-color: rgba(255, 255, 255, 1);
       list-style: none;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       padding: 0 5px;
-      width: $stem-width;
       margin-top: 29px;
-      height: 40px;
       border-radius: 100px;
       border-color: white;
       border-width: 2px;
       border-style: solid;
       border-color: transparent;
       box-shadow: variables.$node-shadow;
-      &.noMatch {
-        justify-content: center;
-      }
+      align-items: center;
       &.selected,
       &.selecting {
         border-color: variables.$accent-color;
@@ -75,31 +67,43 @@ $max-stems: 10;
         box-shadow: rgba(0, 0, 0, 0.05) 0 1px 7px;
       }
       .stem-index {
-        @include mixins.stem-index(23);
+        @include mixins.stem-index(20);
       }
       .no-match-index {
-        @include mixins.index(23);
+        @include mixins.index(20);
         background-color: #fff8e0;
         color: #d87c09;
       }
       .stem-label {
         display: inline-block;
-        margin-left: 13px;
         position: relative;
         z-index: 5;
         width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        background-color: white;
         color: #444;
-        font-size: 12px;
+        font-size: 10.5px;
         font-weight: 500;
+        margin-left: 7px;
+      }
+      &.rules .stem-label {
+        max-width: 100%;
+        max-height: calc(100% - 10px);
+        overflow: clip;
+        padding-left: 5px;
+        padding-right: 5px;
         &:hover {
           white-space: normal;
           overflow: auto;
+          max-width: none;
+          max-height: none;
+          padding-top: 5px;
+          padding-bottom: 5px;
+          background-color: white;
+          border-radius: 5px;
         }
       }
+    }
+    .link {
+      z-index: 6;
     }
   }
 }

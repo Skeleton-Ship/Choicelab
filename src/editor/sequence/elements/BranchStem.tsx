@@ -84,6 +84,8 @@ export default function BranchStemEl(props: {
   const style = {
     left: viewSettings.stemMarginLeft * props.index + "px",
     top: 100 + "px",
+    width: viewSettings.stemWidth + "px",
+    height: viewSettings.stemHeight + "px",
   };
   const className = `stem ${stem.type} ${selectedClass}`;
   return (

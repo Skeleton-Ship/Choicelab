@@ -35,6 +35,8 @@ export default function createDataStore(
       cellHeight: 100,
       cellMarginLeft: 275,
       cellMarginTop: 275,
+      stemWidth: 135,
+      stemHeight: 54,
       stemMarginLeft: 240,
       paneInView: "node-editor",
     },
