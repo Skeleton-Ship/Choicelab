@@ -14,6 +14,7 @@ import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
 import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
+import showPane from "./inspector/functions/showPane";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./sequence/Sequence";
@@ -27,18 +28,12 @@ export default function MainEditor() {
     listen("menu-show-node-editor", async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
-      const store = getStore();
-      store.viewSettings.paneInView = "node-editor";
-      setStore(store);
-      handleUpdate(false);
+      showPane("node-editor", handleUpdate);
     });
     listen("menu-show-variables", async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
-      const store = getStore();
-      store.viewSettings.paneInView = "variables";
-      setStore(store);
-      handleUpdate(false);
+      showPane("variables", handleUpdate);
     });
     // Set up undo/redo listeners
     listen("menu-undo", async () => {

@@ -1,24 +1,12 @@
-import { emit } from "@tauri-apps/api/event";
 import { createCell, createBranch } from "../../data/createNode";
 import insertNewNode from "../sequence/general/insertNewNode";
 import iconBranch from "../../assets/icon-add-branch.svg";
 import iconCell from "../../assets/icon-add-cell.svg";
-import { getStore, setStore } from "../../data/dataStore";
-
+import { getStore } from "../../data/dataStore";
+import showPane from "../inspector/functions/showPane";
 function Toolbar(props: { update: Function }) {
   function handleSelectPane(paneName: string) {
-    store.viewSettings.paneInView = paneName;
-    setStore(store);
-    props.update(false);
-    // Send updates to menu
-    const selectItems =
-      paneName === "node-editor" ? ["show_node_editor"] : ["show_variables"];
-    const deselectItems =
-      paneName === "node-editor" ? ["show_variables"] : ["show_node_editor"];
-    emit("select-menu-items", {
-      selectItems: selectItems,
-      deselectItems: deselectItems,
-    });
+    showPane(paneName, props.update);
   }
   const store = getStore();
   const paneInView = store.viewSettings.paneInView;

@@ -67,10 +67,10 @@
         box-shadow: rgba(0, 0, 0, 0.05) 0 1px 7px;
       }
       .stem-index {
-        @include mixins.stem-index(20);
+        @include mixins.stem-index(23);
       }
       .no-match-index {
-        @include mixins.index(20);
+        @include mixins.index(23);
         background-color: #fff8e0;
         color: #d87c09;
       }

@@ -9,6 +9,10 @@ export default function RuleInstance(props: {
   branch: Branch;
   update: Function;
 }) {
+  /*
+   * Rule functions
+   */
+
   // Handle form updates
   function handleChange(
     fieldName: "variableId" | "operator" | "value",
@@ -68,6 +72,7 @@ export default function RuleInstance(props: {
     setStore(store);
     props.update();
   }
+
   // Delete rule
   function handleDelete() {
     const newStore = deleteStemRuleFromData(
@@ -79,6 +84,10 @@ export default function RuleInstance(props: {
     setStore(newStore);
     props.update();
   }
+
+  /*
+   * Front-end
+   */
   const store = getStore();
   // Get a list of variables
   const variables = getVariables(store);
@@ -89,13 +98,31 @@ export default function RuleInstance(props: {
     const varItem = <option value={variable.id}>{variable.name}</option>;
     varItems.push(varItem);
   });
+  let rule: Rule | undefined = props.rule;
+  // If we have a variable BUT that variable does not exist, clear it
+  if (
+    props.rule.variableId !== "" &&
+    !getVariable(props.rule.variableId, store)
+  ) {
+    rule = getStemRule(props.rule.id, props.stem.id, props.branch.id, store);
+    if (rule) {
+      rule.variableId = "";
+      rule.operator = "";
+      rule.value = "";
+      setStore(store);
+      props.update(false);
+    }
+  }
+  if (!rule) {
+    return <p>Rule not found.</p>;
+  }
   // Figure out what the input field and operators should be based on the currently selected variable
   let inputField = <></>,
     operatorItems: Array<preact.JSX.Element> = [];
   // Get the kind of operators for each element
-  let thisVar = getVariable(props.rule.variableId, store);
+  let thisVar = getVariable(rule.variableId, store);
   if (thisVar) {
-    const displayValue: any = props.rule.value;
+    const displayValue: any = rule.value;
     switch (thisVar.varType) {
       case "string":
         operatorItems = [
@@ -154,7 +181,7 @@ export default function RuleInstance(props: {
     <li class="rule">
       <select
         class="variables"
-        value={props.rule.variableId}
+        value={rule.variableId}
         onChange={(e) => {
           handleChange("variableId", e);
         }}
@@ -163,7 +190,7 @@ export default function RuleInstance(props: {
       </select>
       <select
         class="operators"
-        value={props.rule.operator}
+        value={rule.operator}
         onChange={(e) => {
           handleChange("operator", e);
         }}

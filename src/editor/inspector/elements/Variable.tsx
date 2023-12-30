@@ -176,7 +176,7 @@ export default function VariableEl(props: {
       </div>
       <div class="inspector-prop">
         <label class="break-line" for={descField}>
-          Description:
+          Description (optional):
         </label>
         <textarea
           id={descField}

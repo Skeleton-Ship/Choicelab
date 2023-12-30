@@ -1,7 +1,8 @@
 import { Stem, Branch, Rule, Store } from "../../../typings";
-import { getBranchStem } from "../../../data/getData";
+import { getBranchStem, getVariables } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import addRule from "../functions/addRule";
+import showPane from "../functions/showPane";
 import RuleInstance from "./RuleInstance";
 
 export default function StemInstance(props: {
@@ -11,7 +12,9 @@ export default function StemInstance(props: {
   update: Function;
   indexLabel: Number;
 }) {
-  // Functions
+  /*
+   * Functions
+   */
   function handleAddRule() {
     addRule(props.stem.id, props.branch.id, props.update);
   }
@@ -32,7 +35,10 @@ export default function StemInstance(props: {
     setStore(store);
     props.update();
   }
-  // Front-end elements
+
+  /*
+   * Elements
+   */
   const stemLabel = `Stem ${props.indexLabel}`;
   const store = getStore();
   let selectedClass = "";
@@ -83,26 +89,48 @@ export default function StemInstance(props: {
     ) : (
       ""
     );
+  // Finally, test if we have any variables, and show a placeholder if so
+  let mainContents = <ul class="rules">{ruleEls}</ul>;
+  let toolbarItems = (
+    <>
+      <p class="match-text">{matchText}</p>
+      <div class="controls">
+        <button class="add-rule icon" title="Add Rule" onClick={handleAddRule}>
+          <span class="icon">
+            <i class="bi bi-plus-circle-fill"></i>
+          </span>
+        </button>
+      </div>
+    </>
+  );
+  const variables = getVariables(props.store);
+  if (variables.length === 0) {
+    toolbarItems = <></>;
+    mainContents = (
+      <p class="blank-content">
+        <button
+          onClick={() => {
+            showPane("variables", props.update);
+          }}
+        >
+          Create a variable
+        </button>{" "}
+        to add rules for this branch.
+      </p>
+    );
+  }
+  const toolbarContents = (
+    <div class="item-toolbar">
+      {stemIndex}
+      <h5 class="item-heading aria-only">{stemLabel}</h5>
+      {toolbarItems}
+    </div>
+  );
   // Return
   return (
     <div class={itemClass}>
-      <div class="item-toolbar">
-        {stemIndex}
-        <h5 class="item-heading aria-only">{stemLabel}</h5>
-        <p class="match-text">{matchText}</p>
-        <div class="controls">
-          <button
-            class="add-rule icon"
-            title="Add Rule"
-            onClick={handleAddRule}
-          >
-            <span class="icon">
-              <i class="bi bi-plus-circle-fill"></i>
-            </span>
-          </button>
-        </div>
-      </div>
-      <ul class="rules">{ruleEls}</ul>
+      {toolbarContents}
+      {mainContents}
     </div>
   );
 }
