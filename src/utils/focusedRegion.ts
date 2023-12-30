@@ -7,6 +7,7 @@ function getElementRegion(targetEl: Element): string {
     "#available-actions",
     "#variables-toolbar",
     "#variables-list",
+    "#branch-editor",
   ];
   regions.forEach((regionName) => {
     const parent = document.querySelector(regionName);
