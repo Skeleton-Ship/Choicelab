@@ -77,12 +77,18 @@ export default function StemInstance(props: {
     );
     ruleEls.push(ruleEl);
   });
+  const stemIndex =
+    props.branch.stems.length > 2 ? (
+      <div class="stem-index">{props.indexLabel}</div>
+    ) : (
+      ""
+    );
   // Return
   return (
     <div class={itemClass}>
       <div class="item-toolbar">
+        {stemIndex}
         <h5 class="item-heading aria-only">{stemLabel}</h5>
-        <div class="stem-index">{props.indexLabel}</div>
         <p class="match-text">{matchText}</p>
         <div class="controls">
           <button

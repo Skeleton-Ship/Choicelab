@@ -21,6 +21,11 @@
   padding-top: #{math.div($size, 2) + "px"};
   width: #{$size + "px"};
   height: #{$size + "px"};
+  i {
+    display: inline-block;
+    font-size: #{$size + "px"};
+    margin-top: #{math.div($size, 2) * -1 + "px"};
+  }
 }
 
 @mixin stem-index($size: 30) {

@@ -60,6 +60,9 @@ $max-stems: 10;
       border-style: solid;
       border-color: transparent;
       box-shadow: variables.$node-shadow;
+      &.noMatch {
+        justify-content: center;
+      }
       &.selected,
       &.selecting {
         border-color: variables.$accent-color;
@@ -76,8 +79,13 @@ $max-stems: 10;
       }
       .no-match-index {
         @include mixins.index(23);
-        background-color: #ffe0e8;
-        color: #e52f5f;
+        background-color: #fff8e0;
+        color: #d87c09;
+      }
+      .stem-label {
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.7;
       }
     }
   }

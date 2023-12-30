@@ -1,7 +1,7 @@
 import Link from "./Link";
-import { getBranchStem } from "../../../data/getData";
+import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
-import { Stem } from "../../../typings";
+import { Branch, Stem } from "../../../typings";
 
 /**
  * A single path in a branch. If the stem is a "value" type, it will test for the given value. A "noMatch" type stem is the fallback if all other stems fail.
@@ -38,6 +38,7 @@ export default function BranchStemEl(props: {
   const stem: Stem | undefined = getBranchStem(props.id, props.nodeId, store);
   if (typeof stem === "undefined") return <></>;
   let contents;
+  let stemIndex;
   let link = (
     <Link
       origin="branchStem"
@@ -50,15 +51,27 @@ export default function BranchStemEl(props: {
     contents = (
       <>
         <span className="node-id">{stem.id}</span>
-        No Match
+        <span class="no-match-index">
+          <i class="bi bi-x"></i>
+        </span>
+        <span class="stem-label">No Match</span>
         {link}
       </>
     );
   } else if (stem.type === "rules") {
+    const branch: Branch | undefined = getBranch(props.nodeId, store);
+    if (branch) {
+      stemIndex =
+        branch.stems.length > 2 ? (
+          <span class="stem-index">{props.index}</span>
+        ) : (
+          ""
+        );
+    }
     contents = (
       <>
         <span className="node-id">{stem.id}</span>
-        <span class="stem-index">{props.index}</span>
+        {stemIndex}
         {link}
       </>
     );
@@ -69,9 +82,10 @@ export default function BranchStemEl(props: {
     left: viewSettings.stemMarginLeft * props.index + "px",
     top: 100 + "px",
   };
+  const className = `stem ${stem.type} ${selectedClass}`;
   return (
     <li
-      className={`stem ${selectedClass}`}
+      className={className}
       data-id={props.id}
       data-element="branchStem"
       data-branch={props.nodeId}
