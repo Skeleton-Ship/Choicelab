@@ -13,7 +13,9 @@ export default async function createProjectFile(name: string) {
       name: "__CHOICELAB_STANDARD__",
       path: "__INTERNAL__",
     },
-    variables: {},
+    variables: {
+      items: [],
+    },
     sequences: [createSequence()],
   };
   const blankProjectStr = JSON.stringify(blankProject, null, 2);

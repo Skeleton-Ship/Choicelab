@@ -28,7 +28,7 @@ export default async function newProject() {
       path: parentPath,
       callback: "project-dir-created",
     });
-    listen("project-dir-created", () => {
+    listen("project-dir-created", async () => {
       // Create sub directories
       emit("create-directory", {
         name: "media",
@@ -39,7 +39,11 @@ export default async function newProject() {
         path: projectPath,
       });
       // Create project.json
-      const projectFileContents = createProjectFile(projectName);
+      const projectFileContents = await createProjectFile(projectName);
+      if (!projectFileContents || projectFileContents === "") {
+        console.error("Project file JSON could not be generated.");
+        return;
+      }
       emit("save-text-file", {
         name: "project.json",
         contents: projectFileContents,
