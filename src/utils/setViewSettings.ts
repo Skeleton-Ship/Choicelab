@@ -15,6 +15,7 @@ export default function setViewSettings(valueNum: number, store: Store) {
   if (viewSettings.stemWidth < 100) viewSettings.stemWidth = 100;
   viewSettings.stemHeight = valueNum * 0.2;
   if (viewSettings.stemHeight < 45) viewSettings.stemHeight = 45;
+  if (viewSettings.stemHeight > 67) viewSettings.stemHeight = 67;
   viewSettings.stemMarginLeft = viewSettings.cellWidth + 25;
   return viewSettings;
 }
