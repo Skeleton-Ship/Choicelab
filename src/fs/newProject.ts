@@ -31,7 +31,7 @@ export default async function newProject() {
     listen("project-dir-created", async () => {
       // Create sub directories
       emit("create-directory", {
-        name: "media",
+        name: "assets",
         path: projectPath,
       });
       emit("create-directory", {
