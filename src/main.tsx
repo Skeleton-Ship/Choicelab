@@ -2,6 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { appWindow } from "@tauri-apps/api/window";
 import { listen, emit } from "@tauri-apps/api/event";
+import { message } from "@tauri-apps/api/dialog";
 import IndexedDB from "./editor/inspector/functions/indexedDB";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
@@ -57,10 +58,15 @@ async function init() {
     }
     // Load project data
     const projectData = await loadProjectData(projectPath);
-    if (typeof projectData === "undefined") {
-      console.error("No project data found.");
+    if (!projectData) {
+      message(
+        "Make sure the selected folder is a Choicelab project folder, then try again.",
+        "The selected folder couldn't be opened."
+      );
+      appWindow.close();
       return;
     }
+    appWindow.show();
     // Let Rust know that the project was opened
     emit("project-opened");
     // Create data store

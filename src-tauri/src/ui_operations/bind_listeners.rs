@@ -151,12 +151,21 @@ pub fn bind_listeners(app: &tauri::App) {
 			match json_value {
 				Ok(json) => {
 					let version_path = json["path"].as_str().unwrap_or("N/A");
+					let script_prefix = "window.__CHOICELAB_DATA_RAW__ = `";
+					let script_suffix = "`;";
+					let project_window = handle_request_project.get_window("project").unwrap();
 					match read_text_file(version_path) {
 						Ok(contents) => {
-							let project_window = handle_request_project.get_window("project").unwrap();
+							let script_text = format!("{}{}{}", script_prefix, contents, script_suffix);
+							let script_text_ref: &str = &script_text;
+							let _ = project_window.eval(script_text_ref);
 						  project_window.emit("receive-project-file", Payload { message: contents }).unwrap();			  
 						}
 						Err(e) => {
+							let contents = "__INVALID_CHOICELAB_FILE__";
+							let script_text = format!("{}{}{}", script_prefix, contents, script_suffix);
+							let script_text_ref: &str = &script_text;
+							let _ = project_window.eval(script_text_ref);
 							eprintln!("Error parsing version: {}", e);
 						}
 					}
@@ -199,7 +208,6 @@ pub fn bind_listeners(app: &tauri::App) {
 							}
 						}
 				  }
-				  // TODO: Add text file creation
 			  }
 			  Err(e) => {
 				  eprintln!("Error parsing JSON: {}", e);
