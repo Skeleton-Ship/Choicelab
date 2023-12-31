@@ -2,6 +2,7 @@ import { createRef } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { emit, listen } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
+import { message } from "@tauri-apps/api/dialog";
 import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
@@ -47,6 +48,23 @@ export default function File(props: {
       const file = filePicker.files[0];
       if (filePicker.files.length == 1) {
         setLoading(true);
+        // First, make sure the file type is valid
+        let isValidType = false;
+        const acceptedTypes = props.accept.split(",");
+        acceptedTypes.forEach((fileType: string) => {
+          fileType = fileType.trim();
+          if (fileType === file.type) {
+            isValidType = true;
+          }
+        });
+        if (isValidType === false) {
+          message(
+            `The ${props.actionDef.label} action only accepts the following file types: ${props.accept}`,
+            `The file "${file.name}" can't be used.`
+          );
+          return;
+        }
+        // If it is, upload the file
         readFileUpload(file, props.type)
           .then(async (contents) => {
             const store = getStore();
