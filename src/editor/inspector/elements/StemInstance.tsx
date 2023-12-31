@@ -70,6 +70,7 @@ export default function StemInstance(props: {
   }
   const itemClass = `inspector-item branch-stem ${selectedClass}`;
   const ruleEls: Array<preact.JSX.Element> = [];
+  let ruleIndex = 0;
   props.stem.rules.forEach((rule: Rule) => {
     const key = `rule_${rule.id}`;
     const ruleEl = (
@@ -78,10 +79,12 @@ export default function StemInstance(props: {
         rule={rule}
         stem={props.stem}
         branch={props.branch}
+        index={ruleIndex}
         update={props.update}
       />
     );
     ruleEls.push(ruleEl);
+    ruleIndex++;
   });
   const stemIndex =
     props.branch.stems.length > 2 ? (

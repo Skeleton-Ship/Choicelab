@@ -7,6 +7,7 @@ export default function RuleInstance(props: {
   rule: Rule;
   stem: Stem;
   branch: Branch;
+  index: number;
   update: Function;
 }) {
   /*
@@ -177,6 +178,20 @@ export default function RuleInstance(props: {
         break;
     }
   }
+  // Only show delete button for rules > 0
+  // (This isn't strictly necessary, it's just a better UI)
+  const deleteButton =
+    props.index > 0 ? (
+      <button
+        class="delete-rule icon"
+        title="Delete Rule"
+        onClick={handleDelete}
+      >
+        <i class="bi bi-dash-circle-fill"></i>
+      </button>
+    ) : (
+      ""
+    );
   return (
     <li class="rule">
       <select
@@ -198,13 +213,7 @@ export default function RuleInstance(props: {
         {operatorItems}
       </select>
       {inputField}
-      <button
-        class="delete-rule icon"
-        title="Delete Rule"
-        onClick={handleDelete}
-      >
-        <i class="bi bi-dash-circle-fill"></i>
-      </button>
+      {deleteButton}
     </li>
   );
 }
