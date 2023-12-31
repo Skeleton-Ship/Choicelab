@@ -118,7 +118,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept="audio/mp3"
+          accept="audio/mpeg"
           filePropName="source"
           action={action}
           actionDef={actionDef}
