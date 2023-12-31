@@ -35,7 +35,10 @@ async function init() {
     }
   });
   // create asset manager
-  window.__CHOICELAB_ASSET_CACHE__ = new IndexedDB("AssetCache", "Assets");
+  window.__CHOICELAB_ASSET_CACHE__ = new IndexedDB(
+    "Choicelab_AssetCache",
+    "Assets"
+  );
 
   let elements = <></>;
 

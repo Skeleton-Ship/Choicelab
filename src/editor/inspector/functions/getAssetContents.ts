@@ -100,7 +100,7 @@ export default async function getAssetContents(
         let contents;
         try {
           contents = await storage.getFileContents(localKey);
-          if (contents === null) {
+          if (contents === null || !contents) {
             contents = await storeCachedAsset(fileName, fileType, localKey);
           }
           resolve(contents);

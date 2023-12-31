@@ -18,7 +18,11 @@ export default class IndexedDBExample {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as any).result;
-        db.createObjectStore(this.storeName);
+        db.createObjectStore(this.storeName, {
+          keyPath: "id",
+          autoIncrement: false,
+        });
+        // Specify 'id' as the keyPath and disable auto-increment
       };
     });
   }
@@ -34,7 +38,7 @@ export default class IndexedDBExample {
       const objectStore = transaction.objectStore(this.storeName);
 
       // Use add method for out-of-line keys
-      const request: IDBRequest = objectStore.put({ id: key, contents });
+      const request: IDBRequest = objectStore.put(contents, key);
 
       request.onsuccess = () => {
         resolve();
@@ -56,10 +60,11 @@ export default class IndexedDBExample {
       const transaction = this.db.transaction([this.storeName], "readonly");
       const objectStore = transaction.objectStore(this.storeName);
 
+      // Pass the key to the get method
       const request = objectStore.get(id);
 
       request.onsuccess = () => {
-        resolve(request.result ? request.result.contents : null);
+        resolve(request.result ? request.result : null);
       };
 
       request.onerror = (event) => {
