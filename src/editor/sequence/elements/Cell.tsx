@@ -55,14 +55,8 @@ export default function CellEl(props: {
       actionClass = actionClass + " no-props";
       actionContents = <span class="action-name">{actionDef.label}</span>;
     } else {
-      const propToShow = actionDef.flowchart.prop;
-      const propValue = action.props[propToShow];
-      const propClass = actionDef.flowchart.className
-        ? actionDef.flowchart.className
-        : "";
-      if (propValue) {
-        actionContents = <div class={propClass}>{propValue}</div>;
-      }
+      const FCElement = actionDef.flowchart;
+      actionContents = <FCElement {...action.props} />;
     }
     const elKey = `action_${action.id}`;
     const actionEl = (

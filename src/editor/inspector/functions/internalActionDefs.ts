@@ -1,4 +1,12 @@
 import { ActionDefs } from "../../../typings";
+import {
+  FCText,
+  FCButton,
+  FCInputField,
+  FCImage,
+  FCAudio,
+  FCVideo,
+} from "./internalActionFlowchartEls";
 
 const internalActionDefs: ActionDefs = {
   name: "__CHOICELAB__STANDARD__",
@@ -16,11 +24,7 @@ const internalActionDefs: ActionDefs = {
         iconColor: "#2f2f52",
         iconBackgroundColor: "#FFC300",
       },
-      flowchart: {
-        prop: "contents",
-        showAs: "text",
-        className: "",
-      },
+      flowchart: FCText,
       props: [
         {
           name: "contents",
@@ -59,6 +63,7 @@ const internalActionDefs: ActionDefs = {
       description: "Play an audio file.",
       extendable: false,
       mediaElement: true,
+      flowchart: FCAudio,
       editor: {
         iconName: "volume-up-fill",
         iconColor: "white",
@@ -85,6 +90,7 @@ const internalActionDefs: ActionDefs = {
       description: "Play a video file.",
       extendable: false,
       mediaElement: true,
+      flowchart: FCVideo,
       editor: {
         iconName: "film",
         iconColor: "white",
@@ -112,6 +118,7 @@ const internalActionDefs: ActionDefs = {
         "An image file that can appear instantly or be associated with a media action.",
       extendable: true,
       mediaElement: false,
+      flowchart: FCImage,
       editor: {
         iconName: "image",
         iconColor: "white",
@@ -140,15 +147,11 @@ const internalActionDefs: ActionDefs = {
       description: "A button that, when pressed, advances to the next node.",
       extendable: true,
       mediaElement: false,
+      flowchart: FCButton,
       editor: {
         iconName: "app",
         iconColor: "white",
         iconBackgroundColor: "#FF9502",
-      },
-      flowchart: {
-        prop: "label",
-        showAs: "text",
-        className: "button-label",
       },
       props: [
         {
@@ -189,12 +192,20 @@ const internalActionDefs: ActionDefs = {
       description: "A fill-in-the-blank field for entering information.",
       extendable: true,
       mediaElement: false,
+      flowchart: FCInputField,
       editor: {
         iconName: "input-cursor-text",
         iconColor: "#027AFF",
         iconBackgroundColor: "#E9F2FF",
       },
       props: [
+        {
+          name: "label",
+          label: "Label",
+          control: "text",
+          required: true,
+          default: "",
+        },
         {
           name: "type",
           label: "Field",

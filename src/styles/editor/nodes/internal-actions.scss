@@ -1,8 +1,44 @@
 .cell {
+  .action {
+    span.no-src {
+      font-style: italic;
+      opacity: 0.8;
+    }
+  }
   .action.button {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    background-color: #f2f2f2;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: #f5f5f5;
     border-radius: 5px;
     padding: 5px;
+  }
+  .action.inputField {
+    div {
+      border: 1px solid #ccc;
+      padding: 5px;
+      color: #444;
+      font-style: italic;
+    }
+  }
+  .action.image {
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    .loading-text {
+      display: none;
+    }
+  }
+  .action.audio,
+  .action.video {
+    div {
+      border-radius: 5px;
+      padding: 5px;
+      color: #308ee5;
+      background-color: #ebf5ff;
+      i {
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
   }
 }
