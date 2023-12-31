@@ -1,7 +1,6 @@
 @use "./bootstrap-reboot/bootstrap-reboot.min";
-@use "./bootstrap-icons/bootstrap-icons"
-  with($bootstrap-icons-font-dir: "./src/styles/bootstrap-icons/fonts");
 @use "./ui-controls";
 @use "./base";
 @use "./launcher";
 @use "./editor";
+@import "./bootstrap-icons/bootstrap-icons.min.css";
