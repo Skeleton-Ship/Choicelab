@@ -3,6 +3,8 @@ import TextField from "./prop-controls/TextField";
 import Dropdown from "./prop-controls/Dropdown";
 import Checkbox from "./prop-controls/Checkbox";
 import File from "./prop-controls/File";
+import VariableControl from "./prop-controls/Variable";
+import VariableValueControl from "./prop-controls/VariableValue";
 
 export default function ActionPropEditor(props: {
   instance: Action;
@@ -139,6 +141,33 @@ export default function ActionPropEditor(props: {
           action={action}
           actionDef={actionDef}
           propDef={defProp}
+          initialValue={initialValue}
+          className={className}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "variable":
+      propControl = (
+        <VariableControl
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          initialValue={initialValue}
+          className={className}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "variableValue":
+      propControl = (
+        <VariableValueControl
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          varFieldName="varToSet"
           initialValue={initialValue}
           className={className}
           store={props.store}
