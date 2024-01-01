@@ -89,7 +89,12 @@ export interface Store {
     versions: Array<string>;
   };
   currentSequenceId: string;
-  targetMode: string;
+  targetMode: {
+    active: boolean;
+    origin: string;
+    nodeId: string;
+    stemId?: string;
+  };
   shiftDown: boolean;
   selectedNodes: Array<AnyNode>;
   selectedStem: Stem | false;
@@ -154,7 +159,6 @@ declare global {
   interface Window {
     __CHOICELAB_DATA_RAW__: string;
     __CHOICELAB_DATA__: Store;
-    __CHOICELAB_TARGET_MODE__: void | false;
     __CHOICELAB_ASSET_CACHE__: any;
   }
 }

@@ -1,16 +1,18 @@
 import { useEffect, useState, useRef } from "preact/hooks";
-import StartEl from "./elements/Start";
-import CellEl from "./elements/Cell";
-import BranchEl from "./elements/Branch";
 import { getSequence } from "../../data/getData";
 import runSequenceEvents from "./general/runSequenceEvents";
 import handleSelectNode from "./selecting/handleSelectNode";
 import positionNodes from "./linking/positionNodes";
 import drawArrows from "./linking/drawArrows";
+import scrollNodeIntoView from "./general/scrollNodeIntoView";
 import setSequenceDimensions from "./general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../../typings";
+import { getStore } from "../../data/dataStore";
+// Elements
+import StartEl from "./elements/Start";
+import CellEl from "./elements/Cell";
+import BranchEl from "./elements/Branch";
 import ViewSlider from "./ViewSlider";
-import scrollNodeIntoView from "./general/scrollNodeIntoView";
 
 /**
  * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes, which can be found in runSequenceEvents.
@@ -79,8 +81,10 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     }
     nodeEls.push(nodeEl);
   });
+  const store = getStore();
+  const targetModeClass = store.targetMode.active === true ? "target-mode" : "";
   return (
-    <div id="sequence-wrap" tabindex={0}>
+    <div id="sequence-wrap" tabindex={0} class={targetModeClass}>
       <div id="sequence" key={props.id}>
         <ul className="nodes" ref={arrowsRef}>
           {nodeEls}

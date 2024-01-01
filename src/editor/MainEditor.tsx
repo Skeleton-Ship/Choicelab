@@ -19,6 +19,7 @@ import showPane from "./inspector/functions/showPane";
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./sequence/Sequence";
 import Inspector from "./Inspector";
+import TargetMode from "./target-mode/TargetMode";
 
 export default function MainEditor() {
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function MainEditor() {
         handlePaste(handleUpdate);
       }
     });
+    // Focus listeners
     window.addEventListener("focus", () => {
       const store = getStore();
       store.focus = true;
@@ -96,6 +98,7 @@ export default function MainEditor() {
       document.querySelector("#App")?.setAttribute("data-focus", "false");
       setStore(store);
     });
+    // Save listeners
     appWindow.listen("tauri://close-requested", async () => {
       const store = getStore();
       if (store.saved) {
@@ -119,8 +122,7 @@ export default function MainEditor() {
 
   const store = getStore();
 
-  // @ts-ignore
-  const [refresh, triggerRefresh] = useState(uuidv4());
+  const [_refresh, triggerRefresh] = useState(uuidv4());
   const handleUpdate = async (updateHistory: boolean = true) => {
     // Update history
     if (updateHistory === true) {
@@ -156,6 +158,7 @@ export default function MainEditor() {
       <div id="editor-contents">
         {flowchartContents}
         <Inspector update={handleUpdate} />
+        <TargetMode update={handleUpdate} />
       </div>
     </div>
   );

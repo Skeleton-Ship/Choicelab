@@ -82,7 +82,7 @@ async function init() {
     elements = <MainEditor />;
   }
   const appDOM = (
-    <div id="App" data-target-mode="" data-focused-region="">
+    <div id="App" data-focused-region="">
       {elements}
     </div>
   );

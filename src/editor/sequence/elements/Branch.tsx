@@ -56,7 +56,9 @@ export default function BranchEl(props: {
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
-  const branchClass = `branch node ${selectedClass}`;
+  const targetModeClass =
+    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+  const branchClass = `branch node ${selectedClass} ${targetModeClass}`;
   // Iterate through links
   const stems: Array<Stem> = branch.stems;
   const stemEls: Array<preact.JSX.Element> = [];

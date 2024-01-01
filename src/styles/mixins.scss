@@ -5,7 +5,7 @@
 }
 
 @mixin target-mode() {
-  #App[data-target-mode]:not([data-target-mode=""]) {
+  #sequence-wrap.target-mode {
     @content;
   }
 }

@@ -36,7 +36,9 @@ export default function CellEl(props: {
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
-  const cellClass = `cell node ${selectedClass}`;
+  const targetModeClass =
+    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+  const cellClass = `cell node ${selectedClass} ${targetModeClass}`;
   const style = {
     top: props.top + "px",
     left: props.left + "px",

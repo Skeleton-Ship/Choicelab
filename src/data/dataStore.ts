@@ -23,7 +23,12 @@ export default function createDataStore(
       versions: [],
     },
     currentSequenceId: "",
-    targetMode: "",
+    targetMode: {
+      active: false,
+      origin: "",
+      nodeId: "",
+      stemId: "",
+    },
     shiftDown: false,
     selectedNodes: [],
     selectedStem: false,

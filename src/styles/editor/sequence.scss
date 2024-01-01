@@ -14,16 +14,17 @@
   position: relative;
   overflow: scroll;
   background-color: rgb(239, 239, 239);
-  // background-color: rgba(239, 239, 239, 0.95);
+  transition: background-color 0.2s ease;
   &:focus {
     outline: none;
+  }
+  &.target-mode {
+    background-color: rgba(239, 239, 239, 0.8);
   }
 }
 
 #sequence {
   width: 100%;
-  background-color: transparent;
-  transition: background-color 0.2s ease;
   #empty-flowchart {
     position: absolute;
     top: 50%;

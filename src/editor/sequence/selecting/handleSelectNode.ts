@@ -9,9 +9,10 @@ import { AnyNode } from "../../../typings";
  */
 export default function handleSelectNode(node: AnyNode, update: Function) {
   const store = getStore();
+  // Intercept target mode
   const targetMode = store.targetMode;
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
-  if (typeof node === "undefined" || targetMode !== "") return;
+  if (typeof node === "undefined" || targetMode.active === true) return;
   let selectedNodes = store.selectedNodes;
   const shiftDown = store.shiftDown;
   let removeFromSelection = -1;

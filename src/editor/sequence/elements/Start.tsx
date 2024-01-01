@@ -38,7 +38,9 @@ export default function StartEl(props: {
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
-  const cellClass = `start node ${selectedClass}`;
+  const targetModeClass =
+    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+  const cellClass = `start node ${selectedClass} ${targetModeClass}`;
   const style = {
     top: props.top + "px",
     left: props.left + "px",

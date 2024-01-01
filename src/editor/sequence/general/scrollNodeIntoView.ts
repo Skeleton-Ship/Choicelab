@@ -9,9 +9,9 @@ export default function scrollNodeIntoView() {
     `#sequence .nodes .node[data-id="${lastSelected.id}"]`
   );
   if (!nodeEl) return;
+  if (store.targetMode.active === true) return;
   // First, get sequence dimensions — we need it to tell if the element exceeds that
-  const sequenceWrap = document.querySelector("#sequence-wrap");
-  if (!sequenceWrap) return;
+  const sequenceWrap = document.querySelector("#sequence-wrap")!;
   const wrapRect = sequenceWrap.getBoundingClientRect();
   const nodeRect = nodeEl.getBoundingClientRect();
   if (
