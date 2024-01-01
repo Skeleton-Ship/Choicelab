@@ -6,6 +6,7 @@ import { getFocusedRegion } from "../../../utils/focusedRegion";
 import insertNewNode from "./insertNewNode";
 import inTextElement from "../../../utils/inTextElement";
 import handleDisconnectLinks from "./handleDisconnectLinks";
+import enterTargetMode from "../../target-mode/enterTargetMode";
 import handleKeyNavigation from "./handleKeyNavigation";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";
@@ -75,6 +76,13 @@ export default function runSequenceEvents(update: Function) {
     } else {
       handleDeleteNodes(update);
     }
+  });
+  listen("menu-set-link", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
+    enterTargetMode({
+      update: update,
+    });
   });
   listen("menu-disconnect-link", async () => {
     const focused = await appWindow.isFocused();

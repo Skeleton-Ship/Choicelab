@@ -42,6 +42,7 @@ pub fn create_app_menu() -> Menu {
 	.add_item(CustomMenuItem::new("new_cell", "New Cell").accelerator("Cmd+N"))
 	.add_item(CustomMenuItem::new("new_branch", "New Branch").accelerator("Cmd+B"))
 	.add_native_item(MenuItem::Separator)
+	.add_item(CustomMenuItem::new("set_link", "Set Link").accelerator("Cmd+L"))	
 	.add_item(CustomMenuItem::new("disconnect_link", "Disconnect Link").accelerator("Cmd+D"))	
 	.add_item(CustomMenuItem::new("delete_nodes", "Delete Items").accelerator("Cmd+Delete"))	
 	);

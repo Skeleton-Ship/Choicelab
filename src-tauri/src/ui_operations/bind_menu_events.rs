@@ -37,6 +37,9 @@ pub fn bind_menu_events(event: WindowMenuEvent) {
 		  "delete_nodes" => {
 			  event.window().emit("menu-delete-nodes", ()).unwrap();
 		  }
+		  "set_link" => {
+			  event.window().emit("menu-set-link", ()).unwrap();
+		  }
 		  "disconnect_link" => {
 			  event.window().emit("menu-disconnect-link", ()).unwrap();
 		  }	
