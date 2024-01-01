@@ -1,8 +1,30 @@
+@use "../../variables";
+
 .cell {
   .action {
     span.no-src {
       font-style: italic;
       opacity: 0.8;
+    }
+  }
+  .action.button,
+  .action.inputField {
+    > div {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .button-label {
+      flex-basis: 50%;
+      padding-right: 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .button-var {
+      min-width: 90px;
+      font-family: variables.$fonts-mono;
+      color: rgb(238, 66, 141);
+      font-size: 11px;
     }
   }
   .action.button {
@@ -12,22 +34,14 @@
     padding: 5px;
   }
   .action.inputField {
-    div {
-      border: 1px solid #ccc;
-      padding: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    .button-label {
       color: #444;
       font-style: italic;
     }
   }
-  .action.image {
-    img {
-      max-width: 100%;
-      height: auto;
-    }
-    .loading-text {
-      display: none;
-    }
-  }
+  .action.image,
   .action.audio,
   .action.video {
     div {

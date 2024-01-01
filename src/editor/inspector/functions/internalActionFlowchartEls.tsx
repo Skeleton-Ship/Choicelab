@@ -1,6 +1,5 @@
-import { useState } from "preact/hooks";
-import getAssetPreviewElement from "./getAssetPreviewElement";
-import getAssetContents from "./getAssetContents";
+import { getVariable } from "../../../data/getData";
+import { getStore } from "../../../data/dataStore";
 
 function FCText(props: { contents: string; tag: string }) {
   let contents = <>{props.contents}</>;
@@ -17,7 +16,18 @@ function FCButton(props: {
   response: string;
   saveInputs: boolean;
 }) {
-  return <div>{props.label}</div>;
+  const store = getStore();
+  const variable = getVariable(props.varToSet, store);
+  let varEl = <></>;
+  if (variable) {
+    varEl = <span class="button-var">{variable.name}</span>;
+  }
+  return (
+    <div>
+      <span class="button-label">{props.label}</span>
+      {varEl}
+    </div>
+  );
 }
 
 function FCInputField(props: {
@@ -25,9 +35,21 @@ function FCInputField(props: {
   type: string;
   varToSet: string;
 }) {
-  return <div>{props.label}</div>;
+  const store = getStore();
+  const variable = getVariable(props.varToSet, store);
+  let varEl = <></>;
+  if (variable) {
+    varEl = <span class="button-var">{variable.name}</span>;
+  }
+  return (
+    <div>
+      <span class="button-label">{props.label}</span>
+      {varEl}
+    </div>
+  );
 }
 
+/*
 function FCImage(props: { source: string; alt: string }) {
   const [imageEl, setImageEl] = useState(<span class="no-src">Image</span>);
   getAssetContents(props.source, "image").then((src) => {
@@ -36,6 +58,20 @@ function FCImage(props: { source: string; alt: string }) {
     }
   });
   return <div>{imageEl}</div>;
+}
+*/
+
+function FCImage(props: { source: string; alt: string }) {
+  let imageLabel = <span class="no-src">Image</span>;
+  if (typeof props.source !== "undefined" && props.source !== "") {
+    imageLabel = (
+      <div>
+        <i class="bi bi-image"></i>
+        {props.source}
+      </div>
+    );
+  }
+  return <>{imageLabel}</>;
 }
 
 function FCAudio(props: { source: string; captions: string }) {
