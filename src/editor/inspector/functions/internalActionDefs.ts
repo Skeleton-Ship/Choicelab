@@ -163,24 +163,35 @@ const internalActionDefs: ActionDefs = {
         },
         {
           name: "varToSet",
-          label: "Variable",
+          label: "Variable to Set",
           control: "variable",
+          className: "col-2",
           required: true,
         },
         {
           name: "value",
           label: "Value to Set",
           control: "variableValue",
+          className: "col-2",
           required: true,
         },
+        /*
         {
           name: "response",
           label: "Response Audio",
+          className: "col-2",
           control: "audio",
         },
         {
+          name: "responseCaptions",
+          label: "Response Captions",
+          className: "col-2",
+          control: "captions",
+        },
+		*/
+        {
           name: "saveInputs",
-          label: "Save Inputs When Clicked",
+          label: "Save Input Fields When Clicked",
           control: "boolean",
           default: true,
         },
@@ -211,6 +222,7 @@ const internalActionDefs: ActionDefs = {
           label: "Field",
           control: "dropdown",
           default: "text",
+          className: "col-2",
           options: [
             {
               value: "text",
@@ -230,6 +242,7 @@ const internalActionDefs: ActionDefs = {
           name: "varToSet",
           label: "Variable to Set",
           control: "variable",
+          className: "col-2",
           required: true,
         },
       ],

@@ -124,8 +124,12 @@ export default function File(props: {
       <label class="label break-line" for={inputId}>
         {props.propDef.label}
       </label>
+      <button class="file-initial" onClick={handleReplace}>
+        Choose...
+      </button>
       <input
         id={inputId}
+        class="file-initial"
         type="file"
         ref={filePickerEl}
         accept={props.accept}
