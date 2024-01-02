@@ -18,6 +18,7 @@
   top: 0;
   left: 0;
   list-style: none;
+  scroll-margin: 75px;
   .contents {
     position: relative;
     width: 100%;
@@ -53,15 +54,6 @@
       border-radius: 99px;
       background-color: variables.$accent-color;
     }
-  }
-}
-
-@keyframes node-appear {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
   }
 }
 

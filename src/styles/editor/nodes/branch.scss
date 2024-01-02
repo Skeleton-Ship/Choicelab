@@ -38,6 +38,7 @@
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 1));
     }
     path {
+      animation: node-appear 0.2s ease;
       fill: #ffffff;
       @media (prefers-color-scheme: dark) {
         fill: variables.$node-bg-dark;
@@ -63,6 +64,7 @@
       border-style: solid;
       border-color: transparent;
       align-items: center;
+      animation: node-appear 0.2s ease;
       @include mixins.node-shadow;
       @media (prefers-color-scheme: dark) {
         background-color: variables.$node-bg-dark;
