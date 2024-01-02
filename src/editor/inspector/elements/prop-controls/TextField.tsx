@@ -26,6 +26,7 @@ export default function TextField(props: {
     <input
       name={propElName}
       type="text"
+      class="ui-text-field"
       value={props.initialValue}
       onChange={(e) => {
         handleChange(e.target);
@@ -37,6 +38,7 @@ export default function TextField(props: {
       <textarea
         name={propElName}
         id={propElName}
+        class="ui-text-area"
         onChange={(e) => {
           handleChange(e.target);
         }}

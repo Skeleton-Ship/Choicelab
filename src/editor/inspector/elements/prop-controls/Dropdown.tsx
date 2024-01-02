@@ -40,16 +40,18 @@ export default function Dropdown(props: {
       <label class="label break-line" for={propElName}>
         {propDef.label}
       </label>
-      <select
-        name={propElName}
-        id={propElName}
-        value={props.initialValue}
-        onChange={(e) => {
-          handleChange(e.target);
-        }}
-      >
-        {optionEls}
-      </select>
+      <div class="ui-dropdown">
+        <select
+          name={propElName}
+          id={propElName}
+          value={props.initialValue}
+          onChange={(e) => {
+            handleChange(e.target);
+          }}
+        >
+          {optionEls}
+        </select>
+      </div>
     </div>
   );
 }

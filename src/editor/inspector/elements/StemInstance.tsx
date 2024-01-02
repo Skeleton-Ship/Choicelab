@@ -49,14 +49,16 @@ export default function StemInstance(props: {
     }
   }
   const matchDropdown = (
-    <select
-      class="match-dropdown"
-      value={props.stem.match}
-      onChange={handleMatchChange}
-    >
-      <option value="all">all</option>
-      <option value="any">any</option>
-    </select>
+    <div class="ui-dropdown">
+      <select
+        class="match-dropdown"
+        value={props.stem.match}
+        onChange={handleMatchChange}
+      >
+        <option value="all">all</option>
+        <option value="any">any</option>
+      </select>
+    </div>
   );
   let matchText = <span>Match this rule:</span>;
   if (props.stem.rules.length > 1) {

@@ -1,34 +1,179 @@
+@use "./mixins";
+
 button {
   cursor: default !important;
 }
 
-.ui-button {
-  border-style: solid;
-  border-width: 0;
-  border-radius: 5px;
-  padding: 0px 10px 1px;
-  height: 21px;
+// Set consistent font sizes, colors, line heights
+.ui-button,
+.ui-text-field,
+.ui-text-area,
+.ui-number-field input,
+.ui-dropdown select {
   font-size: 13px;
+  line-height: 1.1;
+  color: rgba(0, 0, 0, 0.85);
+  @media (prefers-color-scheme: dark) {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+// Make buttons and dropdowns look similar
+.ui-button,
+.ui-dropdown {
+  appearance: none;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
   background-color: white;
-  line-height: 1;
   vertical-align: middle;
-  box-shadow: rgb(0, 0, 0, 0.44) 0 0.5px 1.5px;
+  box-shadow: rgb(0, 0, 0, 0.07) 0 1px 2px;
+  @media (prefers-color-scheme: dark) {
+    box-shadow: rgba(0, 0, 0, 0.35) 0 2px 2px;
+  }
   &.large {
     font-size: 15px;
     padding-left: 12px;
     padding-right: 12px;
     height: 28px;
   }
+  @media (prefers-color-scheme: dark) {
+    background-color: #5f5f5f;
+    color: rgba(255, 255, 255, 0.9);
+    border-top-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+// Buttons
+.ui-button {
+  padding: 0px 10px 1px;
+  height: 21px;
   &:active {
     background-color: #eee;
   }
   @media (prefers-color-scheme: dark) {
-    background-color: #5f5f5f;
-    color: rgba(255, 255, 255, 0.9);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.35) 0 2px 2px;
     &:active {
       background-color: #777677;
+    }
+  }
+}
+
+$field-padding: 4px 6px;
+
+// Make text fields and text areas look similar
+.ui-text-field,
+.ui-text-area,
+.ui-number-field input {
+  appearance: none;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: $field-padding;
+  border-radius: 0.4em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.17);
+  @media (prefers-color-scheme: dark) {
+    border-color: rgba(255, 255, 255, 0.16);
+    border-top-color: rgba(255, 255, 255, 0.26);
+  }
+}
+
+// Text area
+.ui-text-area {
+  padding: 0.6em;
+}
+
+// Dropdown
+.ui-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  &:after {
+    content: "";
+    width: 0.8em;
+    height: 0.8em;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    right: 0.35em;
+    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz48IS0tIEdlbmVyYXRlZCBieSBQaXhlbG1hdG9yIFBybyAzLjUuMyAtLT48c3ZnIHdpZHRoPSc3NCcgaGVpZ2h0PSc3NCcgdmlld0JveD0nMCAwIDc0IDc0JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxnIGlkPSdHcm91cCc+PHBhdGggaWQ9J1BhdGgtY29weScgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gMTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktMycgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgNDkgTCAzNyA2OScvPjxwYXRoIGlkPSdTaGFwZS1jb3B5LTInIGZpbGw9J25vbmUnIHN0cm9rZT0nIzAwMDAwMCcgc3Ryb2tlLXdpZHRoPScxMCcgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBkPSdNIDE3IDQ5IEwgMzcgNjknLz48L2c+PC9zdmc+Cg==");
+    background-size: contain;
+    background-repeat: no-repeat;
+    @media (prefers-color-scheme: dark) {
+      @include mixins.invert-icon;
+    }
+  }
+  select {
+    appearance: none;
+    border: none;
+    width: 100%;
+    display: block;
+    padding: $field-padding;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 1.5em;
+    background-color: transparent;
+  }
+}
+
+// Number field
+.ui-number-field {
+  position: relative;
+  input {
+    padding-right: 20px;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+    }
+  }
+  .controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25px;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    button {
+      margin: 0 auto;
+      appearance: none;
+      width: auto;
+      height: 50%;
+      border: none;
+      padding: 0 8.5px;
+      background-color: transparent;
+      text-align: center;
+      font-weight: 500;
+      display: flex;
+      &:first-of-type {
+        padding-bottom: 1px;
+        align-items: flex-end;
+      }
+      &:last-of-type {
+        padding-top: 1px;
+        align-items: flex-start;
+      }
+      &:active {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      @media (prefers-color-scheme: dark) {
+        &:active {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      }
+      svg {
+        max-width: 100%;
+        height: auto;
+        path {
+          stroke: rgba(0, 0, 0, 0.8);
+          @media (prefers-color-scheme: dark) {
+            stroke: rgba(255, 255, 255, 0.8);
+          }
+        }
+      }
     }
   }
 }

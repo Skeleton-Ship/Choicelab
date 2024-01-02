@@ -9,6 +9,8 @@
   }
   .action.button,
   .action.inputField {
+    border-radius: 5px;
+    padding: 5px;
     > div {
       display: flex;
       flex-wrap: wrap;
@@ -22,16 +24,18 @@
     .button-var {
       min-width: 90px;
       font-family: variables.$fonts-mono;
-      color: rgb(238, 66, 141);
+      color: variables.$pink-vibrant;
       font-size: 11px;
+      @media (prefers-color-scheme: dark) {
+        color: variables.$pink-faded-light;
+      }
     }
   }
   .action.button {
     background-color: #fff1e0;
-    border-radius: 5px;
-    padding: 5px;
     @media (prefers-color-scheme: dark) {
-      background-color: #695c52;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background-color: #614632;
     }
   }
   .action.inputField {
@@ -55,6 +59,7 @@
       background-color: #ebf5ff;
       @media (prefers-color-scheme: dark) {
         color: #75bcff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
         background-color: #454f5c;
       }
       i {

@@ -2,6 +2,7 @@ import { Rule, Stem, Branch, Variable } from "../../../typings";
 import { getVariables, getVariable, getStemRule } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { deleteStemRuleFromData } from "../../../data/deleteData";
+import NumberField from "./NumberField";
 
 export default function RuleInstance(props: {
   rule: Rule;
@@ -122,6 +123,7 @@ export default function RuleInstance(props: {
     operatorItems: Array<preact.JSX.Element> = [];
   // Get the kind of operators for each element
   let thisVar = getVariable(rule.variableId, store);
+  const fieldName = `input_${rule.id}`;
   if (thisVar) {
     const displayValue: any = rule.value;
     switch (thisVar.varType) {
@@ -132,7 +134,8 @@ export default function RuleInstance(props: {
         ];
         inputField = (
           <input
-            class="value"
+            name={fieldName}
+            class="value ui-text-field"
             type="text"
             value={displayValue}
             onChange={(e: Event) => {
@@ -151,9 +154,8 @@ export default function RuleInstance(props: {
           <option value="lessThanOrEqualTo">&lt;=</option>,
         ];
         inputField = (
-          <input
-            class="value"
-            type="number"
+          <NumberField
+            name={fieldName}
             value={displayValue}
             onChange={(e: Event) => {
               handleChange("value", e);
@@ -164,16 +166,18 @@ export default function RuleInstance(props: {
       case "boolean":
         operatorItems = [<option value="equals">is</option>];
         inputField = (
-          <select
-            class="value"
-            value={displayValue}
-            onChange={(e: Event) => {
-              handleChange("value", e);
-            }}
-          >
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select>
+          <div class="value ui-dropdown">
+            <select
+              name={fieldName}
+              value={displayValue}
+              onChange={(e: Event) => {
+                handleChange("value", e);
+              }}
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
         );
         break;
     }
@@ -194,24 +198,26 @@ export default function RuleInstance(props: {
     );
   return (
     <li class="rule">
-      <select
-        class="variables"
-        value={rule.variableId}
-        onChange={(e) => {
-          handleChange("variableId", e);
-        }}
-      >
-        {varItems}
-      </select>
-      <select
-        class="operators"
-        value={rule.operator}
-        onChange={(e) => {
-          handleChange("operator", e);
-        }}
-      >
-        {operatorItems}
-      </select>
+      <div class="variables ui-dropdown">
+        <select
+          value={rule.variableId}
+          onChange={(e) => {
+            handleChange("variableId", e);
+          }}
+        >
+          {varItems}
+        </select>
+      </div>
+      <div class="operators ui-dropdown">
+        <select
+          value={rule.operator}
+          onChange={(e) => {
+            handleChange("operator", e);
+          }}
+        >
+          {operatorItems}
+        </select>
+      </div>
       {inputField}
       {deleteButton}
     </li>

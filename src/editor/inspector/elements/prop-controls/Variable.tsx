@@ -43,14 +43,16 @@ export default function VariableControl(props: {
       <label class="label break-line" for={propElName}>
         {propDef.label}
       </label>
-      <select
-        value={props.initialValue}
-        onInput={(e) => {
-          handleChange(e.target);
-        }}
-      >
-        {variableEls}
-      </select>
+      <div class="ui-dropdown">
+        <select
+          value={props.initialValue}
+          onInput={(e) => {
+            handleChange(e.target);
+          }}
+        >
+          {variableEls}
+        </select>
+      </div>
     </div>
   );
 }

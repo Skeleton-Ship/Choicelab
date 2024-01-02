@@ -3,6 +3,7 @@ import { getVariable } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
 import IconDelete from "../../../assets/icon-delete.svg";
+import NumberField from "./NumberField";
 
 export default function VariableEl(props: {
   instance: Variable;
@@ -94,6 +95,7 @@ export default function VariableEl(props: {
   let startingValueInput = (
     <input
       type="text"
+      class="ui-text-field"
       value={startingValue}
       onChange={(e) => {
         handleChange("startingValue", e.target);
@@ -102,27 +104,28 @@ export default function VariableEl(props: {
   );
   if (variable.varType === "number") {
     startingValueInput = (
-      <input
-        id={startingValField}
-        type="number"
+      <NumberField
+        name={startingValField}
         value={startingValue}
-        onChange={(e) => {
+        onChange={(e: Event) => {
           handleChange("startingValue", e.target);
         }}
       />
     );
   } else if (variable.varType === "boolean") {
     startingValueInput = (
-      <select
-        id={startingValField}
-        value={startingValue}
-        onChange={(e) => {
-          handleChange("startingValue", e.target);
-        }}
-      >
-        <option value="true">True</option>
-        <option value="false">False</option>
-      </select>
+      <div class="ui-dropdown">
+        <select
+          id={startingValField}
+          value={startingValue}
+          onChange={(e) => {
+            handleChange("startingValue", e.target);
+          }}
+        >
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
     );
   }
   /*
@@ -138,6 +141,7 @@ export default function VariableEl(props: {
           <input
             type="text"
             id={nameField}
+            class="ui-text-field"
             value={variable.name}
             onChange={(e) => {
               handleChange("name", e.target);
@@ -155,17 +159,19 @@ export default function VariableEl(props: {
           <label class="break-line" for={typeField}>
             Type:
           </label>
-          <select
-            id={typeField}
-            value={variable.varType}
-            onChange={(e) => {
-              handleChange("varType", e.target);
-            }}
-          >
-            <option value="string">String</option>
-            <option value="boolean">Boolean</option>
-            <option value="number">Number</option>
-          </select>
+          <div class="ui-dropdown">
+            <select
+              id={typeField}
+              value={variable.varType}
+              onChange={(e) => {
+                handleChange("varType", e.target);
+              }}
+            >
+              <option value="string">String</option>
+              <option value="boolean">Boolean</option>
+              <option value="number">Number</option>
+            </select>
+          </div>
         </div>
         <div class="inspector-prop">
           <label class="break-line" for={startingValField}>
@@ -180,6 +186,7 @@ export default function VariableEl(props: {
         </label>
         <textarea
           id={descField}
+          class="ui-text-area"
           value={variable.description}
           onChange={(e) => {
             handleChange("description", e.target);

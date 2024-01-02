@@ -7,6 +7,7 @@ import {
   Store,
 } from "../../../../typings";
 import { getVariable } from "../../../../data/getData";
+import NumberField from "../NumberField";
 
 export default function VariableValueControl(props: {
   action: Action;
@@ -60,6 +61,7 @@ export default function VariableValueControl(props: {
         <input
           name={propElName}
           type="text"
+          class="ui-text-field"
           value={props.initialValue}
           onChange={(e) => {
             handleChange(e.target, variable.varType);
@@ -69,11 +71,10 @@ export default function VariableValueControl(props: {
       break;
     case "number":
       fieldEl = (
-        <input
+        <NumberField
           name={propElName}
-          type="number"
           value={props.initialValue}
-          onChange={(e) => {
+          onChange={(e: Event) => {
             handleChange(e.target, variable.varType);
           }}
         />
@@ -81,16 +82,18 @@ export default function VariableValueControl(props: {
       break;
     case "boolean":
       fieldEl = (
-        <select
-          name={propElName}
-          value={props.initialValue}
-          onChange={(e) => {
-            handleChange(e.target, variable.varType);
-          }}
-        >
-          <option value="true">True</option>
-          <option value="false">False</option>
-        </select>
+        <div class="ui-dropdown">
+          <select
+            name={propElName}
+            value={props.initialValue}
+            onChange={(e) => {
+              handleChange(e.target, variable.varType);
+            }}
+          >
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
       );
       break;
   }
