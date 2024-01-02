@@ -50,6 +50,18 @@
           &.selected:active {
             background-color: rgba(0, 0, 0, 0.2);
           }
+          @media (prefers-color-scheme: dark) {
+            background-color: rgba(255, 255, 255, 0.08);
+            &.selected {
+              background-color: rgba(255, 255, 255, 0.2);
+            }
+            &:active:not(:disabled):not(.selected) {
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+            &.selected:active {
+              background-color: rgba(255, 255, 255, 0.2);
+            }
+          }
         }
       }
     }
@@ -93,6 +105,9 @@
       }
       &:active:not(:disabled) {
         background-color: rgba(255, 255, 255, 0.12);
+      }
+      &.selected {
+        background-color: rgba(255, 255, 255, 0.08);
       }
     }
     .icon {
