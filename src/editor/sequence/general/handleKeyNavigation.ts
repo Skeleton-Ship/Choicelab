@@ -1,11 +1,55 @@
-import { getStore, setStore } from "../../../data/dataStore";
-import { AnyNode, Branch, Stem } from "../../../typings";
+import { getStore } from "../../../data/dataStore";
+import { AnyNode, Stem, Store } from "../../../typings";
 import {
   getSequenceStart,
   getNode,
-  getStemParent,
   getBranchStem,
 } from "../../../data/getData";
+import handleSelectNode from "../selecting/handleSelectNode";
+import getNodeOriginIds from "../linking/getNodeOriginIds";
+
+function getOriginNode(
+  node: AnyNode,
+  y: number,
+  nodesContainer: Element,
+  store: Store
+) {
+  // First, look for any possible stems
+  const origins = getNodeOriginIds(node.id);
+  let matchingNode: AnyNode | undefined,
+    matchingStem: Stem | undefined,
+    diff = 99999;
+  origins.forEach((origin) => {
+    let nodeEl;
+    if (origin.type === "stem") {
+      nodeEl = nodesContainer.querySelector(`[data-id="${origin.branchId}"]`);
+    } else {
+      nodeEl = nodesContainer.querySelector(`[data-id="${origin.id}"]`);
+    }
+    if (!nodeEl) return;
+    const branchElYStr = nodeEl.getAttribute("data-position-y") as string;
+    const branchElY = parseInt(branchElYStr);
+    const thisDiff = Math.abs(branchElY - y);
+    if (thisDiff < diff) {
+      diff = thisDiff;
+      matchingNode = getNode(origin.id, store);
+      if (origin.type === "stem" && origin.branchId) {
+        matchingNode = getNode(origin.branchId, store);
+        matchingStem = getBranchStem(origin.id, origin.branchId, store);
+      }
+    }
+  });
+  let origin: { node: AnyNode; stem?: Stem } | undefined;
+  if (matchingNode) {
+    origin = {
+      node: matchingNode,
+    };
+    if (matchingStem) {
+      origin.stem = matchingStem;
+    }
+  }
+  return origin;
+}
 
 export default function handleKeyNavigation(keyCode: string, update: Function) {
   const direction = keyCode.replace("Arrow", "").toLowerCase();
@@ -22,10 +66,6 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
   }
   const store = getStore();
   const selectedNodes = store.selectedNodes;
-
-  /*
-   * First, validate that we have everything we need: the current node, the nodes' container in the DOM, and our starting element corresponding with the current node
-   */
   let currentNode: AnyNode | undefined;
   if (selectedNodes.length > 0) {
     currentNode = selectedNodes[selectedNodes.length - 1];
@@ -36,202 +76,88 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
     console.error("No starting node found.");
     return;
   }
-  const nodesContainer = document.querySelector("#sequence .nodes");
-  if (!nodesContainer) {
-    console.error("No sequence parent container found.");
-    return;
-  }
-  const startingEl = nodesContainer.querySelector(
+  const nodesContainer = document.querySelector("#sequence .nodes")!;
+  const currentEl = nodesContainer.querySelector(
     `[data-id="${currentNode.id}"]`
   );
-  if (!startingEl) {
+  if (!currentEl) {
     console.error("No matching element found for this node:", currentNode);
     return;
   }
+
   // Get the position of the starting element, so we can calculate what our next one is
-  const startingPosXStr = startingEl.getAttribute("data-position-x");
-  const startingPosYStr = startingEl.getAttribute("data-position-y");
+  const startingPosXStr = currentEl.getAttribute("data-position-x");
+  const startingPosYStr = currentEl.getAttribute("data-position-y");
   if (!startingPosXStr || !startingPosYStr) {
-    console.error("Position not found for this element:", startingEl);
+    console.error("Position not found for this element:", currentEl);
     return;
   }
   const startingPosX = parseInt(startingPosXStr);
   const startingPosY = parseInt(startingPosYStr);
 
-  /*
-   * Identify our destination element
-   */
-  let destinationEl: Element | null = null;
-
-  // If current node is a branch, allow navigation to stems
-  if (currentNode.type === "branch") {
-    const stemInStore = store.selectedStem;
-    if (!stemInStore) return;
-    /*
-    if (stemInStore === false) {
-      // No stem is currently selected
-      if (direction === "up") {
-
-      } else if (direction === "down") {
-        // Select the first stem
-        const noMatchStem = startingEl.querySelector(
-          ".stems .stem:first-of-type"
-        );
-        if (!noMatchStem) {
-          console.error("No stem found for this branch:", startingEl);
-          return;
+  // Figure out what node/stem to select
+  if (direction === "up") {
+    const origin = getOriginNode(
+      currentNode,
+      startingPosY,
+      nodesContainer,
+      store
+    );
+    if (origin) {
+      if (origin.stem) {
+        handleSelectNode(origin.node, update, origin.stem);
+      } else {
+        handleSelectNode(origin.node, update);
+      }
+    }
+  } else if (direction === "down") {
+    if (currentNode.type === "branch") {
+      if (store.selectedStem !== false) {
+        const destination = getNode(store.selectedStem.link.to, store);
+        if (destination) {
+          handleSelectNode(destination, update);
         }
-        const stemId = noMatchStem.getAttribute("data-id") as string;
-        const branchId = noMatchStem.getAttribute("data-branch") as string;
-        const stem: Stem | undefined = getBranchStem(stemId, branchId, store);
-        if (!stem) {
-          console.error(
-            "No branch stem object found matching this element:",
-            noMatchStem
-          );
-          return;
-        }
-        store.selectedStem = stem;
       }
     } else {
-		*/
-    // stem is currently selected
-    const thisStemEl = startingEl.querySelector(
-      `.stem[data-id="${stemInStore.id}"]`
-    );
-    if (!thisStemEl) {
-      console.error("No stem el found.");
-      return;
+      if (currentNode.link) {
+        const destination = getNode(currentNode.link.to, store);
+        if (destination) {
+          handleSelectNode(destination, update);
+        }
+      }
     }
-    if (direction === "up") {
-      destinationEl = nodesContainer.querySelector(
-        `[data-position-y="${
-          startingPosY - 1
-        }"][data-position-x="${startingPosX}"]`
+  } else if (direction === "left" || direction === "right") {
+    const destinationXPos =
+      direction === "left" ? startingPosX - 1 : startingPosX + 1;
+    // First, we need to figure out if we should move stems (when a branch is selected), or whole nodes (when a cell is selected)
+    if (currentNode.type === "branch") {
+      const stems = currentNode.stems!;
+      const selectedStem = store.selectedStem as Stem;
+      for (var i = 0; i < stems.length; i++) {
+        var stem = stems[i];
+        var destinationStem;
+        if (stem.id === selectedStem.id) {
+          if (direction === "left") {
+            destinationStem = stems[i - 1];
+          } else if (direction === "right") {
+            destinationStem = stems[i + 1];
+          }
+        }
+        if (destinationStem) {
+          handleSelectNode(currentNode, update, destinationStem);
+        }
+      }
+    } else {
+      const destinationEl = nodesContainer.querySelector(
+        `[data-position-x="${destinationXPos}"][data-position-y="${startingPosY}"]`
       );
       if (!destinationEl) return;
-      const destinationId = destinationEl.getAttribute("data-id") as string;
-      const destinationNode: AnyNode | undefined = getNode(
-        destinationId,
+      const destination = getNode(
+        destinationEl.getAttribute("data-id")!,
         store
       );
-      if (!destinationNode) {
-        console.error(
-          "No node object found matching this element:",
-          destinationEl
-        );
-        return;
-      }
-      store.selectedNodes = [destinationNode];
-    } else if (direction === "left" || direction === "right") {
-      const nextStemEl =
-        direction === "left"
-          ? (thisStemEl.previousSibling as Element)
-          : (thisStemEl.nextSibling as Element);
-      if (!nextStemEl) return;
-      const nextStemId = nextStemEl.getAttribute("data-id") as string;
-      const branchId = nextStemEl.getAttribute("data-branch") as string;
-      const nextStem = getBranchStem(nextStemId, branchId, store);
-      if (nextStem) {
-        store.selectedStem = nextStem;
-      }
-    } else if (direction === "down") {
-      const linkId = thisStemEl.getAttribute("data-link-to") as string;
-      const destinationNode = getNode(linkId, store);
-      if (destinationNode) {
-        store.selectedStem = false;
-        store.selectedNodes = [destinationNode];
-      }
-    }
-    //    }
-  } else {
-    /*
-     * Selected node is a cell or start
-     */
-    switch (direction) {
-      case "left":
-        destinationEl = nodesContainer.querySelector(
-          `[data-position-x="${
-            startingPosX - 1
-          }"][data-position-y="${startingPosY}"]`
-        );
-        break;
-      case "right":
-        destinationEl = nodesContainer.querySelector(
-          `[data-position-x="${
-            startingPosX + 1
-          }"][data-position-y="${startingPosY}"]`
-        );
-        break;
-      case "up":
-        // First, look for any possible stems
-        const destinationStems = nodesContainer.querySelectorAll(
-          `.stem[data-link-to="${currentNode.id}"]`
-        );
-        let matchingBranch: Branch | undefined,
-          matchingStem: Stem | undefined,
-          diff = 99999;
-        destinationStems.forEach((destinationStemEl: Element) => {
-          // Look for the one with the closest Y value
-          const stemId = destinationStemEl.getAttribute("data-id") as string;
-          const branch: Branch | undefined = getStemParent(stemId, store);
-          if (!branch) return;
-          const branchElYStr = nodesContainer
-            .querySelector(`[data-id="${branch.id}"]`)
-            ?.getAttribute("data-position-y") as string;
-          const branchElY = parseInt(branchElYStr);
-          const thisDiff = Math.abs(branchElY - startingPosY);
-          if (thisDiff < diff) {
-            diff = thisDiff;
-            const stem: Stem | undefined = getBranchStem(
-              stemId,
-              branch.id,
-              store
-            );
-            if (stem) {
-              matchingBranch = branch;
-              matchingStem = stem;
-            }
-          }
-        });
-        if (matchingStem && matchingBranch) {
-          store.selectedStem = matchingStem;
-          store.selectedNodes = [matchingBranch];
-        } else {
-          // If no matching stem, see if there's a straight link
-          destinationEl = nodesContainer.querySelector(
-            `[data-position-y="${
-              startingPosY - 1
-            }"][data-position-x="${startingPosX}"]`
-          );
-        }
-        break;
-      case "down":
-        destinationEl = nodesContainer.querySelector(
-          `[data-id="${startingEl.getAttribute("data-link-to")}"]`
-        );
-        break;
-    }
-    if (destinationEl) {
-      const destinationId = destinationEl.getAttribute("data-id") as string;
-      const destinationNode: AnyNode | undefined = getNode(
-        destinationId,
-        store
-      );
-      if (!destinationNode) {
-        console.error(
-          "No node object found matching this element:",
-          destinationEl
-        );
-        return;
-      }
-      store.selectedNodes = [destinationNode];
+      if (!destination) return;
+      handleSelectNode(destination, update);
     }
   }
-
-  /*
-   * Update store
-   */
-  setStore(store);
-  update(false);
 }
