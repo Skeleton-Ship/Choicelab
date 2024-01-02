@@ -156,6 +156,7 @@ export default function RuleInstance(props: {
         inputField = (
           <NumberField
             name={fieldName}
+            class="value"
             value={displayValue}
             onChange={(e: Event) => {
               handleChange("value", e);
