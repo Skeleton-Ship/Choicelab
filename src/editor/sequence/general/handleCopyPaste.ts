@@ -75,7 +75,11 @@ function handleCutCopy(action: string, update: Function) {
   const inTextElement = store.inTextElement;
   if (inTextElement === true) return;
   // Create the string sent to the clipboard, then write it
-  const selectedNodes = store.selectedNodes;
+  const selectedNodes: Array<AnyNode> = [];
+  store.selectedNodes.forEach((node: AnyNode) => {
+    if (node.type === "start") return;
+    selectedNodes.push(node);
+  });
   let clipboardContents = {
     ChoicelabNodes: selectedNodes,
   };
