@@ -20,7 +20,9 @@ export default function VariablesPane(props: { update: Function }) {
   return (
     <>
       <div id="variables-toolbar">
-        <button onClick={handleCreateVariable}>New Variable</button>
+        <button class="ui-button" onClick={handleCreateVariable}>
+          New Variable
+        </button>
       </div>
       <ul id="variables-list">{varEls}</ul>
     </>

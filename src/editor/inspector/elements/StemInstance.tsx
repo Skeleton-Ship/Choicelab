@@ -112,6 +112,7 @@ export default function StemInstance(props: {
     mainContents = (
       <p class="blank-content">
         <button
+          class="ui-button"
           onClick={() => {
             showPane("variables", props.update);
           }}

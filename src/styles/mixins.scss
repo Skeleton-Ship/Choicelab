@@ -10,6 +10,13 @@
   }
 }
 
+@mixin node-shadow {
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 3px;
+  @media (prefers-color-scheme: dark) {
+    box-shadow: rgba(0, 0, 0, 1) 0 2px 3px;
+  }
+}
+
 @mixin index($size: 30) {
   display: inline-block;
   text-align: center;
@@ -32,4 +39,8 @@
   @include index($size);
   background-color: #e0f0ff;
   color: #2f8ee5;
+  @media (prefers-color-scheme: dark) {
+    background-color: #1f5990;
+    color: #cce6ff;
+  }
 }

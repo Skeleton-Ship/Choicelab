@@ -13,3 +13,20 @@ body {
   user-select: none;
   -webkit-user-select: none;
 }
+#App {
+  @media (prefers-color-scheme: dark) {
+    &::before {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top-color: rgba(255, 255, 255, 0.28);
+      border-radius: 10px;
+      content: "";
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  }
+}

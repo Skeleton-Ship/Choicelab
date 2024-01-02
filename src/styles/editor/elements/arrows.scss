@@ -1,4 +1,6 @@
 $arrow-color: #aaa;
+$arrow-color-dark: #5b5b5b;
+$arrow-color-dark-highlight: #959595;
 
 #arrows {
   position: absolute;
@@ -7,10 +9,16 @@ $arrow-color: #aaa;
   overflow: visible;
   marker {
     fill: $arrow-color;
+    @media (prefers-color-scheme: dark) {
+      fill: $arrow-color-dark;
+    }
   }
   path.line {
     stroke: $arrow-color;
     fill: none;
+    @media (prefers-color-scheme: dark) {
+      stroke: $arrow-color-dark;
+    }
   }
   .stem-line {
     stroke-dasharray: 6;
@@ -19,10 +27,16 @@ $arrow-color: #aaa;
     path.line {
       stroke: #555;
       stroke-width: 1.4;
+      @media (prefers-color-scheme: dark) {
+        stroke: $arrow-color-dark-highlight;
+      }
     }
     marker path {
       fill: #555;
       stroke-width: 0;
+      @media (prefers-color-scheme: dark) {
+        fill: $arrow-color-dark-highlight;
+      }
     }
   }
 }

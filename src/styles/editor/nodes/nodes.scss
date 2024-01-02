@@ -22,17 +22,24 @@
     position: relative;
     width: 100%;
     font-size: 12px;
-    border-color: white;
     border-width: 2px;
     border-style: solid;
     border-color: transparent;
+    color: #333;
     background-color: white;
     animation: node-appear 0.2s ease;
-    box-shadow: variables.$node-shadow;
+    outline: none;
+    @include mixins.node-shadow;
+    @media (prefers-color-scheme: dark) {
+      color: white;
+      outline: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: variables.$node-bg-dark;
+    }
   }
   &.selected,
   &.selecting {
     .contents {
+      outline: none;
       border-color: variables.$accent-color;
     }
   }

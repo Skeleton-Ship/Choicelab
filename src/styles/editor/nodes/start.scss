@@ -6,5 +6,10 @@
     align-items: center;
     justify-content: center;
     border-radius: 5px;
+    .title {
+      font-weight: 300;
+      font-size: 18px;
+      opacity: 0.8;
+    }
   }
 }

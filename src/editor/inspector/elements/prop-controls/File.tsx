@@ -124,7 +124,7 @@ export default function File(props: {
       <label class="label break-line" for={inputId}>
         {props.propDef.label}
       </label>
-      <button class="file-initial" onClick={handleReplace}>
+      <button class="file-initial ui-button" onClick={handleReplace}>
         Choose...
       </button>
       <input
@@ -136,8 +136,12 @@ export default function File(props: {
       />
       <div class="media">{previewEl}</div>
       <div class="file-set-controls">
-        <button onClick={handleReplace}>Replace</button>
-        <button onClick={handleClear}>Clear</button>
+        <button class="ui-button" onClick={handleReplace}>
+          Replace
+        </button>
+        <button class="ui-button" onClick={handleClear}>
+          Clear
+        </button>
       </div>
     </div>
   );

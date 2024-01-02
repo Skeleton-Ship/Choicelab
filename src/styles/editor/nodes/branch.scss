@@ -23,6 +23,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    outline: none;
   }
   .branch-background {
     position: absolute;
@@ -33,8 +34,16 @@
     transform: translate(-50%, -50%);
     z-index: -1;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    @media (prefers-color-scheme: dark) {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 1));
+    }
     path {
       fill: #ffffff;
+      @media (prefers-color-scheme: dark) {
+        fill: variables.$node-bg-dark;
+        stroke: rgba(255, 255, 255, 0.2);
+        stroke-width: 3;
+      }
     }
   }
   .stems {
@@ -53,11 +62,16 @@
       border-width: 2px;
       border-style: solid;
       border-color: transparent;
-      box-shadow: variables.$node-shadow;
       align-items: center;
+      @include mixins.node-shadow;
+      @media (prefers-color-scheme: dark) {
+        background-color: variables.$node-bg-dark;
+        outline: 1px solid rgba(255, 255, 255, 0.2);
+      }
       &.selected,
       &.selecting {
         border-color: variables.$accent-color;
+        outline: none;
       }
       .stem-index,
       .no-match-index {
@@ -73,16 +87,23 @@
         @include mixins.index(23);
         background-color: #fff8e0;
         color: #d87c09;
+        @media (prefers-color-scheme: dark) {
+          background-color: #75470e;
+          color: #ffdfb8;
+        }
       }
       .stem-label {
         display: inline-block;
         position: relative;
-        z-index: 5;
+        z-index: 7;
         width: 100%;
         color: #444;
         font-size: 10.5px;
         font-weight: 500;
         margin-left: 7px;
+        @media (prefers-color-scheme: dark) {
+          color: #ccc;
+        }
       }
       &.rules .stem-label {
         max-width: 100%;
@@ -99,6 +120,9 @@
           padding-bottom: 5px;
           background-color: white;
           border-radius: 5px;
+          @media (prefers-color-scheme: dark) {
+            background-color: variables.$node-bg-dark;
+          }
         }
       }
     }

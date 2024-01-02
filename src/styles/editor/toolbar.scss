@@ -21,6 +21,7 @@
   height: variables.$toolbar-height;
   z-index: 3;
   @media (prefers-color-scheme: dark) {
+    background-color: #2a2a2b;
     border-color: rgba(0, 0, 0, 0.5);
   }
   .toolbar-region {

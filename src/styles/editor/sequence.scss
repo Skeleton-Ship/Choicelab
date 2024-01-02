@@ -21,6 +21,12 @@
   &.target-mode {
     background-color: rgba(239, 239, 239, 0.8);
   }
+  @media (prefers-color-scheme: dark) {
+    background-color: #171718;
+    &.target-mode {
+      background-color: rgba(23, 23, 24, 0.8);
+    }
+  }
 }
 
 #sequence {

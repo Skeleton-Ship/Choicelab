@@ -15,6 +15,11 @@
   padding: 11px;
   height: 51px;
   z-index: 9;
+  @media (prefers-color-scheme: dark) {
+    color: rgba(255, 255, 255, 0.828);
+    background-color: variables.$node-bg-dark;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
   p {
     margin: 0;
     font-size: 13px;
