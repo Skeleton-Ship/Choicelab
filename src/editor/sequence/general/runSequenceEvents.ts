@@ -72,6 +72,8 @@ export default function runSequenceEvents(update: Function) {
       );
       if (parentBranch && selectedStem.type !== "noMatch") {
         handleDeleteStem(selectedStem.id, parentBranch.id, update);
+      } else {
+        handleDeleteNodes(update);
       }
     } else {
       handleDeleteNodes(update);

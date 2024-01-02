@@ -123,7 +123,7 @@ function handlePaste(update: Function): void {
     const store = getStore();
     store.selectedNodes = processedNodes;
     setStore(store);
-    update();
+    update(false);
   });
 }
 
