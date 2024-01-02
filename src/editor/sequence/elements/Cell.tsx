@@ -1,10 +1,11 @@
 import { getCell } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
 import Link from "./Link";
 import { Cell, Action } from "../../../typings";
 import internalActionDefs from "../../inspector/functions/internalActionDefs";
 import { getActionDef } from "../../../data/getData";
+import handleSelectNode from "../selecting/handleSelectNode";
 
 /**
  * A node that supports actions, in which the content of the Choicelab sequence lives.
@@ -18,19 +19,12 @@ export default function CellEl(props: {
   width: number;
   height: number;
   update: Function;
-  onClick: Function;
 }) {
   const store = getStore();
   const cell: Cell | undefined = getCell(props.id, store);
   const defaultEl = <div>No cell found</div>;
   if (typeof cell === "undefined") {
     return defaultEl;
-  }
-  function handleSelectCell() {
-    const store = getStore();
-    store.selectedStem = false;
-    setStore(store);
-    props.onClick(cell);
   }
   const selectedNodes = store.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
@@ -76,7 +70,9 @@ export default function CellEl(props: {
       data-link-to={cell.link.to}
       data-position-x={props.x}
       data-position-y={props.y}
-      onClick={handleSelectCell}
+      onClick={() => {
+        handleSelectNode(cell, props.update);
+      }}
       style={style}
     >
       <div className="contents">

@@ -1,5 +1,6 @@
+import { getNoMatchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
-import { AnyNode } from "../../../typings";
+import { AnyNode, Cell, Branch, StartNode, Stem } from "../../../typings";
 
 /**
  * Handler for selecting a node.
@@ -7,12 +8,28 @@ import { AnyNode } from "../../../typings";
  * @param {object} node - A node object.
  * @param {Function} update - The React state function to call once selected.
  */
-export default function handleSelectNode(node: AnyNode, update: Function) {
+export default function handleSelectNode(
+  node: AnyNode | Cell | StartNode | Branch,
+  update: Function,
+  stem?: Stem
+) {
   const store = getStore();
-  // Intercept target mode
-  const targetMode = store.targetMode;
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
-  if (typeof node === "undefined" || targetMode.active === true) return;
+  if (typeof node === "undefined" || store.targetMode.active === true) return;
+  store.selectedNodes = [node];
+  // For branches, select a stem
+  if (node.type === "branch") {
+    if (!stem) {
+      const noMatchStem = getNoMatchStem(node.id, store);
+      if (!noMatchStem) return;
+      store.selectedStem = noMatchStem;
+    } else {
+      store.selectedStem = stem;
+    }
+  } else {
+    store.selectedStem = false;
+  }
+  /*
   let selectedNodes = store.selectedNodes;
   const shiftDown = store.shiftDown;
   let removeFromSelection = -1;
@@ -33,6 +50,7 @@ export default function handleSelectNode(node: AnyNode, update: Function) {
   } else {
     selectedNodes.push(node);
   }
+  */
   // Update data
   setStore(store);
   update(false);

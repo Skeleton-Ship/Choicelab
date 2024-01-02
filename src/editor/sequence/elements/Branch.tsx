@@ -5,6 +5,7 @@ import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
 import BranchStemEl from "./BranchStem";
 import { Branch, Stem } from "../../../typings";
+import handleSelectNode from "../selecting/handleSelectNode";
 
 /**
  * A node that allows the flowchart to "branch off" into one or more possible directions. By default, all branches include a "no match" stem, and usually (though optionally) can add additional branch *stems* to test for possible values in the branch's variable.
@@ -12,14 +13,13 @@ import { Branch, Stem } from "../../../typings";
  */
 export default function BranchEl(props: {
   id: string;
-  onClick: Function;
-  update: Function;
   x: number;
   y: number;
   left: number;
   top: number;
   width: number;
   height: number;
+  update: Function;
 }) {
   const store = getStore();
   const branch: Branch | undefined = getBranch(props.id, store);
@@ -27,6 +27,7 @@ export default function BranchEl(props: {
     console.error("Branch not found.");
     return <></>;
   }
+  // Make sure the click is the actual branch el, not one of the stems
   function handleSelectBranch(e: MouseEvent) {
     let target;
     if (e.target !== null) {
@@ -34,13 +35,7 @@ export default function BranchEl(props: {
     }
     if (!target) return;
     if (elementIsStem(target)) return;
-    // Un-set stem selection
-    store.selectedStem = false;
-    setStore(store);
-    props.onClick(getBranch(props.id, store));
-  }
-  function handleSelectStem() {
-    props.onClick(getBranch(props.id, store));
+    if (branch) handleSelectNode(branch, props.update);
   }
   function addBranchStem() {
     const branch: Branch | undefined = getBranch(props.id, store);
@@ -70,7 +65,6 @@ export default function BranchEl(props: {
         id={stem.id}
         index={stemIndex}
         nodeId={props.id}
-        onClick={handleSelectStem}
         update={props.update}
       />
     );

@@ -1,8 +1,9 @@
 import Link from "./Link";
 import { getBranch, getBranchStem } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore } from "../../../data/dataStore";
 import { Branch, Stem } from "../../../typings";
 import getStemRulesLabel from "../general/getStemRulesLabel";
+import handleSelectNode from "../selecting/handleSelectNode";
 
 /**
  * A single path in a branch. If the stem is a "value" type, it will test for the given value. A "noMatch" type stem is the fallback if all other stems fail.
@@ -12,22 +13,19 @@ export default function BranchStemEl(props: {
   id: string;
   index: number;
   nodeId: string;
-  onClick: Function;
   update: Function;
 }) {
   function handleSelectStem() {
     const store = getStore();
+    const branch = getBranch(props.nodeId, store);
     const branchStem: Stem | undefined = getBranchStem(
       props.id,
       props.nodeId,
       store
     );
-    if (typeof branchStem === "undefined") return;
-    store.selectedStem = branchStem;
-    setStore(store);
-    props.onClick(branchStem);
+    if (!branch || !branchStem) return;
+    handleSelectNode(branch, props.update, branchStem);
   }
-
   const store = getStore();
   const selectedStem = store.selectedStem;
   let selectedClass = "";

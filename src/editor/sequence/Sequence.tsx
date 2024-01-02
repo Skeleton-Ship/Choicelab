@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "preact/hooks";
 import { getSequence } from "../../data/getData";
 import runSequenceEvents from "./general/runSequenceEvents";
-import handleSelectNode from "./selecting/handleSelectNode";
 import positionNodes from "./linking/positionNodes";
 import drawArrows from "./linking/drawArrows";
 import scrollNodeIntoView from "./general/scrollNodeIntoView";
@@ -67,9 +66,6 @@ export default function SequenceEl(props: { id: string; update: Function }) {
       width: node.position.width,
       height: node.position.height,
       update: props.update,
-      onClick: () => {
-        handleSelectNode(node, props.update);
-      },
     };
     let nodeEl: preact.JSX.Element = <></>;
     if (node.type === "cell") {

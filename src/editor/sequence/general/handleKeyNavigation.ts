@@ -66,28 +66,12 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
   // If current node is a branch, allow navigation to stems
   if (currentNode.type === "branch") {
     const stemInStore = store.selectedStem;
+    if (!stemInStore) return;
+    /*
     if (stemInStore === false) {
       // No stem is currently selected
       if (direction === "up") {
-        destinationEl = nodesContainer.querySelector(
-          `[data-position-y="${
-            startingPosY - 1
-          }"][data-position-x="${startingPosX}"]`
-        );
-        if (!destinationEl) return;
-        const destinationId = destinationEl.getAttribute("data-id") as string;
-        const destinationNode: AnyNode | undefined = getNode(
-          destinationId,
-          store
-        );
-        if (!destinationNode) {
-          console.error(
-            "No node object found matching this element:",
-            destinationEl
-          );
-          return;
-        }
-        store.selectedNodes = [destinationNode];
+
       } else if (direction === "down") {
         // Select the first stem
         const noMatchStem = startingEl.querySelector(
@@ -110,37 +94,56 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
         store.selectedStem = stem;
       }
     } else {
-      // stem is currently selected
-      const thisStemEl = startingEl.querySelector(
-        `.stem[data-id="${stemInStore.id}"]`
+		*/
+    // stem is currently selected
+    const thisStemEl = startingEl.querySelector(
+      `.stem[data-id="${stemInStore.id}"]`
+    );
+    if (!thisStemEl) {
+      console.error("No stem el found.");
+      return;
+    }
+    if (direction === "up") {
+      destinationEl = nodesContainer.querySelector(
+        `[data-position-y="${
+          startingPosY - 1
+        }"][data-position-x="${startingPosX}"]`
       );
-      if (!thisStemEl) {
-        console.error("No stem el found.");
+      if (!destinationEl) return;
+      const destinationId = destinationEl.getAttribute("data-id") as string;
+      const destinationNode: AnyNode | undefined = getNode(
+        destinationId,
+        store
+      );
+      if (!destinationNode) {
+        console.error(
+          "No node object found matching this element:",
+          destinationEl
+        );
         return;
       }
-      if (direction === "up") {
+      store.selectedNodes = [destinationNode];
+    } else if (direction === "left" || direction === "right") {
+      const nextStemEl =
+        direction === "left"
+          ? (thisStemEl.previousSibling as Element)
+          : (thisStemEl.nextSibling as Element);
+      if (!nextStemEl) return;
+      const nextStemId = nextStemEl.getAttribute("data-id") as string;
+      const branchId = nextStemEl.getAttribute("data-branch") as string;
+      const nextStem = getBranchStem(nextStemId, branchId, store);
+      if (nextStem) {
+        store.selectedStem = nextStem;
+      }
+    } else if (direction === "down") {
+      const linkId = thisStemEl.getAttribute("data-link-to") as string;
+      const destinationNode = getNode(linkId, store);
+      if (destinationNode) {
         store.selectedStem = false;
-      } else if (direction === "left" || direction === "right") {
-        const nextStemEl =
-          direction === "left"
-            ? (thisStemEl.previousSibling as Element)
-            : (thisStemEl.nextSibling as Element);
-        if (!nextStemEl) return;
-        const nextStemId = nextStemEl.getAttribute("data-id") as string;
-        const branchId = nextStemEl.getAttribute("data-branch") as string;
-        const nextStem = getBranchStem(nextStemId, branchId, store);
-        if (nextStem) {
-          store.selectedStem = nextStem;
-        }
-      } else if (direction === "down") {
-        const linkId = thisStemEl.getAttribute("data-link-to") as string;
-        const destinationNode = getNode(linkId, store);
-        if (destinationNode) {
-          store.selectedStem = false;
-          store.selectedNodes = [destinationNode];
-        }
+        store.selectedNodes = [destinationNode];
       }
     }
+    //    }
   } else {
     /*
      * Selected node is a cell or start
