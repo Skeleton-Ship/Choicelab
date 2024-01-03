@@ -26,7 +26,7 @@ function Launcher() {
           <span class="icon">⚠️</span>
           <p>
             Choicelab is <strong>alpha software</strong>. Use with caution and
-            back up your data regularly.
+            save your work frequently.
           </p>
         </aside>
       </div>
