@@ -137,6 +137,7 @@ export default function RuleInstance(props: {
             name={fieldName}
             class="value ui-text-field"
             type="text"
+            placeholder="empty"
             value={displayValue}
             onChange={(e: Event) => {
               handleChange("value", e);
