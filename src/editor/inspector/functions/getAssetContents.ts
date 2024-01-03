@@ -1,10 +1,6 @@
 import { resolve as path_resolve, appCacheDir } from "@tauri-apps/api/path";
 import { emit, once } from "@tauri-apps/api/event";
-import {
-  readBinaryFile,
-  readTextFile,
-  BaseDirectory,
-} from "@tauri-apps/api/fs";
+import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs";
 import { getStore } from "../../../data/dataStore";
 import getBase64Prefix from "./getBase64Prefix";
 
