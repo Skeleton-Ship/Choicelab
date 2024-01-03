@@ -116,6 +116,9 @@
   }
   &.disabled {
     background-color: rgba(255, 255, 255, 0.5);
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(24, 23, 24, 0.5);
+    }
     .props {
       opacity: 0.5;
     }
@@ -190,6 +193,14 @@
     &:active:not(:disabled) {
       opacity: 1;
       background-color: rgba(50, 50, 50, 0.15);
+    }
+    @media (prefers-color-scheme: dark) {
+      &:hover:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      &:active:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.12);
+      }
     }
     &:disabled {
       opacity: 0.3;
