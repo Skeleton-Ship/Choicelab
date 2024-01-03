@@ -32,7 +32,7 @@ export default function VariableControl(props: {
   const store = getStore();
   const variables = getVariables(store);
   const variableEls: Array<preact.JSX.Element> = [
-    <option value="">Variable</option>,
+    <option value="">None</option>,
   ];
   variables.forEach((variable: Variable) => {
     const variableEl = <option value={variable.id}>{variable.name}</option>;
