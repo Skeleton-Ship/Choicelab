@@ -23,11 +23,18 @@ function readFileContents(
   localKey: string,
   iteration: number
 ) {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
+    const store = getStore();
+    const cacheBase = await appCacheDir();
+    const cachePath = await path_resolve(
+      cacheBase,
+      "Projects",
+      store.project.id,
+      "assets",
+      fileName
+    );
     if (fileType === "binary") {
-      readBinaryFile(fileName, {
-        dir: BaseDirectory.AppCache,
-      }).then(async (file) => {
+      readBinaryFile(cachePath).then(async (file) => {
         const prefix = getBase64Prefix(fileName);
         let fileSrc = uint8ToBase64(file);
         if (!fileSrc || (fileSrc === "" && iteration < 50)) {
@@ -40,9 +47,7 @@ function readFileContents(
         }
       });
     } else if (fileType === "text") {
-      readTextFile(fileName, {
-        dir: BaseDirectory.AppCache,
-      }).then(async (fileSrc) => {
+      readTextFile(cachePath).then(async (fileSrc) => {
         resolve(fileSrc);
       });
     }

@@ -24,7 +24,7 @@
       "fs": {
         "readFile": true,
         "exists": true,
-        "scope": ["$APPCACHE/*"]
+        "scope": ["$APPCACHE/Projects/*", "$APPCACHE/Projects/*/assets/*"]
       },
       "path": {
         "all": true
