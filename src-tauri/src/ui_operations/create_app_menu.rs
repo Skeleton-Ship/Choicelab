@@ -12,7 +12,7 @@ pub fn create_app_menu() -> Menu {
 	.add_native_item(MenuItem::HideOthers)
 	.add_native_item(MenuItem::ShowAll)
 	.add_native_item(MenuItem::Separator)
-	.add_native_item(MenuItem::Quit)
+	.add_item(CustomMenuItem::new("request_quit", "Quit Choicelab").accelerator("Cmd+Q"))
 	);
 	// File menu
 	let file_menu = Submenu::new("File", Menu::new()

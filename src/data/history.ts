@@ -26,7 +26,12 @@ async function saveHistoryVersion(initial: boolean = false) {
   }
   // Write to fs
   const cacheBase = await appCacheDir();
-  const cachePath = await resolve(cacheBase, store.project.id, "undo");
+  const cachePath = await resolve(
+    cacheBase,
+    "Projects",
+    store.project.id,
+    "undo"
+  );
   emit("save-text-file", {
     name: versionId,
     contents: JSON.stringify(store.project, null, 2),
@@ -77,6 +82,7 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
   const cacheBase = await appCacheDir();
   const versionPath = await resolve(
     cacheBase,
+    "Projects",
     store.project.id,
     "undo",
     stepVersion

@@ -1,5 +1,6 @@
 // Libraries
 import { ask } from "@tauri-apps/api/dialog";
+import { appCacheDir } from "@tauri-apps/api/path";
 import { getVersion } from "@tauri-apps/api/app";
 import { listen, emit } from "@tauri-apps/api/event";
 import { appWindow } from "@tauri-apps/api/window";
@@ -98,11 +99,21 @@ export default function MainEditor() {
       document.querySelector("#App")?.setAttribute("data-focus", "false");
       setStore(store);
     });
-    // Save listeners
-    appWindow.listen("tauri://close-requested", async () => {
+    // Close listeners
+    async function handleClose() {
+      // Clear cache
+      const cacheBase = await appCacheDir();
+      const cachePath = await resolve(cacheBase, "Projects");
+      emit("clear-cache", {
+        path: cachePath,
+      });
+      // Close it, baby!
+      appWindow.close();
+    }
+    async function handleCloseRequest() {
       const store = getStore();
       if (store.saved) {
-        appWindow.close();
+        handleClose();
         return;
       }
       const confirm = await ask(
@@ -115,8 +126,14 @@ export default function MainEditor() {
         }
       );
       if (confirm === false) {
-        appWindow.close();
+        handleClose();
       }
+    }
+    appWindow.listen("tauri://close-requested", async () => {
+      handleCloseRequest();
+    });
+    listen("menu-request-quit", () => {
+      handleCloseRequest();
     });
   }, []);
 

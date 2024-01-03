@@ -1,7 +1,15 @@
+import { appWindow } from "@tauri-apps/api/window";
+import { useEffect } from "preact/hooks";
+import { listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 
 function Launcher() {
+  useEffect(() => {
+    listen("menu-request-quit", () => {
+      appWindow.close();
+    });
+  }, []);
   return (
     <div id="launcher" data-tauri-drag-region>
       <div className="contents">

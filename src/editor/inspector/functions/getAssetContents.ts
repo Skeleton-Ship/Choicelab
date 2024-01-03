@@ -65,6 +65,7 @@ async function storeCachedAsset(
           const cacheBase = await appCacheDir();
           const cachePath = await path_resolve(
             cacheBase,
+            "Projects",
             store.project.id,
             "assets"
           );

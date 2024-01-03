@@ -2,6 +2,7 @@ use tauri::Window;
 use tauri::Manager;
 use serde::{Serialize, Deserialize};
 use serde_json::{Value, from_str};
+use std::fs;
 use crate::file_operations::{
 	create_binary_file,
 	create_text_file,
@@ -263,4 +264,22 @@ pub fn bind_listeners(app: &tauri::App) {
 			  }
 		  }
 		});
+		
+		// listen for cache clear
+		app.listen_global("clear-cache", move |event| {
+			let json_raw = event.payload().unwrap();
+			let json_value: Result<Value, _> = from_str(json_raw);
+			match json_value {
+				Ok(json) => {
+					let cache_path = json["path"].as_str().unwrap_or("N/A");
+					if cache_path != "N/A" {
+						let _ = fs::remove_dir_all(cache_path);
+					}
+				}
+				Err(e) => {
+					eprintln!("Error parsing JSON: {}", e);
+				}
+			}
+		});
+
 }

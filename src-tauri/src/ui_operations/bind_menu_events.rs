@@ -4,6 +4,9 @@ pub fn bind_menu_events(event: WindowMenuEvent) {
 	let window = event.window();
 	let menu_handle = window.menu_handle();
 	match event.menu_item_id() {
+		  "request_quit" => {
+			  event.window().emit("menu-request-quit", ()).unwrap();
+		  }
 		  "new_project" => {
 			  event.window().emit("menu-new-project", ()).unwrap();
 		  }
