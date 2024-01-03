@@ -34,6 +34,9 @@ pub fn create_text_file(file_name: &str, contents: &str, path: &str) -> io::Resu
 	// Combine the specified path and the file name
 	let full_path = format!("{}/{}", path, file_name);
 
+	// Create the destination directory if it doesn't exist
+	fs::create_dir_all(path)?;
+	
 	// Create a new file at the specified path
 	let mut file = File::create(&full_path)?;
 

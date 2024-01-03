@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { emit, once } from "@tauri-apps/api/event";
-import { resolve } from "@tauri-apps/api/path";
+import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { appWindow } from "@tauri-apps/api/window";
 import inTextElement from "../utils/inTextElement";
 import { getStore, setStore } from "../data/dataStore";
@@ -25,10 +25,12 @@ async function saveHistoryVersion(initial: boolean = false) {
     markUnsaved();
   }
   // Write to fs
+  const cacheBase = await appCacheDir();
+  const cachePath = await resolve(cacheBase, store.project.id, "undo");
   emit("save-text-file", {
     name: versionId,
     contents: JSON.stringify(store.project, null, 2),
-    projectPath: await resolve(store.projectPath, "undo"),
+    path: cachePath,
   });
 }
 
@@ -72,11 +74,20 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
     return;
   }
   const stepVersion = projectHistory.versions[stepIndex];
+  const cacheBase = await appCacheDir();
+  const versionPath = await resolve(
+    cacheBase,
+    store.project.id,
+    "undo",
+    stepVersion
+  );
+  /*
   const versionPath: string = await resolve(
     store.projectPath,
     "undo",
     stepVersion
   );
+  */
   emit("request-history-version", {
     versionPath: versionPath,
   });

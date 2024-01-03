@@ -47,7 +47,7 @@ export default async function newProject() {
       emit("save-text-file", {
         name: "project.json",
         contents: projectFileContents,
-        projectPath: projectPath,
+        path: projectPath,
         callback: "project-file-created",
       });
       // Load the project

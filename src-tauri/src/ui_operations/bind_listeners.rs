@@ -105,8 +105,8 @@ pub fn bind_listeners(app: &tauri::App) {
 			Ok(json) => {
 				let name = json["name"].as_str().unwrap_or("N/A");
 				let contents = json["contents"].as_str().unwrap_or("N/A");
-				let project_path = json["projectPath"].as_str().unwrap_or("N/A");
-				let _ = create_text_file(name, contents, project_path);
+				let path = json["path"].as_str().unwrap_or("N/A");
+				let _ = create_text_file(name, contents, path);
 				// Do callback
 				let callback = json["callback"].as_str().unwrap_or("N/A");
 				if callback != "N/A" && callback != "" {

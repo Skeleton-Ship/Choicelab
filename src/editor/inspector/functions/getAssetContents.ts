@@ -62,7 +62,12 @@ async function storeCachedAsset(
       const store = getStore();
       path_resolve(store.projectPath, "./assets", fileName).then(
         async (filePath) => {
-          const cachePath = await appCacheDir();
+          const cacheBase = await appCacheDir();
+          const cachePath = await path_resolve(
+            cacheBase,
+            store.project.id,
+            "assets"
+          );
           emit("read-asset", {
             assetPath: filePath,
             cachePath: cachePath,

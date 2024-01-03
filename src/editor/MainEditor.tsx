@@ -59,7 +59,7 @@ export default function MainEditor() {
       emit("save-text-file", {
         name: "project.json",
         contents: JSON.stringify(newStore.project, null, 2),
-        projectPath: await resolve(newStore.projectPath),
+        path: await resolve(newStore.projectPath),
       });
       newStore.saved = true;
       appWindow.setTitle(store.project.name);
