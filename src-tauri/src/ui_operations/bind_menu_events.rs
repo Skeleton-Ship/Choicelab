@@ -1,4 +1,5 @@
 use tauri::WindowMenuEvent;
+use webbrowser;
 
 pub fn bind_menu_events(event: WindowMenuEvent) {
 	let window = event.window();
@@ -55,7 +56,11 @@ pub fn bind_menu_events(event: WindowMenuEvent) {
 			  event.window().emit("menu-show-variables", ()).unwrap();
 			  let _ = menu_handle.get_item("show_node_editor").set_selected(false);
 			  let _ = menu_handle.get_item("show_variables").set_selected(true);
-		  }	 
+		  }
+		  "submit_feedback" => {
+			  let url = "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
+			  let _ = webbrowser::open(url);
+		  }		  
 		_ => {}
 	  }
 }

@@ -49,6 +49,9 @@ pub fn create_app_menu() -> Menu {
 	let window_menu = Submenu::new("Window", Menu::new()
 	.add_native_item(MenuItem::Minimize)
 	);
+	let help_menu = Submenu::new("Help", Menu::new()
+	.add_item(CustomMenuItem::new("submit_feedback", "Report a Problem or Feature Request..."))
+	);
 	// Build and return it
 	let menu = Menu::new()
 	.add_submenu(app_menu)
@@ -56,6 +59,7 @@ pub fn create_app_menu() -> Menu {
 	.add_submenu(edit_menu)
 	.add_submenu(view_menu)
 	.add_submenu(project_menu)
-	.add_submenu(window_menu);
+	.add_submenu(window_menu)
+	.add_submenu(help_menu);
 	return menu;
 }
