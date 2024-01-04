@@ -25,8 +25,8 @@ function Launcher() {
         <aside id="alpha-alert">
           <span class="icon">⚠️</span>
           <p>
-            Choicelab is <strong>alpha software</strong>. Use with caution and
-            save your work frequently.
+            Choicelab is <strong>alpha software</strong>, so make sure you save
+            your work frequently.
           </p>
         </aside>
       </div>
