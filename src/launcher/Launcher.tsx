@@ -9,6 +9,20 @@ function Launcher() {
     listen("menu-request-quit", () => {
       appWindow.close();
     });
+    listen("tauri://focus", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      appWindow.emit("enable-menu-items", {
+        disableItems: [
+          "new_cell",
+          "new_branch",
+          "set_link",
+          "disconnect_link",
+          "delete_nodes",
+          "delete_stem",
+        ],
+      });
+    });
   }, []);
   return (
     <div id="launcher" data-tauri-drag-region>

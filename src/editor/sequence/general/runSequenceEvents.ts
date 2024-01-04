@@ -63,6 +63,11 @@ export default function runSequenceEvents(update: Function) {
   listen("menu-delete-nodes", async () => {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
+    handleDeleteNodes(update);
+  });
+  listen("menu-delete-stem", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
     const store = getStore();
     const selectedStem = store.selectedStem;
     if (selectedStem !== false) {
@@ -72,11 +77,7 @@ export default function runSequenceEvents(update: Function) {
       );
       if (parentBranch && selectedStem.type !== "noMatch") {
         handleDeleteStem(selectedStem.id, parentBranch.id, update);
-      } else {
-        handleDeleteNodes(update);
       }
-    } else {
-      handleDeleteNodes(update);
     }
   });
   listen("menu-set-link", async () => {

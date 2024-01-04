@@ -53,7 +53,12 @@ pub fn bind_listeners(app: &tauri::App) {
 		let json_value: Result<Value, _> = from_str(json_raw);
 		match json_value {
 			Ok(json) => {
-				let main_window = handle_select_menu.get_window("project").unwrap();
+				let main_window_wrapped = handle_select_menu.get_focused_window();
+				if main_window_wrapped.is_none() {
+					eprintln!("Could not fetch focused window.");
+					return;
+				}
+				let main_window = main_window_wrapped.unwrap();
 				let menu_handle = main_window.menu_handle();
 				if let Some(select_items) = json["selectItems"].as_array() {
 					for select_item in select_items {
@@ -77,19 +82,43 @@ pub fn bind_listeners(app: &tauri::App) {
 	});
 	// Listen to menu item enable/disable
 	let handle_menu = app.handle();
-	app.listen_global("enable-menu-item", move |event| {
+	app.listen_global("enable-menu-items", move |event| {
 		let json_raw = event.payload().unwrap();
 		let json_value: Result<Value, _> = from_str(json_raw);
 		match json_value {
 			Ok(json) => {
-				let main_window = handle_menu.get_window("project").unwrap();
+				let main_window_wrapped = handle_menu.get_focused_window();
+				if main_window_wrapped.is_none() {
+					eprintln!("Could not fetch focused window.");
+					return;
+				}
+				let main_window = main_window_wrapped.unwrap();
 				let menu_handle = main_window.menu_handle();
-				let item_name = json["item"].as_str().unwrap_or("N/A");
-				let item_state = json["state"].as_str().unwrap_or("N/A");
-				if item_state == "enable" {
-					let _ = menu_handle.get_item(item_name).set_enabled(true);
-				} else {
-					let _ = menu_handle.get_item(item_name).set_enabled(false);
+				if let Some(select_items) = json["enableItems"].as_array() {
+					for select_item in select_items {
+						if let Some(select_item_str) = select_item.as_str() {
+							let item = menu_handle.try_get_item(select_item_str);
+							if item.is_none() {
+								eprintln!("Could not get this item: {}", select_item_str);
+								return;
+							} else {
+								let _ = item.unwrap().set_enabled(true);
+							}
+						}
+					}
+				}
+				if let Some(deselect_items) = json["disableItems"].as_array() {
+					for deselect_item in deselect_items {
+						if let Some(deselect_item_str) = deselect_item.as_str() {
+							let item = menu_handle.try_get_item(deselect_item_str);
+							if item.is_none() {
+								eprintln!("Could not get this item: {}", deselect_item_str);
+								return;
+							} else {
+								let _ = item.unwrap().set_enabled(false);
+							}
+						}
+					}
 				}
 			}
 			Err(e) => {

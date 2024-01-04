@@ -86,14 +86,24 @@ export default function MainEditor() {
         handlePaste(handleUpdate);
       }
     });
+    // Enable cell + branch menu items
+    appWindow.emit("enable-menu-items", {
+      enableItems: ["new_cell", "new_branch"],
+    });
     // Focus listeners
-    window.addEventListener("focus", () => {
+    listen("tauri://focus", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
       const store = getStore();
       store.focus = true;
       document.querySelector("#App")?.setAttribute("data-focus", "true");
       setStore(store);
+      // Re-enable cell + branch menu items, in case we focused away
+      appWindow.emit("enable-menu-items", {
+        enableItems: ["new_cell", "new_branch"],
+      });
     });
-    window.addEventListener("blur", () => {
+    listen("tauri://blur", async () => {
       const store = getStore();
       store.focus = false;
       document.querySelector("#App")?.setAttribute("data-focus", "false");
@@ -146,17 +156,15 @@ export default function MainEditor() {
       saveHistoryVersion();
     }
     // Check if we can undo
-    let undoState = canUndo() === true ? "enable" : "disable";
-    emit("enable-menu-item", {
-      item: "undo",
-      state: undoState,
-    });
+    let undoState =
+      canUndo() === true
+        ? { enableItems: ["undo"] }
+        : { disableItems: ["undo"] };
+    emit("enable-menu-items", undoState);
     // Check if we can redo
-    let redoState = canRedo() === true ? "enable" : "disable";
-    emit("enable-menu-item", {
-      item: "redo",
-      state: redoState,
-    });
+    let redoState =
+      canRedo() === true ? { enableItems: ["redo"] } : { redo: ["undo"] };
+    emit("enable-menu-items", redoState);
     // Trigger refresh
     triggerRefresh(uuidv4());
   };
