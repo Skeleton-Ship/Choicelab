@@ -63,7 +63,7 @@ export default function BranchStemEl(props: {
     if (branch) {
       stemIndex =
         branch.stems.length > 2 ? (
-          <span class="stem-index">{props.index}</span>
+          <span class="stem-index">{props.index + 1}</span>
         ) : (
           ""
         );
@@ -90,6 +90,7 @@ export default function BranchStemEl(props: {
     <li
       className={className}
       data-id={props.id}
+      data-index={props.index}
       data-element="branchStem"
       data-branch={props.nodeId}
       data-link-to={stem.link.to}

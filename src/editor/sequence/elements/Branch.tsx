@@ -38,12 +38,27 @@ export default function BranchEl(props: {
     if (branch) handleSelectNode(branch, props.update);
   }
   function addBranchStem() {
+    const store = getStore();
     const branch: Branch | undefined = getBranch(props.id, store);
     if (!branch) return;
+    // Create the new stem
     const stem = createBranchStem("rules");
-    if (branch.stems) {
-      branch.stems.push(stem);
+    branch.stems.push(stem);
+    // Re-sort stems so no-match is last
+    const newStems: Array<Stem> = [];
+    let noMatchStem;
+    branch.stems.forEach((stem: Stem) => {
+      if (stem.type === "noMatch") {
+        noMatchStem = stem;
+      } else {
+        newStems.push(stem);
+      }
+    });
+    if (noMatchStem) {
+      newStems.push(noMatchStem);
     }
+    branch.stems = newStems;
+    // Update
     setStore(store);
     props.update();
   }

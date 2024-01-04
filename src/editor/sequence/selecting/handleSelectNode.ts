@@ -1,4 +1,3 @@
-import { getNoMatchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { AnyNode, Cell, Branch, StartNode, Stem } from "../../../typings";
 
@@ -20,37 +19,16 @@ export default function handleSelectNode(
   // For branches, select a stem
   if (node.type === "branch") {
     if (!stem) {
-      const noMatchStem = getNoMatchStem(node.id, store);
-      if (!noMatchStem) return;
-      store.selectedStem = noMatchStem;
+      // @ts-ignore
+      const firstStem = node.stems[0];
+      if (!firstStem) return;
+      store.selectedStem = firstStem;
     } else {
       store.selectedStem = stem;
     }
   } else {
     store.selectedStem = false;
   }
-  /*
-  let selectedNodes = store.selectedNodes;
-  const shiftDown = store.shiftDown;
-  let removeFromSelection = -1;
-  // If shift key isn't being held, clear the existing selection
-  if (shiftDown === false) {
-    selectedNodes.length = 0;
-  } else {
-    // If shift is held and the node is selected again, mark it for de-selection
-    for (var i = 0; i < selectedNodes.length; i++) {
-      const selectedNode = selectedNodes[i];
-      if (node.id === selectedNode.id) {
-        removeFromSelection = i;
-      }
-    }
-  }
-  if (removeFromSelection > -1) {
-    selectedNodes.splice(removeFromSelection, 1);
-  } else {
-    selectedNodes.push(node);
-  }
-  */
   // Update data
   setStore(store);
   update(false);
