@@ -1,5 +1,6 @@
 import { Store, Project } from "../typings";
 import setViewSettings from "../utils/setViewSettings";
+import structuredClone from "@ungap/structured-clone";
 
 function getStore() {
   const store: Store = window.__CHOICELAB_DATA__;
