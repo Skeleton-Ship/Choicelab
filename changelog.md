@@ -1,7 +1,5 @@
 # Changelog
 
-##
-
 ## 0.1.3
 
 - 1b7aa541180cd0d11a2f04f942b9029c84962aac (#1) Fixed an issue where the new project dialog would not open in macOS Ventura.
