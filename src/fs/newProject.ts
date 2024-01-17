@@ -9,7 +9,7 @@ export default async function newProject() {
     filters: [
       {
         name: "My Project",
-        extensions: [],
+        extensions: [""],
       },
     ],
   });
