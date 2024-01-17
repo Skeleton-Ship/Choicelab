@@ -1,10 +1,16 @@
 # Changelog
 
+##
+
+## 0.1.3
+
+- 1b7aa541180cd0d11a2f04f942b9029c84962aac (#1) Fixed an issue where the new project dialog would not open in macOS Ventura.
+
 ## 0.1.2
 
 #### 2024-01-04
 
-- Fixed an issue (#bf9b09a) that resulted in projects not opening in macOS Monterey and older.
+- bf9b09a4f230e08f591b3fdc57c92f29d8e6fcc9 Fixed an issue that resulted in projects not opening in macOS Monterey and older.
 
 ## 0.1.1
 
