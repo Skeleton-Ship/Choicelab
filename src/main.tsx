@@ -11,6 +11,7 @@ import MainEditor from "./editor/MainEditor";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
+import { Project, LoadError } from "./typings";
 import "./styles/style.scss";
 
 async function init() {
@@ -57,15 +58,27 @@ async function init() {
       return;
     }
     // Load project data
-    const projectData = await loadProjectData(projectPath);
-    if (!projectData) {
-      message(
-        "Make sure the selected folder is a Choicelab project folder, then try again.",
-        "The selected folder couldn't be opened."
-      );
+    let projectData = await loadProjectData(projectPath);
+    if (projectData.hasOwnProperty("error")) {
+      projectData = projectData as LoadError;
+      let title = "",
+        contents = "";
+      switch (projectData.error) {
+        case "badJSON":
+          title = "The selected project couldn't be opened.";
+          contents =
+            "There may be an issue with the project file contents. Check to make sure the project file contains no incorrect characters, then try again.";
+          break;
+        default:
+          title = "The selected folder couldn't be opened.";
+          contents =
+            "Make sure the selected folder is a Choicelab project folder, then try again.";
+      }
+      message(contents, title);
       appWindow.close();
       return;
     }
+    projectData = projectData as Project;
     appWindow.show();
     // Let Rust know that the project was opened
     emit("project-opened");

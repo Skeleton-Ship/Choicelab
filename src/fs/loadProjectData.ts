@@ -1,23 +1,34 @@
 import { resolve } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
-import { Project } from "../typings";
+import { Project, LoadError } from "../typings";
 
-function parseRawData(iteration: number): Project | false {
+function parseRawData(iteration: number): Project | LoadError {
   const dataRaw: string | undefined = window.__CHOICELAB_DATA_RAW__;
-  if (dataRaw && dataRaw !== "__INVALID_CHOICELAB_FILE__") {
-    const data = JSON.parse(dataRaw);
-    return data;
+  if (dataRaw) {
+    if (dataRaw !== "__INVALID_CHOICELAB_FILE__") {
+      try {
+        let data = JSON.parse(dataRaw);
+        return data;
+      } catch (e) {
+        return {
+          error: "badJSON",
+        };
+      }
+    }
   } else {
     if (iteration < 500) {
       return parseRawData(iteration + 1);
     }
   }
-  return false;
+  // Default behavior
+  return {
+    error: "other",
+  };
 }
 
 export default async function loadProjectData(
   projectPath: string
-): Promise<Project | false> {
+): Promise<Project | LoadError> {
   const dataPath = await resolve(projectPath, "project.json");
   emit("request-project-file", {
     path: dataPath,
