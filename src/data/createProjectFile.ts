@@ -9,6 +9,16 @@ export default async function createProjectFile(name: string) {
     name: name,
     id: uuidv4(),
     appVersion: appVersion,
+    settings: {
+      activePlayer: "choicelab-player-html5",
+      player: {
+        "choicelab-player-html5": {
+          transitionTime: 300,
+          autoPlay: false,
+          clearOnStart: false,
+        },
+      },
+    },
     actions: {
       name: "__CHOICELAB_STANDARD__",
       path: "__INTERNAL__",

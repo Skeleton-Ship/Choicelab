@@ -1,12 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { Cell, Branch, Stem, Rule, StartNode } from "../typings";
+import { getStore } from "./dataStore";
 
 function createCell(): Cell {
+  const store = getStore();
+  const activePlayerName: string = store.project.settings.activePlayer;
+  const playerSettings: object =
+    store.project.settings.player[activePlayerName];
   const cell = {
     id: uuidv4(),
     type: "cell",
     label: "",
     actions: [],
+    settings: structuredClone(playerSettings),
     link: {
       to: "",
     },
