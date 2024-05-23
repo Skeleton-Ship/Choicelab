@@ -67,6 +67,10 @@ export interface Project {
   name: string;
   id: string;
   appVersion: string;
+  settings: {
+    activePlayer: string;
+    player: any;
+  };
   actions: {
     name: string;
     path: string;
@@ -154,6 +158,9 @@ export interface ActionDefs {
   name: string;
   label: string;
   actions: Array<ActionDef>;
+}
+export interface LoadError {
+  error: string;
 }
 declare global {
   interface Window {
