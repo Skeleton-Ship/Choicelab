@@ -4,8 +4,8 @@
   "version": "0.2.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "tauri dev",
+    "build": "tauri build",
     "preview": "vite preview",
     "start": "tauri dev",
     "version-major": "yarn version --major && node version.cjs",
