@@ -1,6 +1,7 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { Project } from "../typings";
 import { v4 as uuidv4 } from "uuid";
+import { stringify } from "../utils/stringify";
 import createSequence from "./createSequence";
 
 export default async function createProjectFile(name: string) {
@@ -14,6 +15,7 @@ export default async function createProjectFile(name: string) {
       player: {
         "choicelab-player-html5": {
           rememberHistory: true,
+          autoAdvance: true,
         },
       },
     },
@@ -26,6 +28,6 @@ export default async function createProjectFile(name: string) {
     },
     sequences: [createSequence()],
   };
-  const blankProjectStr = JSON.stringify(blankProject, null, 2);
+  const blankProjectStr = stringify(blankProject);
   return blankProjectStr;
 }

@@ -8,6 +8,7 @@ import { resolve } from "@tauri-apps/api/path";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
+import { stringify } from "../utils/stringify";
 import { Sequence } from "../typings";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
@@ -59,7 +60,7 @@ export default function MainEditor() {
       // Pass to back-end
       emit("save-text-file", {
         name: "project.json",
-        contents: JSON.stringify(newStore.project, null, 2),
+        contents: stringify(newStore.project),
         path: await resolve(newStore.projectPath),
       });
       newStore.saved = true;

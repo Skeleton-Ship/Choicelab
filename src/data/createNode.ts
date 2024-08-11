@@ -13,7 +13,6 @@ function createCell(): Cell {
     settings: {
       "choicelab-player-html5": {
         transitionTime: 0.3,
-        autoAdvance: true,
         navigationPoint: true,
       },
     },

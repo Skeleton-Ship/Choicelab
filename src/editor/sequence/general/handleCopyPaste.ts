@@ -1,6 +1,7 @@
 import { getStore, setStore } from "../../../data/dataStore";
 import isObject from "../../../utils/isObject";
 import { v4 as uuidv4 } from "uuid";
+import { stringify } from "../../../utils/stringify";
 import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
 import isJson from "../../../utils/isJson";
@@ -83,7 +84,7 @@ function handleCutCopy(action: string, update: Function) {
   let clipboardContents = {
     ChoicelabNodes: selectedNodes,
   };
-  const clipboardStr: string = JSON.stringify(clipboardContents);
+  const clipboardStr: string = stringify(clipboardContents, false);
   const type = "text/plain";
   const blob = new Blob([clipboardStr], { type });
   const data = [new ClipboardItem({ [type]: blob })];

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { emit, once } from "@tauri-apps/api/event";
 import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { appWindow } from "@tauri-apps/api/window";
+import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
 import { getStore, setStore } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
@@ -34,7 +35,7 @@ async function saveHistoryVersion(initial: boolean = false) {
   );
   emit("save-text-file", {
     name: versionId,
-    contents: JSON.stringify(store.project, null, 2),
+    contents: stringify(store.project),
     path: cachePath,
   });
 }
