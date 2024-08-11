@@ -13,9 +13,7 @@ export default async function createProjectFile(name: string) {
       activePlayer: "choicelab-player-html5",
       player: {
         "choicelab-player-html5": {
-          transitionTime: 300,
-          autoPlay: false,
-          clearOnStart: false,
+          rememberHistory: true,
         },
       },
     },

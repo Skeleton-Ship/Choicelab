@@ -1,18 +1,22 @@
 import { v4 as uuidv4 } from "uuid";
 import { Cell, Branch, Stem, Rule, StartNode } from "../typings";
-import { getStore } from "./dataStore";
 
+/*
+ * NOTE: This currently hardcodes the HTML5 player settings. In the future, it should automatically pull settings from the current player.
+ */
 function createCell(): Cell {
-  const store = getStore();
-  const activePlayerName: string = store.project.settings.activePlayer;
-  const playerSettings: object =
-    store.project.settings.player[activePlayerName];
   const cell = {
     id: uuidv4(),
     type: "cell",
     label: "",
     actions: [],
-    settings: structuredClone(playerSettings),
+    settings: {
+      "choicelab-player-html5": {
+        transitionTime: 0.3,
+        autoAdvance: true,
+        navigationPoint: true,
+      },
+    },
     link: {
       to: "",
     },
