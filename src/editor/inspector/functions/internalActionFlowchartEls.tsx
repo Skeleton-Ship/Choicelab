@@ -49,18 +49,6 @@ function FCInputField(props: {
   );
 }
 
-/*
-function FCImage(props: { source: string; alt: string }) {
-  const [imageEl, setImageEl] = useState(<span class="no-src">Image</span>);
-  getAssetContents(props.source, "image").then((src) => {
-    if (typeof src === "string") {
-      setImageEl(getAssetPreviewElement("image", props.source, src));
-    }
-  });
-  return <div>{imageEl}</div>;
-}
-*/
-
 function FCImage(props: { source: string; alt: string }) {
   let imageLabel = <span class="no-src">Image</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
@@ -100,4 +88,12 @@ function FCVideo(props: { source: string; captions: string }) {
   return <>{videoLabel}</>;
 }
 
-export { FCText, FCButton, FCInputField, FCImage, FCAudio, FCVideo };
+function FCSilence(props: { duration: number }) {
+  return (
+    <div>
+      <em>({props.duration}s of silence)</em>
+    </div>
+  );
+}
+
+export { FCText, FCButton, FCInputField, FCImage, FCAudio, FCVideo, FCSilence };

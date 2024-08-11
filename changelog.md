@@ -1,6 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+#### 2024-08-11
+
+- Add support for the Silence action, which can eventually be used to time visual elements without any accompanying audio or video.
+
 ## 0.1.3
+
+#### 2024-01-17
 
 - 1b7aa541180cd0d11a2f04f942b9029c84962aac (#1) Fixed an issue where the new project dialog would not open in macOS Ventura.
 

@@ -58,6 +58,20 @@ export default function ActionPropEditor(props: {
         />
       );
       break;
+    case "number":
+      propControl = (
+        <TextField
+          fieldType="number"
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          initialValue={initialValue}
+          className={className}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
     case "dropdown":
       propControl = (
         <Dropdown

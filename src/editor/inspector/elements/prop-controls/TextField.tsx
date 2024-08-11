@@ -47,6 +47,19 @@ export default function TextField(props: {
       </textarea>
     );
   }
+  if (props.fieldType === "number") {
+    fieldEl = (
+      <input
+        name={propElName}
+        type="number"
+        class="ui-text-field"
+        value={props.initialValue}
+        onChange={(e) => {
+          handleChange(e.target);
+        }}
+      />
+    );
+  }
   return (
     <div class={className}>
       <label class="label break-line" for={propElName}>

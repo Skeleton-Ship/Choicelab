@@ -6,6 +6,7 @@ import {
   FCImage,
   FCAudio,
   FCVideo,
+  FCSilence,
 } from "./internalActionFlowchartEls";
 
 const internalActionDefs: ActionDefs = {
@@ -175,20 +176,6 @@ const internalActionDefs: ActionDefs = {
           className: "col-2",
           required: true,
         },
-        /*
-        {
-          name: "response",
-          label: "Response Audio",
-          className: "col-2",
-          control: "audio",
-        },
-        {
-          name: "responseCaptions",
-          label: "Response Captions",
-          className: "col-2",
-          control: "captions",
-        },
-		*/
         {
           name: "saveInputs",
           label: "Save Input Fields When Clicked",
@@ -244,6 +231,29 @@ const internalActionDefs: ActionDefs = {
           control: "variable",
           className: "col-2",
           required: true,
+        },
+      ],
+    },
+    {
+      name: "silence",
+      label: "Silence",
+      description:
+        "A block of silence, useful for timing visual elements without audio or video accompaniment.",
+      extendable: true,
+      mediaElement: true,
+      flowchart: FCSilence,
+      editor: {
+        iconName: "hourglass",
+        iconColor: "#fff",
+        iconBackgroundColor: "#8A95A5",
+      },
+      props: [
+        {
+          name: "duration",
+          label: "Duration",
+          control: "number",
+          required: true,
+          default: 0,
         },
       ],
     },
