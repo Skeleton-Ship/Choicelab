@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+#### 2024-08-11
+
+- Fixed an issue where special characters (like double quotes, and newlines) weren't properly escaped during project save.
+
 ## 0.2.0
 
 #### 2024-08-11
