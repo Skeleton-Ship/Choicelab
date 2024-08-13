@@ -18,7 +18,8 @@ export default function RuleInstance(props: {
   // Handle form updates
   function handleChange(
     fieldName: "variableId" | "operator" | "value",
-    e: Event
+    e: Event,
+    varName?: string
   ) {
     let value: string | number | boolean;
     if (e.target !== null) {
@@ -56,17 +57,24 @@ export default function RuleInstance(props: {
       }
     }
     // Cast value from a string to its correct type
-    if (variable && fieldName === "value") {
-      switch (variable.varType) {
-        case "number":
-          value = parseFloat(value);
-          if (isNaN(value)) {
-            value = "";
-          }
-          break;
-        case "boolean":
-          value = value === "true" ? true : false;
-          break;
+    if (fieldName === "value") {
+      if (!varName) {
+        console.error("No variable name provided; value cannot be re-cast.");
+        return;
+      }
+      variable = getVariable(varName, store);
+      if (variable) {
+        switch (variable.varType) {
+          case "number":
+            value = parseFloat(value);
+            if (isNaN(value)) {
+              value = "";
+            }
+            break;
+          case "boolean":
+            value = value === "true" ? true : false;
+            break;
+        }
       }
     }
     // @ts-ignore
@@ -140,7 +148,7 @@ export default function RuleInstance(props: {
             placeholder="empty"
             value={displayValue}
             onChange={(e: Event) => {
-              handleChange("value", e);
+              handleChange("value", e, rule.variableId);
             }}
           />
         );
@@ -160,7 +168,7 @@ export default function RuleInstance(props: {
             class="value"
             value={displayValue}
             onChange={(e: Event) => {
-              handleChange("value", e);
+              handleChange("value", e, rule.variableId);
             }}
           />
         );
@@ -173,7 +181,7 @@ export default function RuleInstance(props: {
               name={fieldName}
               value={displayValue}
               onChange={(e: Event) => {
-                handleChange("value", e);
+                handleChange("value", e, rule.variableId);
               }}
             >
               <option value="true">True</option>

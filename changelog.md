@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+#### 2024-08-12
+
+- Fixed an issue where numbers added to rules would not parse correctly.
+
 ## 0.2.1
 
 #### 2024-08-11
