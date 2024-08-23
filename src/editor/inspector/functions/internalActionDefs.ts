@@ -186,7 +186,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "inputField",
-      label: "Input Field",
+      label: "Field",
       description: "A fill-in-the-blank field for entering information.",
       extendable: true,
       mediaElement: false,

@@ -18,7 +18,7 @@
 
 #available-actions {
   position: relative;
-  height: 200px;
+  height: 156px;
   z-index: 3;
   background-color: white;
   overflow: scroll;
@@ -29,12 +29,15 @@
   }
   .inner {
     padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
   }
   h4 {
     font-size: 11px;
     margin: 0;
     padding: 8px;
     opacity: 0.65;
+    width: 100%;
     @media (prefers-color-scheme: dark) {
       color: white;
     }
@@ -60,14 +63,7 @@
   }
   li {
     list-style: none;
-    &:nth-child(even) {
-      button {
-        background-color: #f7f7f7;
-        @media (prefers-color-scheme: dark) {
-          background-color: rgba(255, 255, 255, 0.048);
-        }
-      }
-    }
+    width: 33%;
   }
 }
 
