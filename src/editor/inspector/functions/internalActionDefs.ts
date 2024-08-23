@@ -37,7 +37,7 @@ const internalActionDefs: ActionDefs = {
         },
         {
           name: "tag",
-          label: "HTML Tag",
+          label: "Role",
           control: "dropdown",
           default: "p",
           options: [
@@ -45,14 +45,17 @@ const internalActionDefs: ActionDefs = {
               value: "p",
               label: "Body Text",
             },
-
+            {
+              value: "h1",
+              label: "Title",
+            },
             {
               value: "h2",
-              label: "Heading 2",
+              label: "Heading",
             },
             {
               value: "h3",
-              label: "Heading 3",
+              label: "Subheading",
             },
           ],
         },
