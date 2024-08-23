@@ -4,16 +4,17 @@
   "version": "0.2.2",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "preDev": "vite",
+    "dev": "tauri dev",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "tauri dev",
     "version-major": "yarn version --major && node version.cjs",
     "version-minor": "yarn version --minor && node version.cjs",
     "version-patch": "yarn version --patch && node version.cjs",
     "tauri": "tauri"
   },
   "dependencies": {
+    "@surfgreen/choicelab-player-html5": "^0.1.0",
     "@tauri-apps/api": "^1.5.1",
     "@types/uuid": "^9.0.7",
     "@ungap/structured-clone": "^1.2.0",
