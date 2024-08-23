@@ -134,6 +134,15 @@
   }
 }
 
+#sequence.view-xs,
+#sequence.view-sm {
+  .nodes .branch .stems .stem .stem-label {
+    font-size: 8px;
+    font-weight: 400;
+    max-height: 100%;
+  }
+}
+
 @include mixins.target-mode {
   .branch:not(.target-mode-origin):hover {
     .branch-background {

@@ -81,7 +81,7 @@ export default function BranchStemEl(props: {
   const viewSettings = store.viewSettings;
   const style = {
     left: viewSettings.stemMarginLeft * props.index + "px",
-    top: 100 + "px",
+    top: viewSettings.stemHeight * 1.5 + "px",
     width: viewSettings.stemWidth + "px",
     height: viewSettings.stemHeight + "px",
   };

@@ -1,3 +1,4 @@
+import { getStore } from "../../../data/dataStore";
 export default function setSequenceDimensions() {
   const sequenceEl = document.querySelector("#sequence") as HTMLElement;
   const sequenceWrap = document.querySelector("#sequence-wrap") as HTMLElement;
@@ -20,6 +21,26 @@ export default function setSequenceDimensions() {
       height = elY;
     }
   });
+  // Set sequence width, height
   sequenceEl.style.width = width + 50 + "px";
   sequenceEl.style.height = height + 50 + "px";
+  // Set zoom class
+  const zoomFactor = getStore().viewSettings.cellWidth;
+  const viewPrefixes = ["xs", "sm", "md", "lg", "xl"];
+  let viewClass = "";
+  if (zoomFactor < 120) {
+    viewClass = "view-xs";
+  } else if (zoomFactor >= 120 && zoomFactor < 220) {
+    viewClass = "view-sm";
+  } else if (zoomFactor >= 220 && zoomFactor < 320) {
+    viewClass = "view-md";
+  } else if (zoomFactor >= 320 && zoomFactor < 420) {
+    viewClass = "view-lg";
+  } else if (zoomFactor >= 420) {
+    viewClass = "view-xl";
+  }
+  viewPrefixes.forEach((className) => {
+    sequenceEl.classList.remove(`view-${className}`);
+  });
+  sequenceEl.classList.add(viewClass);
 }
