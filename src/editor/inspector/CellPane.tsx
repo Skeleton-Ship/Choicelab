@@ -7,6 +7,7 @@ import addAction from "./functions/addAction";
 import internalActionDefs from "./functions/internalActionDefs";
 import ActionInstance from "./elements/ActionInstance";
 import ActionIcon from "./elements/ActionIcon";
+import { getPlayerConfig } from "../../player/getPlayerConfig";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -77,11 +78,18 @@ function ActionsEditor(props: { update: Function }) {
   );
 }
 
-export default function ActionsPane(props: { update: Function }) {
+function NodeSettings(_props: { update: Function }) {
+  const config = getPlayerConfig();
+  console.log(config);
+  return <div>Here be node settings</div>;
+}
+
+export default function CellPane(props: { update: Function }) {
   return (
     <>
       <AvailableActions update={props.update} />
       <ActionsEditor update={props.update} />
+      <NodeSettings update={props.update} />
     </>
   );
 }

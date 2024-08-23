@@ -1,9 +1,9 @@
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 import { getStore } from "../data/dataStore";
-import ActionsPane from "./inspector/ActionsPane";
-import VariablesPane from "./inspector/VariablesPane";
+import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
+import VariablesPane from "./inspector/VariablesPane";
 
 function makeResizable(el: HTMLElement) {
   const resizer = el.querySelector(".resizer");
@@ -53,7 +53,7 @@ export default function Inspector(props: { update: Function }) {
       if (node.type === "cell") {
         contents = (
           <>
-            <ActionsPane update={props.update} />
+            <CellPane update={props.update} />
           </>
         );
       } else if (node.type === "branch") {
