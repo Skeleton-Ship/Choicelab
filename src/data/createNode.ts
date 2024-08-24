@@ -1,20 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 import { Cell, Branch, Stem, Rule, StartNode } from "../typings";
+import { createPlayerCellSettings } from "../player/createPlayerSettings";
 
-/*
- * NOTE: This currently hardcodes the HTML5 player settings. In the future, it should automatically pull settings from the current player.
- */
 function createCell(): Cell {
+  const cellSettings = createPlayerCellSettings();
   const cell = {
     id: uuidv4(),
     type: "cell",
     label: "",
     actions: [],
     settings: {
-      "choicelab-player-html5": {
-        transitionTime: 0.3,
-        navigationPoint: true,
-      },
+      [cellSettings.id]: cellSettings.settings,
     },
     link: {
       to: "",

@@ -8,17 +8,14 @@ import { createPlayerProjectSettings } from "../player/createPlayerSettings";
 export default async function createProjectFile(name: string) {
   const appVersion = await getVersion();
   const playerSettings = createPlayerProjectSettings();
-  console.log(playerSettings);
   const blankProject: Project = {
     name: name,
     id: uuidv4(),
     appVersion: appVersion,
     settings: {
-      activePlayer: "choicelab-player-html5",
+      activePlayer: playerSettings.id,
       player: {
-        "choicelab-player-html5": {
-          rememberHistory: true,
-        },
+        [playerSettings.id]: playerSettings.settings,
       },
     },
     actions: {
