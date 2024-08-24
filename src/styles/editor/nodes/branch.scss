@@ -87,8 +87,10 @@
       }
       .no-match-index {
         @include mixins.index(23);
-        background-color: #fff8e0;
-        color: #d87c09;
+        & {
+          background-color: #fff8e0;
+          color: #d87c09;
+        }
         @media (prefers-color-scheme: dark) {
           background-color: #75470e;
           color: #ffdfb8;
@@ -136,6 +138,10 @@
 
 #sequence.view-xs,
 #sequence.view-sm {
+  .branch.node {
+    width: 140px;
+    height: 53px;
+  }
   .nodes .branch .stems .stem .stem-label {
     font-size: 8px;
     font-weight: 400;

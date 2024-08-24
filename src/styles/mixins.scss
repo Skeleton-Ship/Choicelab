@@ -37,8 +37,10 @@
 
 @mixin stem-index($size: 30) {
   @include index($size);
-  background-color: #e0f0ff;
-  color: #2f8ee5;
+  & {
+    background-color: #e0f0ff;
+    color: #2f8ee5;
+  }
   @media (prefers-color-scheme: dark) {
     background-color: #1f5990;
     color: #cce6ff;

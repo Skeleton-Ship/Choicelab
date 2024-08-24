@@ -6,9 +6,11 @@
   overflow: scroll;
   .stem-index {
     @include mixins.stem-index(27);
-    position: absolute;
-    top: -23px;
-    left: -29px;
+    & {
+      position: absolute;
+      top: -23px;
+      left: -29px;
+    }
   }
   .item-toolbar {
     align-items: flex-start;

@@ -91,13 +91,13 @@
       }
     }
     &.selected {
+      background-color: rgba(0, 0, 0, 0.08);
       .icon {
         opacity: 1;
       }
       i {
         color: #2f8ee5;
       }
-      background-color: rgba(0, 0, 0, 0.08);
     }
     @media (prefers-color-scheme: dark) {
       &:hover:not(:disabled) {
