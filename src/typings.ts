@@ -22,6 +22,7 @@ export interface AnyNode {
   actions?: Array<Action>;
   link?: Link;
   stems?: Array<Stem>;
+  settings: { [key: string]: any };
   position?: {
     x: number;
     y: number;
@@ -44,12 +45,14 @@ export interface Cell {
   type: string;
   label: string;
   actions: Array<Action>;
+  settings: { [key: string]: any };
   link: Link;
 }
 export interface Branch {
   id: string;
   type: string;
   stems: Array<Stem>;
+  settings: { [key: string]: any };
 }
 export interface Sequence {
   id: string;

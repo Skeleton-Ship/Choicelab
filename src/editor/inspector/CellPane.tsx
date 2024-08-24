@@ -8,6 +8,7 @@ import internalActionDefs from "./functions/internalActionDefs";
 import ActionInstance from "./elements/ActionInstance";
 import ActionIcon from "./elements/ActionIcon";
 import { getPlayerConfig } from "../../player/getPlayerConfig";
+import { NodeSetting } from "./elements/NodeSetting";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -78,10 +79,33 @@ function ActionsEditor(props: { update: Function }) {
   );
 }
 
-function NodeSettings(_props: { update: Function }) {
-  const config = getPlayerConfig();
-  console.log(config);
-  return <div>Here be node settings</div>;
+function NodeSettings(props: { update: Function }) {
+  const store = getStore();
+  const selectedNodeId = store.selectedNodes[0].id;
+  const node: Cell | undefined = getCell(selectedNodeId, store);
+  if (!node) return <></>;
+  const activePlayerId = store.project.settings.activePlayer;
+  // Create UI elements to edit
+  const cellSettingsDefs = getPlayerConfig().nodeSettings.cell;
+  const settingEls: Array<preact.JSX.Element> = [];
+  const defKeys = Object.keys(cellSettingsDefs);
+  defKeys.forEach((key) => {
+    // @ts-ignore
+    const settingDef = cellSettingsDefs[key];
+    settingEls.push(
+      <NodeSetting
+        node={node}
+        playerId={activePlayerId}
+        def={settingDef}
+        update={props.update}
+      />
+    );
+  });
+  return (
+    <ul id="node-settings">
+      <div class="inner">{settingEls}</div>
+    </ul>
+  );
 }
 
 export default function CellPane(props: { update: Function }) {
