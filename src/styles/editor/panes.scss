@@ -48,6 +48,8 @@
     text-align: center;
     font-size: 18px;
     opacity: 0.8;
+    font-weight: 300;
+    letter-spacing: 0.01em;
     @media (prefers-color-scheme: dark) {
       color: rgba(255, 255, 255, 0.7);
     }
