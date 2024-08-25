@@ -55,7 +55,7 @@ pub fn bind_listeners(app: &tauri::App) {
 			Ok(json) => {
 				let main_window_wrapped = handle_select_menu.get_focused_window();
 				if main_window_wrapped.is_none() {
-					eprintln!("Could not fetch focused window.");
+					// eprintln!("Could not fetch focused window.");
 					return;
 				}
 				let main_window = main_window_wrapped.unwrap();
@@ -89,7 +89,7 @@ pub fn bind_listeners(app: &tauri::App) {
 			Ok(json) => {
 				let main_window_wrapped = handle_menu.get_focused_window();
 				if main_window_wrapped.is_none() {
-					eprintln!("Could not fetch focused window.");
+					// eprintln!("Could not fetch focused window.");
 					return;
 				}
 				let main_window = main_window_wrapped.unwrap();
