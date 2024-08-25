@@ -1,5 +1,6 @@
 import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
+import NumberField from "../NumberField";
 
 export default function TextField(props: {
   action: Action;
@@ -11,9 +12,8 @@ export default function TextField(props: {
   store: Store;
   update: Function;
 }) {
-  function handleChange(target: EventTarget | null) {
-    if (target === null || !action) return;
-    const value = (target as HTMLInputElement).value;
+  function handleChange(value: any) {
+    if (!action) return;
     action.props[propDef.name] = value;
     setStore(props.store);
     props.update();
@@ -29,7 +29,8 @@ export default function TextField(props: {
       class="ui-text-field"
       value={props.initialValue}
       onChange={(e) => {
-        handleChange(e.target);
+        const value = (e.target as HTMLInputElement).value;
+        handleChange(value);
       }}
     />
   );
@@ -40,7 +41,8 @@ export default function TextField(props: {
         id={propElName}
         class="ui-text-area"
         onChange={(e) => {
-          handleChange(e.target);
+          const value = (e.target as HTMLInputElement).value;
+          handleChange(value);
         }}
       >
         {props.initialValue}
@@ -49,13 +51,12 @@ export default function TextField(props: {
   }
   if (props.fieldType === "number") {
     fieldEl = (
-      <input
+      <NumberField
         name={propElName}
-        type="number"
-        class="ui-text-field"
         value={props.initialValue}
-        onChange={(e) => {
-          handleChange(e.target);
+        decimalPlaces={2}
+        onChange={(value: number) => {
+          handleChange(value);
         }}
       />
     );
