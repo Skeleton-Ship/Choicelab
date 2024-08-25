@@ -269,3 +269,8 @@ $item-margin: clamp(16px, 3.5%, 28px);
     }
   }
 }
+
+.empty-contents {
+  height: 100%;
+  padding: 1rem;
+}

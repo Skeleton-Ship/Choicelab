@@ -73,8 +73,17 @@ function ActionsEditor(props: { update: Function }) {
     );
   });
   return (
-    <ul id="actions-editor">
-      <div class="inner">{editorEls}</div>
+    <ul
+      id="actions-editor"
+      class={editorEls.length === 0 ? "empty-contents" : ""}
+    >
+      <div class="inner">
+        {editorEls.length === 0 ? (
+          <p class="placeholder">No Actions Added</p>
+        ) : (
+          editorEls
+        )}
+      </div>
     </ul>
   );
 }
