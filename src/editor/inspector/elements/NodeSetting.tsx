@@ -1,37 +1,7 @@
 import { Cell, Branch } from "../../../typings";
 import { setStore } from "../../../data/dataStore";
 import { Store } from "../../../typings";
-
-function sanitizeTimingValue(value: string) {
-  let newValue: string | number = value;
-  newValue = newValue.replace(/[^0-9.]/g, "");
-  if (newValue.endsWith(".")) {
-    newValue += "0";
-  }
-  if (newValue === "") {
-    newValue = "0";
-  }
-  // Check for the last occurrence of a period
-  const lastDotIndex = newValue.lastIndexOf(".");
-
-  // If there is a period, check the number of digits after it
-  if (lastDotIndex !== -1) {
-    const integerPart = newValue.substring(0, lastDotIndex + 1);
-    let decimalPart = newValue.substring(lastDotIndex + 1);
-
-    // If more than 2 decimal places, truncate to 2
-    if (decimalPart.length > 2) {
-      decimalPart = decimalPart.substring(0, 2);
-    }
-
-    newValue = integerPart + decimalPart;
-  }
-  newValue = parseFloat(newValue);
-  if (isNaN(newValue)) {
-    newValue = 0;
-  }
-  return newValue;
-}
+import NumberField from "./NumberField";
 
 export function NodeSetting(props: {
   node: Cell | Branch;
@@ -41,10 +11,7 @@ export function NodeSetting(props: {
   def: { [key: string]: any };
   update: Function;
 }) {
-  function handleChange(newValue: any, type: string) {
-    if (type === "number") {
-      newValue = sanitizeTimingValue(newValue);
-    }
+  function handleChange(newValue: any) {
     props.node.settings[props.playerId][props.settingName] = newValue;
     setStore(props.store);
     props.update();
@@ -64,7 +31,7 @@ export function NodeSetting(props: {
             onInput={(e) => {
               const target = e.target as HTMLInputElement;
               const value = target.checked;
-              handleChange(value, "checkbox");
+              handleChange(value);
             }}
           />{" "}
           <span>{props.def.label}</span>
@@ -75,16 +42,13 @@ export function NodeSetting(props: {
       control = (
         <label class="number" for={controlId}>
           <span>{props.def.label}</span>
-          <input
-            type="number"
-            class="field short"
-            id={controlId}
+          <NumberField
             name={controlId}
             value={existingValue}
-            onChange={(e) => {
-              const target = e.target as HTMLInputElement;
-              const value = target.value;
-              handleChange(value, "number");
+            step={0.1}
+            decimalPlaces={2}
+            onChange={(value: number) => {
+              handleChange(value);
             }}
           />
           {props.def.labelSuffix ? (

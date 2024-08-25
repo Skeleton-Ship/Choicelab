@@ -18,14 +18,19 @@ export default function RuleInstance(props: {
   // Handle form updates
   function handleChange(
     fieldName: "variableId" | "operator" | "value",
-    e: Event,
-    varName?: string
+    e: Event | null,
+    varName?: string,
+    directValue?: any
   ) {
     let value: string | number | boolean;
-    if (e.target !== null) {
+    if (e !== null && e.target !== null) {
       value = (e.target as HTMLInputElement).value;
     } else {
-      return;
+      if (typeof directValue !== "undefined") {
+        value = directValue;
+      } else {
+        return;
+      }
     }
     const store = getStore();
     const rule = getStemRule(
@@ -37,10 +42,12 @@ export default function RuleInstance(props: {
     if (!rule) return;
     let variable: Variable | undefined;
     // If changing variable, clear the existing value and operators and try to set defaults
-    if (fieldName === "variableId") {
+    if (fieldName === "variableId" && !directValue) {
       rule.operator = "";
       rule.value = "";
-      variable = getVariable(value, store);
+      if (typeof value === "string") {
+        variable = getVariable(value, store);
+      }
       if (variable) {
         switch (variable.varType) {
           case "string":
@@ -65,12 +72,6 @@ export default function RuleInstance(props: {
       variable = getVariable(varName, store);
       if (variable) {
         switch (variable.varType) {
-          case "number":
-            value = parseFloat(value);
-            if (isNaN(value)) {
-              value = "";
-            }
-            break;
           case "boolean":
             value = value === "true" ? true : false;
             break;
@@ -167,8 +168,9 @@ export default function RuleInstance(props: {
             name={fieldName}
             class="value"
             value={displayValue}
-            onChange={(e: Event) => {
-              handleChange("value", e, rule.variableId);
+            decimalPlaces={2}
+            onChange={(value: number) => {
+              handleChange("value", null, rule.variableId, value);
             }}
           />
         );

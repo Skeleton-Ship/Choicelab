@@ -19,9 +19,14 @@ export default function VariableValueControl(props: {
   store: Store;
   update: Function;
 }) {
-  function handleChange(target: EventTarget | null, varType: string) {
-    if (target === null || !action) return;
-    const rawValue = (target as HTMLInputElement).value;
+  function handleChange(
+    target: EventTarget | null,
+    varType: string,
+    directValue?: any
+  ) {
+    if (!action) return;
+    const rawValue =
+      target !== null ? (target as HTMLInputElement).value : undefined;
     let value;
     // Cast numbers and bools to be actual values
     switch (varType) {
@@ -29,8 +34,16 @@ export default function VariableValueControl(props: {
         value = rawValue;
         break;
       case "number":
-        value = parseFloat(rawValue);
-        if (isNaN(value)) value = 0;
+        if (typeof directValue !== "undefined") {
+          value = directValue;
+        } else {
+          if (rawValue) {
+            value = parseFloat(rawValue);
+            if (isNaN(value)) value = 0;
+          } else {
+            value = 0;
+          }
+        }
         break;
       case "boolean":
         value = rawValue === "true" ? true : false;
@@ -74,8 +87,9 @@ export default function VariableValueControl(props: {
         <NumberField
           name={propElName}
           value={props.initialValue}
-          onChange={(e: Event) => {
-            handleChange(e.target, variable.varType);
+          decimalPlaces={2}
+          onChange={(value: number) => {
+            handleChange(null, variable.varType, value);
           }}
         />
       );

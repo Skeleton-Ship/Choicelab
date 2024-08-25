@@ -36,9 +36,9 @@ export default function VariableEl(props: {
   }
   function handleChange(
     field: "name" | "varType" | "description" | "startingValue",
-    target: EventTarget | null
+    target: EventTarget | null,
+    directValue?: any
   ) {
-    if (target === null) return;
     // Get var in store
     const store = getStore();
     const varInStore: Variable | undefined = getVariable(
@@ -51,14 +51,20 @@ export default function VariableEl(props: {
     }
     // Figure out what kind of change we're making, and cast values as needed
     let value: any;
-    let rawValue = (target as HTMLInputElement).value;
+    let rawValue = target ? (target as HTMLInputElement).value : null;
     switch (field) {
       case "name":
-        value = setVariableName(rawValue);
+        if (rawValue) {
+          value = setVariableName(rawValue);
+        }
         break;
       case "startingValue":
         if (varInStore.varType === "number") {
-          value = parseFloat(rawValue);
+          if (typeof directValue !== "undefined") {
+            value = directValue;
+          } else if (rawValue) {
+            value = parseFloat(rawValue);
+          }
         } else if (varInStore.varType === "boolean") {
           value = rawValue === "true" ? true : false;
         }
@@ -107,8 +113,9 @@ export default function VariableEl(props: {
       <NumberField
         name={startingValField}
         value={startingValue}
-        onChange={(e: Event) => {
-          handleChange("startingValue", e.target);
+        decimalPlaces={2}
+        onChange={(value: number) => {
+          handleChange("startingValue", null, value);
         }}
       />
     );
