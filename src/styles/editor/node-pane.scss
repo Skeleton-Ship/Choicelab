@@ -2,10 +2,13 @@
 @use "../mixins";
 @use "./action-pane/prop-controls";
 
+$available-actions-height: 105px;
+$node-settings-height: 85px;
+
 #node-pane {
-  background-color: rgba(228, 228, 228, 0.5);
+  background-color: rgba(228, 228, 228, 0.9);
   @media (prefers-color-scheme: dark) {
-    background-color: rgba(30, 30, 30, 0.5);
+    background-color: rgba(30, 30, 30, 0.8);
   }
 }
 
@@ -17,17 +20,20 @@
   margin: 0;
 }
 
-#available-actions {
-  position: relative;
-  height: 109px;
-  z-index: 3;
-  background-color: white;
-  overflow: scroll;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 1px 3px;
+#available-actions,
+#actions-editor {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   @media (prefers-color-scheme: dark) {
-    background-color: rgba(29, 29, 29, 1);
+    // background-color: rgba(29, 29, 29, 0.5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
+}
+
+#available-actions {
+  position: relative;
+  height: $available-actions-height;
+  z-index: 3;
+  overflow: scroll;
   .inner {
     padding: 8px;
     display: flex;
@@ -51,7 +57,7 @@
     text-align: left;
     cursor: pointer;
     padding: 8px;
-    font-size: 13px;
+    font-size: 12px;
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -70,7 +76,7 @@
 
 #actions-editor {
   z-index: 2;
-  height: calc(100% - 260px);
+  height: calc(100% - #{$available-actions-height} - #{$node-settings-height});
   .props {
     display: flex;
     flex-wrap: wrap;
@@ -78,8 +84,9 @@
 }
 
 #node-settings {
+  height: $node-settings-height;
   .inner {
-    padding: 8px;
+    padding: 15px;
     display: flex;
     flex-wrap: wrap;
   }
@@ -87,6 +94,30 @@
     width: 100%;
     flex-shrink: 0;
     list-style: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    &:not(:last-of-type) {
+      margin-bottom: 8px;
+    }
+    .checkbox {
+      span {
+        display: inline-block;
+        margin-left: 3px;
+      }
+    }
+    .number {
+      .field.short {
+        width: 50px;
+      }
+      span {
+        display: inline-block;
+        margin-right: 5px;
+      }
+      span.suffix {
+        margin-left: 5px;
+      }
+    }
   }
 }
 
