@@ -3,6 +3,9 @@ import { sep } from "@tauri-apps/api/path";
 import { emit, listen } from "@tauri-apps/api/event";
 import createProjectFile from "../data/createProjectFile";
 import loadProject from "./loadProject";
+import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html?raw";
+import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
+import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
 
 export default async function newProject() {
   const projectPath = await save({
@@ -34,10 +37,6 @@ export default async function newProject() {
         name: "assets",
         path: projectPath,
       });
-      emit("create-directory", {
-        name: "undo",
-        path: projectPath,
-      });
       // Create project.json
       const projectFileContents = await createProjectFile(projectName);
       if (!projectFileContents || projectFileContents === "") {
@@ -53,6 +52,29 @@ export default async function newProject() {
       // Load the project
       listen("project-file-created", () => {
         loadProject(projectPath);
+      });
+      // Create web folder
+      emit("create-directory", {
+        name: ".web",
+        path: projectPath,
+        callback: "web-dir-created",
+      });
+      listen("web-dir-created", () => {
+        emit("save-text-file", {
+          name: "index.html",
+          contents: playerHTMLDefault,
+          path: projectPath + "/.web",
+        });
+        emit("save-text-file", {
+          name: "choicelab.css",
+          contents: playerCSSDefault,
+          path: projectPath + "/.web",
+        });
+        emit("save-text-file", {
+          name: "choicelab.js",
+          contents: playerJSDefault,
+          path: projectPath + "/.web",
+        });
       });
     });
   }
