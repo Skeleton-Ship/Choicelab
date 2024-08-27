@@ -40,6 +40,7 @@
         "create": true,
         "setTitle": true,
         "close": true,
+        "setFocus": true,
         "hide": true,
         "show": true,
         "maximize": true,

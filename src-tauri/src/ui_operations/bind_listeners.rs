@@ -315,7 +315,7 @@ pub fn bind_listeners(app: &tauri::App) {
 		
 		// listen for preview mode
 		  // let handle_show_preview = app.handle();
-		  app.listen_global("launch-preview", move |event| {
+		  app.listen_global("update-preview", move |event| {
 			  let json_raw = event.payload().unwrap();
 			  let json_value: Result<Value, _> = from_str(json_raw);
 			  match json_value {
