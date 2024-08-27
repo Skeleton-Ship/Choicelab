@@ -1,3 +1,4 @@
+import { useEffect } from "preact/hooks";
 import { getStore, setStore } from "../../../../data/dataStore";
 import {
   Action,
@@ -53,6 +54,28 @@ export default function VariableValueControl(props: {
     setStore(props.store);
     props.update();
   }
+  // Set defaults for variable value
+  useEffect(() => {
+    if (!variableId) return;
+    if (
+      typeof variable !== "undefined" &&
+      typeof action.props[propDef.name] === "undefined"
+    ) {
+      switch (variable.varType) {
+        case "string":
+          action.props[propDef.name] = "";
+          break;
+        case "boolean":
+          action.props[propDef.name] = true;
+          break;
+        case "number":
+          action.props[propDef.name] = 0;
+          break;
+      }
+      setStore(props.store);
+      props.update();
+    }
+  }, []);
   const action = props.action;
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
