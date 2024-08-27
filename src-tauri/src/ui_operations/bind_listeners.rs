@@ -9,6 +9,7 @@ use crate::file_operations::{
 	read_text_file,
 	copy_file,
 	create_directory,
+	load_preview_files
 };
 // use crate::ui_operations::preview_server::start_server;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
@@ -319,10 +320,9 @@ pub fn bind_listeners(app: &tauri::App) {
 			  let json_value: Result<Value, _> = from_str(json_raw);
 			  match json_value {
 				  Ok(json) => {
-					  let web_path = json["webPath"].as_str().unwrap_or("N/A");
-				  let project_contents = json["project"].as_str().unwrap_or("N/A");
-					  if web_path != "N/A" && project_contents != "N/A" {
-						  // TODO: Move web files to preview mode
+				  let project_path = json["projectPath"].as_str().unwrap_or("N/A");
+					  if project_path != "N/A" {
+						  load_preview_files(project_path).unwrap();
 					  }
 				  }
 				  Err(e) => {

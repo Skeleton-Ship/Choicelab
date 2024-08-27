@@ -6,6 +6,7 @@ mod ui_operations {
 	pub mod bind_listeners;
 	pub mod preview_server;
 }
+use file_operations::get_preview_path;
 use ui_operations::{
 	create_app_menu::create_app_menu,
 	create_launcher::create_launcher,
@@ -13,25 +14,18 @@ use ui_operations::{
 	bind_listeners::bind_listeners,
 	preview_server::start_server
 };
-use std::path::PathBuf;
-use home::home_dir;
 
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
 	// Run server
-			std::thread::spawn(move || {
-				// Get the user's home directory
-				if let Some(home_path) = home_dir() {
-					// Append a relative directory or file path
-					let preview_path: PathBuf = home_path.join("Library/Caches/com.choicelab.choicelab/Preview");
-   					start_server(preview_path).unwrap();
-				} else {
-					println!("Could not determine the home directory");
-				}
-			  });
-	  // Run Tauri
+	std::thread::spawn(move || {
+		if let Some(preview_path) = get_preview_path() {
+			start_server(preview_path).unwrap();
+		}
+	});
+	// Run Tauri
 	let menu = create_app_menu();
     tauri::Builder::default()
 	.menu(menu)
