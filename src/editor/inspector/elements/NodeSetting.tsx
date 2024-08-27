@@ -12,11 +12,12 @@ export function NodeSetting(props: {
   update: Function;
 }) {
   function handleChange(newValue: any) {
-    props.node.settings[props.playerId][props.settingName] = newValue;
+    props.node.settings.player[props.playerId][props.settingName] = newValue;
     setStore(props.store);
     props.update();
   }
-  const existingValue = props.node.settings[props.playerId][props.settingName];
+  const existingValue =
+    props.node.settings.player[props.playerId][props.settingName];
   let control: preact.JSX.Element = <></>;
   const controlId = `node_${props.node.id}_control_${props.settingName}`;
   switch (props.def.type) {

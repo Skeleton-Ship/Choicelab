@@ -10,7 +10,9 @@ function createCell(): Cell {
     label: "",
     actions: [],
     settings: {
-      [cellSettings.id]: cellSettings.settings,
+      player: {
+        [cellSettings.id]: cellSettings.settings,
+      },
     },
     link: {
       to: "",
