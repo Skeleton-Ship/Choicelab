@@ -22,7 +22,7 @@ export interface AnyNode {
   actions?: Array<Action>;
   link?: Link;
   stems?: Array<Stem>;
-  settings: { [key: string]: any };
+  settings?: { [key: string]: any };
   position?: {
     x: number;
     y: number;
@@ -52,7 +52,6 @@ export interface Branch {
   id: string;
   type: string;
   stems: Array<Stem>;
-  settings: { [key: string]: any };
 }
 export interface Sequence {
   id: string;

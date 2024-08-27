@@ -1,10 +1,10 @@
-import { Cell, Branch } from "../../../typings";
+import { Cell } from "../../../typings";
 import { setStore } from "../../../data/dataStore";
 import { Store } from "../../../typings";
 import NumberField from "./NumberField";
 
 export function NodeSetting(props: {
-  node: Cell | Branch;
+  node: Cell;
   settingName: string;
   playerId: string;
   store: Store;
