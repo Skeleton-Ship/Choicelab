@@ -23,7 +23,11 @@
       "fs": {
         "readFile": true,
         "exists": true,
-        "scope": ["$APPCACHE/Projects/*", "$APPCACHE/Projects/*/assets/*"]
+        "scope": [
+          "$APPCACHE/Preview/*",
+          "$APPCACHE/Projects/*",
+          "$APPCACHE/Projects/*/assets/*"
+        ]
       },
       "path": {
         "all": true

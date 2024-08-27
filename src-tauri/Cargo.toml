@@ -22,6 +22,7 @@ window-vibrancy = "0.4"
 webbrowser = "0.5"
 actix-web = "4"
 actix-files = "0.6"
+home = "0.5"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
