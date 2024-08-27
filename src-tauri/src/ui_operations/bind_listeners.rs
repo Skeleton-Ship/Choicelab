@@ -10,6 +10,7 @@ use crate::file_operations::{
 	copy_file,
 	create_directory,
 };
+// use crate::ui_operations::preview_server::start_server;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // the payload type must implement `Serialize` and `Clone`.
@@ -310,5 +311,24 @@ pub fn bind_listeners(app: &tauri::App) {
 				}
 			}
 		});
+		
+		// listen for preview mode
+		  // let handle_show_preview = app.handle();
+		  app.listen_global("launch-preview", move |event| {
+			  let json_raw = event.payload().unwrap();
+			  let json_value: Result<Value, _> = from_str(json_raw);
+			  match json_value {
+				  Ok(json) => {
+					  let web_path = json["webPath"].as_str().unwrap_or("N/A");
+				  let project_contents = json["project"].as_str().unwrap_or("N/A");
+					  if web_path != "N/A" && project_contents != "N/A" {
+						  // TODO: Move web files to preview mode
+					  }
+				  }
+				  Err(e) => {
+					  eprintln!("Error parsing JSON: {}", e);
+				  }
+			  }
+			});
 
 }

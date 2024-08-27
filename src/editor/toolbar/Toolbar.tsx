@@ -4,9 +4,14 @@ import iconBranch from "../../assets/icon-add-branch.svg";
 import iconCell from "../../assets/icon-add-cell.svg";
 import { getStore } from "../../data/dataStore";
 import showPane from "../inspector/functions/showPane";
+import { startPreview } from "../../preview/startPreview";
+
 function Toolbar(props: { update: Function }) {
   function handleSelectPane(paneName: string) {
     showPane(paneName, props.update);
+  }
+  function launchPreview() {
+    startPreview();
   }
   const store = getStore();
   const paneInView = store.viewSettings.paneInView;
@@ -41,6 +46,7 @@ function Toolbar(props: { update: Function }) {
           </div>
         </button>
       </div>
+      <div class="toolbar-region spacer" style="width: 85%;"></div>
       <div class="toolbar-region button-group panes right">
         <button
           title="Node Editor"
@@ -62,6 +68,18 @@ function Toolbar(props: { update: Function }) {
         >
           <div class="icon node-editor">
             <i class="bi bi-braces-asterisk"></i>
+          </div>
+        </button>
+      </div>
+      <div class="toolbar-region panes">
+        <button
+          title="Preview"
+          onClick={() => {
+            launchPreview();
+          }}
+        >
+          <div class="icon preview">
+            <i class="bi bi-play-fill"></i>
           </div>
         </button>
       </div>
