@@ -32,6 +32,10 @@
       "path": {
         "all": true
       },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["$APPCACHE/Projects/*/assets/*"]
+      },
       "shell": {
         "all": false,
         "open": true
@@ -63,7 +67,7 @@
       ]
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; frame-src 'self';"
     },
     "windows": [],
     "macOSPrivateApi": true

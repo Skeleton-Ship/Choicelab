@@ -1,24 +1,10 @@
+import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { resolve as path_resolve, appCacheDir } from "@tauri-apps/api/path";
 import { emit, once } from "@tauri-apps/api/event";
-import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs";
+import { readTextFile } from "@tauri-apps/api/fs";
 import { getStore } from "../../../data/dataStore";
-import getBase64Prefix from "./getBase64Prefix";
 
-function uint8ToBase64(arr: Uint8Array): string {
-  return btoa(
-    Array(arr.length)
-      .fill("")
-      .map((_, i) => String.fromCharCode(arr[i]))
-      .join("")
-  );
-}
-
-function readFileContents(
-  fileName: string,
-  fileType: string,
-  localKey: string,
-  iteration: number
-) {
+function readFileContents(fileName: string, fileType: string) {
   return new Promise(async (resolve) => {
     const store = getStore();
     const cacheBase = await appCacheDir();
@@ -30,18 +16,8 @@ function readFileContents(
       fileName
     );
     if (fileType === "binary") {
-      readBinaryFile(cachePath).then(async (file) => {
-        const prefix = getBase64Prefix(fileName);
-        let fileSrc = uint8ToBase64(file);
-        if (!fileSrc || (fileSrc === "" && iteration < 50)) {
-          return readFileContents(fileName, fileType, localKey, iteration + 1);
-        } else if (fileSrc && fileSrc !== "") {
-          fileSrc = prefix + uint8ToBase64(file);
-          resolve(fileSrc);
-        } else {
-          resolve("");
-        }
-      });
+      const assetUrl = convertFileSrc(cachePath);
+      resolve(assetUrl);
     } else if (fileType === "text") {
       readTextFile(cachePath).then(async (fileSrc) => {
         resolve(fileSrc);
@@ -75,12 +51,7 @@ async function storeCachedAsset(
             cachePath: cachePath,
           });
           once("asset-ready", async () => {
-            const fileSrc = await readFileContents(
-              fileName,
-              fileType,
-              localKey,
-              0
-            );
+            const fileSrc = await readFileContents(fileName, fileType);
             if (fileSrc !== "") {
               const storage = window.__CHOICELAB_ASSET_CACHE__;
               storage.storeFileContents(localKey, fileSrc);
