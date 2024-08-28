@@ -6,7 +6,7 @@ $available-actions-height: 105px;
 $node-settings-height: 85px;
 
 #node-pane {
-  background-color: rgba(240, 240, 240, 0.85);
+  background-color: rgba(240, 240, 240, 0.7);
   @media (prefers-color-scheme: dark) {
     background-color: rgba(30, 30, 30, 0.8);
   }
@@ -24,7 +24,6 @@ $node-settings-height: 85px;
 #actions-editor {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   @media (prefers-color-scheme: dark) {
-    // background-color: rgba(29, 29, 29, 0.5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
 }

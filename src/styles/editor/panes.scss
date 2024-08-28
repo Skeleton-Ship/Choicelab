@@ -34,6 +34,7 @@
     max-width: 80%;
     width: 440px;
     height: 100%;
+    box-shadow: inset rgba(0, 0, 0, 0.05) 1px 0 2px;
     border-left-width: 1px;
     .resizer {
       cursor: col-resize;
