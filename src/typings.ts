@@ -126,6 +126,9 @@ export interface Action {
   props: {
     [key: string]: any;
   };
+  extendedProps: {
+    [key: string]: any;
+  };
 }
 export interface ActionDef {
   name: string;
@@ -168,6 +171,5 @@ declare global {
   interface Window {
     __CHOICELAB_DATA_RAW__: string;
     __CHOICELAB_DATA__: Store;
-    __CHOICELAB_ASSET_CACHE__: any;
   }
 }

@@ -62,22 +62,40 @@ pub fn read_text_file(file_path: &str) -> Result<String, Box<dyn Error>> {
 }
 
 pub fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
+	let src_path = Path::new(src_path);
+	let dest_dir = Path::new(dest_dir);
+
 	// Check if the source file exists
-	if !Path::new(src_path).exists() {
-		return Err(io::Error::new(io::ErrorKind::NotFound, "File not found"));
+	if !src_path.exists() {
+		return Err(io::Error::new(io::ErrorKind::NotFound, "Source file not found"));
 	}
 
 	// Create the destination directory if it doesn't exist
-	fs::create_dir_all(dest_dir)?;
+	if let Err(e) = fs::create_dir_all(dest_dir) {
+		return Err(io::Error::new(io::ErrorKind::Other, format!("Failed to create destination directory: {}", e)));
+	}
 
 	// Construct the destination path
-	let file_name = Path::new(src_path).file_name().unwrap();
-	let dest_path = Path::new(dest_dir).join(file_name);
+	let file_name = src_path.file_name().ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "Invalid source file name"))?;
+	let dest_path = dest_dir.join(file_name);
 
 	// Perform the file copy
-	fs::copy(src_path, &dest_path)?;
+	fs::copy(src_path, &dest_path)
+		.map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to copy file: {}", e)))?;
 
-	Ok(dest_path.to_str().unwrap().to_string())
+	// Ensure the file was created and has a non-zero size
+	if !dest_path.exists() {
+		return Err(io::Error::new(io::ErrorKind::Other, "File was not created"));
+	}
+
+	let metadata = fs::metadata(&dest_path)
+		.map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to retrieve file metadata: {}", e)))?;
+
+	if metadata.len() == 0 {
+		return Err(io::Error::new(io::ErrorKind::Other, "Copied file is empty"));
+	}
+
+	Ok(dest_path.to_str().ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Failed to convert destination path to string"))?.to_string())
 }
 
 pub fn create_directory(directory_name: &str, path: &str) -> io::Result<()> {

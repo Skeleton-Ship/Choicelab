@@ -256,10 +256,11 @@ pub fn bind_listeners(app: &tauri::App) {
 				Ok(json) => {
 					let asset_path = json["assetPath"].as_str().unwrap_or("N/A");
 					let dest_path = json["cachePath"].as_str().unwrap_or("N/A");
+					let id = json["id"].as_str().unwrap_or("N/A");
 					match copy_file(asset_path, dest_path) {
 						Ok(_success) => {
 							let project_window = handle_read_asset.get_window("project").unwrap();
-							let _ = project_window.emit("asset-ready", Payload { message: "Asset available in temp".to_string() } );
+							let _ = project_window.emit(&("asset-ready-".to_owned() + id), Payload { message: "Asset available in temp".to_string() } );
 						}
 						Err(_e) => {
 							eprintln!("Error reading file");

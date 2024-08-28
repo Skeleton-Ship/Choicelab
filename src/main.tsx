@@ -3,7 +3,6 @@ import Launcher from "./launcher/Launcher";
 import { appWindow } from "@tauri-apps/api/window";
 import { listen, emit } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/api/dialog";
-import IndexedDB from "./editor/inspector/functions/indexedDB";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
@@ -36,11 +35,6 @@ async function init() {
       setFocusedRegion(document.activeElement);
     }
   });
-  // create asset manager
-  window.__CHOICELAB_ASSET_CACHE__ = new IndexedDB(
-    "Choicelab_AssetCache",
-    "Assets"
-  );
 
   let elements = <></>;
 

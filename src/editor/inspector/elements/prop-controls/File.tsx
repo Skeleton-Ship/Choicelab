@@ -7,7 +7,7 @@ import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import readFileUpload from "../../functions/readFileUpload";
-import getAssetContents from "../../functions/getAssetContents";
+import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
 import getAssetPreviewElement from "../../functions/getAssetPreviewElement";
 
 export default function File(props: {
@@ -103,8 +103,8 @@ export default function File(props: {
   const existingFile = props.action.props[props.filePropName];
   const fileIsSet = existingFile && existingFile !== "";
   if (fileIsSet) {
-    getAssetContents(existingFile, props.type).then((contents) => {
-      if (typeof contents === "string") {
+    getAssetPreviewURL(existingFile, props.type).then((contents) => {
+      if (typeof contents === "string" && fileSrc === "") {
         setFileSrc(contents);
       }
     });

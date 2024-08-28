@@ -1,3 +1,22 @@
+import { createRef } from "preact";
+import { useEffect } from "preact/hooks";
+
+function setSrc(
+  el: HTMLVideoElement | HTMLAudioElement | HTMLImageElement,
+  url: string,
+  iteration: number = 0
+) {
+  try {
+    el.src = url;
+  } catch (e) {
+    if (iteration < 1000) {
+      setSrc(el, url, iteration + 1);
+    } else {
+      el.src = "";
+    }
+  }
+}
+
 export default function getAssetPreviewElement(
   previewType: string,
   fileName: string,
@@ -9,11 +28,12 @@ export default function getAssetPreviewElement(
     </span>
   );
   let previewEl = <></>;
+  let mediaRef = createRef();
   switch (previewType) {
     case "image":
       previewEl = (
         <>
-          <img class="media-preview" src={fileSrc} />
+          <img class="media-preview" ref={mediaRef} />
           {loadingEl}
         </>
       );
@@ -21,7 +41,7 @@ export default function getAssetPreviewElement(
     case "video":
       previewEl = (
         <>
-          <video class="media-preview" src={fileSrc} controls></video>
+          <video class="media-preview" ref={mediaRef} controls></video>
           {loadingEl}
         </>
       );
@@ -29,7 +49,7 @@ export default function getAssetPreviewElement(
     case "audio":
       previewEl = (
         <>
-          <audio class="media-preview" src={fileSrc} controls></audio>
+          <audio class="media-preview" ref={mediaRef} controls></audio>
           {loadingEl}
         </>
       );
@@ -41,6 +61,12 @@ export default function getAssetPreviewElement(
         </div>
       );
   }
-
+  useEffect(() => {
+    setTimeout(() => {
+      if (mediaRef.current !== null) {
+        setSrc(mediaRef.current, fileSrc, 0);
+      }
+    }, 150);
+  });
   return previewEl;
 }
