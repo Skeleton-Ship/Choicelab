@@ -1,11 +1,13 @@
 import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
+import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function Checkbox(props: {
   action: Action;
   actionDef: ActionDef;
   propDef: ActionDefProp;
   initialValue: boolean;
+  extended: boolean;
   className: string;
   store: Store;
   update: Function;
@@ -13,7 +15,11 @@ export default function Checkbox(props: {
   function handleChange(target: EventTarget | null) {
     if (target === null || !action) return;
     const value = (target as HTMLInputElement).checked;
-    action.props[propDef.name] = value;
+    const propsObj =
+      props.extended === false
+        ? action.props
+        : action.extendedProps[getPlayerConfig().id];
+    propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();
   }

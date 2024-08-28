@@ -5,14 +5,17 @@ import Checkbox from "./prop-controls/Checkbox";
 import File from "./prop-controls/File";
 import VariableControl from "./prop-controls/Variable";
 import VariableValueControl from "./prop-controls/VariableValue";
+import { getPlayerConfig } from "../../../player/getPlayerConfig";
 
 export default function ActionPropEditor(props: {
   instance: Action;
   def: ActionDef;
+  extended: boolean;
   defProp: ActionDefProp;
   store: Store;
   update: Function;
 }) {
+  const playerConfig = getPlayerConfig();
   let propEl = <></>,
     propControl;
   // Figure out the initial value for the element
@@ -20,7 +23,10 @@ export default function ActionPropEditor(props: {
   const action = props.instance;
   const actionDef = props.def;
   const defProp = props.defProp;
-  const storedValue = action.props[defProp.name];
+  const storedValue =
+    props.extended === false
+      ? action.props[defProp.name]
+      : action.extendedProps[playerConfig.id][defProp.name];
   const className = defProp.className ? defProp.className : "";
   if (typeof storedValue !== "undefined") {
     initialValue = storedValue;
@@ -38,6 +44,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -52,6 +59,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -66,6 +74,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -79,6 +88,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -92,6 +102,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -108,6 +119,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -124,6 +136,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -140,6 +153,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -156,6 +170,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -169,6 +184,7 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}
@@ -183,6 +199,7 @@ export default function ActionPropEditor(props: {
           propDef={defProp}
           varFieldName="varToSet"
           initialValue={initialValue}
+          extended={props.extended}
           className={className}
           store={props.store}
           update={props.update}

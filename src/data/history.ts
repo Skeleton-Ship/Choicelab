@@ -88,13 +88,6 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
     "undo",
     stepVersion
   );
-  /*
-  const versionPath: string = await resolve(
-    store.projectPath,
-    "undo",
-    stepVersion
-  );
-  */
   emit("request-history-version", {
     versionPath: versionPath,
   });

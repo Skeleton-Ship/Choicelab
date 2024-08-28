@@ -35,30 +35,6 @@ const internalActionDefs: ActionDefs = {
           default: "",
           required: true,
         },
-        {
-          name: "tag",
-          label: "Role",
-          control: "dropdown",
-          default: "p",
-          options: [
-            {
-              value: "p",
-              label: "Body Text",
-            },
-            {
-              value: "h1",
-              label: "Title",
-            },
-            {
-              value: "h2",
-              label: "Heading",
-            },
-            {
-              value: "h3",
-              label: "Subheading",
-            },
-          ],
-        },
       ],
     },
     {

@@ -6,12 +6,14 @@ import {
   ActionDefPropDropdownOption,
   Store,
 } from "../../../../typings";
+import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function Dropdown(props: {
   action: Action;
   actionDef: ActionDef;
   propDef: ActionDefProp;
   initialValue: string;
+  extended: boolean;
   className: string;
   store: Store;
   update: Function;
@@ -19,7 +21,11 @@ export default function Dropdown(props: {
   function handleChange(target: EventTarget | null) {
     if (target === null || !action) return;
     const value = (target as HTMLSelectElement).value;
-    action.props[propDef.name] = value;
+    const propsObj =
+      props.extended === false
+        ? action.props
+        : action.extendedProps[getPlayerConfig().id];
+    propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();
   }

@@ -1,6 +1,7 @@
 import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import NumberField from "../NumberField";
+import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function TextField(props: {
   action: Action;
@@ -8,13 +9,18 @@ export default function TextField(props: {
   propDef: ActionDefProp;
   fieldType: string;
   initialValue: string;
+  extended: boolean;
   className: string;
   store: Store;
   update: Function;
 }) {
   function handleChange(value: any) {
     if (!action) return;
-    action.props[propDef.name] = value;
+    const propsObj =
+      props.extended === false
+        ? action.props
+        : action.extendedProps[getPlayerConfig().id];
+    propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();
   }

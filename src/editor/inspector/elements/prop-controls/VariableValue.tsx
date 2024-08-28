@@ -9,6 +9,7 @@ import {
 } from "../../../../typings";
 import { getVariable } from "../../../../data/getData";
 import NumberField from "../NumberField";
+import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function VariableValueControl(props: {
   action: Action;
@@ -16,6 +17,7 @@ export default function VariableValueControl(props: {
   propDef: ActionDefProp;
   varFieldName: string;
   initialValue: any;
+  extended: boolean;
   className: string;
   store: Store;
   update: Function;
@@ -50,7 +52,11 @@ export default function VariableValueControl(props: {
         value = rawValue === "true" ? true : false;
         break;
     }
-    action.props[propDef.name] = value;
+    const propsObj =
+      props.extended === false
+        ? action.props
+        : action.extendedProps[getPlayerConfig().id];
+    propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();
   }

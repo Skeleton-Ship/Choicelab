@@ -9,6 +9,7 @@ import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import readFileUpload from "../../functions/readFileUpload";
 import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
 import getAssetPreviewElement from "../../functions/getAssetPreviewElement";
+import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function File(props: {
   type: string;
@@ -17,6 +18,7 @@ export default function File(props: {
   propDef: ActionDefProp;
   filePropName: string;
   initialValue: string;
+  extended: boolean;
   className: string;
   accept: string;
   store: Store;
@@ -27,7 +29,11 @@ export default function File(props: {
     const store = getStore();
     const action: Action | undefined = getAction(props.action.id, store);
     if (!action) return;
-    action.props[props.filePropName] = "";
+    const propsObj =
+      props.extended === false
+        ? action.props
+        : action.extendedProps[getPlayerConfig().id];
+    propsObj[props.propDef.name] = "";
     setStore(store);
     props.update();
   }
@@ -84,7 +90,12 @@ export default function File(props: {
                 store
               );
               if (storedAction) {
-                storedAction.props[props.filePropName] = file.name;
+                // storedAction.props[props.filePropName] = file.name;
+                const propsObj =
+                  props.extended === false
+                    ? storedAction.props
+                    : storedAction.extendedProps[getPlayerConfig().id];
+                propsObj[props.filePropName] = file.name;
                 setLoading(false);
                 setStore(store);
                 props.update();

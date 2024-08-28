@@ -1,8 +1,10 @@
 import { setStore } from "../../../data/dataStore";
 import { getActionDef, getCell } from "../../../data/getData";
+import { getPlayerConfig } from "../../../player/getPlayerConfig";
 import { deleteActionFromData } from "../../../data/deleteData";
 import { Action, Store, Cell } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
+import { getExtendedActionDefs } from "../../../player/getExtendedActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
 import IconDelete from "../../../assets/icon-delete.svg";
 import IconActionEnabled from "../../../assets/icon-action-enabled.svg";
@@ -111,12 +113,34 @@ export default function ActionInstance(props: {
         key={propKey}
         def={actionDef}
         defProp={defProp}
+        extended={false}
         store={props.store}
         update={props.update}
       />
     );
     propEls.push(propEl);
   });
+  // TODO: Create player-specific prop elements
+  const playerConfig = getPlayerConfig();
+  const extendedActionDefs = getExtendedActionDefs();
+  const extendedActionDef = extendedActionDefs[action.name];
+  if (extendedActionDef && extendedActionDef.props) {
+    extendedActionDef.props.forEach((defProp: any) => {
+      const propKey = `action_${action.id}_prop_${playerConfig.id}_${defProp.name}`;
+      const propEl = (
+        <ActionPropEditor
+          instance={props.instance}
+          key={propKey}
+          def={actionDef}
+          defProp={defProp}
+          extended={true}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      propEls.push(propEl);
+    });
+  }
   // Finally, make an editor el
   const iconEnabled =
     action.enabled === true ? IconActionEnabled : IconActionDisabled;

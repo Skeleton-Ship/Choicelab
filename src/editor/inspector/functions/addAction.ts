@@ -1,4 +1,6 @@
 import { ActionDef, Cell } from "../../../typings";
+import { getPlayerConfig } from "../../../player/getPlayerConfig";
+import { getExtendedActionDefs } from "../../../player/getExtendedActionDefs";
 import { getCell } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import handleSelectNode from "../../sequence/selecting/handleSelectNode";
@@ -15,11 +17,27 @@ export default function addAction(actionDef: ActionDef, update: Function) {
       actionProps[propDef.name] = propDef.default;
     }
   });
+  const playerConfig = getPlayerConfig();
+  const extendedActionsDefs: any = getExtendedActionDefs();
+  const extendedActionDefs = extendedActionsDefs[actionDef.name];
+  const extendedProps: any = {};
+  if (extendedActionDefs) {
+    const extendedPropDefs: any = extendedActionDefs.props;
+    if (extendedPropDefs) {
+      extendedPropDefs.forEach((propDef: any) => {
+        extendedProps[propDef.name] = propDef.default;
+      });
+    }
+  }
+  const playerName = playerConfig.id;
   const action = {
     name: actionDef.name,
     id: uuidv4(),
     enabled: true,
     props: actionProps,
+    extendedProps: {
+      [playerName]: extendedProps,
+    },
   };
   cell.actions.push(action);
   setStore(store);
