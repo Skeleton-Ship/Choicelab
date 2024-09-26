@@ -1,6 +1,9 @@
 @use "./mixins";
 @use "./variables";
 
+/*
+ * Shared styles
+ */
 button {
   cursor: default !important;
 }
@@ -56,27 +59,6 @@ button {
   }
 }
 
-// Buttons
-.ui-button {
-  padding: 0px 10px 1px;
-  height: 21px;
-  &:active {
-    background-color: #eee;
-  }
-  @mixin dark-button {
-    color: rgba(255, 255, 255, 0.9) !important;
-    &:active {
-      background-color: #777677;
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    @include dark-button;
-  }
-  &.dark-mode {
-    @include dark-button;
-  }
-}
-
 $field-padding: 4px 6px;
 
 // Make text fields and text areas look similar
@@ -102,12 +84,39 @@ $field-padding: 4px 6px;
   }
 }
 
-// Text area
+/*
+ * Standard buttons
+ */
+.ui-button {
+  padding: 0px 10px 1px;
+  height: 21px;
+  &:active {
+    background-color: #eee;
+  }
+  @mixin dark-button {
+    color: rgba(255, 255, 255, 0.9) !important;
+    &:active {
+      background-color: #777677;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-button;
+  }
+  &.dark-mode {
+    @include dark-button;
+  }
+}
+
+/*
+ * Text area 
+*/
 .ui-text-area {
   padding: 0.6em;
 }
 
-// Dropdown
+/*
+ * Dropdown
+ */
 .ui-dropdown {
   position: relative;
   display: flex;
@@ -124,15 +133,6 @@ $field-padding: 4px 6px;
     background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz48IS0tIEdlbmVyYXRlZCBieSBQaXhlbG1hdG9yIFBybyAzLjUuMyAtLT48c3ZnIHdpZHRoPSc3NCcgaGVpZ2h0PSc3NCcgdmlld0JveD0nMCAwIDc0IDc0JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxnIGlkPSdHcm91cCc+PHBhdGggaWQ9J1BhdGgtY29weScgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gMTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktMycgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgNDkgTCAzNyA2OScvPjxwYXRoIGlkPSdTaGFwZS1jb3B5LTInIGZpbGw9J25vbmUnIHN0cm9rZT0nIzAwMDAwMCcgc3Ryb2tlLXdpZHRoPScxMCcgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBkPSdNIDE3IDQ5IEwgMzcgNjknLz48L2c+PC9zdmc+Cg==");
     background-size: contain;
     background-repeat: no-repeat;
-    @mixin dark-dropdown {
-      @include mixins.invert-icon;
-    }
-    &.dark-mode {
-      @include dark-dropdown;
-    }
-    @media (prefers-color-scheme: dark) {
-      @include dark-dropdown;
-    }
   }
   select {
     appearance: none;
@@ -147,7 +147,25 @@ $field-padding: 4px 6px;
   }
 }
 
-// Toggles
+@mixin dark-dropdown {
+  &:after {
+    @include mixins.invert-icon;
+  }
+}
+
+.ui-dropdown.dark-mode {
+  @include dark-dropdown;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ui-dropdown {
+    @include dark-dropdown;
+  }
+}
+
+/*
+ * Toggle button
+ */
 $toggle-width: 40px;
 $toggle-height: 20px;
 .ui-toggle-button {
@@ -200,7 +218,9 @@ $toggle-height: 20px;
   }
 }
 
-// Number field
+/*
+ * Number field
+ */
 .ui-number-field {
   position: relative;
   input {
@@ -255,14 +275,16 @@ $toggle-height: 20px;
 }
 
 @mixin dark-number-field {
-  button {
-    &:active {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-  }
-  svg {
-    path {
-      stroke: rgba(255, 255, 255, 0.8);
+  .controls {
+    button {
+      &:active {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      svg {
+        path {
+          stroke: rgba(255, 255, 255, 0.8);
+        }
+      }
     }
   }
 }
