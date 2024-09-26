@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .inspector-prop {
   width: 100%;
   &:not(:last-of-type) {
@@ -89,6 +91,135 @@
           display: none;
         }
       }
+      .media-control {
+        @mixin media-bg {
+          background-color: rgba(45, 45, 46, 0.95);
+        }
+        .el-wrapper {
+          min-height: 44px;
+          line-height: 0;
+          position: relative;
+          video {
+            position: relative;
+            width: 100%;
+            height: auto;
+          }
+          .controls {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            padding-left: 10px;
+            padding-right: 15px;
+            gap: 10px;
+            @include media-bg;
+            .play-button {
+              appearance: none;
+              border: none;
+              padding: 0;
+              background: transparent;
+              &:active {
+                img {
+                  filter: invert(1) brightness(0.7);
+                }
+              }
+              img {
+                display: block;
+                height: 30px;
+                width: auto;
+                filter: invert(1);
+              }
+            }
+            .current-time {
+              color: white;
+            }
+            .scrubber {
+              position: relative;
+              width: 100%;
+              .base,
+              .progress {
+                height: 5px;
+                border-radius: 100px;
+              }
+              .base {
+                background-color: rgba(0, 0, 0, 0.8);
+                position: relative;
+                width: 100%;
+                z-index: 1;
+              }
+              .progress {
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: white;
+                z-index: 2;
+              }
+            }
+          }
+        }
+        .timeable-els {
+          position: absolute;
+          z-index: 4;
+          top: 100%;
+          right: 15px;
+          max-width: 300px;
+          box-shadow: rgba(0, 0, 0, 0.15) 0 2px 10px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 8px;
+          outline: 1px solid rgba(0, 0, 0, 0.5);
+          box-shadow: rgba(0, 0, 0, 0.5) 0 1px 10px;
+          display: none;
+          @include media-bg;
+          opacity: 0;
+          transform-origin: right top;
+          &.active {
+            display: block;
+          }
+          &.visible {
+            animation: fade-bounce-in 0.3s ease forwards;
+            opacity: 1;
+          }
+          &.fade-out {
+            animation: fade-bounce-out 0.25s ease forwards;
+            opacity: 1;
+          }
+          .timeable-el {
+            appearance: none;
+            display: flex;
+            align-items: center;
+            border: none;
+            font-size: 12px;
+            padding: 10px 11px;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            text-overflow: ellipsis;
+            .action-preview {
+              display: flex;
+              width: calc(100% - 35px);
+              margin-right: 15px;
+              i {
+                display: block;
+                width: 17px;
+                height: 17px;
+                font-size: 10px;
+                border-radius: 3px;
+                text-align: center;
+                border: 1px solid rgba(255, 255, 255, 0.7);
+                line-height: 16px;
+                color: white;
+                margin-right: 9px;
+              }
+              .text {
+                line-height: 1.4;
+                color: white;
+              }
+            }
+          }
+        }
+      }
     }
     .file-set-controls {
       display: flex;
@@ -96,5 +227,30 @@
         margin-right: 10px;
       }
     }
+  }
+}
+
+@keyframes fade-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-bounce-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
   }
 }

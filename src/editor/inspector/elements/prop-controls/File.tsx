@@ -128,7 +128,9 @@ export default function File(props: {
   const previewEl = getAssetPreviewElement(
     props.propDef.control,
     existingFile,
-    fileSrc
+    fileSrc,
+    props.action,
+    props.update
   );
   return (
     <div class={elementClass}>

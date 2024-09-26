@@ -98,6 +98,7 @@ const internalActionDefs: ActionDefs = {
         "An image file that can appear instantly or be associated with a media action.",
       extendable: true,
       mediaElement: false,
+      timedElement: true,
       flowchart: FCImage,
       editor: {
         iconName: "image",
@@ -126,10 +127,11 @@ const internalActionDefs: ActionDefs = {
       label: "Button",
       description: "A button that, when pressed, advances to the next node.",
       extendable: true,
+      timedElement: true,
       mediaElement: false,
       flowchart: FCButton,
       editor: {
-        iconName: "app",
+        iconName: "three-dots",
         iconColor: "white",
         iconBackgroundColor: "#FF9502",
       },
@@ -168,6 +170,7 @@ const internalActionDefs: ActionDefs = {
       label: "Field",
       description: "A fill-in-the-blank field for entering information.",
       extendable: true,
+      timedElement: true,
       mediaElement: false,
       flowchart: FCInputField,
       editor: {

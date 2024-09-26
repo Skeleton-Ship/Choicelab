@@ -5,10 +5,10 @@ import { stringify } from "../../../utils/stringify";
 import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
 import isJson from "../../../utils/isJson";
-import { AnyNode } from "../../../typings";
+import { AnyNode, Action } from "../../../typings";
 
 /**
- * Given an object, regenerates the `id` property, and clears the `link` property. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
+ * Given an object, regenerates the `id` property, clears the `link` property, and for cells, clears timed actions. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
  *
  * @param {object} obj - The object to check.
  */
@@ -24,6 +24,15 @@ function regenerateIdsAndLinks(obj: AnyNode) {
       if (typeof obj.link === "undefined") return;
       if (typeof obj.link.to === "undefined") return;
       obj.link.to = "";
+    }
+    // Remove timed actions
+    if (key === "actions") {
+      const actions = obj.actions as Array<Action>;
+      actions.forEach((action) => {
+        if (action.timedActions) {
+          action.timedActions = {};
+        }
+      });
     }
     // Check nested props
     // @ts-ignore

@@ -123,6 +123,12 @@ export interface Action {
   name: string;
   id: string;
   enabled: boolean;
+  timedActions?: {
+    [key: string]: {
+      start: number;
+      end: number;
+    };
+  };
   props: {
     [key: string]: any;
   };
