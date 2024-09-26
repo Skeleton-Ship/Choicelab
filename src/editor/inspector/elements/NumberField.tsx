@@ -35,13 +35,13 @@ export default function NumberField(props: {
   name: string;
   value: any;
   class?: string;
-  className?: string;
   step?: number;
   decimalPlaces?: number;
   onChange: Function;
 }) {
+  let supplementalClass = props.class || "";
   const ref = createRef();
-  const className = `ui-number-field ${props.class}`;
+  const className = `ui-number-field ${supplementalClass}`;
   function doSpinner(amount: number) {
     const el = ref.current;
     const value = parseNumber(el.value);
