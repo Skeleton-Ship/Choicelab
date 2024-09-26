@@ -1,4 +1,5 @@
 @use "./mixins";
+@use "./variables";
 
 button {
   cursor: default !important;
@@ -13,8 +14,14 @@ button {
   font-size: 13px;
   line-height: 1.1;
   color: rgba(0, 0, 0, 0.85);
-  @media (prefers-color-scheme: dark) {
+  @mixin dark-reset {
     color: rgba(255, 255, 255, 0.85);
+  }
+  &.dark-mode {
+    @include dark-reset;
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-reset;
   }
 }
 
@@ -29,19 +36,23 @@ button {
   background-color: white;
   vertical-align: middle;
   box-shadow: rgb(0, 0, 0, 0.07) 0 1px 2px;
-  @media (prefers-color-scheme: dark) {
-    box-shadow: rgba(0, 0, 0, 0.35) 0 2px 2px;
-  }
   &.large {
     font-size: 15px;
     padding-left: 12px;
     padding-right: 12px;
     height: 28px;
   }
-  @media (prefers-color-scheme: dark) {
+  @mixin dark-buttonlike {
     background-color: #5f5f5f;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.9) !important;
     border-top-color: rgba(255, 255, 255, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.35) 0 2px 2px;
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-buttonlike;
+  }
+  &.dark-mode {
+    @include dark-buttonlike;
   }
 }
 
@@ -52,10 +63,17 @@ button {
   &:active {
     background-color: #eee;
   }
-  @media (prefers-color-scheme: dark) {
+  @mixin dark-button {
+    color: rgba(255, 255, 255, 0.9) !important;
     &:active {
       background-color: #777677;
     }
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-button;
+  }
+  &.dark-mode {
+    @include dark-button;
   }
 }
 
@@ -72,9 +90,15 @@ $field-padding: 4px 6px;
   border-style: solid;
   border-width: 1px;
   border-color: rgba(0, 0, 0, 0.17);
-  @media (prefers-color-scheme: dark) {
+  @mixin dark-field-reset {
     border-color: rgba(255, 255, 255, 0.16);
     border-top-color: rgba(255, 255, 255, 0.26);
+  }
+  &.dark-mode {
+    @include dark-field-reset;
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-field-reset;
   }
 }
 
@@ -100,8 +124,14 @@ $field-padding: 4px 6px;
     background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz48IS0tIEdlbmVyYXRlZCBieSBQaXhlbG1hdG9yIFBybyAzLjUuMyAtLT48c3ZnIHdpZHRoPSc3NCcgaGVpZ2h0PSc3NCcgdmlld0JveD0nMCAwIDc0IDc0JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxnIGlkPSdHcm91cCc+PHBhdGggaWQ9J1BhdGgtY29weScgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gMTcgMjUgTCAzNyA1Jy8+PHBhdGggaWQ9J1NoYXBlLWNvcHktMycgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwMDAwJyBzdHJva2Utd2lkdGg9JzEwJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGQ9J00gNTcgNDkgTCAzNyA2OScvPjxwYXRoIGlkPSdTaGFwZS1jb3B5LTInIGZpbGw9J25vbmUnIHN0cm9rZT0nIzAwMDAwMCcgc3Ryb2tlLXdpZHRoPScxMCcgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBkPSdNIDE3IDQ5IEwgMzcgNjknLz48L2c+PC9zdmc+Cg==");
     background-size: contain;
     background-repeat: no-repeat;
-    @media (prefers-color-scheme: dark) {
+    @mixin dark-dropdown {
       @include mixins.invert-icon;
+    }
+    &.dark-mode {
+      @include dark-dropdown;
+    }
+    @media (prefers-color-scheme: dark) {
+      @include dark-dropdown;
     }
   }
   select {
@@ -114,6 +144,59 @@ $field-padding: 4px 6px;
     padding-bottom: 5px;
     padding-right: 1.5em;
     background-color: transparent;
+  }
+}
+
+// Toggles
+$toggle-width: 40px;
+$toggle-height: 20px;
+.ui-toggle-button {
+  display: inline-block;
+  position: relative;
+  width: $toggle-width;
+  height: $toggle-height;
+  border-radius: 100px;
+  border-style: solid;
+  border-width: 1px;
+  transition: background-color 0.3s ease;
+  border-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
+  &:after {
+    content: "";
+    position: absolute;
+    height: #{$toggle-height - 4px};
+    width: #{$toggle-height - 4px};
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 100px;
+    left: 1px;
+    top: 1px;
+    transition: left 0.2s ease;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 1px;
+  }
+  &:not(.active) {
+    &:active {
+      transition: none;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+  &.active {
+    background-color: variables.$accent-color !important;
+    &:after {
+      left: 20px;
+    }
+    &:active {
+      filter: brightness(1.15);
+    }
+  }
+  @mixin dark-toggle-button {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  @media (prefers-color-scheme: dark) {
+    @include dark-toggle-button;
+  }
+  &.dark-mode {
+    @include dark-toggle-button;
   }
 }
 
@@ -160,21 +243,36 @@ $field-padding: 4px 6px;
       &:active {
         background-color: rgba(0, 0, 0, 0.1);
       }
-      @media (prefers-color-scheme: dark) {
-        &:active {
-          background-color: rgba(255, 255, 255, 0.2);
-        }
-      }
       svg {
         max-width: 100%;
         height: auto;
         path {
           stroke: rgba(0, 0, 0, 0.8);
-          @media (prefers-color-scheme: dark) {
-            stroke: rgba(255, 255, 255, 0.8);
-          }
         }
       }
     }
+  }
+}
+
+@mixin dark-number-field {
+  button {
+    &:active {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  svg {
+    path {
+      stroke: rgba(255, 255, 255, 0.8);
+    }
+  }
+}
+
+.ui-number-field.dark-mode {
+  @include dark-number-field;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ui-number-field {
+    @include dark-number-field;
   }
 }
