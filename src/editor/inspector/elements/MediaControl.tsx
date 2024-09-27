@@ -8,6 +8,15 @@ import { getActionDef } from "../functions/getActionDef";
 import { timeableActionInUse } from "../functions/timeableActionInUse";
 import { getStore, setStore } from "../../../data/dataStore";
 import { getAction } from "../../../data/getData";
+import PanelCornerTopLeft from "../../../assets/panel-images/corner-top-left.png";
+import PanelCornerTopRight from "../../../assets/panel-images/corner-top-right.png";
+import PanelCornerBottomLeft from "../../../assets/panel-images/corner-bottom-left.png";
+import PanelCornerBottomRight from "../../../assets/panel-images/corner-bottom-right.png";
+import PanelArrow from "../../../assets/panel-images/arrow.png";
+import PanelSideLeft from "../../../assets/panel-images/side-left.png";
+import PanelSideRight from "../../../assets/panel-images/side-right.png";
+import PanelSideTop from "../../../assets/panel-images/side-top.png";
+import PanelSideBottom from "../../../assets/panel-images/side-bottom.png";
 
 function actionContainsTimedAction(action: Action, timedAction: Action) {
   if (
@@ -238,8 +247,52 @@ export function MediaControl(props: {
           >
             Actions...
           </button>
-          <div class="timeable-els" ref={actionsPaneRef}>
-            {timeableEls}
+          <div class="timeable-els panel top-right" ref={actionsPaneRef}>
+            <div class="decoration">
+              <div
+                class="corner top-left"
+                style={{ backgroundImage: `url("${PanelCornerTopLeft}")` }}
+              ></div>
+              <div
+                class="corner top-right"
+                style={{ backgroundImage: `url("${PanelCornerTopRight}")` }}
+              ></div>
+              <div
+                class="corner bottom-left"
+                style={{ backgroundImage: `url("${PanelCornerBottomLeft}")` }}
+              ></div>
+              <div
+                class="corner bottom-right"
+                style={{ backgroundImage: `url("${PanelCornerBottomRight}")` }}
+              ></div>
+              <div
+                class="side left"
+                style={{ backgroundImage: `url("${PanelSideLeft}")` }}
+              ></div>
+              <div
+                class="side right"
+                style={{ backgroundImage: `url("${PanelSideRight}")` }}
+              ></div>
+              <div
+                class="side bottom"
+                style={{ backgroundImage: `url("${PanelSideBottom}")` }}
+              ></div>
+              <div class="side top">
+                <div
+                  class="top-left"
+                  style={{ backgroundImage: `url("${PanelSideTop}")` }}
+                ></div>
+                <div
+                  class="top-right"
+                  style={{ backgroundImage: `url("${PanelSideTop}")` }}
+                ></div>
+                <div
+                  class="arrow"
+                  style={{ backgroundImage: `url("${PanelArrow}")` }}
+                ></div>
+              </div>
+            </div>
+            <div class="contents">{timeableEls}</div>
           </div>
         </div>
       </div>
