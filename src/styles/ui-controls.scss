@@ -180,6 +180,9 @@ $toggle-height: 20px;
   transition: background-color 0.3s ease;
   border-color: rgba(0, 0, 0, 0.2);
   background-color: rgba(0, 0, 0, 0.1);
+  &[disabled] {
+    opacity: 0.5;
+  }
   &:after {
     content: "";
     position: absolute;
@@ -192,7 +195,7 @@ $toggle-height: 20px;
     transition: left 0.2s ease;
     box-shadow: rgba(0, 0, 0, 0.1) 0 1px 1px;
   }
-  &:not(.active) {
+  &:not(.active):not([disabled]) {
     &:active {
       transition: none;
       background-color: rgba(255, 255, 255, 0.3);
@@ -203,7 +206,7 @@ $toggle-height: 20px;
     &:after {
       left: 20px;
     }
-    &:active {
+    &:active:not([disabled]) {
       filter: brightness(1.15);
     }
   }

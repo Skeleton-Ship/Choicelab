@@ -146,8 +146,6 @@ $item-margin: clamp(16px, 3.5%, 28px);
   padding: 12px 12px 14px;
   background-color: white;
   color: #333333;
-  margin: $item-margin;
-  border-radius: 13px;
   box-shadow: rgba(0, 0, 0, 0.07) 0 2px 8px;
   list-style: none;
   border-style: solid;
@@ -201,7 +199,8 @@ $item-margin: clamp(16px, 3.5%, 28px);
     .item-heading {
       margin: 0;
       display: inline;
-      font-size: 14px;
+      font-size: 13px;
+      opacity: 0.85;
     }
     .disabled-text {
       font-weight: 300;
