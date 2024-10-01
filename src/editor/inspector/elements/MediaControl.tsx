@@ -9,7 +9,7 @@ import { timeableActionInUse } from "../functions/timeableActionInUse";
 import { getStore, setStore } from "../../../data/dataStore";
 import { getAction } from "../../../data/getData";
 import { formatElapsedTime } from "../../../utils/formatElapsedTime";
-import { MiniPanelDecorations } from "./MiniPanelDecorations";
+import { MiniPanel } from "./MiniPanel";
 
 function actionContainsTimedAction(action: Action, timedAction: Action) {
   if (
@@ -44,9 +44,9 @@ export function MediaControl(props: {
   if (!cell || props.media === false) return <></>;
   const media = props.media as HTMLVideoElement | HTMLAudioElement;
   // Set up state
-  let [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
-  let [paused, setPaused] = useState(true);
-  let [actionsPaneVisible, showActionsPane] = useState(false);
+  const [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
+  const [paused, setPaused] = useState(true);
+  const [actionsPaneVisible, showActionsPane] = useState(false);
   // Set media listener for current time + scrubber
   const scrubberRef = createRef();
   useEffect(() => {
@@ -59,25 +59,6 @@ export function MediaControl(props: {
       }
     });
   }, []);
-  function togglePane() {
-    if (!panelRef.current) return;
-    const panel = panelRef.current;
-    if (actionsPaneVisible === false) {
-      showActionsPane(true);
-      panel.classList.add("active");
-      setTimeout(() => {
-        panel.classList.add("visible");
-      }, 10);
-    } else {
-      showActionsPane(false);
-      panel.classList.remove("visible");
-      panel.classList.add("fade-out");
-      setTimeout(() => {
-        panel.classList.remove("active");
-        panel.classList.remove("fade-out");
-      }, 200);
-    }
-  }
   //
   // Get timeable actions available, based on whether they're a timed element
   //
@@ -162,7 +143,6 @@ export function MediaControl(props: {
     setStore(store);
     props.update();
   }
-  const panelRef = createRef();
   return (
     <>
       <div class={`media-controls ${action.name === "video" ? "overlay" : ""}`}>
@@ -188,16 +168,23 @@ export function MediaControl(props: {
         <button
           class="small ui-button dark-mode"
           onClick={() => {
-            togglePane();
+            if (actionsPaneVisible === false) {
+              showActionsPane(true);
+              return;
+            }
+            showActionsPane(false);
           }}
         >
           Actions...
         </button>
       </div>
-      <div class={`panel top-right timeable-els`} ref={panelRef}>
-        <div class="contents">{timeableEls}</div>
-        <MiniPanelDecorations />
-      </div>
+      <MiniPanel
+        visible={actionsPaneVisible}
+        origin="top-right"
+        className="timeable-els"
+      >
+        {timeableEls}
+      </MiniPanel>
     </>
   );
 }
