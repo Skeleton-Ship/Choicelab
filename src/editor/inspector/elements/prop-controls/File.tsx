@@ -8,7 +8,7 @@ import { getStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import readFileUpload from "../../functions/readFileUpload";
 import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
-import getAssetPreviewElement from "../../functions/getAssetPreviewElement";
+import AssetPreview from "../../functions/AssetPreview";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
 export default function File(props: {
@@ -125,13 +125,6 @@ export default function File(props: {
   const setClass = fileIsSet === true ? "file-set" : "file-not-set";
   const loadingClass = isLoading === true ? "is-loading" : "loaded";
   const elementClass = `inspector-prop file ${setClass} ${loadingClass} ${props.className}`;
-  const previewEl = getAssetPreviewElement(
-    props.propDef.control,
-    existingFile,
-    fileSrc,
-    props.action,
-    props.update
-  );
   return (
     <div class={elementClass}>
       <label class="label break-line" for={inputId}>
@@ -147,7 +140,15 @@ export default function File(props: {
         ref={filePickerEl}
         accept={props.accept}
       />
-      <div class="media">{previewEl}</div>
+      <div class="media">
+        <AssetPreview
+          media={props.propDef.control}
+          fileName={existingFile}
+          fileSrc={fileSrc}
+          action={props.action}
+          update={props.update}
+        />
+      </div>
       <div class="file-set-controls">
         <button class="ui-button" onClick={handleReplace}>
           Replace

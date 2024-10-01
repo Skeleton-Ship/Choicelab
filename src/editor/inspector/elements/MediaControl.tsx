@@ -8,22 +8,8 @@ import { getActionDef } from "../functions/getActionDef";
 import { timeableActionInUse } from "../functions/timeableActionInUse";
 import { getStore, setStore } from "../../../data/dataStore";
 import { getAction } from "../../../data/getData";
-import { MiniPanel } from "./MiniPanel";
-
-function formatElapsedTime(currentTime: number): string {
-  const minutes = Math.floor(currentTime / 60);
-  const seconds = Math.floor(currentTime % 60);
-  const milliseconds = (currentTime % 1) * 1000;
-
-  const formattedMinutes = String(minutes).padStart(2, "0");
-  const formattedSeconds = String(seconds).padStart(2, "0");
-  const formattedMilliseconds = String(Math.floor(milliseconds / 10)).padStart(
-    2,
-    "0"
-  ); // Ensure two digits
-
-  return `${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
-}
+import { formatElapsedTime } from "../../../utils/formatElapsedTime";
+import { MiniPanelDecorations } from "./MiniPanelDecorations";
 
 function actionContainsTimedAction(action: Action, timedAction: Action) {
   if (
@@ -45,23 +31,24 @@ function setScrubberWidth(
 }
 
 export function MediaControl(props: {
-  el: HTMLVideoElement | HTMLAudioElement;
+  media: HTMLAudioElement | HTMLVideoElement | false;
   actionId: string;
   update: Function;
 }) {
   //
   // Set up state and data
   //
-  let [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
-  let [paused, setPaused] = useState(true);
-  let [actionsPaneVisible, showActionsPane] = useState(false);
   const store = getStore();
   const action = getAction(props.actionId, store) as Action;
   const cell = getActionParent(action, store);
-  if (!cell) return <></>;
-  const scrubberRef = createRef();
-  const media = props.el;
+  if (!cell || props.media === false) return <></>;
+  const media = props.media as HTMLVideoElement | HTMLAudioElement;
+  // Set up state
+  let [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
+  let [paused, setPaused] = useState(true);
+  let [actionsPaneVisible, showActionsPane] = useState(false);
   // Set media listener for current time + scrubber
+  const scrubberRef = createRef();
   useEffect(() => {
     const scrubber = scrubberRef.current;
     media.addEventListener("playing", () => {
@@ -72,6 +59,25 @@ export function MediaControl(props: {
       }
     });
   }, []);
+  function togglePane() {
+    if (!panelRef.current) return;
+    const panel = panelRef.current;
+    if (actionsPaneVisible === false) {
+      showActionsPane(true);
+      panel.classList.add("active");
+      setTimeout(() => {
+        panel.classList.add("visible");
+      }, 10);
+    } else {
+      showActionsPane(false);
+      panel.classList.remove("visible");
+      panel.classList.add("fade-out");
+      setTimeout(() => {
+        panel.classList.remove("active");
+        panel.classList.remove("fade-out");
+      }, 200);
+    }
+  }
   //
   // Get timeable actions available, based on whether they're a timed element
   //
@@ -139,7 +145,6 @@ export function MediaControl(props: {
     );
     timeableEls.push(timeableEl);
   });
-
   function toggleTimedAction(timeableAction: Action) {
     if (!action.timedActions) {
       action.timedActions = {};
@@ -157,6 +162,7 @@ export function MediaControl(props: {
     setStore(store);
     props.update();
   }
+  const panelRef = createRef();
   return (
     <>
       <div class={`media-controls ${action.name === "video" ? "overlay" : ""}`}>
@@ -180,25 +186,18 @@ export function MediaControl(props: {
           <div class="base"></div>
         </div>
         <button
-          class="ui-button dark-mode"
+          class="small ui-button dark-mode"
           onClick={() => {
-            if (actionsPaneVisible === true) {
-              showActionsPane(false);
-              return;
-            }
-            showActionsPane(true);
+            togglePane();
           }}
         >
           Actions...
         </button>
       </div>
-      <MiniPanel
-        open={actionsPaneVisible}
-        origin="top-right"
-        className="timeable-els"
-      >
+      <div class={`panel top-right timeable-els`} ref={panelRef}>
         <div class="contents">{timeableEls}</div>
-      </MiniPanel>
+        <MiniPanelDecorations />
+      </div>
     </>
   );
 }

@@ -110,7 +110,7 @@
         padding-left: 10px;
         padding-right: 15px;
         margin-bottom: 15px;
-        gap: 10px;
+        gap: 8px;
         background-color: rgba(56, 56, 57, 0.95);
         &.overlay {
           position: absolute;
@@ -138,7 +138,10 @@
           }
         }
         .current-time {
+          display: inline-block;
+          margin-right: 5px;
           color: white;
+          font-size: 13px;
           font-variant-numeric: tabular-nums;
         }
         .scrubber {
@@ -220,7 +223,7 @@
   display: none;
   &.top-right {
     transform-origin: calc(100% - 30px) calc(0% - 10px);
-    .decoration {
+    .decorations {
       .side {
         .arrow {
           transform: none !important;
@@ -246,7 +249,7 @@
     z-index: 2;
   }
   /* Box borders + arrow */
-  .decoration {
+  .decorations {
     position: absolute;
     top: 0;
     left: 0;
