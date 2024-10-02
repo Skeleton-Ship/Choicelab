@@ -10,6 +10,7 @@ import { getStore, setStore } from "../../../data/dataStore";
 import { getAction } from "../../../data/getData";
 import { formatElapsedTime } from "../../../utils/formatElapsedTime";
 import { MiniPanel } from "./MiniPanel";
+import { getActionTextLabel } from "../functions/getActionTextLabel";
 
 function actionContainsTimedAction(action: Action, timedAction: Action) {
   if (
@@ -62,8 +63,10 @@ export function MediaControl(props: {
   //
   // Get timeable actions available, based on whether they're a timed element
   //
-  const timeableActions: Array<{ icon: string | undefined; action: Action }> =
-    [];
+  const timeableActions: Array<{
+    icon: string | undefined;
+    action: Action;
+  }> = [];
   cell.actions.forEach((action) => {
     const def = getActionDef(action);
     if (def && def.timedElement === true) {
@@ -74,7 +77,6 @@ export function MediaControl(props: {
     }
   });
   // Build the list of actions
-  // NOTE: This is pretty crufty. Ideally the actions should determine what goes in the label, not this component.
   const timeableEls: Array<preact.JSX.Element> = [];
   timeableActions.forEach((timeable) => {
     const timeableAction: any = timeable.action;
@@ -83,31 +85,10 @@ export function MediaControl(props: {
     const activeClass = actionContainsTimedAction(action, timeableAction)
       ? "active"
       : "";
-    let previewText = "";
-    switch (timeableAction.name) {
-      case "text":
-        previewText =
-          timeableAction.props.contents !== ""
-            ? timeableAction.props.contents
-            : "Text Block";
-        break;
-      case "button":
-        previewText =
-          timeableAction.props.label !== ""
-            ? timeableAction.props.label
-            : "Button";
-        break;
-      case "image":
-        previewText =
-          timeableAction.props.src !== "" ? timeableAction.props.src : "Image";
-        break;
-      case "inputField":
-        previewText =
-          timeableAction.props.label !== ""
-            ? timeableAction.props.src
-            : "Input Field";
-        break;
-    }
+    const previewText = getActionTextLabel(
+      timeableAction.name,
+      timeableAction.props
+    );
     const timeableEl = (
       <div class={`timeable-el ${activeClass}`} key={key} disabled={disabled}>
         <span class="action-preview">

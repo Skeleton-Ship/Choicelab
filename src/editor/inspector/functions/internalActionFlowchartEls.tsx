@@ -1,7 +1,10 @@
 import { getVariable } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 
-function FCText(props: { contents: string; tag: string }) {
+/*
+ * Text
+ */
+export function FCText(props: { contents: string; tag: string }) {
   let contents = <>{props.contents}</>;
   if (props.tag !== "p") {
     contents = <strong>{props.contents}</strong>;
@@ -9,7 +12,10 @@ function FCText(props: { contents: string; tag: string }) {
   return <div>{contents}</div>;
 }
 
-function FCButton(props: {
+/*
+ * Button
+ */
+export function FCButton(props: {
   label: string;
   varToSet: string;
   value: string;
@@ -30,7 +36,10 @@ function FCButton(props: {
   );
 }
 
-function FCInputField(props: {
+/*
+ * Input field
+ */
+export function FCInputField(props: {
   label: string;
   type: string;
   varToSet: string;
@@ -49,20 +58,26 @@ function FCInputField(props: {
   );
 }
 
-function FCImage(props: { source: string; alt: string }) {
+/*
+ * Image
+ */
+export function FCImage(props: { source: string; alt: string }) {
   let imageLabel = <span class="no-src">Image</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
     imageLabel = (
       <div>
         <i class="bi bi-image"></i>
-        {props.source}
+        {props.alt !== "" ? props.alt : props.source}
       </div>
     );
   }
   return <>{imageLabel}</>;
 }
 
-function FCAudio(props: { source: string; captions: string }) {
+/*
+ * Audio
+ */
+export function FCAudio(props: { source: string; captions: string }) {
   let audioLabel = <span class="no-src">Audio</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
     audioLabel = (
@@ -75,7 +90,10 @@ function FCAudio(props: { source: string; captions: string }) {
   return <>{audioLabel}</>;
 }
 
-function FCVideo(props: { source: string; captions: string }) {
+/*
+ * Video
+ */
+export function FCVideo(props: { source: string; captions: string }) {
   let videoLabel = <span class="no-src">Video</span>;
   if (props.source && props.source !== "") {
     videoLabel = (
@@ -88,12 +106,13 @@ function FCVideo(props: { source: string; captions: string }) {
   return <>{videoLabel}</>;
 }
 
-function FCSilence(props: { duration: number }) {
+/*
+ * Silence
+ */
+export function FCSilence(props: { duration: number }) {
   return (
     <div>
       <em>({props.duration}s of silence)</em>
     </div>
   );
 }
-
-export { FCText, FCButton, FCInputField, FCImage, FCAudio, FCVideo, FCSilence };
