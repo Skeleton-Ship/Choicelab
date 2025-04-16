@@ -470,3 +470,8 @@ vite@^4.4.4:
     rollup "^3.27.1"
   optionalDependencies:
     fsevents "~2.3.2"
+
+wavesurfer.js@^7.8.6:
+  version "7.8.6"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.8.6.tgz#753eb22c93c27225a1c878f13d1a1bee073365dd"
+  integrity sha512-EDexkMwkkQBTWruhfWQRkTtvRggtKFTPuJX/oZ5wbIZEfyww9EBeLr2mtkxzA1S8TlWPx6adY5WyjOlNYNyHSg==

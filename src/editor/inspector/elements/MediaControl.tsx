@@ -11,6 +11,7 @@ import { getAction } from "../../../data/getData";
 import { formatElapsedTime } from "../../../utils/formatElapsedTime";
 import { MiniPanel } from "./MiniPanel";
 import { getActionTextLabel } from "../functions/getActionTextLabel";
+import { Waveform } from "./Waveform";
 
 function actionContainsTimedAction(action: Action, timedAction: Action) {
   if (
@@ -48,17 +49,40 @@ export function MediaControl(props: {
   const [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
   const [paused, setPaused] = useState(true);
   const [actionsPaneVisible, showActionsPane] = useState(false);
-  // Set media listener for current time + scrubber
+  const intervalRef = createRef();
   const scrubberRef = createRef();
+  const timechangeRef = createRef();
+  const pointerRef = createRef();
+  // Set media listener for current time + scrubber
   useEffect(() => {
     const scrubber = scrubberRef.current;
-    media.addEventListener("playing", () => {
-      setCurrentTimeLabel(formatElapsedTime(media.currentTime));
-      if (scrubber) {
-        console.log(scrubber);
+    intervalRef.current = setInterval(() => {
+      if (!media.paused) {
+        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
+        setScrubberWidth(scrubber, media.currentTime, media.duration);
+      }
+    }, 75);
+    pointerRef.current = scrubber.addEventListener(
+      "pointerdown",
+      (e: PointerEvent) => {
+        const percentage = e.offsetX / scrubber.offsetWidth;
+        const newTime = media.duration * percentage;
+        media.currentTime = newTime;
+        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
+        setScrubberWidth(scrubber, media.currentTime, media.duration);
+      }
+    );
+    timechangeRef.current = media.addEventListener("timeupdate", () => {
+      if (media.paused) {
+        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
         setScrubberWidth(scrubber, media.currentTime, media.duration);
       }
     });
+    return () => {
+      clearInterval(intervalRef.current);
+      scrubber.removeEventListener("pointerdown", pointerRef.current);
+      media.removeEventListener("timeupdate", timechangeRef.current);
+    };
   }, []);
   //
   // Get timeable actions available, based on whether they're a timed element
@@ -126,6 +150,9 @@ export function MediaControl(props: {
   }
   return (
     <>
+      {action.name === "audio" ? (
+        <Waveform el={media} actionId={props.actionId} />
+      ) : null}
       <div class={`media-controls ${action.name === "video" ? "overlay" : ""}`}>
         <button
           class="play-button"
