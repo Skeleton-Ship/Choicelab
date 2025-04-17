@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Internal: Players can now add their own props to actions.
+- In the editor, timeable actions (text, images, inputs) can now be timed to media actions (video, audio).
+  - Player support is forthcoming!
+- Added waveforms for slotted audio actions.
+
 ## 0.3.0
 
 ## 2024-08-27
