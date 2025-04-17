@@ -9,8 +9,8 @@ export function timeableActionInUse(action: Action) {
       if (node.type !== "cell") return;
       const thisNode = node as Cell;
       thisNode.actions.forEach((thisAction) => {
-        if (thisAction.childActions) {
-          if (thisAction.childActions[action.id]) {
+        if (thisAction.timedActions) {
+          if (thisAction.timedActions[action.id]) {
             inUse = true;
           }
         }
