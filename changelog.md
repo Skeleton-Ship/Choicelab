@@ -2,6 +2,8 @@
 
 ## 0.4.0
 
+#### 2025-04-17
+
 - Internal: Players can now add their own props to actions.
 - In the editor, timeable actions (text, images, inputs) can now be timed to media actions (video, audio).
   - Player support is forthcoming!
@@ -9,7 +11,7 @@
 
 ## 0.3.0
 
-## 2024-08-27
+#### 2024-08-27
 
 - First version of preview functionality. Press the ▶️ button in the toolbar to open the project in a web view, and test a project from its start point.
 - Cells now feature transition time and navigation point settings that allow for greater control over the pacing and navigation of a project.
