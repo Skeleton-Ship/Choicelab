@@ -67,7 +67,7 @@
       ]
     },
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; frame-src 'self';"
+      "csp": "default-src 'self'; img-src 'self' data: asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' asset://localhost; frame-src 'self';"
     },
     "windows": [],
     "macOSPrivateApi": true

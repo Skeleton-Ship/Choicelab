@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+#### XXX
+
+- Fixed an issue where waveforms and some icons would not load.
+
 ## 0.4.0
 
 #### 2025-04-17
