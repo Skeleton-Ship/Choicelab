@@ -159,6 +159,7 @@ export function MediaControl(props: {
       return (
         <TimingFlag
           key={`timing_flag_${ta.id}`}
+          parentActionId={props.actionId}
           label={label}
           start={timingProps.start}
           onChange={(newTimes) => setTimeableActionValues(action, ta, newTimes)}
