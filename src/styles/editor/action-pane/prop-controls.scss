@@ -103,14 +103,13 @@
         height: 36px;
         z-index: 5;
         width: 100%;
-        display: flex;
-        align-items: center;
-        border-radius: 8px;
         line-height: 0;
         padding-left: 10px;
         padding-right: 15px;
         margin-bottom: 15px;
         gap: 8px;
+        display: flex;
+        align-items: center;
         &.video {
           position: absolute;
           bottom: 10px;
@@ -118,6 +117,7 @@
           right: 10px;
           margin-bottom: 0;
           width: calc(100% - 20px);
+          border-radius: 8px;
           background-color: rgba(56, 56, 57, 0.95);
         }
         &.audio {
@@ -126,12 +126,20 @@
             display: none;
           }
           .current-time {
-            color: black;
+            @media (prefers-color-scheme: light) {
+              color: black;
+            }
           }
           .play-button {
             img {
-              filter: none !important;
+              @media (prefers-color-scheme: light) {
+                filter: none !important;
+              }
             }
+          }
+          .timeable-actions-button {
+            position: absolute;
+            right: 0;
           }
         }
         .play-button {
@@ -192,11 +200,15 @@
       .wavesurfer {
         z-index: 10;
       }
-      .timeable-els {
+      .timeable-els.panel {
         z-index: 4;
-        top: calc(100% + 12px);
-        right: 15px;
+        top: calc(100% + 8px);
+        right: 5px;
         max-width: 300px;
+        &.video {
+          top: calc(100% + 5px);
+          right: 30px;
+        }
         .timeable-el {
           appearance: none;
           display: flex;

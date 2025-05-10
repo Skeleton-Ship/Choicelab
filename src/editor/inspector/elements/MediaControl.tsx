@@ -199,7 +199,7 @@ export function MediaControl(props: {
           <div class="base"></div>
         </div>
         <button
-          class="small ui-button"
+          class="small ui-button timeable-actions-button"
           onClick={() => showActionsPane(!actionsPaneVisible)}
         >
           Actions...
@@ -208,7 +208,7 @@ export function MediaControl(props: {
       <MiniPanel
         visible={actionsPaneVisible}
         origin="top-right"
-        className="timeable-els"
+        className={`timeable-els ${action.name}`}
       >
         {timeableEls}
       </MiniPanel>
