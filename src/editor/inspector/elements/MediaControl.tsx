@@ -1,5 +1,5 @@
-import { useState, useEffect } from "preact/hooks";
-import { createRef } from "preact";
+import { JSX } from "preact";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { Action } from "../../../typings";
 import PlayIcon from "../../../assets/icon-play.svg";
 import PauseIcon from "../../../assets/icon-pause.svg";
@@ -12,14 +12,13 @@ import { formatElapsedTime } from "../../../utils/formatElapsedTime";
 import { MiniPanel } from "./MiniPanel";
 import { getActionTextLabel } from "../functions/getActionTextLabel";
 import { Waveform } from "./Waveform";
+import { TimingFlag } from "./TimingFlag";
 
-function actionContainsTimedAction(action: Action, timedAction: Action) {
-  if (
-    typeof action.timedActions !== "undefined" &&
-    action.timedActions.hasOwnProperty(timedAction.id)
-  )
-    return true;
-  return false;
+function actionContainsTimedAction(
+  action: Action,
+  timedAction: Action
+): boolean {
+  return !!action.timedActions?.hasOwnProperty(timedAction.id);
 }
 
 function setScrubberWidth(
@@ -29,7 +28,7 @@ function setScrubberWidth(
 ) {
   const progress = scrubber.querySelector(".progress") as HTMLDivElement;
   if (!progress) return;
-  progress.style.width = (elapsedTime / totalTime) * 100 + "%";
+  progress.style.width = ((elapsedTime / totalTime) * 100).toFixed(2) + "%";
 }
 
 export function MediaControl(props: {
@@ -37,127 +36,151 @@ export function MediaControl(props: {
   actionId: string;
   update: Function;
 }) {
-  //
-  // Set up state and data
-  //
   const store = getStore();
-  const action = getAction(props.actionId, store) as Action;
+  const action = getAction(props.actionId, store);
+  if (!action) return <></>;
   const cell = getActionParent(action, store);
   if (!cell || props.media === false) return <></>;
-  const media = props.media as HTMLVideoElement | HTMLAudioElement;
-  // Set up state
+
+  const media = props.media;
   const [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
   const [paused, setPaused] = useState(true);
   const [actionsPaneVisible, showActionsPane] = useState(false);
-  const intervalRef = createRef();
-  const scrubberRef = createRef();
-  const timechangeRef = createRef();
-  const pointerRef = createRef();
-  // Set media listener for current time + scrubber
+
+  const scrubberRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const scrubber = scrubberRef.current;
-    intervalRef.current = setInterval(() => {
+    if (!scrubber) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const el = e.target as HTMLElement;
+      const parent = el.parentElement as HTMLElement;
+      if (
+        el.classList.contains("timing-flag") ||
+        parent?.classList.contains("timing-flag")
+      )
+        return;
+
+      const percentage = e.offsetX / scrubber.offsetWidth;
+      const newTime = media.duration * percentage;
+      media.currentTime = newTime;
+      setCurrentTimeLabel(formatElapsedTime(media.currentTime));
+      setScrubberWidth(scrubber, media.currentTime, media.duration);
+    };
+
+    const handleTimeUpdate = () => {
+      if (media.paused) {
+        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
+        setScrubberWidth(scrubber, media.currentTime, media.duration);
+      }
+    };
+
+    const interval = setInterval(() => {
       if (!media.paused) {
         setCurrentTimeLabel(formatElapsedTime(media.currentTime));
         setScrubberWidth(scrubber, media.currentTime, media.duration);
       }
     }, 75);
-    pointerRef.current = scrubber.addEventListener(
-      "pointerdown",
-      (e: PointerEvent) => {
-        const percentage = e.offsetX / scrubber.offsetWidth;
-        const newTime = media.duration * percentage;
-        media.currentTime = newTime;
-        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
-        setScrubberWidth(scrubber, media.currentTime, media.duration);
-      }
-    );
-    timechangeRef.current = media.addEventListener("timeupdate", () => {
-      if (media.paused) {
-        setCurrentTimeLabel(formatElapsedTime(media.currentTime));
-        setScrubberWidth(scrubber, media.currentTime, media.duration);
-      }
-    });
+
+    scrubber.addEventListener("pointerdown", handlePointerDown);
+    media.addEventListener("timeupdate", handleTimeUpdate);
+
     return () => {
-      clearInterval(intervalRef.current);
-      scrubber.removeEventListener("pointerdown", pointerRef.current);
-      media.removeEventListener("timeupdate", timechangeRef.current);
+      clearInterval(interval);
+      scrubber.removeEventListener("pointerdown", handlePointerDown);
+      media.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, []);
-  //
-  // Get timeable actions available, based on whether they're a timed element
-  //
-  const timeableActions: Array<{
-    icon: string | undefined;
-    action: Action;
-  }> = [];
-  cell.actions.forEach((action) => {
-    const def = getActionDef(action);
-    if (def && def.timedElement === true) {
-      timeableActions.push({
-        icon: def.editor?.iconName,
-        action: action,
-      });
-    }
-  });
-  // Build the list of actions
-  const timeableEls: Array<preact.JSX.Element> = [];
-  timeableActions.forEach((timeable) => {
-    const timeableAction: any = timeable.action;
-    const disabled = timeableActionInUse(timeableAction, action) ? true : false;
-    const key = `timeable_action_${timeableAction.id}`;
-    const activeClass = actionContainsTimedAction(action, timeableAction)
-      ? "active"
-      : "";
-    const previewText = getActionTextLabel(
-      timeableAction.name,
-      timeableAction.props
-    );
-    const timeableEl = (
-      <div class={`timeable-el ${activeClass}`} key={key} disabled={disabled}>
+
+  const timeableActions = cell.actions
+    .map((action) => {
+      const def = getActionDef(action);
+      return def?.timedElement ? { icon: def.editor?.iconName, action } : null;
+    })
+    .filter(Boolean) as Array<{ icon: string | undefined; action: Action }>;
+
+  const timeableEls = timeableActions.map(({ icon, action: ta }) => {
+    const disabled = timeableActionInUse(ta, action);
+    const activeClass = actionContainsTimedAction(action, ta) ? "active" : "";
+    const previewText = getActionTextLabel(ta.name, ta.props);
+
+    return (
+      <div
+        class={`timeable-el ${activeClass}`}
+        key={`timeable_action_${ta.id}`}
+        disabled={disabled}
+      >
         <span class="action-preview">
-          <i class={`bi bi-${timeable.icon}`}></i>{" "}
+          <i class={`bi bi-${icon}`}></i>
           <span class="text">{previewText}</span>
         </span>
         <button
           disabled={disabled}
           class={`ui-toggle-button dark-mode ${activeClass}`}
-          title={`Toggle timing for the ${timeableAction.name} action labeled "${previewText}"`}
-          onClick={() => {
-            toggleTimedAction(timeableAction);
-          }}
-        ></button>
+          title={`Toggle timing for the ${ta.name} action labeled "${previewText}"`}
+          onClick={() => toggleTimedAction(action, ta)}
+        />
       </div>
     );
-    timeableEls.push(timeableEl);
   });
-  function toggleTimedAction(timeableAction: Action) {
-    if (!action.timedActions) {
-      action.timedActions = {};
-    }
-    if (actionContainsTimedAction(action, timeableAction) === false) {
-      action.timedActions[timeableAction.id] = {
-        start: 0,
-        end: -1,
-      };
+
+  function toggleTimedAction(action: Action, timeableAction: Action) {
+    action.timedActions ||= {};
+    if (!actionContainsTimedAction(action, timeableAction)) {
+      action.timedActions[timeableAction.id] = { start: 0, end: -1 };
     } else {
-      if (action.timedActions[timeableAction.id]) {
-        delete action.timedActions[timeableAction.id];
-      }
+      delete action.timedActions[timeableAction.id];
     }
     setStore(store);
     props.update();
   }
+
+  function setTimeableActionValues(
+    action: Action,
+    timeableAction: Action,
+    newTimes: { start: number; end: number }
+  ) {
+    if (!action.timedActions?.[timeableAction.id]) return;
+    action.timedActions[timeableAction.id] = {
+      start: newTimes.start,
+      end: newTimes.end,
+    };
+    setStore(store);
+    props.update();
+  }
+
+  const timingFlagEls = timeableActions
+    .filter(({ action: ta }) => actionContainsTimedAction(action, ta))
+    .map(({ action: ta }) => {
+      const label = getActionTextLabel(ta.name, ta.props);
+      const timingProps = action.timedActions?.[ta.id];
+      if (!timingProps) return null;
+      return (
+        <TimingFlag
+          key={`timing_flag_${ta.id}`}
+          label={label}
+          start={timingProps.start}
+          onChange={(newTimes) => setTimeableActionValues(action, ta, newTimes)}
+        />
+      );
+    })
+    .filter((el): el is JSX.Element => el !== null);
+
   return (
     <>
-      {action.name === "audio" ? (
-        <Waveform el={media} actionId={props.actionId} />
-      ) : null}
-      <div class={`media-controls ${action.name === "video" ? "overlay" : ""}`}>
+      {action.name === "audio" && (
+        <Waveform el={media} actionId={props.actionId} flags={timingFlagEls} />
+      )}
+      <div
+        class={`media-controls ${action.name} ${
+          action.name === "video" ? "overlay" : ""
+        }`}
+      >
         <button
           class="play-button"
           onClick={() => {
-            if (media.paused === true) {
+            if (media.paused) {
               media.play();
               setPaused(false);
             } else {
@@ -166,22 +189,17 @@ export function MediaControl(props: {
             }
           }}
         >
-          <img src={paused === true ? PlayIcon : PauseIcon} />
+          <img src={paused ? PlayIcon : PauseIcon} />
         </button>
         <span class="current-time">{currentTimeLabel}</span>
         <div class="scrubber" ref={scrubberRef}>
+          {action.name === "video" ? timingFlagEls : null}
           <div class="progress"></div>
           <div class="base"></div>
         </div>
         <button
-          class="small ui-button dark-mode"
-          onClick={() => {
-            if (actionsPaneVisible === false) {
-              showActionsPane(true);
-              return;
-            }
-            showActionsPane(false);
-          }}
+          class="small ui-button"
+          onClick={() => showActionsPane(!actionsPaneVisible)}
         >
           Actions...
         </button>

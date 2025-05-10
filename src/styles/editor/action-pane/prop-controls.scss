@@ -111,14 +111,28 @@
         padding-right: 15px;
         margin-bottom: 15px;
         gap: 8px;
-        background-color: rgba(56, 56, 57, 0.95);
-        &.overlay {
+        &.video {
           position: absolute;
           bottom: 10px;
           left: 10px;
           right: 10px;
           margin-bottom: 0;
           width: calc(100% - 20px);
+          background-color: rgba(56, 56, 57, 0.95);
+        }
+        &.audio {
+          padding: 0;
+          .scrubber {
+            display: none;
+          }
+          .current-time {
+            color: black;
+          }
+          .play-button {
+            img {
+              filter: none !important;
+            }
+          }
         }
         .play-button {
           appearance: none;
@@ -171,6 +185,13 @@
           }
         }
       }
+      .wave-container {
+        position: relative;
+        overflow: hidden;
+      }
+      .wavesurfer {
+        z-index: 10;
+      }
       .timeable-els {
         z-index: 4;
         top: calc(100% + 12px);
@@ -209,6 +230,45 @@
               color: white;
             }
           }
+        }
+      }
+      .timing-flag {
+        position: absolute;
+        appearance: none;
+        border: none;
+        display: block;
+        font-size: 11px;
+        z-index: 20;
+        bottom: 0;
+        height: 80px;
+        padding: 0;
+        background: none;
+        &:before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background-color: white;
+          width: 1.5px;
+          box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px;
+        }
+        span {
+          position: absolute;
+          display: block;
+          top: 0;
+          color: white !important;
+          font-weight: 500;
+          background-color: rgba(50, 50, 50, 0.8);
+          backdrop-filter: blur(10px);
+          border-radius: 0 7px 7px 0;
+          border: 1.5px solid white;
+          max-width: 130px;
+          padding: 6px 8px;
+          line-height: 1;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
       }
     }

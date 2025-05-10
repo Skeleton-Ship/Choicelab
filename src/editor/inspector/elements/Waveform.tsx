@@ -2,7 +2,11 @@ import WaveSurfer from "wavesurfer.js";
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 
-export function Waveform(props: { el: HTMLAudioElement; actionId: string }) {
+export function Waveform(props: {
+  el: HTMLAudioElement;
+  actionId: string;
+  flags: Array<preact.JSX.Element>;
+}) {
   const waveId = `waveform_${props.actionId}`;
   const waveRef = createRef();
   useEffect(() => {
@@ -18,5 +22,10 @@ export function Waveform(props: { el: HTMLAudioElement; actionId: string }) {
       waveRef.current.destroy();
     };
   }, []);
-  return <div class="wave-container" id={waveId}></div>;
+  return (
+    <div class="wave-container">
+      {props.flags}
+      <div class="wavesurfer" id={waveId}></div>
+    </div>
+  );
 }
