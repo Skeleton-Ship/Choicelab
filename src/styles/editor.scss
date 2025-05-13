@@ -1,27 +1,19 @@
 @use "./editor/toolbar";
-@use "./editor/sequence";
-@use "./editor/target-mode";
+@use "./editor/flowchart";
 @use "./editor/panes";
-@use "./editor/node-pane";
-@use "./editor/variables-pane";
-@use "./editor/branch-pane";
-@use "./variables";
-@use "./mixins";
-
-:root {
-  --toolbar-height: 51px;
-}
+@use "./editor/inspector";
+@use "./base/mixins";
 
 #editor {
   width: 100%;
   height: 100%;
   display: flex;
   transition: background-color 0.3s ease;
-  color: variables.$text-light;
+  color: var(--text-light);
   button {
-    color: variables.$text-light;
+    color: var(--text-light);
     @media (prefers-color-scheme: dark) {
-      color: variables.$text-dark;
+      color: var(--text-dark);
     }
   }
   &[data-focus="false"] {
@@ -39,9 +31,9 @@
   }
   #editor-contents {
     width: 100%;
-    height: calc(100% - #{variables.$toolbar-height});
+    height: calc(100% - var(--toolbar-height));
     position: relative;
-    top: variables.$toolbar-height;
+    top: var(--toolbar-height);
     display: flex;
   }
   #sequences-pane {

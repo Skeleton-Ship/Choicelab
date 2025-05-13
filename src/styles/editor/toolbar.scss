@@ -1,5 +1,4 @@
-@use "../variables";
-@use "../mixins";
+@use "../base/mixins";
 
 #toolbar {
   background-color: rgba(255, 255, 255, 0.9);
@@ -18,7 +17,7 @@
   padding-left: 9px;
   padding-right: 9px;
   padding-bottom: 7px;
-  height: variables.$toolbar-height;
+  height: var(--toolbar-height);
   z-index: 3;
   @media (prefers-color-scheme: dark) {
     background-color: #353535;
@@ -147,9 +146,9 @@
     font-weight: 700;
     margin: 0;
     margin-right: 18px;
-    color: variables.$heading-text-light;
+    color: var(--heading-text-light);
     @media (prefers-color-scheme: dark) {
-      color: variables.$heading-text-dark;
+      color: var(--heading-text-dark);
     }
   }
 }

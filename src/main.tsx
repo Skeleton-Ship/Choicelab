@@ -11,7 +11,7 @@ import { getStore, setStore, createDataStore } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
 import { Project, LoadError } from "./typings";
-import "./styles/style.scss";
+import "./styles/_style.scss";
 
 async function init() {
   // New + open project listeners

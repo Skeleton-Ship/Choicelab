@@ -1,0 +1,272 @@
+.inspector-prop .media {
+  position: relative;
+  margin-bottom: 10px;
+  .loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    font-weight: 300;
+    font-size: 16px;
+    opacity: 0.6;
+  }
+  .media-preview {
+    width: 100%;
+    height: auto;
+    z-index: 4;
+    position: relative;
+    &[src=""] {
+      display: none;
+    }
+    &[src] + .loading-text {
+      display: none;
+    }
+  }
+  .media-controls {
+    position: relative;
+    height: 36px;
+    z-index: 5;
+    width: 100%;
+    line-height: 0;
+    padding-left: 10px;
+    padding-right: 15px;
+    margin-bottom: 15px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    &.video {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      margin-bottom: 0;
+      width: calc(100% - 20px);
+      border-radius: 8px;
+      background-color: rgba(56, 56, 57, 0.95);
+    }
+    &.audio {
+      padding: 0;
+      .scrubber {
+        display: none;
+      }
+      .current-time {
+        @media (prefers-color-scheme: light) {
+          color: black;
+        }
+      }
+      .play-button {
+        img {
+          @media (prefers-color-scheme: light) {
+            filter: none !important;
+          }
+        }
+      }
+      .timeable-actions-button {
+        position: absolute;
+        right: 0;
+      }
+    }
+    .play-button {
+      appearance: none;
+      border: none;
+      padding: 0;
+      background: transparent;
+      &:active {
+        img {
+          filter: invert(1) brightness(0.7);
+        }
+      }
+      img {
+        display: block;
+        height: 24px;
+        width: auto;
+        filter: invert(1);
+      }
+    }
+    .current-time {
+      display: inline-block;
+      margin-right: 5px;
+      color: white;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    .scrubber {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      .base,
+      .progress {
+        height: 5px;
+        border-radius: 100px;
+      }
+      .base {
+        background-color: rgba(0, 0, 0, 0.8);
+        position: relative;
+        width: 100%;
+        z-index: 1;
+      }
+      .progress {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        background-color: white;
+        z-index: 2;
+      }
+    }
+  }
+  .wave-container {
+    position: relative;
+    overflow: hidden;
+  }
+  .wavesurfer {
+    z-index: 10;
+  }
+  .timeable-els.panel {
+    z-index: 4;
+    top: calc(100% + 8px);
+    right: 5px;
+    max-width: 300px;
+    &.video {
+      top: calc(100% + 5px);
+      right: 30px;
+    }
+    .timeable-el {
+      appearance: none;
+      display: flex;
+      align-items: center;
+      border: none;
+      font-size: 12px;
+      padding: 10px 11px;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      text-overflow: ellipsis;
+      .action-preview {
+        display: flex;
+        width: calc(100% - 35px);
+        margin-right: 15px;
+        i {
+          display: block;
+          width: 17px;
+          height: 17px;
+          flex-shrink: 0;
+          font-size: 10px;
+          border-radius: 3px;
+          text-align: center;
+          border: 1px solid rgba(255, 255, 255, 0.7);
+          line-height: 16px;
+          color: white;
+          margin-right: 9px;
+        }
+        .text {
+          line-height: 1.4;
+          color: white;
+        }
+      }
+    }
+  }
+  .timing-flag {
+    $flag-height: 70px;
+    $flag-overlap-height: 32px;
+    $flag-span-top: -22px;
+    position: absolute;
+    appearance: none;
+    border: none;
+    display: block;
+    font-size: 11px;
+    z-index: 20;
+    bottom: 0;
+    height: $flag-height;
+    padding: 0;
+    background: none;
+    min-width: 50px;
+    max-width: 130px;
+    pointer-events: none;
+    &[data-overlap="2"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 1});
+      span {
+        top: calc(#{$flag-span-top} - calc(#{$flag-overlap-height} / 2));
+      }
+    }
+    &[data-overlap="3"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 2});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height});
+      }
+    }
+    &[data-overlap="4"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 3});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 1.5});
+      }
+    }
+    &[data-overlap="5"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 4});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 2});
+      }
+    }
+    &[data-overlap="6"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 5});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 2.5});
+      }
+    }
+    &[data-overlap="7"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 6});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 3});
+      }
+    }
+    &[data-overlap="8"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 7});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 3.5});
+      }
+    }
+    &[data-overlap="9"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 8});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 4});
+      }
+    }
+    &[data-overlap="10"] {
+      height: calc(#{$flag-height} + #{$flag-overlap-height * 9});
+      span {
+        top: calc(#{$flag-span-top} - #{$flag-overlap-height * 4.5});
+      }
+    }
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background-color: white;
+      width: 1.5px;
+      box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px;
+    }
+    span {
+      position: relative;
+      display: block;
+      pointer-events: auto;
+      top: -22px;
+      color: white !important;
+      font-weight: 500;
+      background-color: rgba(50, 50, 50, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 0 7px 7px 0;
+      border: 1.5px solid white;
+      padding: 6px 8px;
+      line-height: 1;
+      white-space: nowrap;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}

@@ -1,11 +1,8 @@
-@use "nodes/nodes";
-@use "nodes/cell";
-@use "nodes/branch";
-@use "nodes/start";
-@use "elements/arrows";
-@use "./view-slider";
-@use "../mixins";
-@use "../variables";
+@use "../base/mixins";
+@use "./flowchart/target-mode";
+@use "./flowchart/nodes";
+@use "./flowchart/arrows";
+@use "./flowchart/view-slider";
 
 #sequence-wrap {
   z-index: 2;

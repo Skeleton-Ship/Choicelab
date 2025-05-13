@@ -1,5 +1,4 @@
 @use "./mixins";
-@use "./variables";
 
 /*
  * Shared styles
@@ -210,7 +209,7 @@ $toggle-height: 20px;
     }
   }
   &.active {
-    background-color: variables.$accent-color !important;
+    background-color: var(--accent-color) !important;
     &:after {
       left: 20px;
     }

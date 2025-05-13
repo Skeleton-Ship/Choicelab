@@ -1,5 +1,4 @@
-@use "../../variables";
-@use "../../mixins";
+@use "../../../base/mixins";
 
 .branch.node {
   width: 190px;
@@ -41,7 +40,7 @@
       animation: node-appear 0.2s ease;
       fill: #ffffff;
       @media (prefers-color-scheme: dark) {
-        fill: variables.$node-bg-dark;
+        fill: var(--node-bg-dark);
         stroke: rgba(255, 255, 255, 0.2);
         stroke-width: 3;
       }
@@ -67,12 +66,12 @@
       animation: node-appear 0.2s ease;
       @include mixins.node-shadow;
       @media (prefers-color-scheme: dark) {
-        background-color: variables.$node-bg-dark;
+        background-color: var(--node-bg-dark);
         outline: 1px solid rgba(255, 255, 255, 0.2);
       }
       &.selected,
       &.selecting {
-        border-color: variables.$accent-color;
+        border-color: var(--accent-color);
         outline: none;
       }
       .stem-index,
@@ -125,7 +124,7 @@
           background-color: white;
           border-radius: 5px;
           @media (prefers-color-scheme: dark) {
-            background-color: variables.$node-bg-dark;
+            background-color: var(--node-bg-dark);
           }
         }
       }

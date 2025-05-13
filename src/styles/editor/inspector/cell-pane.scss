@@ -1,6 +1,6 @@
-@use "../variables";
-@use "../mixins";
-@use "./action-pane/prop-controls";
+@use "../../base/mixins";
+@use "./cell-pane/prop-controls";
+@use "./cell-pane/media-controls";
 
 $available-actions-height: 105px;
 $node-settings-height: 85px;
@@ -61,7 +61,7 @@ $node-settings-height: 85px;
     display: flex;
     align-items: center;
     &.selected {
-      background-color: variables.$accent-color !important;
+      background-color: var(--accent-color) !important;
       .action-label {
         color: white;
       }

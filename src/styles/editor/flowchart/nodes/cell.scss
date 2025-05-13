@@ -1,5 +1,4 @@
-@use "../../variables";
-@use "../../mixins";
+@use "../../../base/mixins";
 @use "./internal-actions";
 
 .cell.node {
@@ -8,7 +7,7 @@
     padding: 3px 5px;
     justify-content: space-between;
     align-items: center;
-    font-family: variables.$fonts-mono;
+    font-family: var(--fonts-mono);
     font-size: 11px;
   }
   .contents {
@@ -30,7 +29,7 @@
   &.selected,
   &.selecting {
     .title {
-      background-color: variables.$accent-color;
+      background-color: var(--accent-color);
       color: white;
     }
     .label {
@@ -45,6 +44,6 @@
 #App[data-focus="false"] {
   .cell.node.selected .title,
   .cell.node.selecting .title {
-    background-color: variables.$accent-color-blurred;
+    background-color: var(--accent-color-blurred);
   }
 }

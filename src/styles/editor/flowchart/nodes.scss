@@ -1,5 +1,7 @@
-@use "../../variables";
-@use "../../mixins";
+@use "../../base/mixins";
+@use "./nodes/cell";
+@use "./nodes/branch";
+@use "./nodes/start";
 
 .nodes {
   position: relative;
@@ -34,14 +36,14 @@
     @media (prefers-color-scheme: dark) {
       color: white;
       outline: 1px solid rgba(255, 255, 255, 0.2);
-      background-color: variables.$node-bg-dark;
+      background-color: var(--node-bg-dark);
     }
   }
   &.selected,
   &.selecting {
     .contents {
       outline: none;
-      border-color: variables.$accent-color;
+      border-color: var(--accent-color);
     }
   }
   &.drop-zone {
@@ -52,7 +54,7 @@
       width: 100%;
       height: 5px;
       border-radius: 99px;
-      background-color: variables.$accent-color;
+      background-color: var(--accent-color);
     }
   }
 }
@@ -72,7 +74,7 @@
     border-radius: 50px;
     box-shadow: rgba(0, 0, 0, 0.1) 0 1px 1px;
     color: rgb(97, 97, 97);
-    font-family: variables.$fonts-mono;
+    font-family: var(--fonts-mono);
     font-weight: 500;
     text-overflow: ellipsis;
     font-size: 10px;
@@ -102,8 +104,8 @@
       left: 50%;
       transform: translateX(-50%);
       border: none;
-      background-color: variables.$accent-color;
-      border: 1px solid variables.$accent-color;
+      background-color: var(--accent-color);
+      border: 1px solid var(--accent-color);
       transition: width 0.2s ease, height 0.2s ease, bottom 0.2s ease;
       span {
         display: none;
@@ -114,7 +116,7 @@
         bottom: -22px;
       }
       &:active {
-        background-color: variables.$accent-color;
+        background-color: var(--accent-color);
       }
     }
   }
@@ -146,7 +148,7 @@
 #App[data-focus="false"] {
   .node.selected,
   .node.selecting {
-    border-color: variables.$accent-color-blurred;
+    border-color: var(--accent-color-blurred);
   }
 }
 

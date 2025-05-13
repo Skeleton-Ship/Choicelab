@@ -199,7 +199,9 @@ export function MediaControl(props: {
           <div class="base"></div>
         </div>
         <button
-          class="small ui-button timeable-actions-button"
+          class={`small ui-button timeable-actions-button ${
+            action.name === "video" ? "dark-mode" : ""
+          }`}
           onClick={() => showActionsPane(!actionsPaneVisible)}
         >
           Actions...

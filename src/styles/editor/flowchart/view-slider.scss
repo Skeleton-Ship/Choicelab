@@ -1,5 +1,4 @@
-@use "../variables";
-@use "../mixins";
+@use "../../base/mixins";
 
 #view-slider {
   position: fixed;
@@ -14,7 +13,7 @@
   display: flex;
   align-items: center;
   @media (prefers-color-scheme: dark) {
-    background-color: variables.$node-bg-dark;
+    background-color: var(--node-bg-dark);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   img {
