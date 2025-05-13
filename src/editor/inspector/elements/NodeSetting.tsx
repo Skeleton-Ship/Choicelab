@@ -3,6 +3,9 @@ import { setStore } from "../../../data/dataStore";
 import { Store } from "../../../typings";
 import NumberField from "./NumberField";
 
+/*
+ * A setting for a node that appears at the bottom of the inspector.
+ */
 export function NodeSetting(props: {
   node: Cell;
   settingName: string;
@@ -47,7 +50,7 @@ export function NodeSetting(props: {
             name={controlId}
             value={existingValue}
             min={0}
-            showSpinner={false}
+            step={0.1}
             decimalPlaces={2}
             onChange={(value: number) => {
               handleChange(value);
