@@ -46,7 +46,8 @@ export function NodeSetting(props: {
           <NumberField
             name={controlId}
             value={existingValue}
-            step={0.1}
+            min={0}
+            showSpinner={false}
             decimalPlaces={2}
             onChange={(value: number) => {
               handleChange(value);
