@@ -69,7 +69,7 @@ export default function AssetPreview(props: {
             data-id={`media_preview_${props.action.id}`}
             ref={mediaRef}
           ></video>
-          {mediaControl}
+          {mediaEl !== false ? mediaControl : <></>}
         </>
       );
       break;
@@ -82,7 +82,7 @@ export default function AssetPreview(props: {
             data-id={`media_preview_${props.action.id}`}
             ref={mediaRef}
           ></audio>
-          {mediaControl}
+          {mediaEl !== false ? mediaControl : <></>}
         </>
       );
       break;

@@ -12,6 +12,7 @@ import { formatElapsedTime } from "../../../utils/formatElapsedTime";
 import { MiniPanel } from "./MiniPanel";
 import { getActionTextLabel } from "../functions/getActionTextLabel";
 import { Waveform } from "./Waveform";
+import { parseNumber } from "../../../utils/parseNumber";
 import { TimingFlag } from "./TimingFlag";
 
 function actionContainsTimedAction(
@@ -43,6 +44,7 @@ export function MediaControl(props: {
   if (!cell || props.media === false) return <></>;
 
   const media = props.media;
+  const [mediaLoaded, setMediaLoaded] = useState(false);
   const [currentTimeLabel, setCurrentTimeLabel] = useState("00:00.00");
   const [paused, setPaused] = useState(true);
   const [actionsPaneVisible, showActionsPane] = useState(false);
@@ -85,6 +87,13 @@ export function MediaControl(props: {
 
     scrubber.addEventListener("pointerdown", handlePointerDown);
     media.addEventListener("timeupdate", handleTimeUpdate);
+    media.addEventListener(
+      "loadeddata",
+      () => {
+        setMediaLoaded(true);
+      },
+      { once: true }
+    );
 
     return () => {
       clearInterval(interval);
@@ -136,33 +145,33 @@ export function MediaControl(props: {
     props.update();
   }
 
-  function setTimeableActionValues(
-    action: Action,
-    timeableAction: Action,
-    newTimes: { start: number; end: number }
-  ) {
-    if (!action.timedActions?.[timeableAction.id]) return;
-    action.timedActions[timeableAction.id] = {
-      start: newTimes.start,
-      end: newTimes.end,
-    };
-    setStore(store);
-    props.update();
-  }
-
   const timingFlagEls = timeableActions
     .filter(({ action: ta }) => actionContainsTimedAction(action, ta))
     .map(({ action: ta }) => {
       const label = getActionTextLabel(ta.name, ta.props);
       const timingProps = action.timedActions?.[ta.id];
       if (!timingProps) return null;
+      if (!mediaLoaded) return null;
+      // Get percentage from duration and start prop
+      let startPercent = (timingProps.start / media.duration) * 100;
+      startPercent = parseNumber(startPercent, 2);
       return (
         <TimingFlag
           key={`timing_flag_${ta.id}`}
           parentActionId={props.actionId}
           label={label}
-          start={timingProps.start}
-          onChange={(newTimes) => setTimeableActionValues(action, ta, newTimes)}
+          start={startPercent}
+          onChange={(newTimes) => {
+            if (!action.timedActions?.[ta.id]) return;
+            // Convert percentage back into duration
+            const newDuration = parseNumber(
+              (media.duration * newTimes.start) / 100,
+              2
+            );
+            action.timedActions[ta.id].start = newDuration;
+            setStore(store);
+            props.update();
+          }}
         />
       );
     })

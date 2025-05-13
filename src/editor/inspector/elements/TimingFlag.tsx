@@ -83,7 +83,9 @@ export function TimingFlag(props: {
   function endDrag(e: PointerEvent) {
     setDragging(false);
     elRef.current?.releasePointerCapture(e.pointerId);
-    props.onChange({ start: percent, end: -1 });
+    if (props.start !== percent) {
+      props.onChange({ start: percent, end: -1 });
+    }
   }
 
   // Sync percent when props.start changes
