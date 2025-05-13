@@ -1,17 +1,17 @@
 import { useEffect, useState, useRef } from "preact/hooks";
-import { getSequence } from "../../data/getData";
-import runSequenceEvents from "./general/runSequenceEvents";
-import positionNodes from "./linking/positionNodes";
-import drawArrows from "./linking/drawArrows";
-import scrollNodeIntoView from "./general/scrollNodeIntoView";
-import setSequenceDimensions from "./general/setSequenceDimensions";
-import { Sequence, AnyNode } from "../../typings";
-import { getStore } from "../../data/dataStore";
+import { getSequence } from "../data/getData";
+import runSequenceEvents from "./flowchart/general/runSequenceEvents";
+import positionNodes from "./flowchart/linking/positionNodes";
+import drawArrows from "./flowchart/linking/drawArrows";
+import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
+import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
+import { Sequence, AnyNode } from "../typings";
+import { getStore } from "../data/dataStore";
 // Elements
-import StartEl from "./elements/Start";
-import CellEl from "./elements/Cell";
-import BranchEl from "./elements/Branch";
-import ViewSlider from "./ViewSlider";
+import StartEl from "./flowchart/elements/Start";
+import CellEl from "./flowchart/elements/Cell";
+import BranchEl from "./flowchart/elements/Branch";
+import ViewSlider from "./flowchart/ViewSlider";
 
 /**
  * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes, which can be found in runSequenceEvents.

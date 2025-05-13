@@ -1,8 +1,8 @@
 import { useEffect } from "preact/hooks";
-import { getStore, setStore } from "../../data/dataStore";
-import { AnyNode } from "../../typings";
-import { getNode, getBranchStem } from "../../data/getData";
-import elementIsNode from "../sequence/general/elementIsNode";
+import { getStore, setStore } from "../../../data/dataStore";
+import { AnyNode } from "../../../typings";
+import { getNode, getBranchStem } from "../../../data/getData";
+import elementIsNode from "../../flowchart/general/elementIsNode";
 
 export default function TargetMode(props: { update: Function }) {
   // Functions

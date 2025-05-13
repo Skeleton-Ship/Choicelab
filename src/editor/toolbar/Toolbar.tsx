@@ -1,5 +1,5 @@
 import { createCell, createBranch } from "../../data/createNode";
-import insertNewNode from "../sequence/general/insertNewNode";
+import insertNewNode from "../flowchart/general/insertNewNode";
 import iconBranch from "../../assets/icon-add-branch.svg";
 import iconCell from "../../assets/icon-add-cell.svg";
 import { getStore } from "../../data/dataStore";

@@ -2,7 +2,7 @@ import { getBranchStem } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 import { getNode } from "../../../data/getData";
 import { Store, Stem, AnyNode, Link } from "../../../typings";
-import enterTargetMode from "../../target-mode/enterTargetMode";
+import enterTargetMode from "../target-mode/enterTargetMode";
 
 /**
  * A component that lives in cells and branch stems that: 1) indicates the node the cell/stem connects to, 2) provides a means of setting the link destination.

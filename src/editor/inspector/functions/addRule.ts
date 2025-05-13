@@ -2,7 +2,7 @@ import { Branch, Stem } from "../../../typings";
 import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createRule } from "../../../data/createNode";
-import handleSelectNode from "../../sequence/selecting/handleSelectNode";
+import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 
 export default function addRule(
   stemId: string,

@@ -6,7 +6,7 @@ import { getFocusedRegion } from "../../../utils/focusedRegion";
 import insertNewNode from "./insertNewNode";
 import inTextElement from "../../../utils/inTextElement";
 import handleDisconnectLinks from "./handleDisconnectLinks";
-import enterTargetMode from "../../target-mode/enterTargetMode";
+import enterTargetMode from "../target-mode/enterTargetMode";
 import handleKeyNavigation from "./handleKeyNavigation";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";

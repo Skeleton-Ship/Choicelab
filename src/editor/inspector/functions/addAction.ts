@@ -3,7 +3,7 @@ import { getPlayerConfig } from "../../../player/getPlayerConfig";
 import { getExtendedActionDefs } from "../../../player/getExtendedActionDefs";
 import { getCell } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
-import handleSelectNode from "../../sequence/selecting/handleSelectNode";
+import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 import { v4 as uuidv4 } from "uuid";
 type GenericObject = { [key: string]: any };
 

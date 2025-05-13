@@ -14,14 +14,17 @@ import { getStore, setStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
 import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
-import { handleCutCopy, handlePaste } from "./sequence/general/handleCopyPaste";
+import {
+  handleCutCopy,
+  handlePaste,
+} from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
-import SequenceEl from "./sequence/Sequence";
+import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
-import TargetMode from "./target-mode/TargetMode";
+import TargetMode from "./flowchart/target-mode/TargetMode";
 
 export default function MainEditor() {
   useEffect(() => {

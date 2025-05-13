@@ -1,5 +1,5 @@
-import { getStore, setStore } from "../../data/dataStore";
-import { getActiveBranchStem } from "../../data/getData";
+import { getStore, setStore } from "../../../data/dataStore";
+import { getActiveBranchStem } from "../../../data/getData";
 
 export default function enterTargetMode(props: {
   origin?: string;
