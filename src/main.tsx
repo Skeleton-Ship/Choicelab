@@ -66,7 +66,7 @@ async function init() {
         default:
           title = "The selected folder couldn't be opened.";
           contents =
-            "Make sure the selected folder is a Choicelab project folder, then try again.";
+            "Make sure the selected folder is a Choicelab project folder downloaded to your computer, then try again.";
       }
       message(contents, title);
       appWindow.close();
