@@ -1,13 +1,10 @@
-import { emit } from "@tauri-apps/api/event";
-import { getStore } from "../data/dataStore";
 import { WebviewWindow } from "@tauri-apps/api/window";
+import { getStore } from "../data/dataStore";
+import { updatePreview } from "./updatePreview";
 
 export async function startPreview() {
   const store = getStore();
-  const projectPath = store.projectPath;
-  emit("update-preview", {
-    projectPath: projectPath,
-  });
+  updatePreview();
   let previewWindow = WebviewWindow.getByLabel("preview");
   const hash = Date.now();
   if (!previewWindow) {

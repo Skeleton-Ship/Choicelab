@@ -20,6 +20,7 @@ import {
 } from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
+import { updatePreview } from "../preview/updatePreview";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
@@ -169,6 +170,8 @@ export default function MainEditor() {
     let redoState =
       canRedo() === true ? { enableItems: ["redo"] } : { redo: ["undo"] };
     emit("enable-menu-items", redoState);
+    // Update preview
+    updatePreview();
     // Trigger refresh
     triggerRefresh(uuidv4());
   };

@@ -119,7 +119,7 @@ pub fn get_preview_path() -> Option<PathBuf> {
 	}
 }
 
-pub fn load_preview_files(input_folder: &str) -> std::io::Result<()> {
+pub fn load_preview_files(input_folder: &str, project_data: &str) -> std::io::Result<()> {
 	
 	// Convert the input folder string to a PathBuf
 let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
@@ -136,10 +136,10 @@ let project_subfolder = output_folder.join("project");
 // Ensure the output folder and project subfolder exist
 fs::create_dir_all(&project_subfolder)?;
 
-// Copy `project.json` to the `project` subfolder in the output folder
-let project_json_src = input_folder.join("project.json");
+// Write `project_data` to `project.json` in the `project` subfolder
 let project_json_dest = project_subfolder.join("project.json");
-fs::copy(project_json_src, project_json_dest)?;
+let mut file = File::create(project_json_dest)?;
+file.write_all(project_data.as_bytes())?;
 
 // Copy the contents of the `.web` folder to the top level of the output folder
 let web_folder_src = input_folder.join(".web");

@@ -1,39 +1,17 @@
-import { createRef } from "preact";
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { getStore } from "../data/dataStore";
+import { makeResizable } from "./inspector/functions/makeResizable";
 import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
 import VariablesPane from "./inspector/VariablesPane";
-
-function makeResizable(el: HTMLElement) {
-  const resizer = el.querySelector(".resizer");
-  if (!resizer) return;
-
-  resizer.addEventListener("mousedown", () => {
-    initDrag();
-  });
-
-  function initDrag() {
-    window.addEventListener("mousemove", doDrag, false);
-    window.addEventListener("mouseup", stopDrag, false);
-  }
-
-  function doDrag(e: MouseEvent) {
-    el.style.width = window.innerWidth - e.clientX + "px";
-  }
-
-  function stopDrag() {
-    window.removeEventListener("mousemove", doDrag, false);
-    window.removeEventListener("mouseup", stopDrag, false);
-  }
-}
+import { PreviewPane } from "./inspector/PreviewPane";
 
 export default function Inspector(props: { update: Function }) {
   // Make resizable
-  const ref = createRef();
+  const paneRef = useRef(null);
   useEffect(() => {
-    if (!ref.current) return;
-    makeResizable(ref.current);
+    if (!paneRef.current) return;
+    makeResizable(paneRef.current);
   }, []);
 
   // Contents
@@ -68,9 +46,12 @@ export default function Inspector(props: { update: Function }) {
     contents = <VariablesPane update={props.update} />;
   }
   return (
-    <div id="node-pane" class="pane right" ref={ref}>
-      <div class="resizer"></div>
-      <div class="pane-contents">{contents}</div>
+    <div id="node-pane" class="pane right" ref={paneRef}>
+      <div class="resizer horizontal"></div>
+      <div class="pane-contents">
+        <PreviewPane />
+        {contents}
+      </div>
     </div>
   );
 }

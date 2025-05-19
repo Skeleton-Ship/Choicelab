@@ -322,8 +322,9 @@ pub fn bind_listeners(app: &tauri::App) {
 			  match json_value {
 				  Ok(json) => {
 				  let project_path = json["projectPath"].as_str().unwrap_or("N/A");
-					  if project_path != "N/A" {
-						  load_preview_files(project_path).unwrap();
+				  let project_data = json["projectData"].as_str().unwrap_or("N/A");
+					  if project_path != "N/A" && project_data != "N/A" {
+						  load_preview_files(project_path, project_data).unwrap();
 					  }
 				  }
 				  Err(e) => {
