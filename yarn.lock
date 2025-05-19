@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.18.20.tgz#786c5f41f043b07afb1af37683d7c33668858f6d"
   integrity sha512-kTdfRcSiDfQca/y9QIkng02avJ+NCaQvrMejlsB3RRv5sE9rRoeBPISaZpKxHELzRxZyLvNts1P27W3wV+8geQ==
 
-"@surfgreen/choicelab-player-html5@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@surfgreen/choicelab-player-html5/-/choicelab-player-html5-0.3.1.tgz#720398a44c2e1fdfd0c9a83dfae63686996c2889"
-  integrity sha512-q7PdanJlkdEmYztaGTYOe4rt0Jjwr5Gw1A4CE4OXgO3v6gVJe37xu8AKxzT7wABk8zcgu8y2KHETf6I2lltyOQ==
+"@surfgreen/choicelab-player-html5@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@surfgreen/choicelab-player-html5/-/choicelab-player-html5-0.4.1.tgz#fe52413decdf15c9e5e93a6a0d2e1c5c4662db46"
+  integrity sha512-5lrha90reMNF984mSqjAe12ZXR8dCznMYhUW2eIQFyZd5pHWQMvRoOi1j943O8wULnNwSflUmBEkJnb9L0j9Rw==
   dependencies:
     uuid "^10.0.0"
 
