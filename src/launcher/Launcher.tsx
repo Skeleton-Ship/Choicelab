@@ -3,7 +3,7 @@ import { useEffect } from "preact/hooks";
 import { listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
-const appWindow = getCurrentWebviewWindow()
+const appWindow = getCurrentWebviewWindow();
 
 function Launcher() {
   useEffect(() => {
@@ -30,7 +30,12 @@ function Launcher() {
       <div className="contents">
         <h1>Choicelab</h1>
         <div class="buttons">
-          <button className="ui-button large" onClick={newProject}>
+          <button
+            className="ui-button large"
+            onClick={() => {
+              newProject("launcher");
+            }}
+          >
             New Project...
           </button>
           <button className="ui-button large" onClick={openProject}>

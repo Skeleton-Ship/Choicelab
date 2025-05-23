@@ -20,7 +20,7 @@ async function init() {
   listen("menu-new-project", async () => {
     const focused = await appWindow.isFocused();
     if (focused === false) return;
-    newProject();
+    newProject(getStore().projectPath);
   });
   listen("menu-open-project", async () => {
     const focused = await appWindow.isFocused();

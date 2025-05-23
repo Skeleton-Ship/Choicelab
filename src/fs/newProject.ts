@@ -8,7 +8,7 @@ import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.c
 import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
-export default async function newProject() {
+export default async function newProject(source: string) {
   const projectPath = await save({
     filters: [
       {
@@ -17,28 +17,30 @@ export default async function newProject() {
       },
     ],
   });
+  const label =
+    source === "launcher" ? "launcher" : getProjectWindowLabel(source);
   if (projectPath === null) {
   } else {
     // Get project name
-    const pathComponents = projectPath.split(sep);
+    const pathComponents = projectPath.split(sep());
     const projectName = pathComponents[pathComponents.length - 1];
     // Get parent path
     let parentPathComponents = pathComponents;
     parentPathComponents.length = parentPathComponents.length - 1;
-    const parentPath = parentPathComponents.join(sep);
+    const parentPath = parentPathComponents.join(sep());
     // Create project path
     emit("create-directory", {
       name: projectName,
       path: parentPath,
       callback: "project-dir-created",
-      label: getProjectWindowLabel(projectPath),
+      label: label,
     });
     listen("project-dir-created", async () => {
       // Create sub directories
       emit("create-directory", {
         name: "assets",
         path: projectPath,
-        label: getProjectWindowLabel(projectPath),
+        label: label,
       });
       // Create project.json
       const projectFileContents = await createProjectFile(projectName);
@@ -51,7 +53,7 @@ export default async function newProject() {
         contents: projectFileContents,
         path: projectPath,
         callback: "project-file-created",
-        label: getProjectWindowLabel(projectPath),
+        label: label,
       });
       // Load the project
       listen("project-file-created", () => {
@@ -62,26 +64,26 @@ export default async function newProject() {
         name: ".web",
         path: projectPath,
         callback: "web-dir-created",
-        label: getProjectWindowLabel(projectPath),
+        label: label,
       });
       listen("web-dir-created", () => {
         emit("save-text-file", {
           name: "index.html",
           contents: playerHTMLDefault,
           path: projectPath + "/.web",
-          label: getProjectWindowLabel(projectPath),
+          label: label,
         });
         emit("save-text-file", {
           name: "choicelab.css",
           contents: playerCSSDefault,
           path: projectPath + "/.web",
-          label: getProjectWindowLabel(projectPath),
+          label: label,
         });
         emit("save-text-file", {
           name: "choicelab.js",
           contents: playerJSDefault,
           path: projectPath + "/.web",
-          label: getProjectWindowLabel(projectPath),
+          label: label,
         });
       });
     });
