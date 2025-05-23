@@ -21,6 +21,7 @@ import {
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
 import { updatePreview } from "../preview/updatePreview";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
@@ -29,7 +30,6 @@ import TargetMode from "./flowchart/target-mode/TargetMode";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
-  console.log("hey guys");
   useEffect(() => {
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
@@ -68,6 +68,7 @@ export default function MainEditor() {
         name: "project.json",
         contents: stringify(newStore.project),
         path: await resolve(newStore.projectPath),
+        label: getProjectWindowLabel(store.projectPath),
       });
       newStore.saved = true;
       appWindow.setTitle(store.project.name);

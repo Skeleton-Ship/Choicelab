@@ -1,9 +1,9 @@
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { getWindowLabel } from "../utils/getWindowLabel";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 export default function loadProject(projectPath: string) {
   const projectPathEncoded = encodeURIComponent(projectPath);
-  const label = getWindowLabel(projectPath);
+  const label = getProjectWindowLabel(projectPath);
   const webview = new WebviewWindow(label, {
     url: `index.html?window_type=project&project_path=${projectPathEncoded}`,
     title: "",

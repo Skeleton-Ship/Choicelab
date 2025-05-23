@@ -18,11 +18,6 @@ struct Payload {
     message: String,
 }
 
-#[derive(Clone, serde::Serialize)]
-struct ProjectReady {
-  label: String,
-}
-
 #[derive(Serialize, Deserialize)]
 struct Response {
     code: u32,
@@ -47,9 +42,12 @@ pub fn bind_listeners(app: &tauri::App) {
 		let json_value: Result<Value, _> = from_str(json_raw);
 		match json_value {
 		Ok(json) => {
-			let label = json["label"].as_str().unwrap_or("N/A");
-			println!("{}", label);
-			// let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
+			let window_label = json["label"].as_str().unwrap_or("N/A");
+			let project_window = handle_project_open
+			.get_webview_window(window_label)
+			.unwrap();
+			println!("{}", window_label);
+			let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
 		}
 		Err(e) => {
 			eprintln!("Error parsing JSON: {}", e);
@@ -156,11 +154,12 @@ pub fn bind_listeners(app: &tauri::App) {
                 let name = json["name"].as_str().unwrap_or("N/A");
                 let contents = json["contents"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 let _ = create_text_file(name, contents, path);
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {
-                    let main_window = handle_text_file.get_webview_window("project").unwrap();
+                    let main_window = handle_text_file.get_webview_window(window_label).unwrap();
                     main_window
                         .emit(
                             callback,
@@ -186,11 +185,12 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let name = json["name"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 let _ = create_directory(name, path);
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {
-                    let main_window = handle_project_dir.get_webview_window("project").unwrap();
+                    let main_window = handle_project_dir.get_webview_window(window_label).unwrap();
                     main_window
                         .emit(
                             callback,
@@ -215,10 +215,11 @@ pub fn bind_listeners(app: &tauri::App) {
         match json_value {
             Ok(json) => {
                 let version_path = json["path"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 let script_prefix = "window.__CHOICELAB_DATA_RAW__ = `";
                 let script_suffix = "`;";
                 let project_window = handle_request_project
-                    .get_webview_window("project")
+                    .get_webview_window(window_label)
                     .unwrap();
                 match read_text_file(version_path) {
                     Ok(contents) => {
@@ -254,12 +255,13 @@ pub fn bind_listeners(app: &tauri::App) {
                 let file_name = json["fileName"].as_str().unwrap_or("N/A");
                 let file_type = json["fileType"].as_str().unwrap_or("N/A");
                 let contents = json["contents"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 let assets_dir = json["assetsPath"].as_str().unwrap_or("N/A");
                 if file_type == "binary" {
                     match create_binary_file(file_name, contents, assets_dir) {
                         Ok(_success) => {
                             let project_window =
-                                handle_create_asset.get_webview_window("project").unwrap();
+                                handle_create_asset.get_webview_window(window_label).unwrap();
                             let _ = project_window.emit(
                                 "asset-created",
                                 Payload {
@@ -275,7 +277,7 @@ pub fn bind_listeners(app: &tauri::App) {
                     match create_text_file(file_name, contents, assets_dir) {
                         Ok(_success) => {
                             let project_window =
-                                handle_create_asset.get_webview_window("project").unwrap();
+                                handle_create_asset.get_webview_window(window_label).unwrap();
                             let _ = project_window.emit(
                                 "asset-created",
                                 Payload {
@@ -304,11 +306,12 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let asset_path = json["assetPath"].as_str().unwrap_or("N/A");
                 let dest_path = json["cachePath"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 let id = json["id"].as_str().unwrap_or("N/A");
                 match copy_file(asset_path, dest_path) {
                     Ok(_success) => {
                         let project_window =
-                            handle_read_asset.get_webview_window("project").unwrap();
+                            handle_read_asset.get_webview_window(window_label).unwrap();
                         let _ = project_window.emit(
                             &("asset-ready-".to_owned() + id),
                             Payload {
@@ -335,9 +338,10 @@ pub fn bind_listeners(app: &tauri::App) {
         match json_value {
             Ok(json) => {
                 let version_path = json["versionPath"].as_str().unwrap_or("N/A");
+				let window_label = json["label"].as_str().unwrap_or("N/A");
                 match read_text_file(version_path) {
                     Ok(contents) => {
-                        let main_window = handle_history.get_webview_window("project").unwrap();
+                        let main_window = handle_history.get_webview_window(window_label).unwrap();
                         main_window
                             .emit("receive-history-version", Payload { message: contents })
                             .unwrap();

@@ -4,6 +4,7 @@ import { emit, once } from "@tauri-apps/api/event";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { getStore } from "../../../data/dataStore";
 import { v4 as uuidv4 } from "uuid";
+import { getProjectWindowLabel } from "../../../utils/getProjectWindowLabel";
 
 export default async function getAssetPreviewURL(
   fileName: string,
@@ -26,6 +27,7 @@ export default async function getAssetPreviewURL(
             assetPath: filePath,
             cachePath: cachePath,
             id: fileId,
+            label: getProjectWindowLabel(store.projectPath),
           });
           once(`asset-ready-${fileId}`, async () => {
             const filePath = await path_resolve(

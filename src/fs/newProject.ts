@@ -6,6 +6,7 @@ import loadProject from "./loadProject";
 import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html?raw";
 import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
 import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 export default async function newProject() {
   const projectPath = await save({
@@ -30,12 +31,14 @@ export default async function newProject() {
       name: projectName,
       path: parentPath,
       callback: "project-dir-created",
+      label: getProjectWindowLabel(projectPath),
     });
     listen("project-dir-created", async () => {
       // Create sub directories
       emit("create-directory", {
         name: "assets",
         path: projectPath,
+        label: getProjectWindowLabel(projectPath),
       });
       // Create project.json
       const projectFileContents = await createProjectFile(projectName);
@@ -48,6 +51,7 @@ export default async function newProject() {
         contents: projectFileContents,
         path: projectPath,
         callback: "project-file-created",
+        label: getProjectWindowLabel(projectPath),
       });
       // Load the project
       listen("project-file-created", () => {
@@ -58,22 +62,26 @@ export default async function newProject() {
         name: ".web",
         path: projectPath,
         callback: "web-dir-created",
+        label: getProjectWindowLabel(projectPath),
       });
       listen("web-dir-created", () => {
         emit("save-text-file", {
           name: "index.html",
           contents: playerHTMLDefault,
           path: projectPath + "/.web",
+          label: getProjectWindowLabel(projectPath),
         });
         emit("save-text-file", {
           name: "choicelab.css",
           contents: playerCSSDefault,
           path: projectPath + "/.web",
+          label: getProjectWindowLabel(projectPath),
         });
         emit("save-text-file", {
           name: "choicelab.js",
           contents: playerJSDefault,
           path: projectPath + "/.web",
+          label: getProjectWindowLabel(projectPath),
         });
       });
     });

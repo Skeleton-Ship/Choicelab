@@ -8,7 +8,8 @@ import { getStore, setStore } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
 import { getNode } from "./getData";
 import { AnyNode } from "../typings";
-const appWindow = getCurrentWebviewWindow()
+const appWindow = getCurrentWebviewWindow();
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 /**
  * Create a history instance.
@@ -38,6 +39,7 @@ async function saveHistoryVersion(initial: boolean = false) {
     name: versionId,
     contents: stringify(store.project),
     path: cachePath,
+    label: getProjectWindowLabel(store.projectPath),
   });
 }
 
@@ -91,6 +93,7 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
   );
   emit("request-history-version", {
     versionPath: versionPath,
+    label: getProjectWindowLabel(store.projectPath),
   });
   // Listen to receive it
   once(

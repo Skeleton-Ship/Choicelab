@@ -1,6 +1,7 @@
 import { resolve } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
 import { Project, LoadError } from "../typings";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 function parseRawData(iteration: number): Project | LoadError {
   const dataRaw: string | undefined = window.__CHOICELAB_DATA_RAW__;
@@ -32,6 +33,7 @@ export default async function loadProjectData(
   const dataPath = await resolve(projectPath, "project.json");
   emit("request-project-file", {
     path: dataPath,
+    label: getProjectWindowLabel(projectPath),
   });
   return new Promise((resolveData) => {
     setTimeout(() => {

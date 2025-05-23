@@ -10,6 +10,7 @@ import readFileUpload from "../../functions/readFileUpload";
 import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
 import AssetPreview from "../../functions/AssetPreview";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { getProjectWindowLabel } from "../../../../utils/getProjectWindowLabel";
 
 export default function File(props: {
   type: string;
@@ -80,6 +81,7 @@ export default function File(props: {
               contents: contents,
               fileType: props.type,
               assetsPath: assetsPath,
+              label: getProjectWindowLabel(store.projectPath),
             };
             emit("create-asset", jsonData);
             listen("asset-created", async () => {
