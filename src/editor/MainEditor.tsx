@@ -20,7 +20,7 @@ import {
 } from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
-import { updatePreview } from "../preview/updatePreview";
+import { updatePreview as handleUpdatePreview } from "../preview/updatePreview";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
@@ -159,7 +159,10 @@ export default function MainEditor() {
   const store = getStore();
 
   const [_refresh, triggerRefresh] = useState(uuidv4());
-  const handleUpdate = async (updateHistory: boolean = true) => {
+  const handleUpdate = async (
+    updateHistory: boolean = true,
+    updatePreview?: boolean
+  ) => {
     // Update history
     if (updateHistory === true) {
       saveHistoryVersion();
@@ -175,7 +178,9 @@ export default function MainEditor() {
       canRedo() === true ? { enableItems: ["redo"] } : { redo: ["undo"] };
     emit("enable-menu-items", redoState);
     // Update preview
-    updatePreview();
+    if (typeof updatePreview === "undefined" || updatePreview === true) {
+      handleUpdatePreview();
+    }
     // Trigger refresh
     triggerRefresh(uuidv4());
   };

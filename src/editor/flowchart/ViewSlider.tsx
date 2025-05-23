@@ -14,7 +14,7 @@ export default function ViewSlider(props: { update: Function }) {
     store.viewSettings = setViewSettings(valueNum, store);
     setSequenceDimensions();
     setStore(store);
-    props.update(false);
+    props.update(false, false);
   }
   return (
     <div id="view-slider" tabindex={-1}>
