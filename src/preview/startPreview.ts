@@ -5,7 +5,7 @@ import { updatePreview } from "./updatePreview";
 export async function startPreview() {
   const store = getStore();
   updatePreview();
-  let previewWindow = WebviewWindow.getByLabel("preview");
+  let previewWindow = await WebviewWindow.getByLabel("preview");
   const hash = Date.now();
   if (!previewWindow) {
     previewWindow = new WebviewWindow("preview", {
