@@ -1,7 +1,7 @@
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { resolve as path_resolve, appCacheDir } from "@tauri-apps/api/path";
 import { emit, once } from "@tauri-apps/api/event";
-import { readTextFile } from "@tauri-apps/api/fs";
+import { readTextFile } from "@tauri-apps/plugin-fs";
 import { getStore } from "../../../data/dataStore";
 import { v4 as uuidv4 } from "uuid";
 

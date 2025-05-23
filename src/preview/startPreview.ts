@@ -1,4 +1,4 @@
-import { WebviewWindow } from "@tauri-apps/api/window";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getStore } from "../data/dataStore";
 import { updatePreview } from "./updatePreview";
 

@@ -2,7 +2,7 @@ import { createRef } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { emit, listen } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
-import { message } from "@tauri-apps/api/dialog";
+import { message } from "@tauri-apps/plugin-dialog";
 import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";

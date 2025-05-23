@@ -1,5 +1,6 @@
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getStore, setStore } from "./dataStore";
+const appWindow = getCurrentWebviewWindow()
 
 export default function markUnsaved() {
   const newStore = getStore();

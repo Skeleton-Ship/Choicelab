@@ -15,7 +15,10 @@
   },
   "dependencies": {
     "@surfgreen/choicelab-player-html5": "^0.4.1",
-    "@tauri-apps/api": "^1.5.1",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-dialog": "~2",
+    "@tauri-apps/plugin-fs": "~2",
+    "@tauri-apps/plugin-shell": "~2",
     "@types/uuid": "^9.0.7",
     "@ungap/structured-clone": "^1.2.0",
     "fs": "^0.0.1-security",
@@ -27,7 +30,7 @@
     "wavesurfer.js": "^7.8.6"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.9",
+    "@tauri-apps/cli": "^2.5.0",
     "@types/lodash": "^4.17.16",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",

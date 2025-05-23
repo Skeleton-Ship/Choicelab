@@ -2,74 +2,45 @@
   "build": {
     "beforeDevCommand": "yarn preDev",
     "beforeBuildCommand": "yarn build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": true
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Choicelab"
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "dialog": {
-        "all": true,
-        "ask": true,
-        "confirm": true,
-        "message": true,
-        "open": true,
-        "save": true
-      },
-      "fs": {
-        "readFile": true,
-        "exists": true,
-        "scope": [
-          "$APPCACHE/Preview/*",
-          "$APPCACHE/Projects/*",
-          "$APPCACHE/Projects/*/assets/*"
-        ]
-      },
-      "path": {
-        "all": true
-      },
-      "protocol": {
-        "asset": true,
-        "assetScope": ["$APPCACHE/Projects/*/assets/*"]
-      },
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "window": {
-        "create": true,
-        "setTitle": true,
-        "close": true,
-        "setFocus": true,
-        "hide": true,
-        "show": true,
-        "maximize": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true,
-        "startDragging": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.choicelab.choicelab",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-    },
+  "productName": "Choicelab",
+  "mainBinaryName": "Choicelab",
+  "identifier": "com.choicelab.choicelab",
+  "plugins": {},
+  "app": {
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true,
     "security": {
-      "csp": "default-src 'self'; img-src 'self' data: asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' asset://localhost; frame-src 'self';"
+      "assetProtocol": {
+        "scope": ["$APPCACHE/Projects/*/assets/*"],
+        "enable": true
+      },
+      "csp": "default-src 'self'; img-src 'self' data: asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src ipc: http://ipc.localhost 'self' asset://localhost; frame-src 'self';"
     },
-    "windows": [],
-    "macOSPrivateApi": true
+    "windows": [
+      {
+        "label": "launcher",
+        "url": "index.html?window_type=launcher",
+        "title": "",
+        "width": 600,
+        "height": 400,
+        "resizable": false,
+        "titleBarStyle": "Overlay",
+        "transparent": true
+      }
+    ]
   }
 }

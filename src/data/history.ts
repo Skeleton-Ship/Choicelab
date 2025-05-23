@@ -1,13 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 import { emit, once } from "@tauri-apps/api/event";
 import { resolve, appCacheDir } from "@tauri-apps/api/path";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
 import { getStore, setStore } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
 import { getNode } from "./getData";
 import { AnyNode } from "../typings";
+const appWindow = getCurrentWebviewWindow()
 
 /**
  * Create a history instance.

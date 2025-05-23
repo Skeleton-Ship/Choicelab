@@ -1,4 +1,4 @@
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { listen } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createCell, createBranch } from "../../../data/createNode";
@@ -11,6 +11,7 @@ import handleKeyNavigation from "./handleKeyNavigation";
 import { handleDeleteNodes, handleDeleteStem } from "./handleDelete";
 import { getStemParent } from "../../../data/getData";
 import { Branch } from "../../../typings";
+const appWindow = getCurrentWebviewWindow()
 
 /**
  * Menu and key command events for a sequence in the project. Presently used to create and delete cells and branches.

@@ -1,4 +1,4 @@
-import { save } from "@tauri-apps/api/dialog";
+import { save } from "@tauri-apps/plugin-dialog";
 import { sep } from "@tauri-apps/api/path";
 import { emit, listen } from "@tauri-apps/api/event";
 import createProjectFile from "../data/createProjectFile";

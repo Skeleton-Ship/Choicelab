@@ -1,9 +1,9 @@
 // Libraries
-import { ask } from "@tauri-apps/api/dialog";
+import { ask } from "@tauri-apps/plugin-dialog";
 import { appCacheDir } from "@tauri-apps/api/path";
 import { getVersion } from "@tauri-apps/api/app";
 import { listen, emit } from "@tauri-apps/api/event";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { resolve } from "@tauri-apps/api/path";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
@@ -26,8 +26,10 @@ import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
+const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
+  console.log("hey guys");
   useEffect(() => {
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);

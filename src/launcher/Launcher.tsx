@@ -1,8 +1,9 @@
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect } from "preact/hooks";
 import { listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
+const appWindow = getCurrentWebviewWindow()
 
 function Launcher() {
   useEffect(() => {

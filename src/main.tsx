@@ -1,8 +1,8 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { listen, emit } from "@tauri-apps/api/event";
-import { message } from "@tauri-apps/api/dialog";
+import { message } from "@tauri-apps/plugin-dialog";
 import newProject from "./fs/newProject";
 import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
@@ -12,6 +12,7 @@ import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
 import { Project, LoadError } from "./typings";
 import "./styles/_style.scss";
+const appWindow = getCurrentWebviewWindow();
 
 async function init() {
   // New + open project listeners
@@ -74,12 +75,12 @@ async function init() {
     }
     projectData = projectData as Project;
     appWindow.show();
-    // Let Rust know that the project was opened
-    emit("project-opened");
     // Create data store
     createDataStore(projectData, projectPath);
     // Load store
     const store = getStore();
+    // Let Rust know that the project was opened
+    emit("project-ready", { label: `project_${store.projectPath}` });
     // Load the default sequence
     store.currentSequenceId = store.project.sequences[0].id;
     setStore(store);
