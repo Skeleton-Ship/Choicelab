@@ -1,14 +1,12 @@
 // Libraries
 import { ask } from "@tauri-apps/plugin-dialog";
 import { appCacheDir } from "@tauri-apps/api/path";
-import { getVersion } from "@tauri-apps/api/app";
 import { listen, emit } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { resolve } from "@tauri-apps/api/path";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
-import { stringify } from "../utils/stringify";
 import { Sequence } from "../typings";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
@@ -21,16 +19,18 @@ import {
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
 import { updatePreview as handleUpdatePreview } from "../preview/updatePreview";
-import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { setMenu } from "../menu/setMenu";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
+import { saveProject } from "../menu/saveProject";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
   useEffect(() => {
+    setMenu({});
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Set up actions/variables view listeners
@@ -57,23 +57,7 @@ export default function MainEditor() {
     });
     // Set up save listener
     listen("menu-save-project", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      const newStore = getStore();
-      // Update app version
-      const appVersion = await getVersion();
-      newStore.project.appVersion = appVersion;
-      // Pass to back-end
-      emit("save-text-file", {
-        name: "project.json",
-        contents: stringify(newStore.project),
-        path: await resolve(newStore.projectPath),
-        label: getProjectWindowLabel(store.projectPath),
-      });
-      newStore.saved = true;
-      appWindow.setTitle(store.project.name);
-      setStore(newStore);
-      handleUpdate(false);
+      saveProject();
     });
     // Set up cut/copy listener
     window.addEventListener("cut", (e) => {
@@ -181,9 +165,15 @@ export default function MainEditor() {
     if (typeof updatePreview === "undefined" || updatePreview === true) {
       handleUpdatePreview();
     }
+    // Update menu
+    setMenu({});
     // Trigger refresh
     triggerRefresh(uuidv4());
   };
+
+  console.log(window.__CHOICELAB_FUNCTIONS__);
+
+  window.__CHOICELAB_FUNCTIONS__.updateProject = handleUpdate;
 
   // Load sequence
   const sequence: Sequence | undefined = getCurrentSequence(store);

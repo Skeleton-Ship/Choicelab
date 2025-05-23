@@ -176,6 +176,9 @@ export interface LoadError {
 declare global {
   interface Window {
     __CHOICELAB_DATA_RAW__: string;
+    __CHOICELAB_FUNCTIONS__: {
+      updateProject: (saveProject?: boolean, updatePreview?: boolean) => void;
+    };
     __CHOICELAB_DATA__: Store;
   }
 }

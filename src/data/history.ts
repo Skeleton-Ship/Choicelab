@@ -14,7 +14,7 @@ import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 /**
  * Create a history instance.
  */
-async function saveHistoryVersion(initial: boolean = false) {
+export async function saveHistoryVersion(initial: boolean = false) {
   const store = getStore();
   const versionId = uuidv4();
   // Update history object
@@ -46,7 +46,7 @@ async function saveHistoryVersion(initial: boolean = false) {
 /**
  * Determine if, based on the project history and text field focus, if we can undo — move backward in the project history.
  */
-function canUndo() {
+export function canUndo() {
   const store = getStore();
   const history = store.history;
   if (history.location === 0 && inTextElement() === false) {
@@ -58,7 +58,7 @@ function canUndo() {
 /**
  * Determine if, based on the project history and text field focus, if we can redo — move forward the project history.
  */
-function canRedo() {
+export function canRedo() {
   const store = getStore();
   const history = store.history;
   if (
@@ -70,7 +70,7 @@ function canRedo() {
   return true;
 }
 
-async function handleUndoRedo(undoOrRedo: string, update: Function) {
+export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   // Get project history
   const store = getStore();
   const projectHistory = store.history;
@@ -124,5 +124,3 @@ async function handleUndoRedo(undoOrRedo: string, update: Function) {
     }
   );
 }
-
-export { saveHistoryVersion, handleUndoRedo, canUndo, canRedo };

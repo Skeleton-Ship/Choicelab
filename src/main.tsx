@@ -74,6 +74,9 @@ async function init() {
       appWindow.close();
       return;
     }
+    window.__CHOICELAB_FUNCTIONS__ = {
+      updateProject: () => {},
+    };
     projectData = projectData as Project;
     appWindow.show();
     // Create data store
