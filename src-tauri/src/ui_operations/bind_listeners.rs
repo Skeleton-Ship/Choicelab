@@ -46,7 +46,6 @@ pub fn bind_listeners(app: &tauri::App) {
 			let project_window = handle_project_open
 			.get_webview_window(window_label)
 			.unwrap();
-			println!("{}", window_label);
 			let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
 		}
 		Err(e) => {

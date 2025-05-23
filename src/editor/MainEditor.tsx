@@ -125,8 +125,9 @@ export default function MainEditor() {
       emit("clear-cache", {
         path: cachePath,
       });
+      console.log(appWindow);
       // Close it, baby!
-      appWindow.close();
+      appWindow.destroy();
     }
     async function handleCloseRequest() {
       const store = getStore();
@@ -138,7 +139,7 @@ export default function MainEditor() {
         "Do you want to save your changes before quitting?",
         {
           title: "Quit before saving?",
-          type: "warning",
+          kind: "warning",
           okLabel: "Go Back",
           cancelLabel: "Quit Without Saving",
         }
