@@ -10,7 +10,7 @@ import newProject from "../fs/newProject";
 import { getStore } from "../data/dataStore";
 const appWindow = getCurrentWebviewWindow();
 import { canUndo, canRedo } from "../data/history";
-import { saveProject } from "./saveProject";
+import { saveProject } from "../fs/saveProject";
 import openProject from "../fs/openProject";
 import inTextElement from "../utils/inTextElement";
 import showPane from "../editor/inspector/functions/showPane";
