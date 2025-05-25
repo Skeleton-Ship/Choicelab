@@ -24,19 +24,9 @@ fn main() {
     // Run Tauri
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        // your plugins here
-        // .menu(tauri::menu::Menu::new()) // start with empty menu
-        // .on_menu_event(|event| {
-        //    bind_menu_events(event);
-        // })
         .setup(|app| {
             create_launcher(app);
             bind_listeners(app);
-
-            // Create and set the full menu here using the `app`
-            // let menu = create_app_menu(app);
-            // app.set_menu(menu);
-
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![])

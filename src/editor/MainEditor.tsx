@@ -53,10 +53,6 @@ export default function MainEditor() {
         handlePaste(handleUpdate);
       }
     });
-    // Enable cell + branch menu items
-    appWindow.emit("enable-menu-items", {
-      enableItems: ["new_cell", "new_branch"],
-    });
     // Focus listeners
     listen("tauri://focus", async () => {
       const focused = await appWindow.isFocused();
