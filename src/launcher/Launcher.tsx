@@ -15,16 +15,7 @@ function Launcher() {
     listen("tauri://focus", async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
-      appWindow.emit("enable-menu-items", {
-        disableItems: [
-          "new_cell",
-          "new_branch",
-          "set_link",
-          "disconnect_link",
-          "delete_nodes",
-          "delete_stem",
-        ],
-      });
+      setMenu("launcher");
     });
   }, []);
   return (

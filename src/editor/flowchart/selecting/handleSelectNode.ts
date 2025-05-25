@@ -1,6 +1,7 @@
 import { emit } from "@tauri-apps/api/event";
 import { getStore, setStore } from "../../../data/dataStore";
 import { AnyNode, Cell, Branch, StartNode, Stem } from "../../../typings";
+import { setMenu } from "../../../menu/setMenu";
 
 /**
  * Handler for selecting a node.
@@ -54,5 +55,6 @@ export default function handleSelectNode(
   // Update data
   emit("enable-menu-items", enableMenuProps);
   setStore(store);
+  setMenu();
   update(false);
 }
