@@ -13,6 +13,7 @@ import { canUndo, canRedo } from "../data/history";
 import { saveProject } from "./saveProject";
 import openProject from "../fs/openProject";
 import inTextElement from "../utils/inTextElement";
+import showPane from "../editor/inspector/functions/showPane";
 
 export async function setMenu(windowState?: string) {
   const fns = window.__CHOICELAB_FUNCTIONS__;
@@ -169,10 +170,49 @@ export async function setMenu(windowState?: string) {
   });
 
   /*
+   * View menu
+   */
+
+  const showNodeEditor = await MenuItem.new({
+    id: "show_node_editor",
+    text: "Show Node Editor",
+    accelerator: "Cmd+E",
+    action: async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      showPane("node-editor", update);
+    },
+  });
+  showNodeEditor.setEnabled(windowState !== "launcher" ? true : false);
+
+  const showVariables = await MenuItem.new({
+    id: "show_variables",
+    text: "Show Variables",
+    accelerator: "Cmd+R",
+    action: async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      showPane("variables", update);
+    },
+  });
+  showVariables.setEnabled(windowState !== "launcher" ? true : false);
+
+  const viewSubmenu = await Submenu.new({
+    text: "View",
+    items: [
+      showNodeEditor,
+      showVariables,
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+    ],
+  });
+
+  /*
    * Set the menu
    */
   const menu = await Menu.new({
-    items: [appSubmenu, fileSubmenu, editSubmenu],
+    items: [appSubmenu, fileSubmenu, editSubmenu, viewSubmenu],
   });
 
   menu.setAsAppMenu();

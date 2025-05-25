@@ -16,7 +16,6 @@ import {
   handlePaste,
 } from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
-import showPane from "./inspector/functions/showPane";
 import {
   updatePreview as handleUpdatePreview,
   updatePreview,
@@ -35,17 +34,6 @@ export default function MainEditor() {
     updatePreview();
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
-    // Set up actions/variables view listeners
-    listen("menu-show-node-editor", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      showPane("node-editor", handleUpdate);
-    });
-    listen("menu-show-variables", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      showPane("variables", handleUpdate);
-    });
     // Set up cut/copy listener
     window.addEventListener("cut", (e) => {
       if (getFocusedRegion() === "sequence") {
@@ -76,11 +64,8 @@ export default function MainEditor() {
       const store = getStore();
       store.focus = true;
       document.querySelector("#App")?.setAttribute("data-focus", "true");
+      setMenu();
       setStore(store);
-      // Re-enable cell + branch menu items, in case we focused away
-      // appWindow.emit("enable-menu-items", {
-      // enableItems: ["new_cell", "new_branch"],
-      // });
     });
     listen("tauri://blur", async () => {
       const store = getStore();
