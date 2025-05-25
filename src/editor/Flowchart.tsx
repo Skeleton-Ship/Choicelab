@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from "preact/hooks";
 import { getSequence } from "../data/getData";
-import runSequenceEvents from "./flowchart/general/runSequenceEvents";
 import positionNodes from "./flowchart/linking/positionNodes";
 import drawArrows from "./flowchart/linking/drawArrows";
 import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
 import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../typings";
-import { getStore } from "../data/dataStore";
+import { getStore, setStore } from "../data/dataStore";
+import inTextElement from "../utils/inTextElement";
+import { getFocusedRegion } from "../utils/focusedRegion";
+import handleKeyNavigation from "./flowchart/general/handleKeyNavigation";
+
 // Elements
 import StartEl from "./flowchart/elements/Start";
 import CellEl from "./flowchart/elements/Cell";
@@ -14,7 +17,7 @@ import BranchEl from "./flowchart/elements/Branch";
 import ViewSlider from "./flowchart/ViewSlider";
 
 /**
- * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes, which can be found in runSequenceEvents.
+ * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes.
  *
  */
 export default function SequenceEl(props: { id: string; update: Function }) {
@@ -27,8 +30,36 @@ export default function SequenceEl(props: { id: string; update: Function }) {
   const svgRef = useRef(null);
   // On mount...
   useEffect(() => {
-    // Run sequence events
-    runSequenceEvents(props.update);
+    // Set shift, arrow key events
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Shift" && inTextElement() === false) {
+        const store = getStore();
+        if (store.focus === true) {
+          store.shiftDown = true;
+          setStore(store);
+          props.update(false);
+        }
+      } else if (
+        getFocusedRegion() === "sequence" &&
+        (e.key === "ArrowUp" ||
+          e.key === "ArrowDown" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight")
+      ) {
+        e.preventDefault();
+        handleKeyNavigation(e.key, props.update);
+      }
+    });
+    document.addEventListener("keyup", (e) => {
+      if (e.key === "Shift" && inTextElement() === false) {
+        const store = getStore();
+        if (store.focus === true) {
+          store.shiftDown = false;
+          setStore(store);
+          props.update(false);
+        }
+      }
+    });
   }, []);
   // On each refresh...
   useEffect(() => {
