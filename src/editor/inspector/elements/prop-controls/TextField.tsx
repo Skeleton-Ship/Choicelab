@@ -2,6 +2,7 @@ import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import NumberField from "../NumberField";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { setMenu } from "../../../../menu/setMenu";
 
 export default function TextField(props: {
   action: Action;
@@ -34,6 +35,9 @@ export default function TextField(props: {
       type="text"
       class="ui-text-field"
       value={props.initialValue}
+      onFocus={() => {
+        setMenu();
+      }}
       onChange={(e) => {
         const value = (e.target as HTMLInputElement).value;
         handleChange(value);
@@ -46,6 +50,9 @@ export default function TextField(props: {
         name={propElName}
         id={propElName}
         class="ui-text-area"
+        onFocus={() => {
+          setMenu();
+        }}
         onChange={(e) => {
           const value = (e.target as HTMLInputElement).value;
           handleChange(value);

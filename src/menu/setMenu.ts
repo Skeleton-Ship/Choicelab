@@ -6,17 +6,17 @@ import {
 } from "@tauri-apps/api/menu";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { handleUndoRedo } from "../data/history";
+import newProject from "../fs/newProject";
+import { getStore } from "../data/dataStore";
 const appWindow = getCurrentWebviewWindow();
 import { canUndo, canRedo } from "../data/history";
 import { saveProject } from "./saveProject";
+import openProject from "../fs/openProject";
+import inTextElement from "../utils/inTextElement";
 
-export async function setMenu(props: {
-  enable?: Array<string>;
-  disable?: Array<string>;
-}) {
+export async function setMenu(windowState?: string) {
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
-  console.log(props);
   /*
    * App menu
    */
@@ -31,11 +31,9 @@ export async function setMenu(props: {
     items: [
       aboutItem,
       await PredefinedMenuItem.new({
-        text: "",
         item: "Separator",
       }),
       await PredefinedMenuItem.new({
-        text: "Services",
         item: "Services",
       }),
       await PredefinedMenuItem.new({
@@ -47,11 +45,9 @@ export async function setMenu(props: {
         item: "Hide",
       }),
       await PredefinedMenuItem.new({
-        text: "Hide Others",
         item: "HideOthers",
       }),
       await PredefinedMenuItem.new({
-        text: "",
         item: "Separator",
       }),
       await PredefinedMenuItem.new({
@@ -74,7 +70,37 @@ export async function setMenu(props: {
   });
   const fileSubmenu = await Submenu.new({
     text: "File",
-    items: [save],
+    items: [
+      await MenuItem.new({
+        id: "new_project",
+        text: "New Project...",
+        accelerator: "Cmd+Shift+N",
+        action: () => {
+          const source =
+            windowState === "launcher" ? "launcher" : getStore().projectPath;
+          newProject(source);
+        },
+      }),
+      await MenuItem.new({
+        id: "open_project",
+        text: "Open Project...",
+        accelerator: "Cmd+O",
+        action: () => {
+          openProject();
+        },
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      save,
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      await PredefinedMenuItem.new({
+        text: "Close Window",
+        item: "CloseWindow",
+      }),
+    ],
   });
 
   /*
@@ -82,7 +108,7 @@ export async function setMenu(props: {
    */
 
   // Undo
-  const undo = await MenuItem.new({
+  let undo = await MenuItem.new({
     text: "Undo",
     accelerator: "Cmd+Z",
     action: async () => {
@@ -91,22 +117,55 @@ export async function setMenu(props: {
       handleUndoRedo("undo", update);
     },
   });
-  undo.setEnabled(canUndo());
+  const undoState = windowState === "launcher" ? false : canUndo();
+  undo.setEnabled(undoState);
+  if (inTextElement() === true) {
+    // @ts-ignore
+    undo = await PredefinedMenuItem.new({
+      item: "Undo",
+    });
+  }
 
   // Redo
-  const redo = await MenuItem.new({
+  let redo = await MenuItem.new({
     text: "Redo",
     accelerator: "Cmd+Shift+Z",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
+      if (inTextElement() === true) return;
       handleUndoRedo("redo", update);
     },
   });
-  redo.setEnabled(canRedo());
+  const redoState = windowState === "launcher" ? false : canRedo();
+  redo.setEnabled(redoState);
+  if (inTextElement() === true) {
+    // @ts-ignore
+    redo = await PredefinedMenuItem.new({
+      item: "Redo",
+    });
+  }
   const editSubmenu = await Submenu.new({
     text: "Edit",
-    items: [undo, redo],
+    items: [
+      undo,
+      redo,
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      await PredefinedMenuItem.new({
+        item: "Cut",
+      }),
+      await PredefinedMenuItem.new({
+        item: "Copy",
+      }),
+      await PredefinedMenuItem.new({
+        item: "Paste",
+      }),
+      await PredefinedMenuItem.new({
+        item: "SelectAll",
+      }),
+    ],
   });
 
   /*

@@ -36,6 +36,7 @@ export default async function newProject(source: string) {
       label: label,
     });
     listen("project-dir-created", async () => {
+      console.log("Project dir created, doing the other stuff now", label);
       // Create sub directories
       emit("create-directory", {
         name: "assets",
@@ -57,6 +58,7 @@ export default async function newProject(source: string) {
       });
       // Load the project
       listen("project-file-created", () => {
+        console.log(projectPath);
         loadProject(projectPath);
       });
       // Create web folder

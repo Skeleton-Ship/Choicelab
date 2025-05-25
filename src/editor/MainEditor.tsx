@@ -10,7 +10,6 @@ import { useEffect, useState } from "preact/hooks";
 import { Sequence } from "../typings";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
-import { handleUndoRedo, canUndo, canRedo } from "../data/history";
 import { saveHistoryVersion } from "../data/history";
 import {
   handleCutCopy,
@@ -18,19 +17,22 @@ import {
 } from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import showPane from "./inspector/functions/showPane";
-import { updatePreview as handleUpdatePreview } from "../preview/updatePreview";
+import {
+  updatePreview as handleUpdatePreview,
+  updatePreview,
+} from "../preview/updatePreview";
 import { setMenu } from "../menu/setMenu";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
-import { saveProject } from "../menu/saveProject";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
   useEffect(() => {
-    setMenu({});
+    setMenu();
+    updatePreview();
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Set up actions/variables view listeners
@@ -43,21 +45,6 @@ export default function MainEditor() {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
       showPane("variables", handleUpdate);
-    });
-    // Set up undo/redo listeners
-    listen("menu-undo", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      handleUndoRedo("undo", handleUpdate);
-    });
-    listen("menu-redo", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      handleUndoRedo("redo", handleUpdate);
-    });
-    // Set up save listener
-    listen("menu-save-project", async () => {
-      saveProject();
     });
     // Set up cut/copy listener
     window.addEventListener("cut", (e) => {
@@ -91,9 +78,9 @@ export default function MainEditor() {
       document.querySelector("#App")?.setAttribute("data-focus", "true");
       setStore(store);
       // Re-enable cell + branch menu items, in case we focused away
-      appWindow.emit("enable-menu-items", {
-        enableItems: ["new_cell", "new_branch"],
-      });
+      // appWindow.emit("enable-menu-items", {
+      // enableItems: ["new_cell", "new_branch"],
+      // });
     });
     listen("tauri://blur", async () => {
       const store = getStore();
@@ -109,7 +96,6 @@ export default function MainEditor() {
       emit("clear-cache", {
         path: cachePath,
       });
-      console.log(appWindow);
       // Close it, baby!
       appWindow.destroy();
     }
@@ -151,27 +137,15 @@ export default function MainEditor() {
     if (updateHistory === true) {
       saveHistoryVersion();
     }
-    // Check if we can undo
-    let undoState =
-      canUndo() === true
-        ? { enableItems: ["undo"] }
-        : { disableItems: ["undo"] };
-    emit("enable-menu-items", undoState);
-    // Check if we can redo
-    let redoState =
-      canRedo() === true ? { enableItems: ["redo"] } : { redo: ["undo"] };
-    emit("enable-menu-items", redoState);
     // Update preview
     if (typeof updatePreview === "undefined" || updatePreview === true) {
       handleUpdatePreview();
     }
     // Update menu
-    setMenu({});
+    setMenu();
     // Trigger refresh
     triggerRefresh(uuidv4());
   };
-
-  console.log(window.__CHOICELAB_FUNCTIONS__);
 
   window.__CHOICELAB_FUNCTIONS__.updateProject = handleUpdate;
 

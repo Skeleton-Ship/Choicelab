@@ -1,10 +1,8 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { listen, emit } from "@tauri-apps/api/event";
+import { emit } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
-import newProject from "./fs/newProject";
-import openProject from "./fs/openProject";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
 import { getStore, setStore, createDataStore } from "./data/dataStore";
@@ -16,17 +14,6 @@ import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
-  // New + open project listeners
-  listen("menu-new-project", async () => {
-    const focused = await appWindow.isFocused();
-    if (focused === false) return;
-    newProject(getStore().projectPath);
-  });
-  listen("menu-open-project", async () => {
-    const focused = await appWindow.isFocused();
-    if (focused === false) return;
-    openProject();
-  });
   // Region focus listeners
   window.addEventListener("pointerdown", (e) => {
     const targetEl = e.target as HTMLElement;
@@ -37,6 +24,10 @@ async function init() {
       setFocusedRegion(document.activeElement);
     }
   });
+
+  window.__CHOICELAB_FUNCTIONS__ = {
+    updateProject: () => {},
+  };
 
   let elements = <></>;
 
@@ -74,9 +65,6 @@ async function init() {
       appWindow.close();
       return;
     }
-    window.__CHOICELAB_FUNCTIONS__ = {
-      updateProject: () => {},
-    };
     projectData = projectData as Project;
     appWindow.show();
     // Create data store

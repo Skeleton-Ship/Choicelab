@@ -4,9 +4,11 @@ import { listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 const appWindow = getCurrentWebviewWindow();
+import { setMenu } from "../menu/setMenu";
 
 function Launcher() {
   useEffect(() => {
+    setMenu("launcher");
     listen("menu-request-quit", () => {
       appWindow.close();
     });
