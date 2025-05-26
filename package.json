@@ -8,6 +8,7 @@
     "dev": "tauri dev",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "install-all": "cd src-tauri && cargo clean && cargo build && cd ../ && yarn install",
     "version-major": "yarn version --major && node version.cjs",
     "version-minor": "yarn version --minor && node version.cjs",
     "version-patch": "yarn version --patch && node version.cjs",
