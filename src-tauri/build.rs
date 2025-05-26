@@ -3,18 +3,18 @@ use std::process::Command;
 fn main() {
 	
 	// Tell Cargo to rerun build.rs if the Swift source changes:
-	println!("cargo:rerun-if-changed=src/NativeMenus.swift"); 
+	println!("cargo:rerun-if-changed=src/NativeBridge.swift"); 
 	
 	// Call swiftc to build your dylib or .a
 	let status = Command::new("swiftc")
 		.args(&[
 		  "-emit-library",
 		"-o",
-		"macos/libNativeMenus.a",
+		"macos/libNativeBridge.a",
 		"-emit-object",
-		"src/NativeMenus.swift",
+		"src/NativeBridge.swift",
 		"-module-name",
-		"NativeMenus",
+		"NativeBridge",
 		])
 		.status()
 		.expect("Failed to compile Swift library");
@@ -27,7 +27,7 @@ fn main() {
 	#[cfg(target_os = "macos")]
 	{
 	println!("cargo:rustc-link-search=macos");
-	println!("cargo:rustc-link-lib=static=NativeMenus");
+	println!("cargo:rustc-link-lib=static=NativeBridge");
 	println!("cargo:rustc-link-lib=framework=AppKit");
 	println!("cargo:rustc-link-lib=framework=Cocoa");
 	}

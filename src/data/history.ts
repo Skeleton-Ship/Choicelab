@@ -82,6 +82,14 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
     console.error("Can't go back further in history.");
     return;
   }
+  /*
+  // NOTE: This is marks the document as unedited if you go to the beginning of history. The idea is that if you made a bunch of changes and then backed all the way up, it should mark the document as unedited.
+  // BUT: That's not tenable if you saved the document and THEN backed all the way up to the beginning. It'd technically be a different version than what you saved, which is no good.
+  // So, commenting this out for now, with the hope that I'll find a way to handle it. Maybe comparing the saved version to the one at index 0?
+  if (stepIndex === 0) {
+    emit("set-document-edited", { state: false });
+  }
+  */
   const stepVersion = projectHistory.versions[stepIndex];
   const cacheBase = await appCacheDir();
   const versionPath = await resolve(

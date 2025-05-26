@@ -1,6 +1,17 @@
 import Cocoa
 
-@objc public class NativeMenusBridge: NSObject {
+@objc public class NativeBridge: NSObject {
+	
+@objc public static func setDocumentEdited(_ edited: Bool) {
+	DispatchQueue.main.async {
+		if let window = NSApp.keyWindow ?? NSApp.mainWindow {
+			window.isDocumentEdited = edited
+		} else {
+			print("No active window found to mark as edited.")
+		}
+	}
+}
+	  
   @objc public static func addNativeMenus() {
 	DispatchQueue.main.async {
 	  guard let mainMenu = NSApp.mainMenu else { return }
@@ -21,7 +32,7 @@ import Cocoa
 		  action: #selector(openWebsite(_:)),
 		  keyEquivalent: ""
 		)
-		visitWebsiteItem.target = NativeMenusBridge.sharedInstance()
+		visitWebsiteItem.target = NativeBridge.sharedInstance()
 		helpMenu.addItem(visitWebsiteItem)
 		
 		mainMenu.addItem(helpMenuItem)
@@ -67,10 +78,10 @@ import Cocoa
   }
 
   // Singleton instance for target of selectors
-  @objc public static func sharedInstance() -> NativeMenusBridge {
+  @objc public static func sharedInstance() -> NativeBridge {
 	return _sharedInstance
   }
-  private static let _sharedInstance = NativeMenusBridge()
+  private static let _sharedInstance = NativeBridge()
 
   @objc func openWebsite(_ sender: NSMenuItem) {
 	if let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link") {

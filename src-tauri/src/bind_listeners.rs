@@ -9,7 +9,7 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
-use crate::native_menus::add_native_menus;
+use crate::native_bridge_macos::{add_native_menus,set_document_edited};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // the payload type must implement `Serialize` and `Clone`.
@@ -33,6 +33,21 @@ fn apply_project_vibrancy(window: WebviewWindow) {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
+	// Add native menus
+	app.listen("set-document-edited", move |event| {
+		// Set vibrancy
+		let json_raw = event.payload();
+		let json_value: Result<Value, _> = from_str(json_raw);
+		match json_value {
+			Ok(json) => {
+				let state = json["state"].as_bool().unwrap_or(false);
+				set_document_edited(state);
+			}
+			Err(e) => {
+				eprintln!("Error parsing JSON: {}", e);
+			}
+		}
+	});
 	// Add native menus
 	app.listen("add-native-menus", move |_event| {
 		add_native_menus();

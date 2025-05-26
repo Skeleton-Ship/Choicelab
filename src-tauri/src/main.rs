@@ -1,5 +1,5 @@
 mod file_operations;
-mod native_menus;
+mod native_bridge_macos;
 mod bind_listeners;
 mod preview_server;
 

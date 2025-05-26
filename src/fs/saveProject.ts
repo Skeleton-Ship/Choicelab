@@ -25,5 +25,6 @@ export async function saveProject() {
   store.saved = true;
   appWindow.setTitle(store.project.name);
   setStore(store);
+  emit("set-document-edited", { state: false });
   update(false);
 }
