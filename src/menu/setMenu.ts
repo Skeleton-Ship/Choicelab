@@ -2,9 +2,13 @@ import {
   Menu,
   MenuItem,
   PredefinedMenuItem,
+  CheckMenuItem,
   Submenu,
 } from "@tauri-apps/api/menu";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import {
+  getAllWebviewWindows,
+  getCurrentWebviewWindow,
+} from "@tauri-apps/api/webviewWindow";
 import { handleUndoRedo } from "../data/history";
 import newProject from "../fs/newProject";
 import { getStore } from "../data/dataStore";
@@ -23,6 +27,7 @@ import { handleDeleteNodes } from "../editor/flowchart/general/handleDelete";
 import { getStemParent } from "../data/getData";
 import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 /* 
  * Create and update the app-wide menu.
@@ -46,7 +51,7 @@ export async function setMenu(windowState?: string) {
   let quit = await MenuItem.new({
     id: "request-quit",
     text: "Quit Choicelab",
-    accelerator: "Cmd+Q",
+    accelerator: "CmdOrCtrl+Q",
     action: () => {
       /* Emit a request to quit, responded to in MainEditor
        */
@@ -97,7 +102,7 @@ export async function setMenu(windowState?: string) {
 
   const save = await MenuItem.new({
     text: "Save",
-    accelerator: "Cmd+S",
+    accelerator: "CmdOrCtrl+S",
     action: () => {
       saveProject();
     },
@@ -108,7 +113,7 @@ export async function setMenu(windowState?: string) {
       await MenuItem.new({
         id: "new_project",
         text: "New Project...",
-        accelerator: "Cmd+Shift+N",
+        accelerator: "CmdOrCtrl+Shift+N",
         action: () => {
           const source =
             windowState === "launcher" ? "launcher" : store.projectPath;
@@ -118,7 +123,7 @@ export async function setMenu(windowState?: string) {
       await MenuItem.new({
         id: "open_project",
         text: "Open Project...",
-        accelerator: "Cmd+O",
+        accelerator: "CmdOrCtrl+O",
         action: () => {
           openProject();
         },
@@ -144,7 +149,7 @@ export async function setMenu(windowState?: string) {
   // Undo
   let undo = await MenuItem.new({
     text: "Undo",
-    accelerator: "Cmd+Z",
+    accelerator: "CmdOrCtrl+Z",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -163,7 +168,7 @@ export async function setMenu(windowState?: string) {
   // Redo
   let redo = await MenuItem.new({
     text: "Redo",
-    accelerator: "Cmd+Shift+Z",
+    accelerator: "CmdOrCtrl+Shift+Z",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -206,10 +211,10 @@ export async function setMenu(windowState?: string) {
    * View menu
    */
 
-  const showNodeEditor = await MenuItem.new({
+  const showNodeEditor = await CheckMenuItem.new({
     id: "show_node_editor",
     text: "Show Node Editor",
-    accelerator: "Cmd+E",
+    accelerator: "CmdOrCtrl+E",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -217,11 +222,14 @@ export async function setMenu(windowState?: string) {
     },
   });
   showNodeEditor.setEnabled(windowState !== "launcher" ? true : false);
+  showNodeEditor.setChecked(
+    store && store.viewSettings.paneInView === "node-editor" ? true : false
+  );
 
-  const showVariables = await MenuItem.new({
+  const showVariables = await CheckMenuItem.new({
     id: "show_variables",
     text: "Show Variables",
-    accelerator: "Cmd+R",
+    accelerator: "CmdOrCtrl+R",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -229,6 +237,9 @@ export async function setMenu(windowState?: string) {
     },
   });
   showVariables.setEnabled(windowState !== "launcher" ? true : false);
+  showVariables.setChecked(
+    store && store.viewSettings.paneInView === "variables" ? true : false
+  );
 
   const viewSubmenu = await Submenu.new({
     text: "View",
@@ -248,7 +259,7 @@ export async function setMenu(windowState?: string) {
   const newCell = await MenuItem.new({
     id: "new_cell",
     text: "New Cell",
-    accelerator: "Cmd+N",
+    accelerator: "CmdOrCtrl+N",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -261,7 +272,7 @@ export async function setMenu(windowState?: string) {
   const newBranch = await MenuItem.new({
     id: "new_branch",
     text: "New Branch",
-    accelerator: "Cmd+B",
+    accelerator: "CmdOrCtrl+B",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -274,7 +285,7 @@ export async function setMenu(windowState?: string) {
   const setLink = await MenuItem.new({
     id: "set_link",
     text: "Set Link",
-    accelerator: "Cmd+L",
+    accelerator: "CmdOrCtrl+L",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -286,7 +297,7 @@ export async function setMenu(windowState?: string) {
   const disconnectLink = await MenuItem.new({
     id: "disconnect_link",
     text: "Disconnect Link",
-    accelerator: "Cmd+D",
+    accelerator: "CmdOrCtrl+D",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -303,7 +314,7 @@ export async function setMenu(windowState?: string) {
   const deleteNodes = await MenuItem.new({
     id: "delete_nodes",
     text: "Delete Node",
-    accelerator: "Cmd+Delete",
+    accelerator: "CmdOrCtrl+Delete",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -312,7 +323,7 @@ export async function setMenu(windowState?: string) {
   });
   let deleteEnabled = false;
   if (windowState !== "launcher" && store.selectedNodes.length > 0) {
-    if (store.selectedNodes[0].type !== "start") {
+    if (store && store.selectedNodes[0].type !== "start") {
       deleteEnabled = true;
     }
   }
@@ -321,7 +332,7 @@ export async function setMenu(windowState?: string) {
   const deleteStem = await MenuItem.new({
     id: "delete_stem",
     text: "Delete Branch Stem",
-    accelerator: "Cmd+Option+Delete",
+    accelerator: "CmdOrCtrl+Option+Delete",
     action: async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
@@ -339,9 +350,11 @@ export async function setMenu(windowState?: string) {
     },
   });
   let deleteStemEnabled = false;
-  const selectedStem = store.selectedStem;
-  if (selectedStem !== false && selectedStem.type !== "noMatch") {
-    deleteStemEnabled = true;
+  if (store) {
+    const selectedStem = store.selectedStem;
+    if (selectedStem !== false && selectedStem.type !== "noMatch") {
+      deleteStemEnabled = true;
+    }
   }
   deleteStem.setEnabled(deleteStemEnabled);
 
@@ -364,10 +377,85 @@ export async function setMenu(windowState?: string) {
   });
 
   /*
+   * Window menu
+   */
+
+  const windows = await getAllWebviewWindows();
+  const windowMenuItems: Array<MenuItem> = [];
+  // Set up the center, window switcher, and `bring all to front` commands
+  windows.forEach(async (window) => {
+    const item = await CheckMenuItem.new({
+      text: window.label === "launcher" ? "Launcher" : await window.title(),
+      action: () => {
+        window.setFocus();
+      },
+      checked: await window.isFocused(),
+    });
+    windowMenuItems.push(item);
+  });
+
+  const windowSubmenu = await Submenu.new({
+    text: "Window",
+    items: [
+      await PredefinedMenuItem.new({
+        item: "Minimize",
+      }),
+      await MenuItem.new({
+        accelerator: "",
+        text: "Zoom",
+        action: () => {
+          const window = getCurrentWindow();
+          window.toggleMaximize();
+        },
+      }),
+      await MenuItem.new({
+        text: "Fill",
+        accelerator: "Ctrl+Alt+F",
+        action: () => {
+          const window = getCurrentWindow();
+          window.maximize();
+        },
+      }),
+      await MenuItem.new({
+        text: "Center",
+        accelerator: "Ctrl+Alt+C",
+        action: () => {
+          const window = getCurrentWindow();
+          window.center();
+        },
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      await MenuItem.new({
+        text: "Bring All to Front",
+        action: async () => {
+          const windows = await getAllWebviewWindows();
+          windows.forEach((window) => {
+            window.setFocus();
+          });
+          getCurrentWindow().setFocus();
+        },
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      ...windowMenuItems,
+    ],
+  });
+
+  /*
    * Set the menu
    */
   const menu = await Menu.new({
-    items: [appSubmenu, fileSubmenu, editSubmenu, viewSubmenu, projectSubmenu],
+    items: [
+      appSubmenu,
+      fileSubmenu,
+      editSubmenu,
+      viewSubmenu,
+      projectSubmenu,
+      windowSubmenu,
+    ],
   });
 
   menu.setAsAppMenu();
