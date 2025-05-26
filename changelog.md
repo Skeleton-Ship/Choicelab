@@ -6,6 +6,7 @@
 
 - Fixed an issue where some visual elements (waveforms and icons) would not load.
 - The Window menu now includes all of the standard macOS commands.
+- The title bar in a project window will now reflect when the project has been edited but not saved.
 
 ## 0.4.0
 
