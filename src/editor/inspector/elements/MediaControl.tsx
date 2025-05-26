@@ -118,7 +118,6 @@ export function MediaControl(props: {
       <div
         class={`timeable-el ${activeClass}`}
         key={`timeable_action_${ta.id}`}
-        disabled={disabled}
       >
         <span class="action-preview">
           <i class={`bi bi-${icon}`}></i>
