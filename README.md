@@ -12,7 +12,7 @@ As of 2025, it is **macOS only**.
 
 You'll need a Mac running macOS 14 or later, as well as:
 
-- [NodeJS](https://formulae.brew.sh/formula/node#default) 22 or later
+- [Node.js](https://formulae.brew.sh/formula/node#default) 22 or later
 - [Rust](https://formulae.brew.sh/formula/rust#default) 1.87 or later
 - [Yarn](https://classic.yarnpkg.com/en/)
 - Xcode Command Line Tools (run `xcode-select --install` from your command line)

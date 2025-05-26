@@ -1,10 +1,11 @@
 # Changelog
 
-## 0.4.1
+## 0.5.0
 
-#### XXX
+#### 2025-05-27
 
-- Fixed an issue where waveforms and some icons would not load.
+- Fixed an issue where some visual elements (waveforms and icons) would not load.
+- The Window menu now includes all of the standard macOS commands.
 
 ## 0.4.0
 
