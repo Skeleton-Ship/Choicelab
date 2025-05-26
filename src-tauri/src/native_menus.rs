@@ -1,3 +1,4 @@
+#![allow(unexpected_cfgs)]
 use objc::{msg_send, sel, sel_impl};
 use objc::runtime::Class;
 
