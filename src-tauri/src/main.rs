@@ -1,4 +1,5 @@
 mod file_operations;
+mod native_menus;
 mod ui_operations {
     pub mod bind_listeners;
     // pub mod bind_menu_events;

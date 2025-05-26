@@ -26,6 +26,7 @@ home = "0.5"
 tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
+objc = "0.2.7"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

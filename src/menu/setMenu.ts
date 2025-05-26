@@ -28,7 +28,6 @@ import { getStemParent } from "../data/getData";
 import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-
 /* 
  * Create and update the app-wide menu.
  
@@ -445,6 +444,11 @@ export async function setMenu(windowState?: string) {
   });
 
   /*
+   * Help menu
+     NOTE: This is set in Swift, so we can add the search bar.
+   */
+
+  /*
    * Set the menu
    */
   const menu = await Menu.new({
@@ -459,4 +463,5 @@ export async function setMenu(windowState?: string) {
   });
 
   menu.setAsAppMenu();
+  emit("help-menu");
 }

@@ -9,7 +9,7 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
-// use crate::ui_operations::preview_server::start_server;
+use crate::native_menus::add_native_menus;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // the payload type must implement `Serialize` and `Clone`.
@@ -33,6 +33,9 @@ fn apply_project_vibrancy(window: WebviewWindow) {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
+	app.listen("help-menu", move |_event| {
+		add_native_menus();
+	});
     // Listen to vibrancy
     let handle_project_open = app_handle.clone();
     // let handle_enable_items = handle_project_open.clone();
