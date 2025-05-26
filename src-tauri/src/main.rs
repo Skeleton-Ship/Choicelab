@@ -1,16 +1,11 @@
 mod file_operations;
 mod native_menus;
-mod ui_operations {
-    pub mod bind_listeners;
-    // pub mod bind_menu_events;
-    // pub mod create_app_menu;
-    pub mod create_launcher;
-    pub mod preview_server;
-}
+mod bind_listeners;
+mod preview_server;
+
 use file_operations::get_preview_path;
-use ui_operations::{
-    bind_listeners::bind_listeners, create_launcher::create_launcher, preview_server::start_server,
-};
+use bind_listeners::bind_listeners;
+use preview_server::start_server;
 
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
@@ -26,7 +21,6 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
-            create_launcher(app);
             bind_listeners(app);
             Ok(())
         })

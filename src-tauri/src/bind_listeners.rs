@@ -33,13 +33,13 @@ fn apply_project_vibrancy(window: WebviewWindow) {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
-	app.listen("help-menu", move |_event| {
+	// Add native menus
+	app.listen("add-native-menus", move |_event| {
 		add_native_menus();
 	});
-    // Listen to vibrancy
+	// When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
-    // let handle_enable_items = handle_project_open.clone();
-    app.listen("project-ready", move |event| {
+    app.listen("apply-window-treatment", move |event| {
         // Set vibrancy
 		let json_raw = event.payload();
 		let json_value: Result<Value, _> = from_str(json_raw);

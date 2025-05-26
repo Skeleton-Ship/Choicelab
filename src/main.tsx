@@ -72,7 +72,9 @@ async function init() {
     // Load store
     const store = getStore();
     // Let Rust know that the project was opened
-    emit("project-ready", { label: getProjectWindowLabel(store.projectPath) });
+    emit("apply-window-treatment", {
+      label: getProjectWindowLabel(store.projectPath),
+    });
     // Load the default sequence
     store.currentSequenceId = store.project.sequences[0].id;
     setStore(store);

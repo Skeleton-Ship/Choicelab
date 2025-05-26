@@ -1,6 +1,6 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect } from "preact/hooks";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 const appWindow = getCurrentWebviewWindow();
@@ -9,6 +9,9 @@ import { setMenu } from "../menu/setMenu";
 function Launcher() {
   useEffect(() => {
     setMenu("launcher");
+    emit("apply-window-treatment", {
+      label: "launcher",
+    });
     listen("menu-request-quit", () => {
       appWindow.close();
     });
