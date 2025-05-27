@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1
+
+#### 2025-05-27
+
+- Fixed an issue that caused some text to not appear in preview.
+- Fixed an issue where toggling preview on a non-start cell wouldn't show the selected cell until selected again.
+
 ## 0.5.0
 
 #### 2025-05-27

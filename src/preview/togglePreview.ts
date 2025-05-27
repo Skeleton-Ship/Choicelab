@@ -1,4 +1,5 @@
 import { getStore, setStore } from "../data/dataStore";
+import { updatePreview } from "./updatePreview";
 
 export function togglePreview(update: Function) {
   const store = getStore();
@@ -12,4 +13,8 @@ export function togglePreview(update: Function) {
   }
   setStore(store);
   update(false);
+  // Update preview after toggling it, very hacky
+  setTimeout(() => {
+    updatePreview();
+  }, 50);
 }
