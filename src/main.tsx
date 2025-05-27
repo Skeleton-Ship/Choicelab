@@ -1,7 +1,7 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { emit } from "@tauri-apps/api/event";
+import { emit, once } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
@@ -11,6 +11,8 @@ import { setFocusedRegion } from "./utils/focusedRegion";
 import { Project, LoadError } from "./typings";
 import "./styles/_style.scss";
 import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
+import { createWebDir } from "./fs/createWebDir";
+
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
@@ -71,9 +73,10 @@ async function init() {
     createDataStore(projectData, projectPath);
     // Load store
     const store = getStore();
+    const label = getProjectWindowLabel(store.projectPath);
     // Let Rust know that the project was opened
     emit("apply-window-treatment", {
-      label: getProjectWindowLabel(store.projectPath),
+      label: label,
     });
     // Load the default sequence
     store.currentSequenceId = store.project.sequences[0].id;
@@ -82,6 +85,17 @@ async function init() {
     saveHistoryVersion(true);
     // Create editor
     elements = <MainEditor />;
+    // Create web folder
+    emit("create-directory", {
+      name: ".web",
+      path: projectPath,
+      callback: "web-dir-created",
+      overwrite: true,
+      label: label,
+    });
+    once("web-dir-created", () => {
+      createWebDir(projectPath, label);
+    });
   }
   const appDOM = (
     <div id="App" data-focused-region="">

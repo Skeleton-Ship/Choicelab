@@ -122,8 +122,14 @@ pub fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
         .to_string())
 }
 
-pub fn create_directory(directory_name: &str, path: &str) -> io::Result<()> {
+pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> io::Result<()> {
     let full_path = format!("{}/{}", path, directory_name);
+	let full_path = Path::new(&full_path);
+
+	if *overwrite && full_path.exists() {
+		fs::remove_dir_all(full_path)?;
+	}
+	
     // Create the directory
     fs::create_dir(&full_path)?;
 

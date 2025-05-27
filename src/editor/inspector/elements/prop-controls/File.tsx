@@ -1,6 +1,6 @@
 import { createRef } from "preact";
 import { useState, useEffect } from "preact/hooks";
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit, once } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
 import { getAction } from "../../../../data/getData";
@@ -84,7 +84,7 @@ export default function File(props: {
               label: getProjectWindowLabel(store.projectPath),
             };
             emit("create-asset", jsonData);
-            listen("asset-created", async () => {
+            once("asset-created", async () => {
               // Store file
               const store = getStore(); // get store again, because asset creation can cause the store to fall out-of-date
               const storedAction: Action | undefined = getAction(

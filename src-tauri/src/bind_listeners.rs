@@ -112,8 +112,9 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let name = json["name"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
+				let overwrite = json["overwrite"].as_bool().unwrap_or(false);
 				let window_label = json["label"].as_str().unwrap_or("N/A");
-                let _ = create_directory(name, path);
+                let _ = create_directory(name, path, &overwrite);
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {

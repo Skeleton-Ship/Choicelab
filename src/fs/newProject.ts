@@ -1,11 +1,8 @@
 import { save } from "@tauri-apps/plugin-dialog";
 import { sep } from "@tauri-apps/api/path";
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit, once } from "@tauri-apps/api/event";
 import createProjectFile from "../data/createProjectFile";
 import loadProject from "./loadProject";
-import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html?raw";
-import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
-import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 export default async function newProject(source: string) {
@@ -20,6 +17,7 @@ export default async function newProject(source: string) {
   const label =
     source === "launcher" ? "launcher" : getProjectWindowLabel(source);
   if (projectPath === null) {
+    console.error("Could not get project path from save.");
   } else {
     // Get project name
     const pathComponents = projectPath.split(sep());
@@ -29,14 +27,8 @@ export default async function newProject(source: string) {
     parentPathComponents.length = parentPathComponents.length - 1;
     const parentPath = parentPathComponents.join(sep());
     // Create project path
-    emit("create-directory", {
-      name: projectName,
-      path: parentPath,
-      callback: "project-dir-created",
-      label: label,
-    });
-    listen("project-dir-created", async () => {
-      console.log("Project dir created, doing the other stuff now", label);
+    once("project-dir-created", async () => {
+      console.log("Running callback");
       // Create sub directories
       emit("create-directory", {
         name: "assets",
@@ -57,37 +49,15 @@ export default async function newProject(source: string) {
         label: label,
       });
       // Load the project
-      listen("project-file-created", () => {
-        console.log(projectPath);
+      once("project-file-created", () => {
         loadProject(projectPath);
       });
-      // Create web folder
-      emit("create-directory", {
-        name: ".web",
-        path: projectPath,
-        callback: "web-dir-created",
-        label: label,
-      });
-      listen("web-dir-created", () => {
-        emit("save-text-file", {
-          name: "index.html",
-          contents: playerHTMLDefault,
-          path: projectPath + "/.web",
-          label: label,
-        });
-        emit("save-text-file", {
-          name: "choicelab.css",
-          contents: playerCSSDefault,
-          path: projectPath + "/.web",
-          label: label,
-        });
-        emit("save-text-file", {
-          name: "choicelab.js",
-          contents: playerJSDefault,
-          path: projectPath + "/.web",
-          label: label,
-        });
-      });
+    });
+    emit("create-directory", {
+      name: projectName,
+      path: parentPath,
+      callback: "project-dir-created",
+      label: label,
     });
   }
 }

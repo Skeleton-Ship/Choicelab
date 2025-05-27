@@ -4,9 +4,17 @@
 
 #### 2025-05-27
 
-- Fixed an issue where some visual elements (waveforms and icons) would not load.
+- The Choicelab player now supports timeable actions.
+- Previewing has been improved, so you can now:
+  - Preview from any cell, not just the start
+  - See the preview embedded in the main window
+  - Open the preview in your full browser, instead of a limited window
 - The Window menu now includes all of the standard macOS commands.
 - The title bar in a project window will now reflect when the project has been edited but not saved.
+- Web previews will now automatically update to the latest player version when a project is loaded.
+- Improved the appearance of the actions list in a cell.
+- Fixed an issue where some visual elements (waveforms and icons) would not load.
+- Fixed an issue where multi-line text fields would not refresh when invoking undo/redo.
 
 ## 0.4.0
 
