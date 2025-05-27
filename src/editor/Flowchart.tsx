@@ -37,7 +37,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         if (store.focus === true) {
           store.shiftDown = true;
           setStore(store);
-          props.update(false);
+          props.update(false, false);
         }
       } else if (
         getFocusedRegion() === "sequence" &&
@@ -56,7 +56,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         if (store.focus === true) {
           store.shiftDown = false;
           setStore(store);
-          props.update(false);
+          props.update(false, false);
         }
       }
     });
