@@ -23,10 +23,13 @@ export function makeResizable(el: HTMLDivElement) {
     if (resizer.classList.contains("horizontal")) {
       el.style.width = window.innerWidth - e.clientX + "px";
     } else {
-      //
-      // TODO: Factor in toolbar in calculation
-      //
-      el.style.height = e.clientY + "px";
+      let toolbarHeight = 0;
+      const toolbar = document.querySelector("#toolbar");
+      if (toolbar) {
+        const toolbarStyle = window.getComputedStyle(toolbar);
+        toolbarHeight = parseInt(toolbarStyle.getPropertyValue("height"));
+      }
+      el.style.height = e.clientY - toolbarHeight + "px";
     }
   }
 
