@@ -50,6 +50,7 @@ export default function TextField(props: {
         name={propElName}
         id={propElName}
         class="ui-text-area"
+        value={props.initialValue}
         onFocus={() => {
           setMenu();
         }}
