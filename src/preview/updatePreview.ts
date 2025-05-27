@@ -2,6 +2,7 @@ import { getStore } from "../data/dataStore";
 import { emit } from "@tauri-apps/api/event";
 import { Store } from "../typings";
 import { getCell } from "../data/getData";
+import { stringify } from "../utils/stringify";
 
 function getPreviewId(store: Store) {
   const selectedNodes = store.selectedNodes;
@@ -30,7 +31,7 @@ export async function updatePreview() {
   const projectPath = store.projectPath;
   emit("update-preview", {
     projectPath: projectPath,
-    projectData: JSON.stringify(store.project),
+    projectData: stringify(store.project),
   });
   // Get currently selected node
   const previewUrl = new URL(`http://localhost:4091?time=${Date.now()}`);
