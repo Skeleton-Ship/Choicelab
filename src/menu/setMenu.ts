@@ -245,7 +245,7 @@ export async function setMenu(windowState?: string) {
   const togglePreviewItem = await MenuItem.new({
     id: "toggle_preview",
     text:
-      store.viewSettings.previewVisible === true
+      store && store.viewSettings.previewVisible === true
         ? "Hide Preview"
         : "Show Preview",
     accelerator: "CmdOrCtrl+G",
@@ -255,6 +255,7 @@ export async function setMenu(windowState?: string) {
       togglePreview(update);
     },
   });
+  togglePreviewItem.setEnabled(windowState !== "launcher" ? true : false);
   const viewSubmenu = await Submenu.new({
     text: "View",
     items: [
