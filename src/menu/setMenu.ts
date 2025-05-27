@@ -6,6 +6,7 @@ import {
   Submenu,
 } from "@tauri-apps/api/menu";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { open } from "@tauri-apps/plugin-shell";
 import { handleUndoRedo } from "../data/history";
 import newProject from "../fs/newProject";
 import { getStore } from "../data/dataStore";
@@ -377,6 +378,15 @@ export async function setMenu(windowState?: string) {
   }
   deleteStem.setEnabled(deleteStemEnabled);
 
+  const previewInBrowser = await MenuItem.new({
+    id: "open_in_browser",
+    text: "Open Preview in Browser",
+    action: async () => {
+      await open("http://localhost:4091");
+    },
+  });
+  previewInBrowser.setEnabled(windowState !== "launcher" ? true : false);
+
   const projectSubmenu = await Submenu.new({
     text: "Project",
     items: [
@@ -387,6 +397,10 @@ export async function setMenu(windowState?: string) {
       }),
       setLink,
       disconnectLink,
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      previewInBrowser,
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
