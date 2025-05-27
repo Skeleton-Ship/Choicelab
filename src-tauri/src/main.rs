@@ -20,6 +20,7 @@ fn main() {
     // Run Tauri
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+		.plugin(tauri_plugin_shell::init())
         .setup(|app| {
             bind_listeners(app);
             Ok(())

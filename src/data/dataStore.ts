@@ -46,7 +46,7 @@ export default function createDataStore(
       stemHeight: 0,
       stemMarginLeft: 0,
       paneInView: "node-editor",
-      previewVisible: true,
+      previewVisible: false,
     },
   };
   store.viewSettings = setViewSettings(250, store);

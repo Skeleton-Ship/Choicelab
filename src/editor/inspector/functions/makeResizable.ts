@@ -29,7 +29,13 @@ export function makeResizable(el: HTMLDivElement) {
         const toolbarStyle = window.getComputedStyle(toolbar);
         toolbarHeight = parseInt(toolbarStyle.getPropertyValue("height"));
       }
-      el.style.height = e.clientY - toolbarHeight + "px";
+      let newHeight = e.clientY - toolbarHeight;
+      if (newHeight < 300) newHeight = 300;
+      if (newHeight > 700) newHeight = 700;
+      document.documentElement.style.setProperty(
+        "--preview-height",
+        newHeight + "px"
+      );
     }
   }
 
