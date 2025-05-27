@@ -24,6 +24,8 @@ import { handleDeleteNodes } from "../editor/flowchart/general/handleDelete";
 import { getStemParent } from "../data/getData";
 import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
+import { togglePreview } from "../preview/togglePreview";
+
 /* 
  * Create and update the app-wide menu.
  
@@ -240,11 +242,28 @@ export async function setMenu(windowState?: string) {
     store && store.viewSettings.paneInView === "variables" ? true : false
   );
 
+  const togglePreviewItem = await MenuItem.new({
+    id: "toggle_preview",
+    text:
+      store.viewSettings.previewVisible === true
+        ? "Hide Preview"
+        : "Show Preview",
+    accelerator: "CmdOrCtrl+G",
+    action: async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      togglePreview(update);
+    },
+  });
   const viewSubmenu = await Submenu.new({
     text: "View",
     items: [
       showNodeEditor,
       showVariables,
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      togglePreviewItem,
       await PredefinedMenuItem.new({
         item: "Separator",
       }),

@@ -117,6 +117,7 @@ export interface Store {
     stemHeight: number;
     stemMarginLeft: number;
     paneInView: string;
+    previewVisible: boolean;
   };
 }
 export interface Action {

@@ -4,7 +4,7 @@ import { makeResizable } from "./inspector/functions/makeResizable";
 import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
 import VariablesPane from "./inspector/VariablesPane";
-import { PreviewPane } from "./inspector/PreviewPane";
+import { PreviewPane } from "./inspector/elements/PreviewPane";
 
 export default function Inspector(props: { update: Function }) {
   // Make resizable
@@ -28,10 +28,17 @@ export default function Inspector(props: { update: Function }) {
       contents = <p class="placeholder">Multiple Nodes Selected</p>;
     } else {
       const node = store.selectedNodes[0];
+      const cellPane = <CellPane update={props.update} />;
+      const previewPane =
+        store.viewSettings.previewVisible === true ? <PreviewPane /> : null;
+      if (node.type === "start") {
+        contents = <>{previewPane}</>;
+      }
       if (node.type === "cell") {
         contents = (
           <>
-            <CellPane update={props.update} />
+            {previewPane}
+            {cellPane}
           </>
         );
       } else if (node.type === "branch") {
@@ -48,10 +55,7 @@ export default function Inspector(props: { update: Function }) {
   return (
     <div id="node-pane" class="pane right" ref={paneRef}>
       <div class="resizer horizontal"></div>
-      <div class="pane-contents">
-        <PreviewPane />
-        {contents}
-      </div>
+      <div class="pane-contents">{contents}</div>
     </div>
   );
 }

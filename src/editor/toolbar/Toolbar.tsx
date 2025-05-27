@@ -4,14 +4,11 @@ import iconBranch from "../../assets/icon-add-branch.svg";
 import iconCell from "../../assets/icon-add-cell.svg";
 import { getStore } from "../../data/dataStore";
 import showPane from "../inspector/functions/showPane";
-import { startPreview } from "../../preview/startPreview";
+import { togglePreview } from "../../preview/togglePreview";
 
 function Toolbar(props: { update: Function }) {
   function handleSelectPane(paneName: string) {
     showPane(paneName, props.update);
-  }
-  function launchPreview() {
-    startPreview();
   }
   const store = getStore();
   const paneInView = store.viewSettings.paneInView;
@@ -46,7 +43,7 @@ function Toolbar(props: { update: Function }) {
           </div>
         </button>
       </div>
-      <div class="toolbar-region spacer" style="width: 85%;"></div>
+      <div class="toolbar-region spacer"></div>
       <div class="toolbar-region button-group panes right">
         <button
           title="Node Editor"
@@ -74,8 +71,9 @@ function Toolbar(props: { update: Function }) {
       <div class="toolbar-region panes">
         <button
           title="Preview"
+          class={store.viewSettings.previewVisible === true ? "selected" : ""}
           onClick={() => {
-            launchPreview();
+            togglePreview(props.update);
           }}
         >
           <div class="icon preview">

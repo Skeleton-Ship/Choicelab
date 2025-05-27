@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 
-import { makeResizable } from "./functions/makeResizable";
+import { makeResizable } from "../functions/makeResizable";
 export function PreviewPane() {
   const previewRef = useRef(null);
   useEffect(() => {

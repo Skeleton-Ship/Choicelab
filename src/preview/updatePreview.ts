@@ -43,7 +43,6 @@ export async function updatePreview() {
     "#preview-frame"
   ) as HTMLIFrameElement | null;
   if (!iframe) {
-    console.error("Preview frame not found.");
     return;
   }
   iframe.src = previewUrl.toString();
