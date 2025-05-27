@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "yarn preDev",
-    "beforeBuildCommand": "yarn build",
+    "beforeBuildCommand": "yarn preBuild",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
@@ -28,7 +28,7 @@
         "scope": ["$APPCACHE/Projects/*/assets/*"],
         "enable": true
       },
-      "csp": "default-src 'self'; img-src 'self' data: asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src ipc: http://ipc.localhost 'self' asset://localhost; frame-src 'self';"
+      "csp": "default-src 'self'; img-src 'self' data: asset://localhost; media-src 'self' asset://localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src ipc: http://ipc.localhost 'self' asset://localhost; frame-src 'self' http://localhost:4090 http://localhost:4091 http://localhost:4092 http://localhost:4093 http://localhost:4094 http://localhost:4095 http://localhost:4096 http://localhost:4097 http://localhost:4098 http://localhost:4099;"
     },
     "windows": [
       {

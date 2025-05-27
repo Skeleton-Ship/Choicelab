@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "preDev": "vite",
+    "preBuild": "tsc && vite build",
     "dev": "tauri dev",
-    "build": "tsc && vite build",
+    "build": "tauri build",
     "preview": "vite preview",
     "install-all": "cd src-tauri && cargo clean && cargo build && cd ../ && yarn install",
     "version-major": "yarn version --major && node version.cjs",
