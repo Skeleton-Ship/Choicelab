@@ -422,7 +422,4 @@ export async function setMenu(windowState?: string) {
 
   menu.setAsAppMenu();
   emit("add-native-menus");
-  setTimeout(() => {
-    emit("add-native-menus");
-  }, 5);
 }
