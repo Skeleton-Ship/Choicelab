@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2
+
+#### xxx
+
+- Media files displayed in the sidebar now load much faster.
+- Fixed an issue that caused the Window and Help menus to constantly disappear and re-appear.
+- Fixed an issue that caused the preview window to not show the correct cell when navigating from a branch to a cell.
+
 ## 0.5.1
 
 #### 2025-05-27

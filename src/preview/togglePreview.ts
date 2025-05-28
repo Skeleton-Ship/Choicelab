@@ -15,6 +15,6 @@ export function togglePreview(update: Function) {
   update(false);
   // Update preview after toggling it, very hacky
   setTimeout(() => {
-    updatePreview(true);
+    updatePreview(false);
   }, 50);
 }

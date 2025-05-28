@@ -11,6 +11,7 @@ import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
 import AssetPreview from "../../functions/AssetPreview";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 import { getProjectWindowLabel } from "../../../../utils/getProjectWindowLabel";
+import { updatePreview } from "../../../../preview/updatePreview";
 
 export default function File(props: {
   type: string;
@@ -100,7 +101,10 @@ export default function File(props: {
                 propsObj[props.filePropName] = file.name;
                 setLoading(false);
                 setStore(store);
-                props.update();
+                props.update(true, false);
+                setTimeout(() => {
+                  updatePreview(true);
+                }, 500);
               }
             });
           })
