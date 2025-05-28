@@ -49,9 +49,11 @@ pub fn bind_listeners(app: &tauri::App) {
 		}
 	});
 	// Add native menus
+	let handle_menus = app_handle.clone();
 	app.listen("add-native-menus", move |_event| {
+	let _ = handle_menus.run_on_main_thread(|| {
 		add_native_menus();
-	});
+	});	});
 	// When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
     app.listen("apply-window-treatment", move |event| {
@@ -311,8 +313,9 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let project_path = json["projectPath"].as_str().unwrap_or("N/A");
                 let project_data = json["projectData"].as_str().unwrap_or("N/A");
+				let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    load_preview_files(project_path, project_data).unwrap();
+                    load_preview_files(project_path, project_data, &include_assets).unwrap();
                 }
             }
             Err(e) => {

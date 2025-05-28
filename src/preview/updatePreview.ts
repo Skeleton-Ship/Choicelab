@@ -26,13 +26,14 @@ function getPreviewId(store: Store) {
   return previewId;
 }
 
-export async function updatePreview() {
+export async function updatePreview(includeAssets: boolean) {
   const store = getStore();
   // Update project files in Tauri
   const projectPath = store.projectPath;
   emit("update-preview", {
     projectPath: projectPath,
     projectData: stringify(store.project),
+    includeAssets: includeAssets,
   });
   // Get currently selected node
   const previewUrl = new URL(`http://localhost:4091?time=${Date.now()}`);

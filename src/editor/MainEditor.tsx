@@ -31,7 +31,7 @@ const appWindow = getCurrentWebviewWindow();
 export default function MainEditor() {
   useEffect(() => {
     setMenu();
-    updatePreview();
+    updatePreview(true);
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Set up cut/copy listener
@@ -120,7 +120,7 @@ export default function MainEditor() {
     }
     // Update preview
     if (typeof updatePreview === "undefined" || updatePreview === true) {
-      handleUpdatePreview();
+      handleUpdatePreview(false);
     }
     // Update menu
     setMenu();

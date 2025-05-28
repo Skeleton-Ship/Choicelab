@@ -149,7 +149,7 @@ pub fn get_preview_path() -> Option<PathBuf> {
     }
 }
 
-pub fn load_preview_files(input_folder: &str, project_data: &str) -> std::io::Result<()> {
+pub fn load_preview_files(input_folder: &str, project_data: &str, include_assets: &bool) -> std::io::Result<()> {
     // Convert the input folder string to a PathBuf
     let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
 
@@ -190,6 +190,7 @@ pub fn load_preview_files(input_folder: &str, project_data: &str) -> std::io::Re
     }
 
     // Copy the `assets` folder to the `project` subfolder in the output folder
+	if *include_assets {
     let assets_folder_src = input_folder.join("assets");
     let assets_folder_dest = project_subfolder.join("assets");
     fs::create_dir_all(&assets_folder_dest)?;
@@ -204,6 +205,7 @@ pub fn load_preview_files(input_folder: &str, project_data: &str) -> std::io::Re
             fs::copy(entry.path(), dest_path)?;
         }
     }
+	}
 
     Ok(())
 }
