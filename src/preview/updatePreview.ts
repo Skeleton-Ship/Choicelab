@@ -41,11 +41,13 @@ export async function updatePreview() {
     previewUrl.searchParams.set("start", previewId);
   }
   // Update app frame
-  const iframe = document.querySelector(
-    "#preview-frame"
-  ) as HTMLIFrameElement | null;
-  if (!iframe) {
-    return;
-  }
-  iframe.src = previewUrl.toString();
+  setTimeout(() => {
+    const iframe = document.querySelector(
+      "#preview-frame"
+    ) as HTMLIFrameElement | null;
+    if (!iframe) {
+      return;
+    }
+    iframe.src = previewUrl.toString();
+  }, 50);
 }
