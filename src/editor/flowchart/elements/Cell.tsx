@@ -1,5 +1,5 @@
 import { getCell } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, getViewStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
 import Link from "./Link";
 import { Cell, Action } from "../../../typings";
@@ -20,18 +20,19 @@ export default function CellEl(props: {
   height: number;
   update: Function;
 }) {
-  const store = getStore();
+  const store = getStore(),
+    viewStore = getViewStore();
   const cell: Cell | undefined = getCell(props.id, store);
   const defaultEl = <div>No cell found</div>;
   if (typeof cell === "undefined") {
     return defaultEl;
   }
-  const selectedNodes = store.selectedNodes;
+  const selectedNodes = viewStore.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
   const targetModeClass =
-    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+    viewStore.targetMode.nodeId === props.id ? "target-mode-origin" : "";
   const cellClass = `cell node ${selectedClass} ${targetModeClass}`;
   const style = {
     top: props.top + "px",

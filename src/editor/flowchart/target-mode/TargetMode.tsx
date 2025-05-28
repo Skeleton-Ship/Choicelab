@@ -1,5 +1,10 @@
 import { useEffect } from "preact/hooks";
-import { getStore, setStore } from "../../../data/dataStore";
+import {
+  getStore,
+  getViewStore,
+  setStore,
+  setViewStore,
+} from "../../../data/dataStore";
 import { AnyNode } from "../../../typings";
 import { getNode, getBranchStem } from "../../../data/getData";
 import elementIsNode from "../../flowchart/general/elementIsNode";
@@ -7,8 +12,9 @@ import elementIsNode from "../../flowchart/general/elementIsNode";
 export default function TargetMode(props: { update: Function }) {
   // Functions
   function exitTargetMode(linkTo: string | false) {
-    const store = getStore();
-    const targetMode = store.targetMode;
+    const store = getStore(),
+      viewStore = getViewStore();
+    const targetMode = viewStore.targetMode;
     let updateHistory = false;
     if (linkTo !== false && linkTo !== "disconnect") {
       let originLink;
@@ -40,20 +46,21 @@ export default function TargetMode(props: { update: Function }) {
       }
       updateHistory = true;
     }
-    store.targetMode = {
+    viewStore.targetMode = {
       active: false,
       origin: "",
       nodeId: "",
     };
     setStore(store);
+    setViewStore(viewStore);
     props.update(updateHistory);
   }
   useEffect(() => {
     // Activate click event when target mode is active
     const sequenceEl = document.querySelector("#sequence-wrap")!;
     sequenceEl.addEventListener("click", (e) => {
-      const store = getStore();
-      if (store.targetMode.active === false) return;
+      const viewStore = getViewStore();
+      if (viewStore.targetMode.active === false) return;
       e.preventDefault();
       // Validate target
       const target = e.target;
@@ -62,7 +69,7 @@ export default function TargetMode(props: { update: Function }) {
       const destinationEl = elementIsNode(targetEl);
       if (destinationEl === false) return;
       // Get node ID
-      const targetMode = store.targetMode;
+      const targetMode = viewStore.targetMode;
       const destinationId = destinationEl.getAttribute("data-id");
       if (destinationId && destinationId !== targetMode.nodeId) {
         exitTargetMode(destinationId);
@@ -70,7 +77,7 @@ export default function TargetMode(props: { update: Function }) {
     });
   }, []);
   // Elements
-  const initialStore = getStore();
+  const initialStore = getViewStore();
   let targetModeEl = <></>;
   if (initialStore.targetMode.active === true) {
     targetModeEl = (

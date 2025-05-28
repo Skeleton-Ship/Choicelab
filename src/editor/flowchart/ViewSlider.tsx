@@ -1,19 +1,19 @@
-import { getStore, setStore } from "../../data/dataStore";
+import { getViewStore, setViewStore } from "../../data/dataStore";
 import setSequenceDimensions from "./general/setSequenceDimensions";
 import setViewSettings from "../../utils/setViewSettings";
 import IconSlider from "../../assets/icon-slider.svg";
 
 export default function ViewSlider(props: { update: Function }) {
-  const store = getStore();
-  const viewSettings = store.viewSettings;
+  const viewStore = getViewStore();
+  const viewSettings = viewStore.viewSettings;
   function setView(target: EventTarget | null) {
     if (target === null) return;
     const value = (target as HTMLInputElement).value;
-    const store = getStore();
+    const viewStore = getViewStore();
     const valueNum = parseInt(value);
-    store.viewSettings = setViewSettings(valueNum, store);
+    viewStore.viewSettings = setViewSettings(valueNum, viewStore);
     setSequenceDimensions();
-    setStore(store);
+    setViewStore(viewStore);
     props.update(false, false);
   }
   return (

@@ -1,13 +1,14 @@
 import { getNode, getActiveBranchStem } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import { AnyNode, Stem } from "../../../typings";
 
 /**
  * Handler for disconnecting links.
  */
 export default function handleDisconnectLinks(update: Function) {
-  const store = getStore();
-  const selectedNodes = store.selectedNodes;
+  const store = getStore(),
+    viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   selectedNodes.forEach((nodeRef: AnyNode) => {
     let linkObj;
     if (nodeRef.type === "cell" || nodeRef.type === "start") {

@@ -5,7 +5,14 @@ import { emit, once } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
-import { getStore, setStore, createDataStore } from "./data/dataStore";
+import {
+  getStore,
+  setStore,
+  createDataStore,
+  getViewStore,
+  setViewStore,
+  createViewStore,
+} from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
 import { Project, LoadError } from "./typings";
@@ -71,16 +78,19 @@ async function init() {
     appWindow.show();
     // Create data store
     createDataStore(projectData, projectPath);
+    createViewStore(projectPath);
     // Load store
-    const store = getStore();
+    const store = getStore(),
+      viewStore = getViewStore();
     const label = getProjectWindowLabel(store.projectPath);
     // Let Rust know that the project was opened
     emit("apply-window-treatment", {
       label: label,
     });
     // Load the default sequence
-    store.currentSequenceId = store.project.sequences[0].id;
+    viewStore.currentSequenceId = store.project.sequences[0].id;
     setStore(store);
+    setViewStore(viewStore);
     // Save initial history version
     saveHistoryVersion(true);
     // Create editor

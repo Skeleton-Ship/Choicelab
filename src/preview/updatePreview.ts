@@ -1,11 +1,12 @@
-import { getStore } from "../data/dataStore";
+import { getStore, getViewStore } from "../data/dataStore";
 import { emit } from "@tauri-apps/api/event";
 import { Store } from "../typings";
 import { getCell } from "../data/getData";
 import { stringify } from "../utils/stringify";
 
 function getPreviewId(store: Store) {
-  const selectedNodes = store.selectedNodes;
+  const viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   const thisNode = selectedNodes[0];
   let previewId: string | false = false;
   if (thisNode) {
@@ -13,7 +14,7 @@ function getPreviewId(store: Store) {
       previewId = thisNode.id;
     }
     if (thisNode.type === "branch") {
-      const selectedStem = store.selectedStem;
+      const selectedStem = viewStore.selectedStem;
       if (selectedStem) {
         const linkedCell = getCell(selectedStem.link.to, store);
         if (linkedCell) {

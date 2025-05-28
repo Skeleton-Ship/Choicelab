@@ -86,14 +86,9 @@ export interface ProjectHistory {
   location: number;
   versions: Array<string>;
 }
-export interface Store {
+export interface ViewStore {
   windowType: string;
-  project: Project;
   projectPath: string;
-  history: {
-    location: number;
-    versions: Array<string>;
-  };
   currentSequenceId: string;
   targetMode: {
     active: boolean;
@@ -118,6 +113,14 @@ export interface Store {
     stemMarginLeft: number;
     paneInView: string;
     previewVisible: boolean;
+  };
+}
+export interface Store {
+  project: Project;
+  projectPath: string;
+  history: {
+    location: number;
+    versions: Array<string>;
   };
 }
 export interface Action {
@@ -181,5 +184,6 @@ declare global {
       updateProject: (saveProject?: boolean, updatePreview?: boolean) => void;
     };
     __CHOICELAB_DATA__: Store;
+    __CHOICELAB_VIEW__: ViewStore;
   }
 }

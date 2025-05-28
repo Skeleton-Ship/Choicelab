@@ -5,7 +5,7 @@ import drawArrows from "./flowchart/linking/drawArrows";
 import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
 import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../typings";
-import { getStore, setStore } from "../data/dataStore";
+import { getViewStore, setViewStore } from "../data/dataStore";
 import inTextElement from "../utils/inTextElement";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import handleKeyNavigation from "./flowchart/general/handleKeyNavigation";
@@ -33,10 +33,10 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     // Set shift, arrow key events
     document.addEventListener("keydown", (e) => {
       if (e.key === "Shift" && inTextElement() === false) {
-        const store = getStore();
-        if (store.focus === true) {
-          store.shiftDown = true;
-          setStore(store);
+        const viewStore = getViewStore();
+        if (viewStore.focus === true) {
+          viewStore.shiftDown = true;
+          setViewStore(viewStore);
           props.update(false, false);
         }
       } else if (
@@ -52,10 +52,10 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     });
     document.addEventListener("keyup", (e) => {
       if (e.key === "Shift" && inTextElement() === false) {
-        const store = getStore();
-        if (store.focus === true) {
-          store.shiftDown = false;
-          setStore(store);
+        const viewStore = getViewStore();
+        if (viewStore.focus === true) {
+          viewStore.shiftDown = false;
+          setViewStore(viewStore);
           props.update(false, false);
         }
       }
@@ -108,8 +108,9 @@ export default function SequenceEl(props: { id: string; update: Function }) {
     }
     nodeEls.push(nodeEl);
   });
-  const store = getStore();
-  const targetModeClass = store.targetMode.active === true ? "target-mode" : "";
+  const viewStore = getViewStore();
+  const targetModeClass =
+    viewStore.targetMode.active === true ? "target-mode" : "";
   return (
     <div id="sequence-wrap" tabindex={0} class={targetModeClass}>
       <div id="sequence" key={props.id}>

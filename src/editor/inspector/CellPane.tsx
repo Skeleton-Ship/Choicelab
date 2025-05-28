@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { getFocusedRegion } from "../../utils/focusedRegion";
-import { getStore } from "../../data/dataStore";
+import { getStore, getViewStore } from "../../data/dataStore";
 import { getCell } from "../../data/getData";
 import { Cell, Action, ActionDef } from "../../typings";
 import addAction from "./functions/addAction";
@@ -54,9 +54,10 @@ function AvailableActions(props: { update: Function }) {
 }
 
 function ActionsEditor(props: { update: Function }) {
-  const store = getStore();
+  const store = getStore(),
+    viewStore = getViewStore();
   // 1 node is selected
-  const selectedNodeId = store.selectedNodes[0].id;
+  const selectedNodeId = viewStore.selectedNodes[0].id;
   const node: Cell | undefined = getCell(selectedNodeId, store);
   if (!node) return <></>;
   let editorEls: Array<preact.JSX.Element> = [];
@@ -89,8 +90,9 @@ function ActionsEditor(props: { update: Function }) {
 }
 
 function NodeSettings(props: { update: Function }) {
-  const store = getStore();
-  const selectedNodeId = store.selectedNodes[0].id;
+  const store = getStore(),
+    viewStore = getViewStore();
+  const selectedNodeId = viewStore.selectedNodes[0].id;
   const node: Cell | undefined = getCell(selectedNodeId, store);
   if (!node) return <></>;
   const activePlayerId = store.project.settings.activePlayer;

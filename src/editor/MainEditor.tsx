@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
 import { Sequence } from "../typings";
-import { getStore, setStore } from "../data/dataStore";
+import { getStore, getViewStore, setViewStore } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
 import { saveHistoryVersion } from "../data/history";
 import {
@@ -57,17 +57,17 @@ export default function MainEditor() {
     listen("tauri://focus", async () => {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
-      const store = getStore();
+      const store = getViewStore();
       store.focus = true;
       document.querySelector("#App")?.setAttribute("data-focus", "true");
       setMenu();
-      setStore(store);
+      setViewStore(store);
     });
     listen("tauri://blur", async () => {
-      const store = getStore();
+      const store = getViewStore();
       store.focus = false;
       document.querySelector("#App")?.setAttribute("data-focus", "false");
-      setStore(store);
+      setViewStore(store);
     });
     // Close listeners
     async function handleClose() {
@@ -81,7 +81,7 @@ export default function MainEditor() {
       appWindow.destroy();
     }
     async function handleCloseRequest() {
-      const store = getStore();
+      const store = getViewStore();
       if (store.saved) {
         handleClose();
         return;

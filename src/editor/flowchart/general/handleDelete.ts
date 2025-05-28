@@ -1,4 +1,9 @@
-import { getStore, setStore } from "../../../data/dataStore";
+import {
+  getStore,
+  getViewStore,
+  setStore,
+  setViewStore,
+} from "../../../data/dataStore";
 import {
   deleteNodeFromData,
   deleteStemFromData,
@@ -15,8 +20,9 @@ import { AnyNode, Stem } from "../../../typings";
  * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
 function handleDeleteNodes(update: Function) {
-  let store = getStore();
-  const selectedNodesUnsorted = store.selectedNodes;
+  let store = getStore(),
+    viewStore = getViewStore();
+  const selectedNodesUnsorted = viewStore.selectedNodes;
   // First, arrange order of selected nodes, in case there is one
   const selectedNodes = sortSelectedNodes(selectedNodesUnsorted);
   // If all that's selected is start, then exit
@@ -41,8 +47,9 @@ function handleDeleteNodes(update: Function) {
   // Run resolveConnections one more time without any attempt to re-connect
   store = resolveConnections(store, "");
   // Remove nodes from selection array
-  store.selectedNodes = [];
+  viewStore.selectedNodes = [];
   setStore(store);
+  setViewStore(viewStore);
   update();
 }
 

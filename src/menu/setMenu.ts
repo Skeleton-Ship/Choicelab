@@ -9,7 +9,7 @@ import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { open } from "@tauri-apps/plugin-shell";
 import { handleUndoRedo } from "../data/history";
 import newProject from "../fs/newProject";
-import { getStore } from "../data/dataStore";
+import { getStore, getViewStore } from "../data/dataStore";
 const appWindow = getCurrentWebviewWindow();
 import { canUndo, canRedo } from "../data/history";
 import { saveProject } from "../fs/saveProject";
@@ -39,7 +39,7 @@ import { togglePreview } from "../preview/togglePreview";
 export async function setMenu(windowState?: string) {
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
-  const store = getStore();
+  const viewStore = getViewStore();
 
   /*
    * App menu
@@ -118,7 +118,7 @@ export async function setMenu(windowState?: string) {
         accelerator: "CmdOrCtrl+Shift+N",
         action: () => {
           const source =
-            windowState === "launcher" ? "launcher" : store.projectPath;
+            windowState === "launcher" ? "launcher" : viewStore.projectPath;
           newProject(source);
         },
       }),
@@ -225,7 +225,9 @@ export async function setMenu(windowState?: string) {
   });
   showNodeEditor.setEnabled(windowState !== "launcher" ? true : false);
   showNodeEditor.setChecked(
-    store && store.viewSettings.paneInView === "node-editor" ? true : false
+    viewStore && viewStore.viewSettings.paneInView === "node-editor"
+      ? true
+      : false
   );
 
   const showVariables = await CheckMenuItem.new({
@@ -240,13 +242,15 @@ export async function setMenu(windowState?: string) {
   });
   showVariables.setEnabled(windowState !== "launcher" ? true : false);
   showVariables.setChecked(
-    store && store.viewSettings.paneInView === "variables" ? true : false
+    viewStore && viewStore.viewSettings.paneInView === "variables"
+      ? true
+      : false
   );
 
   const togglePreviewItem = await MenuItem.new({
     id: "toggle_preview",
     text:
-      store && store.viewSettings.previewVisible === true
+      viewStore && viewStore.viewSettings.previewVisible === true
         ? "Hide Preview"
         : "Show Preview",
     accelerator: "CmdOrCtrl+G",
@@ -325,7 +329,7 @@ export async function setMenu(windowState?: string) {
     },
   });
   let linkItemsEnabled = false;
-  if (windowState !== "launcher" && store.selectedNodes.length > 0) {
+  if (windowState !== "launcher" && viewStore.selectedNodes.length > 0) {
     linkItemsEnabled = true;
   }
   setLink.setEnabled(linkItemsEnabled);
@@ -342,8 +346,8 @@ export async function setMenu(windowState?: string) {
     },
   });
   let deleteEnabled = false;
-  if (windowState !== "launcher" && store.selectedNodes.length > 0) {
-    if (store && store.selectedNodes[0].type !== "start") {
+  if (windowState !== "launcher" && viewStore.selectedNodes.length > 0) {
+    if (viewStore && viewStore.selectedNodes[0].type !== "start") {
       deleteEnabled = true;
     }
   }
@@ -357,7 +361,7 @@ export async function setMenu(windowState?: string) {
       const focused = await appWindow.isFocused();
       if (focused === false) return;
       const store = getStore();
-      const selectedStem = store.selectedStem;
+      const selectedStem = viewStore.selectedStem;
       if (selectedStem !== false) {
         const parentBranch: Branch | undefined = getStemParent(
           selectedStem.id,
@@ -370,8 +374,8 @@ export async function setMenu(windowState?: string) {
     },
   });
   let deleteStemEnabled = false;
-  if (store) {
-    const selectedStem = store.selectedStem;
+  if (viewStore) {
+    const selectedStem = viewStore.selectedStem;
     if (selectedStem !== false && selectedStem.type !== "noMatch") {
       deleteStemEnabled = true;
     }

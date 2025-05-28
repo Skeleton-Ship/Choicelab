@@ -12,6 +12,7 @@ import {
   ActionDefs,
   Variable,
 } from "../typings";
+import { getViewStore } from "./dataStore";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
@@ -105,7 +106,8 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
     );
     return;
   }
-  const selectedStem = data.selectedStem;
+  const viewStore = getViewStore();
+  const selectedStem = viewStore.selectedStem;
   // First, find the no-match branch
   branch.stems.forEach((stem: Stem) => {
     if (stem.type === "noMatch") {
@@ -193,7 +195,8 @@ function getStemRule(
 }
 
 function getCurrentSequence(data: Store): Sequence | undefined {
-  const currentSequenceId: string = data.currentSequenceId;
+  const viewStore = getViewStore();
+  const currentSequenceId: string = viewStore.currentSequenceId;
   return getSequence(currentSequenceId, data);
 }
 

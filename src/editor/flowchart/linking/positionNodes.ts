@@ -1,5 +1,5 @@
 import { getSequence, getNode, getSequenceStart } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, getViewStore } from "../../../data/dataStore";
 import { AnyNode, Store, Sequence } from "../../../typings";
 
 /**
@@ -78,7 +78,7 @@ function positionNode(
       top: -1,
     };
     nodeCoordinates = getNodeCoordinates(x, y, node.id, sequenceId, store);
-    const viewSettings = store.viewSettings;
+    const viewSettings = getViewStore().viewSettings;
     // Set size of node
     if (node.type === "cell" || node.type === "start") {
       node.position.width = viewSettings.cellWidth;
@@ -146,7 +146,8 @@ function positionNode(
  * @param {string} sequenceId - The ID of the sequence containing nodes to arrange.
  */
 export default function positionNodes(sequenceId: string) {
-  let store = getStore();
+  let store = getStore(),
+    viewStore = getViewStore();
   const sequence: Sequence | undefined = getSequence(sequenceId, store);
   if (!sequence) {
     console.error("No sequence found; returning store as-is.");
@@ -162,7 +163,7 @@ export default function positionNodes(sequenceId: string) {
     return store;
   }
   store = positionNode(0, 0, startingNode.id, sequenceId, store);
-  const viewSettings = store.viewSettings;
+  const viewSettings = viewStore.viewSettings;
   // Finally, position abandoned nodes up top along the X axis
   let abandonIndex = 0;
   sequence.nodes.forEach((node: AnyNode) => {

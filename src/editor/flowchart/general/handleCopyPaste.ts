@@ -1,4 +1,4 @@
-import { getStore, setStore } from "../../../data/dataStore";
+import { getViewStore, setViewStore } from "../../../data/dataStore";
 import isObject from "../../../utils/isObject";
 import { v4 as uuidv4 } from "uuid";
 import { stringify } from "../../../utils/stringify";
@@ -81,12 +81,12 @@ function cloneObjectWithExclusion(obj: any, excludedProperty: string = "") {
  * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
  */
 function handleCutCopy(action: string, update: Function) {
-  const store = getStore();
-  const inTextElement = store.inTextElement;
+  const viewStore = getViewStore();
+  const inTextElement = viewStore.inTextElement;
   if (inTextElement === true) return;
   // Create the string sent to the clipboard, then write it
   const selectedNodes: Array<AnyNode> = [];
-  store.selectedNodes.forEach((node: AnyNode) => {
+  viewStore.selectedNodes.forEach((node: AnyNode) => {
     if (node.type === "start") return;
     selectedNodes.push(node);
   });
@@ -130,9 +130,9 @@ function handlePaste(update: Function): void {
       insertNewNode(node, update);
     });
     // Finally, set selection to processed nodes
-    const store = getStore();
-    store.selectedNodes = processedNodes;
-    setStore(store);
+    const viewStore = getViewStore();
+    viewStore.selectedNodes = processedNodes;
+    setViewStore(viewStore);
     update(false);
   });
 }

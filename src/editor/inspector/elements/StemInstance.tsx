@@ -1,6 +1,6 @@
 import { Stem, Branch, Rule, Store } from "../../../typings";
 import { getBranchStem, getVariables } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import addRule from "../functions/addRule";
 import showPane from "../functions/showPane";
 import RuleInstance from "./RuleInstance";
@@ -40,9 +40,9 @@ export default function StemInstance(props: {
    * Elements
    */
   const stemLabel = `Stem ${props.indexLabel}`;
-  const store = getStore();
+  const viewStore = getViewStore();
   let selectedClass = "";
-  const stemInStore = store.selectedStem;
+  const stemInStore = viewStore.selectedStem;
   if (stemInStore !== false) {
     if (stemInStore.id === props.stem.id) {
       selectedClass = "selected";

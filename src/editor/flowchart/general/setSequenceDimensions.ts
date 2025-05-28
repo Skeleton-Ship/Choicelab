@@ -1,4 +1,4 @@
-import { getStore } from "../../../data/dataStore";
+import { getViewStore } from "../../../data/dataStore";
 export default function setSequenceDimensions() {
   const sequenceEl = document.querySelector("#sequence") as HTMLElement;
   const sequenceWrap = document.querySelector("#sequence-wrap") as HTMLElement;
@@ -25,7 +25,7 @@ export default function setSequenceDimensions() {
   sequenceEl.style.width = width + 50 + "px";
   sequenceEl.style.height = height + 50 + "px";
   // Set zoom class
-  const zoomFactor = getStore().viewSettings.cellWidth;
+  const zoomFactor = getViewStore().viewSettings.cellWidth;
   const viewPrefixes = ["xs", "sm", "md", "lg", "xl"];
   let viewClass = "";
   if (zoomFactor < 120) {

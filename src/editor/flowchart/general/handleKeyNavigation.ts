@@ -1,4 +1,4 @@
-import { getStore } from "../../../data/dataStore";
+import { getStore, getViewStore } from "../../../data/dataStore";
 import { AnyNode, Stem, Store } from "../../../typings";
 import {
   getSequenceStart,
@@ -64,13 +64,14 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
     );
     return;
   }
-  const store = getStore();
-  const selectedNodes = store.selectedNodes;
+  const store = getStore(),
+    viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   let currentNode: AnyNode | undefined;
   if (selectedNodes.length > 0) {
     currentNode = selectedNodes[selectedNodes.length - 1];
   } else {
-    currentNode = getSequenceStart(store.currentSequenceId, store);
+    currentNode = getSequenceStart(viewStore.currentSequenceId, store);
   }
   if (!currentNode) {
     console.error("No starting node found.");
@@ -112,8 +113,8 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
     }
   } else if (direction === "down") {
     if (currentNode.type === "branch") {
-      if (store.selectedStem !== false) {
-        const destination = getNode(store.selectedStem.link.to, store);
+      if (viewStore.selectedStem !== false) {
+        const destination = getNode(viewStore.selectedStem.link.to, store);
         if (destination) {
           handleSelectNode(destination, update);
         }
@@ -132,7 +133,7 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
     // First, we need to figure out if we should move stems (when a branch is selected), or whole nodes (when a cell is selected)
     if (currentNode.type === "branch") {
       const stems = currentNode.stems!;
-      const selectedStem = store.selectedStem as Stem;
+      const selectedStem = viewStore.selectedStem as Stem;
       for (var i = 0; i < stems.length; i++) {
         var stem = stems[i];
         var destinationStem;

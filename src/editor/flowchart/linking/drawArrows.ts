@@ -1,4 +1,4 @@
-import { getStore } from "../../../data/dataStore";
+import { getViewStore } from "../../../data/dataStore";
 import getArrow from "./getArrow";
 import { AnyNode } from "../../../typings";
 
@@ -79,8 +79,8 @@ export default function drawArrows(nodesEl: HTMLElement, svgEl: HTMLElement) {
   createOrModifyArrows(nodesEl, svgEl);
   // Highlight arrows for selected elements
   const arrows = document.querySelectorAll(`#arrows g`);
-  const store = getStore();
-  const selectedNodes = store.selectedNodes;
+  const viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   arrows.forEach((arrow) => {
     arrow.classList.remove("highlight");
     const dataFrom = arrow.getAttribute("data-from");

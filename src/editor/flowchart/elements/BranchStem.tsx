@@ -1,6 +1,6 @@
 import Link from "./Link";
 import { getBranch, getBranchStem } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, getViewStore } from "../../../data/dataStore";
 import { Branch, Stem } from "../../../typings";
 import getStemRulesLabel from "../general/getStemRulesLabel";
 import handleSelectNode from "../selecting/handleSelectNode";
@@ -26,8 +26,9 @@ export default function BranchStemEl(props: {
     if (!branch || !branchStem) return;
     handleSelectNode(branch, props.update, branchStem);
   }
-  const store = getStore();
-  const selectedStem = store.selectedStem;
+  const store = getStore(),
+    viewStore = getViewStore();
+  const selectedStem = viewStore.selectedStem;
   let selectedClass = "";
   if (selectedStem !== false) {
     if (selectedStem.id === props.id) {
@@ -78,7 +79,7 @@ export default function BranchStemEl(props: {
     );
   }
   // Styles
-  const viewSettings = store.viewSettings;
+  const viewSettings = viewStore.viewSettings;
   const style = {
     left: viewSettings.stemMarginLeft * props.index + "px",
     top: viewSettings.stemHeight * 1.5 + "px",

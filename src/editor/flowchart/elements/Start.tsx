@@ -1,5 +1,5 @@
 import { getNode } from "../../../data/getData";
-import { getStore } from "../../../data/dataStore";
+import { getStore, getViewStore } from "../../../data/dataStore";
 import Link from "./Link";
 import { AnyNode } from "../../../typings";
 import isNodeSelected from "../selecting/isNodeSelected";
@@ -19,7 +19,8 @@ export default function StartEl(props: {
   height: number;
   update: Function;
 }) {
-  const store = getStore();
+  const store = getStore(),
+    viewStore = getViewStore();
   const cell: AnyNode | undefined = getNode(props.id, store);
   const defaultEl = <div>No start found</div>;
   if (typeof cell === "undefined") {
@@ -28,12 +29,12 @@ export default function StartEl(props: {
   if (typeof cell.link === "undefined") {
     return defaultEl;
   }
-  const selectedNodes = store.selectedNodes;
+  const selectedNodes = viewStore.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
   const targetModeClass =
-    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+    viewStore.targetMode.nodeId === props.id ? "target-mode-origin" : "";
   const cellClass = `start node ${selectedClass} ${targetModeClass}`;
   const style = {
     top: props.top + "px",

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "preact/hooks";
-import { getStore } from "../data/dataStore";
+import { getViewStore } from "../data/dataStore";
 import { makeResizable } from "./inspector/functions/makeResizable";
 import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
@@ -16,21 +16,21 @@ export default function Inspector(props: { update: Function }) {
 
   // Contents
   let contents = <></>;
-  const store = getStore();
+  const viewStore = getViewStore();
   // First, see what view we're in
-  const paneInView = store.viewSettings.paneInView;
+  const paneInView = viewStore.viewSettings.paneInView;
   if (paneInView === "node-editor") {
-    if (store.selectedNodes.length <= 0) {
+    if (viewStore.selectedNodes.length <= 0) {
       // If no node is selected
       contents = <p class="placeholder">No Node Selected</p>;
-    } else if (store.selectedNodes.length > 1) {
+    } else if (viewStore.selectedNodes.length > 1) {
       // If multiple nodes are selected
       contents = <p class="placeholder">Multiple Nodes Selected</p>;
     } else {
-      const node = store.selectedNodes[0];
+      const node = viewStore.selectedNodes[0];
       const cellPane = <CellPane update={props.update} />;
       const previewPane =
-        store.viewSettings.previewVisible === true ? <PreviewPane /> : null;
+        viewStore.viewSettings.previewVisible === true ? <PreviewPane /> : null;
       if (node.type === "start") {
         contents = <>{previewPane}</>;
       }

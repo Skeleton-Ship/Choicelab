@@ -1,5 +1,5 @@
 import { getBranch } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import { createBranchStem } from "../../../data/createNode";
 import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
@@ -21,7 +21,8 @@ export default function BranchEl(props: {
   height: number;
   update: Function;
 }) {
-  const store = getStore();
+  const store = getStore(),
+    viewStore = getViewStore();
   const branch: Branch | undefined = getBranch(props.id, store);
   if (!branch) {
     console.error("Branch not found.");
@@ -62,12 +63,12 @@ export default function BranchEl(props: {
     setStore(store);
     props.update();
   }
-  const selectedNodes = store.selectedNodes;
+  const selectedNodes = viewStore.selectedNodes;
   const selectedClass = isNodeSelected(props.id, selectedNodes)
     ? "selected"
     : "";
   const targetModeClass =
-    store.targetMode.nodeId === props.id ? "target-mode-origin" : "";
+    viewStore.targetMode.nodeId === props.id ? "target-mode-origin" : "";
   const branchClass = `branch node ${selectedClass} ${targetModeClass}`;
   // Iterate through links
   const stems: Array<Stem> = branch.stems;

@@ -4,7 +4,7 @@ import { emit, once } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
 import { getAction } from "../../../../data/getData";
-import { getStore, setStore } from "../../../../data/dataStore";
+import { getStore, getViewStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import readFileUpload from "../../functions/readFileUpload";
 import getAssetPreviewURL from "../../functions/getAssetPreviewURL";
@@ -74,14 +74,14 @@ export default function File(props: {
         // If it is, upload the file
         readFileUpload(file, props.type)
           .then(async (contents) => {
-            const store = getStore();
-            const assetsPath = await resolve(store.projectPath, "./assets");
+            const viewStore = getViewStore();
+            const assetsPath = await resolve(viewStore.projectPath, "./assets");
             const jsonData = {
               fileName: file.name,
               contents: contents,
               fileType: props.type,
               assetsPath: assetsPath,
-              label: getProjectWindowLabel(store.projectPath),
+              label: getProjectWindowLabel(viewStore.projectPath),
             };
             emit("create-asset", jsonData);
             once("asset-created", async () => {

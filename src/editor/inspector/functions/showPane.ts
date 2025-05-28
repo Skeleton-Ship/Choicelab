@@ -1,8 +1,8 @@
-import { getStore, setStore } from "../../../data/dataStore";
+import { getViewStore, setViewStore } from "../../../data/dataStore";
 
 export default function showPane(paneName: string, update: Function) {
-  const store = getStore();
-  store.viewSettings.paneInView = paneName;
-  setStore(store);
+  const viewStore = getViewStore();
+  viewStore.viewSettings.paneInView = paneName;
+  setViewStore(viewStore);
   update(false);
 }

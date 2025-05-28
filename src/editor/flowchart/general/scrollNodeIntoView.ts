@@ -1,8 +1,8 @@
-import { getStore } from "../../../data/dataStore";
+import { getViewStore } from "../../../data/dataStore";
 
 export default function scrollNodeIntoView() {
-  const store = getStore();
-  const selectedNodes = store.selectedNodes;
+  const viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   if (selectedNodes.length === 0) return;
   const lastSelected = selectedNodes[selectedNodes.length - 1];
   let el: Element | null = null;
@@ -10,13 +10,13 @@ export default function scrollNodeIntoView() {
     `#sequence .nodes .node[data-id="${lastSelected.id}"]`
   );
   if (!nodeEl) return;
-  if (store.selectedStem !== false) {
-    el = nodeEl.querySelector(`.stem[data-id="${store.selectedStem.id}"]`);
+  if (viewStore.selectedStem !== false) {
+    el = nodeEl.querySelector(`.stem[data-id="${viewStore.selectedStem.id}"]`);
   } else {
     el = nodeEl;
   }
   if (!el) return;
-  if (store.targetMode.active === true) return;
+  if (viewStore.targetMode.active === true) return;
   // First, get sequence dimensions — we need it to tell if the element exceeds that
   const sequenceWrap = document.querySelector("#sequence-wrap")!;
   const wrapRect = sequenceWrap.getBoundingClientRect();

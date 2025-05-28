@@ -2,7 +2,7 @@ import { createCell, createBranch } from "../../data/createNode";
 import insertNewNode from "../flowchart/general/insertNewNode";
 import iconBranch from "../../assets/icon-add-branch.svg";
 import iconCell from "../../assets/icon-add-cell.svg";
-import { getStore } from "../../data/dataStore";
+import { getViewStore } from "../../data/dataStore";
 import showPane from "../inspector/functions/showPane";
 import { togglePreview } from "../../preview/togglePreview";
 
@@ -10,8 +10,8 @@ function Toolbar(props: { update: Function }) {
   function handleSelectPane(paneName: string) {
     showPane(paneName, props.update);
   }
-  const store = getStore();
-  const paneInView = store.viewSettings.paneInView;
+  const viewStore = getViewStore();
+  const paneInView = viewStore.viewSettings.paneInView;
   const nodeEditorSelectedClass =
     paneInView === "node-editor" ? "selected" : "";
   const variablesSelectedClass = paneInView === "variables" ? "selected" : "";
@@ -71,7 +71,9 @@ function Toolbar(props: { update: Function }) {
       <div class="toolbar-region panes">
         <button
           title="Preview"
-          class={store.viewSettings.previewVisible === true ? "selected" : ""}
+          class={
+            viewStore.viewSettings.previewVisible === true ? "selected" : ""
+          }
           onClick={() => {
             togglePreview(props.update);
           }}

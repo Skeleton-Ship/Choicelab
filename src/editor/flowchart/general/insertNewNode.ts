@@ -5,7 +5,12 @@ import {
   getActiveBranchStem,
   getStemParent,
 } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import {
+  getStore,
+  getViewStore,
+  setStore,
+  setViewStore,
+} from "../../../data/dataStore";
 import identifyOriginLink from "../linking/identifyOriginLink";
 import { AnyNode } from "../../../typings";
 
@@ -17,8 +22,9 @@ import { AnyNode } from "../../../typings";
  */
 export default function insertNewNode(newNode: AnyNode, update: Function) {
   // Add the new node to the sequence
-  const store = getStore();
-  const thisSequence = getSequence(store.currentSequenceId, store);
+  const store = getStore(),
+    viewStore = getViewStore();
+  const thisSequence = getSequence(viewStore.currentSequenceId, store);
   if (typeof thisSequence === "undefined") {
     console.error("No sequence found to insert node to.");
     return;
@@ -67,8 +73,9 @@ export default function insertNewNode(newNode: AnyNode, update: Function) {
     linkInData.link.to = newNode.id;
   }
   // Update selection to new node
-  store.selectedNodes = [newNode];
+  viewStore.selectedNodes = [newNode];
   // Update data
   setStore(store);
+  setViewStore(viewStore);
   update();
 }

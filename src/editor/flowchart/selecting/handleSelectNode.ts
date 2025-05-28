@@ -1,4 +1,4 @@
-import { getStore, setStore } from "../../../data/dataStore";
+import { getViewStore, setViewStore } from "../../../data/dataStore";
 import { AnyNode, Cell, Branch, StartNode, Stem } from "../../../typings";
 import { setMenu } from "../../../menu/setMenu";
 
@@ -13,25 +13,26 @@ export default function handleSelectNode(
   update: Function,
   stem?: Stem
 ) {
-  const store = getStore();
+  const viewStore = getViewStore();
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
-  if (typeof node === "undefined" || store.targetMode.active === true) return;
-  store.selectedNodes = [node];
+  if (typeof node === "undefined" || viewStore.targetMode.active === true)
+    return;
+  viewStore.selectedNodes = [node];
   // For branches, select a stem
   if (node.type === "branch") {
     if (!stem) {
       // @ts-ignore
       const firstStem = node.stems[0];
       if (!firstStem) return;
-      store.selectedStem = firstStem;
+      viewStore.selectedStem = firstStem;
     } else {
-      store.selectedStem = stem;
+      viewStore.selectedStem = stem;
     }
   } else {
-    store.selectedStem = false;
+    viewStore.selectedStem = false;
   }
   // Update data
-  setStore(store);
+  setViewStore(viewStore);
   setMenu();
   update(false);
 }

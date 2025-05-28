@@ -4,7 +4,7 @@ import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
-import { getStore, setStore } from "../data/dataStore";
+import { getStore, getViewStore, setStore } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
 import { getNode } from "./getData";
 import { AnyNode } from "../typings";
@@ -73,6 +73,7 @@ export function canRedo() {
 export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   // Get project history
   const store = getStore();
+  const viewStore = getViewStore();
   const projectHistory = store.history;
   const stepIndex =
     undoOrRedo === "undo"
@@ -118,13 +119,13 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
       };
       // See if selected nodes need to be updated
       const newSelectedNodes: Array<AnyNode> = [];
-      store.selectedNodes.forEach((node) => {
+      viewStore.selectedNodes.forEach((node) => {
         const existingNode: AnyNode | undefined = getNode(node.id, store);
         if (existingNode) {
           newSelectedNodes.push(node);
         }
       });
-      store.selectedNodes = newSelectedNodes;
+      viewStore.selectedNodes = newSelectedNodes;
       // Handle final calls
       markUnsaved();
       setStore(store);

@@ -1,4 +1,4 @@
-import { Store, Project } from "../typings";
+import { Store, ViewStore, Project } from "../typings";
 import setViewSettings from "../utils/setViewSettings";
 import structuredClone from "@ungap/structured-clone";
 
@@ -11,18 +11,19 @@ function setStore(newStore: Store) {
   window.__CHOICELAB_DATA__ = structuredClone(newStore);
 }
 
-export default function createDataStore(
-  projectData: Project,
-  projectPath: string
-) {
-  const store: Store = {
+function getViewStore() {
+  const store: ViewStore = window.__CHOICELAB_VIEW__;
+  return structuredClone(store);
+}
+
+function setViewStore(newStore: ViewStore) {
+  window.__CHOICELAB_VIEW__ = structuredClone(newStore);
+}
+
+function createViewStore(projectPath: string) {
+  const store: ViewStore = {
     windowType: "project",
-    project: projectData,
     projectPath: projectPath,
-    history: {
-      location: -1,
-      versions: [],
-    },
     currentSequenceId: "",
     targetMode: {
       active: false,
@@ -50,7 +51,29 @@ export default function createDataStore(
     },
   };
   store.viewSettings = setViewSettings(250, store);
+  window.__CHOICELAB_VIEW__ = store;
+}
+
+export default function createDataStore(
+  projectData: Project,
+  projectPath: string
+) {
+  const store: Store = {
+    project: projectData,
+    projectPath: projectPath,
+    history: {
+      location: -1,
+      versions: [],
+    },
+  };
   window.__CHOICELAB_DATA__ = store;
 }
 
-export { getStore, setStore, createDataStore };
+export {
+  getStore,
+  setStore,
+  getViewStore,
+  setViewStore,
+  createDataStore,
+  createViewStore,
+};

@@ -1,12 +1,13 @@
-import { getStore } from "../../data/dataStore";
+import { getStore, getViewStore } from "../../data/dataStore";
 import { getBranch } from "../../data/getData";
 import { Branch, Stem } from "../../typings";
 import StemInstance from "./elements/StemInstance";
 
 export default function BranchPane(props: { update: Function }) {
-  const store = getStore();
+  const store = getStore(),
+    viewStore = getViewStore();
   // 1 node is selected
-  const selectedNodeId = store.selectedNodes[0].id;
+  const selectedNodeId = viewStore.selectedNodes[0].id;
   const node: Branch | undefined = getBranch(selectedNodeId, store);
   if (!node) return <></>;
   let editorEls: Array<preact.JSX.Element> = [];

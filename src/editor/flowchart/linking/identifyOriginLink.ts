@@ -1,3 +1,4 @@
+import { getViewStore } from "../../../data/dataStore";
 import {
   getNode,
   getActiveBranchStem,
@@ -33,7 +34,8 @@ function getHighestNodeInView() {
  */
 export default function identifyOriginLink(data: Store) {
   // First, see if we have a node selected
-  const selectedNodes = data.selectedNodes;
+  const viewStore = getViewStore();
+  const selectedNodes = viewStore.selectedNodes;
   let foundOrigin = null;
   let foundOriginType;
   // If multiple nodes are selected, use the last one selected

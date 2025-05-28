@@ -1,6 +1,6 @@
-import { Store } from "../typings";
+import { ViewStore } from "../typings";
 
-export default function setViewSettings(valueNum: number, store: Store) {
+export default function setViewSettings(valueNum: number, store: ViewStore) {
   const viewSettings = store.viewSettings;
   // Set width
   viewSettings.cellWidth = valueNum;
