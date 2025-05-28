@@ -146,6 +146,7 @@ export default function handleKeyNavigation(keyCode: string, update: Function) {
         }
         if (destinationStem) {
           handleSelectNode(currentNode, update, destinationStem);
+          break;
         }
       }
     } else {
