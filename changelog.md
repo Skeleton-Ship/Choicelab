@@ -2,7 +2,7 @@
 
 ## 0.5.2
 
-#### xxx
+#### 2025-05-28
 
 - Media files displayed in the sidebar now load much faster.
 - Fixed an issue that caused the Window and Help menus to constantly disappear and re-appear.
