@@ -12,10 +12,15 @@ use tauri::WebviewWindow;
 use crate::native_bridge_macos::{add_native_menus,set_document_edited};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
-// the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
+}
+
+#[derive(Clone, Serialize)]
+struct HistoryPayload {
+	message: String,
+	version_id: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -268,12 +273,13 @@ pub fn bind_listeners(app: &tauri::App) {
         match json_value {
             Ok(json) => {
                 let version_path = json["versionPath"].as_str().unwrap_or("N/A");
+				let version_id = json["versionId"].as_str().unwrap_or("N/A");
 				let window_label = json["label"].as_str().unwrap_or("N/A");
                 match read_text_file(version_path) {
                     Ok(contents) => {
                         let main_window = handle_history.get_webview_window(window_label).unwrap();
                         main_window
-                            .emit("receive-history-version", Payload { message: contents })
+                            .emit("receive-history-version", HistoryPayload { message: contents, version_id: version_id.to_string() })
                             .unwrap();
                     }
                     Err(e) => {

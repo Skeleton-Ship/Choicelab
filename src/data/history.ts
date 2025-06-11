@@ -1,14 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 import { emit, once } from "@tauri-apps/api/event";
 import { resolve, appCacheDir } from "@tauri-apps/api/path";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
-import { getStore, getViewStore, setStore } from "../data/dataStore";
+import {
+  getStore,
+  getViewStore,
+  setStore,
+  setViewStore,
+} from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
 import { getNode } from "./getData";
 import { AnyNode } from "../typings";
-const appWindow = getCurrentWebviewWindow();
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 /**
@@ -102,15 +105,20 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   );
   emit("request-history-version", {
     versionPath: versionPath,
+    versionId: stepVersion,
     label: getProjectWindowLabel(store.projectPath),
   });
   // Listen to receive it
   once(
     "receive-history-version",
-    async (event: { payload: { message: string } }) => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    (event: { payload: { version_id: string; message: string } }) => {
+      // No longer needed since window is now identified in Rust
+      // const focused = await appWindow.isFocused();
+      // if (focused === false) return;
       const payload = event.payload;
+      if (payload.version_id !== stepVersion) {
+        return;
+      }
       const historyVersion = JSON.parse(payload.message);
       store.project = historyVersion;
       store.history = {
@@ -129,6 +137,7 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
       // Handle final calls
       markUnsaved();
       setStore(store);
+      setViewStore(viewStore);
       update(false);
     }
   );

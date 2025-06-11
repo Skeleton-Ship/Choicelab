@@ -1,4 +1,8 @@
-import { getViewStore, setViewStore } from "../../../data/dataStore";
+import {
+  getViewStore,
+  setViewStore,
+  updateView,
+} from "../../../data/dataStore";
 import { AnyNode, Cell, Branch, StartNode, Stem } from "../../../typings";
 import { setMenu } from "../../../menu/setMenu";
 
@@ -6,11 +10,11 @@ import { setMenu } from "../../../menu/setMenu";
  * Handler for selecting a node.
  *
  * @param {object} node - A node object.
- * @param {Function} update - The React state function to call once selected.
+ * @param {Function} _update - The React state function to call once selected.
  */
 export default function handleSelectNode(
   node: AnyNode | Cell | StartNode | Branch,
-  update: Function,
+  _update: Function,
   stem?: Stem
 ) {
   const viewStore = getViewStore();
@@ -32,7 +36,8 @@ export default function handleSelectNode(
     viewStore.selectedStem = false;
   }
   // Update data
-  setViewStore(viewStore);
   setMenu();
-  update(false);
+  setViewStore(viewStore);
+  updateView();
+  // update(false);
 }

@@ -20,6 +20,10 @@ function setViewStore(newStore: ViewStore) {
   window.__CHOICELAB_VIEW__ = structuredClone(newStore);
 }
 
+function updateView() {
+  window.__CHOICELAB_FUNCTIONS__.updateView();
+}
+
 function createViewStore(projectPath: string) {
   const store: ViewStore = {
     windowType: "project",
@@ -74,6 +78,7 @@ export {
   setStore,
   getViewStore,
   setViewStore,
+  updateView,
   createDataStore,
   createViewStore,
 };

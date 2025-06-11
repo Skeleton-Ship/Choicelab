@@ -5,7 +5,7 @@ import drawArrows from "./flowchart/linking/drawArrows";
 import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
 import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../typings";
-import { getViewStore, setViewStore } from "../data/dataStore";
+import { getViewStore, setViewStore, updateView } from "../data/dataStore";
 import inTextElement from "../utils/inTextElement";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import handleKeyNavigation from "./flowchart/general/handleKeyNavigation";
@@ -37,7 +37,8 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         if (viewStore.focus === true) {
           viewStore.shiftDown = true;
           setViewStore(viewStore);
-          props.update(false, false);
+          updateView();
+          // props.update(false, false);
         }
       } else if (
         getFocusedRegion() === "sequence" &&
@@ -56,7 +57,8 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         if (viewStore.focus === true) {
           viewStore.shiftDown = false;
           setViewStore(viewStore);
-          props.update(false, false);
+          updateView();
+          // props.update(false, false);
         }
       }
     });

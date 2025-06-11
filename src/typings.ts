@@ -182,6 +182,7 @@ declare global {
     __CHOICELAB_DATA_RAW__: string;
     __CHOICELAB_FUNCTIONS__: {
       updateProject: (saveProject?: boolean, updatePreview?: boolean) => void;
+      updateView: () => void;
     };
     __CHOICELAB_DATA__: Store;
     __CHOICELAB_VIEW__: ViewStore;

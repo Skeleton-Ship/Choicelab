@@ -110,6 +110,11 @@ export default function MainEditor() {
   const store = getStore();
 
   const [_refresh, triggerRefresh] = useState(uuidv4());
+  const [_viewRefresh, triggerViewRefresh] = useState(uuidv4());
+  const handleUpdateView = async () => {
+    setMenu();
+    triggerViewRefresh(uuidv4());
+  };
   const handleUpdate = async (
     updateHistory: boolean = true,
     updatePreview?: boolean
@@ -126,9 +131,11 @@ export default function MainEditor() {
     setMenu();
     // Trigger refresh
     triggerRefresh(uuidv4());
+    console.trace();
   };
 
   window.__CHOICELAB_FUNCTIONS__.updateProject = handleUpdate;
+  window.__CHOICELAB_FUNCTIONS__.updateView = handleUpdateView;
 
   // Load sequence
   const sequence: Sequence | undefined = getCurrentSequence(store);

@@ -36,6 +36,7 @@ async function init() {
 
   window.__CHOICELAB_FUNCTIONS__ = {
     updateProject: () => {},
+    updateView: () => {},
   };
 
   let elements = <></>;
