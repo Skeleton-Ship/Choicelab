@@ -13,7 +13,7 @@ export default async function getAssetPreviewURL(
   return new Promise((resolve, reject) => {
     try {
       const store = getStore();
-      path_resolve(store.projectPath, "./assets", fileName).then(
+      path_resolve(store.projectPath, "./Assets", fileName).then(
         async (filePath) => {
           const fileId = uuidv4();
           const cacheBase = await appCacheDir();
@@ -21,7 +21,7 @@ export default async function getAssetPreviewURL(
             cacheBase,
             "Projects",
             store.project.id,
-            "assets"
+            "Assets"
           );
           emit("read-asset", {
             assetPath: filePath,
@@ -34,7 +34,7 @@ export default async function getAssetPreviewURL(
               cacheBase,
               "Projects",
               store.project.id,
-              "assets",
+              "Assets",
               fileName
             );
             const assetUrl = convertFileSrc(filePath) + `?i=${fileId}`;

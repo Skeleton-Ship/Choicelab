@@ -1,12 +1,12 @@
 import { save } from "@tauri-apps/plugin-dialog";
-import { sep } from "@tauri-apps/api/path";
+import { sep, resolve } from "@tauri-apps/api/path";
 import { emit, once } from "@tauri-apps/api/event";
 import createProjectFile from "../data/createProjectFile";
 import loadProject from "./loadProject";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 export default async function newProject(source: string) {
-  const projectPath = await save({
+  let projectPath = await save({
     filters: [
       {
         name: "My Project",
@@ -28,29 +28,28 @@ export default async function newProject(source: string) {
     const parentPath = parentPathComponents.join(sep());
     // Create project path
     once("project-dir-created", async () => {
-      console.log("Running callback");
       // Create sub directories
       emit("create-directory", {
-        name: "assets",
+        name: "Assets",
         path: projectPath,
         label: label,
       });
-      // Create project.json
+      // Create project.clx
       const projectFileContents = await createProjectFile(projectName);
       if (!projectFileContents || projectFileContents === "") {
-        console.error("Project file JSON could not be generated.");
+        console.error("Project file could not be generated.");
         return;
       }
       emit("save-text-file", {
-        name: "project.json",
+        name: `${projectName}.clx`,
         contents: projectFileContents,
         path: projectPath,
         callback: "project-file-created",
         label: label,
       });
       // Load the project
-      once("project-file-created", () => {
-        loadProject(projectPath);
+      once("project-file-created", async () => {
+        loadProject(await resolve(projectPath, `${projectName}.clx`));
       });
     });
     emit("create-directory", {

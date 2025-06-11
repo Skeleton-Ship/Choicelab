@@ -3,12 +3,12 @@ import loadProject from "./loadProject";
 
 export default async function openProject() {
   const selected = await open({
-    directory: true,
+    directory: false,
     multiple: false,
     filters: [
       {
         name: "",
-        extensions: [""],
+        extensions: ["clx"],
       },
     ],
   });

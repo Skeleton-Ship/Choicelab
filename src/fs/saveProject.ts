@@ -23,7 +23,7 @@ export async function saveProject() {
   store.project.appVersion = appVersion;
   // Pass to back-end
   emit("save-text-file", {
-    name: "project.json",
+    name: `${store.project.name}.clx`,
     contents: stringify(store.project),
     path: await resolve(store.projectPath),
     label: getProjectWindowLabel(store.projectPath),

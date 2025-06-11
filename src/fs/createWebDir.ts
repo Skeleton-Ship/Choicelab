@@ -2,24 +2,33 @@ import { emit } from "@tauri-apps/api/event";
 import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html?raw";
 import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
 import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
+import { appCacheDir, resolve } from "@tauri-apps/api/path";
+import { getStore } from "../data/dataStore";
 
-export function createWebDir(projectPath: string, label: string) {
+export async function createWebDir(label: string) {
+  const store = getStore();
+  const previewPath = await resolve(
+    await appCacheDir(),
+    "Projects",
+    store.project.id,
+    "Preview"
+  );
   emit("save-text-file", {
     name: "index.html",
     contents: playerHTMLDefault,
-    path: projectPath + "/.web",
+    path: previewPath,
     label: label,
   });
   emit("save-text-file", {
     name: "choicelab.css",
     contents: playerCSSDefault,
-    path: projectPath + "/.web",
+    path: previewPath,
     label: label,
   });
   emit("save-text-file", {
     name: "choicelab.js",
     contents: playerJSDefault,
-    path: projectPath + "/.web",
+    path: previewPath,
     label: label,
   });
 }

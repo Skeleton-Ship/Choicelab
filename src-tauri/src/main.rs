@@ -13,9 +13,11 @@ use preview_server::start_server;
 fn main() {
     // Run server
     std::thread::spawn(move || {
+		/*
         if let Some(preview_path) = get_preview_path() {
             start_server(preview_path).unwrap();
         }
+		*/
     });
     // Run Tauri
     tauri::Builder::default()

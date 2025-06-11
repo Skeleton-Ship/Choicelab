@@ -36,7 +36,7 @@ export async function saveHistoryVersion(initial: boolean = false) {
     cacheBase,
     "Projects",
     store.project.id,
-    "undo"
+    "History"
   );
   emit("save-text-file", {
     name: versionId,
@@ -100,7 +100,7 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
     cacheBase,
     "Projects",
     store.project.id,
-    "undo",
+    "History",
     stepVersion
   );
   emit("request-history-version", {

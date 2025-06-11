@@ -32,6 +32,7 @@ export async function updatePreview(includeAssets: boolean) {
   const projectPath = store.projectPath;
   emit("update-preview", {
     projectPath: projectPath,
+    projectId: store.project.id,
     projectData: stringify(store.project),
     includeAssets: includeAssets,
   });

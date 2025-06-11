@@ -28,9 +28,10 @@ function parseRawData(iteration: number): Project | LoadError {
 }
 
 export default async function loadProjectData(
-  projectPath: string
+  projectPath: string,
+  fileName: string
 ): Promise<Project | LoadError> {
-  const dataPath = await resolve(projectPath, "project.json");
+  let dataPath = await resolve(projectPath, fileName);
   emit("request-project-file", {
     path: dataPath,
     label: getProjectWindowLabel(projectPath),

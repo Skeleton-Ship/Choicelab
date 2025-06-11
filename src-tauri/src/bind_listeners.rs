@@ -170,7 +170,7 @@ pub fn bind_listeners(app: &tauri::App) {
                         let script_text = format!("{}{}{}", script_prefix, contents, script_suffix);
                         let script_text_ref: &str = &script_text;
                         let _ = project_window.eval(script_text_ref);
-                        eprintln!("Error parsing version: {}", e);
+                        eprintln!("Error reading project file: {}", e);
                     }
                 }
             }
@@ -319,9 +319,10 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let project_path = json["projectPath"].as_str().unwrap_or("N/A");
                 let project_data = json["projectData"].as_str().unwrap_or("N/A");
+				let project_id = json["projectId"].as_str().unwrap_or("N/A");
 				let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    load_preview_files(project_path, project_data, &include_assets).unwrap();
+                    load_preview_files(project_path, project_data, project_id, &include_assets).unwrap();
                 }
             }
             Err(e) => {

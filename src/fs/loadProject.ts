@@ -1,11 +1,15 @@
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { resolve, basename } from "@tauri-apps/api/path";
 
-export default function loadProject(projectPath: string) {
+export default async function loadProject(projectFilePath: string) {
+  const projectPath = await resolve(projectFilePath, "../");
   const projectPathEncoded = encodeURIComponent(projectPath);
+  const fileName = await basename(projectFilePath);
+  const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath);
   const webview = new WebviewWindow(label, {
-    url: `index.html?window_type=project&project_path=${projectPathEncoded}`,
+    url: `index.html?window_type=project&project_path=${projectPathEncoded}&file_name=${fileNameEncoded}`,
     title: "",
     titleBarStyle: "overlay",
     width: 1150,

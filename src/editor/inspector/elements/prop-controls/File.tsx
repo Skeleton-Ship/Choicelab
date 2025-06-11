@@ -76,7 +76,7 @@ export default function File(props: {
         readFileUpload(file, props.type)
           .then(async (contents) => {
             const viewStore = getViewStore();
-            const assetsPath = await resolve(viewStore.projectPath, "./assets");
+            const assetsPath = await resolve(viewStore.projectPath, "./Assets");
             const jsonData = {
               fileName: file.name,
               contents: contents,

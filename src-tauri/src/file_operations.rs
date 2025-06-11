@@ -136,11 +136,11 @@ pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> i
     Ok(())
 }
 
-pub fn get_preview_path() -> Option<PathBuf> {
+pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     // Get the user's home directory
     if let Some(home_path) = home_dir() {
         let preview_path: PathBuf =
-            home_path.join("Library/Caches/com.choicelab.choicelab/Preview");
+            home_path.join("Library/Caches/com.choicelab.choicelab/Projects/".to_owned() + id + "/Preview");
         // Return the preview path
         Some(preview_path)
     } else {
@@ -149,12 +149,12 @@ pub fn get_preview_path() -> Option<PathBuf> {
     }
 }
 
-pub fn load_preview_files(input_folder: &str, project_data: &str, include_assets: &bool) -> std::io::Result<()> {
+pub fn load_preview_files(input_folder: &str, project_data: &str, project_id: &str, include_assets: &bool) -> std::io::Result<()> {
     // Convert the input folder string to a PathBuf
     let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
 
     // Get the output folder using get_preview_path
-    let output_folder = match get_preview_path() {
+    let output_folder = match get_preview_path(project_id) {
         Some(path) => path,
         None => {
             return Err(std::io::Error::new(
@@ -170,12 +170,13 @@ pub fn load_preview_files(input_folder: &str, project_data: &str, include_assets
     // Ensure the output folder and project subfolder exist
     fs::create_dir_all(&project_subfolder)?;
 
-    // Write `project_data` to `project.json` in the `project` subfolder
-    let project_json_dest = project_subfolder.join("project.json");
+    // Write `project_data` to `project.clx` in the `project` subfolder
+    let project_json_dest = project_subfolder.join("project.clx");
     let mut file = File::create(project_json_dest)?;
     file.write_all(project_data.as_bytes())?;
 
     // Copy the contents of the `.web` folder to the top level of the output folder
+	/*
     let web_folder_src = input_folder.join(".web");
     for entry in fs::read_dir(web_folder_src)? {
         let entry = entry?;
@@ -188,11 +189,12 @@ pub fn load_preview_files(input_folder: &str, project_data: &str, include_assets
             fs::copy(entry.path(), dest_path)?;
         }
     }
+	*/
 
     // Copy the `assets` folder to the `project` subfolder in the output folder
 	if *include_assets {
-    let assets_folder_src = input_folder.join("assets");
-    let assets_folder_dest = project_subfolder.join("assets");
+    let assets_folder_src = input_folder.join("Assets");
+    let assets_folder_dest = project_subfolder.join("Assets");
     fs::create_dir_all(&assets_folder_dest)?;
     for entry in fs::read_dir(assets_folder_src)? {
         let entry = entry?;

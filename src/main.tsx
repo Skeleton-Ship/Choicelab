@@ -1,7 +1,7 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { emit, once } from "@tauri-apps/api/event";
+import { emit } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import MainEditor from "./editor/MainEditor";
@@ -49,13 +49,15 @@ async function init() {
   if (windowType === "project") {
     // Get project path
     const projectPathRaw: string = urlParams.get("project_path") || "";
+    const fileNameRaw: string = urlParams.get("file_name") || "";
     const projectPath = decodeURIComponent(projectPathRaw);
-    if (projectPath === "") {
-      console.error("No project path found.");
+    const fileName = decodeURIComponent(fileNameRaw);
+    if (projectPath === "" || fileName === "") {
+      console.error("No project found.");
       return;
     }
     // Load project data
-    let projectData = await loadProjectData(projectPath);
+    let projectData = await loadProjectData(projectPath, fileName);
     if (projectData.hasOwnProperty("error")) {
       projectData = projectData as LoadError;
       let title = "",
@@ -71,7 +73,7 @@ async function init() {
           contents =
             "Make sure the selected folder is a Choicelab project folder downloaded to your computer, then try again.";
       }
-      message(contents, title);
+      await message(contents, title);
       appWindow.close();
       return;
     }
@@ -97,16 +99,7 @@ async function init() {
     // Create editor
     elements = <MainEditor />;
     // Create web folder
-    emit("create-directory", {
-      name: ".web",
-      path: projectPath,
-      callback: "web-dir-created",
-      overwrite: true,
-      label: label,
-    });
-    once("web-dir-created", () => {
-      createWebDir(projectPath, label);
-    });
+    createWebDir(label);
   }
   const appDOM = (
     <div id="App" data-focused-region="">
