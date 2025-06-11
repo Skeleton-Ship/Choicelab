@@ -388,15 +388,12 @@ pub fn bind_listeners(app: &tauri::App) {
         }
     });
     // Listen for window close to release preview port
-    let handle_window_close = app_handle.clone();
     app.listen("tauri://close-requested", move |event| {
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
         if let Ok(json) = json_value {
             let window_label = json["label"].as_str().unwrap_or("");
             if window_label.starts_with("project_") {
-                // Find the port assigned to this window (by tracking label->port mapping)
-                // For now, parse the port from a global mapping
                 release_port_for_label(window_label);
             }
         }
