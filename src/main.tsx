@@ -87,7 +87,7 @@ async function init() {
       viewStore = getViewStore();
     const label = getProjectWindowLabel(store.projectPath);
     // Let Rust know that the project was opened
-    emit("apply-window-treatment", {
+    emit("window-ready", {
       label: label,
     });
     // Load the default sequence

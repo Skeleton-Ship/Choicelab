@@ -28,8 +28,7 @@ async fn serve_file(
     Ok(response)
 }
 
-#[actix_web::main]
-pub async fn start_server(folder_path: PathBuf) -> std::io::Result<()> {
+pub async fn start_server(folder_path: PathBuf, port: u16) -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(folder_path.clone()))
@@ -48,7 +47,7 @@ pub async fn start_server(folder_path: PathBuf) -> std::io::Result<()> {
                 ),
             )
     })
-    .bind(("localhost", 4091))?
+    .bind(("localhost", port))?
     .run()
     .await
 }

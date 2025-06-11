@@ -4,7 +4,9 @@ use crate::file_operations::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
+use std::collections::HashMap;
 use std::fs;
+use std::sync::{Mutex, OnceLock};
 use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
@@ -36,6 +38,38 @@ fn apply_project_vibrancy(window: WebviewWindow) {
         .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 }
 
+// Global port tracker for preview servers (4090–4099)
+static PREVIEW_PORTS: OnceLock<Mutex<[bool; 10]>> = OnceLock::new();
+static PORT_LABEL_MAP: OnceLock<Mutex<HashMap<String, u16>>> = OnceLock::new();
+
+fn get_next_available_port() -> Option<u16> {
+    let ports = PREVIEW_PORTS.get_or_init(|| Mutex::new([false; 10]));
+    let mut ports = ports.lock().unwrap();
+    for (i, used) in ports.iter_mut().enumerate() {
+        if !*used {
+            *used = true;
+            return Some(4090 + i as u16);
+        }
+    }
+    None
+}
+
+fn assign_port_for_label(label: &str, port: u16) {
+    let map = PORT_LABEL_MAP.get_or_init(|| Mutex::new(HashMap::new()));
+    map.lock().unwrap().insert(label.to_string(), port);
+}
+
+fn release_port_for_label(label: &str) {
+    let map = PORT_LABEL_MAP.get_or_init(|| Mutex::new(HashMap::new()));
+    if let Some(port) = map.lock().unwrap().remove(label) {
+        let ports = PREVIEW_PORTS.get_or_init(|| Mutex::new([false; 10]));
+        let mut ports = ports.lock().unwrap();
+        if port >= 4090 && port <= 4099 {
+            ports[(port - 4090) as usize] = false;
+        }
+    }
+}
+
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
 	// Add native menus
@@ -61,22 +95,45 @@ pub fn bind_listeners(app: &tauri::App) {
 	});	});
 	// When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
-    app.listen("apply-window-treatment", move |event| {
+    app.listen("window-ready", move |event| {
         // Set vibrancy
-		let json_raw = event.payload();
-		let json_value: Result<Value, _> = from_str(json_raw);
-		match json_value {
-		Ok(json) => {
-			let window_label = json["label"].as_str().unwrap_or("N/A");
-			let project_window = handle_project_open
-			.get_webview_window(window_label)
-			.unwrap();
-			let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
-		}
-		Err(e) => {
-			eprintln!("Error parsing JSON: {}", e);
-		}
-	}
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        match json_value {
+        Ok(json) => {
+            let window_label = json["label"].as_str().unwrap_or("N/A");
+            let project_window = handle_project_open
+                .get_webview_window(window_label)
+                .unwrap();
+            let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
+
+            // If the window label indicates a project, start a preview server for it
+            if window_label.starts_with("project_") {
+                let project_id = &window_label[8..];
+                if let Some(preview_path) = crate::file_operations::get_preview_path(project_id) {
+                    if let Some(port) = get_next_available_port() {
+                        std::thread::spawn(move || {
+                            let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+                            let fut = crate::preview_server::start_server(preview_path, port);
+                            let _ = rt.block_on(async move { fut.await });
+                        });
+                        // Inform the frontend of the assigned port for this window
+                        if let Some(project_window) = handle_project_open.get_webview_window(window_label) {
+                            let _ = project_window.emit("preview-port", serde_json::json!({ "port": port }));
+                        }
+                        assign_port_for_label(window_label, port);
+                    } else {
+                        eprintln!("No available preview ports (4090–4099)");
+                    }
+                } else {
+                    eprintln!("Could not determine preview path for project: {}", project_id);
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error parsing JSON: {}", e);
+        }
+        }
     });
     // listen to text file saves (emitted on any window)
     let handle_text_file = app_handle.clone();
@@ -327,6 +384,20 @@ pub fn bind_listeners(app: &tauri::App) {
             }
             Err(e) => {
                 eprintln!("Error parsing JSON: {}", e);
+            }
+        }
+    });
+    // Listen for window close to release preview port
+    let handle_window_close = app_handle.clone();
+    app.listen("tauri://close-requested", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        if let Ok(json) = json_value {
+            let window_label = json["label"].as_str().unwrap_or("");
+            if window_label.starts_with("project_") {
+                // Find the port assigned to this window (by tracking label->port mapping)
+                // For now, parse the port from a global mapping
+                release_port_for_label(window_label);
             }
         }
     });

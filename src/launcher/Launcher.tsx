@@ -9,7 +9,7 @@ import { setMenu } from "../menu/setMenu";
 function Launcher() {
   useEffect(() => {
     setMenu("launcher");
-    emit("apply-window-treatment", {
+    emit("window-ready", {
       label: "launcher",
     });
     listen("menu-request-quit", () => {
