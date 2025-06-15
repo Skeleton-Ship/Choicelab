@@ -81,13 +81,13 @@ export function Appearance(props: {
             setShowCustom(true);
           }}
         >
-          Set Custom Appearance...
+          Set Custom Style...
         </button>
       ) : (
         settingsEl
       )}
       <button class="ui-button small" onClick={() => {}}>
-        Project Appearance Settings...
+        Project Style Settings...
       </button>
     </div>
   );
