@@ -28,7 +28,7 @@ import Cocoa
 		NSApp.helpMenu = helpMenu
 
 		let visitWebsiteItem = NSMenuItem(
-		  title: "Report a Problem or Request Feature...",
+		  title: "Report Issue or Request Feature...",
 		  action: #selector(openWebsite(_:)),
 		  keyEquivalent: ""
 		)
