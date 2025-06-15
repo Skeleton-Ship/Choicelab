@@ -32,6 +32,7 @@ export async function saveProject() {
   appWindow.setTitle(store.project.name);
   setStore(store);
   setViewStore(viewStore);
-  emit("set-document-edited", { state: false });
+  const title = await appWindow.title();
+  emit("set-document-edited", { state: false, windowTitle: title });
   update(false);
 }

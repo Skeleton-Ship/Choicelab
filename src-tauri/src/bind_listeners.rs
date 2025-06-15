@@ -11,7 +11,7 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
-use crate::native_bridge_macos::{add_native_menus,set_document_edited};
+use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
@@ -74,13 +74,13 @@ pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
 	// Add native menus
 	app.listen("set-document-edited", move |event| {
-		// Set vibrancy
 		let json_raw = event.payload();
 		let json_value: Result<Value, _> = from_str(json_raw);
 		match json_value {
 			Ok(json) => {
 				let state = json["state"].as_bool().unwrap_or(false);
-				set_document_edited(state);
+				let window_title = json["windowTitle"].as_str().unwrap_or("");
+				set_document_edited_with_title(state, window_title);
 			}
 			Err(e) => {
 				eprintln!("Error parsing JSON: {}", e);

@@ -2,14 +2,15 @@ import Cocoa
 
 @objc public class NativeBridge: NSObject {
 	
-@objc public static func setDocumentEdited(_ edited: Bool) {
-	DispatchQueue.main.async {
-		if let window = NSApp.keyWindow ?? NSApp.mainWindow {
-			window.isDocumentEdited = edited
-		} else {
-			print("No active window found to mark as edited.")
-		}
-	}
+@objc public static func setDocumentEdited(_ edited: Bool, windowTitle: String) {
+    DispatchQueue.main.async {
+        // Find the window with the matching title
+        if let targetWindow = NSApp.windows.first(where: { $0.title == windowTitle }) {
+            targetWindow.isDocumentEdited = edited
+        } else {
+            print("No window found with title \(windowTitle) to mark as edited.")
+        }
+    }
 }
 	  
   @objc public static func addNativeMenus() {
