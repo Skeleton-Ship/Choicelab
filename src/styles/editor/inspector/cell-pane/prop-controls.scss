@@ -78,6 +78,48 @@
       }
     }
   }
+  // CUSTOM: Position
+  &.position {
+    --scale: 60px;
+    .position-markers {
+      box-sizing: content-box;
+      display: flex;
+      flex-wrap: wrap;
+      width: var(--scale);
+      height: var(--scale);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      @media (prefers-color-scheme: dark) {
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      button {
+        flex-basis: calc(var(--scale) / 3);
+        height: calc(var(--scale) / 3);
+        flex-grow: 0;
+        flex-shrink: 0;
+        appearance: none;
+        border: none;
+        position: relative;
+        background: transparent;
+        &:after {
+          content: "•";
+          color: rgba(255, 255, 255, 0.3);
+          font-size: 18px;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          margin-top: -1px;
+          transform: translate(-50%, -50%);
+        }
+        &:hover:after {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        &.selected:after {
+          color: var(--accent-color-bright);
+        }
+      }
+    }
+  }
 }
 
 .panel {

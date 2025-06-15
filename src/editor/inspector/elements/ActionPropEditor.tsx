@@ -207,6 +207,19 @@ export default function ActionPropEditor(props: {
         />
       );
       break;
+    case "__CUSTOM__Position":
+      propControl = (
+        <Position
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          initialValue={initialValue}
+          extended={props.extended}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
     default:
       propControl = <div>{defProp.name}</div>;
   }
