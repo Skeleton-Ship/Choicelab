@@ -5,6 +5,7 @@ import Checkbox from "./prop-controls/Checkbox";
 import File from "./prop-controls/File";
 import VariableControl from "./prop-controls/Variable";
 import VariableValueControl from "./prop-controls/VariableValue";
+import { Appearance } from "./prop-controls/_Custom_Appearance";
 import { Position } from "./prop-controls/_Custom_Position";
 import { getPlayerConfig } from "../../../player/getPlayerConfig";
 
@@ -210,6 +211,19 @@ export default function ActionPropEditor(props: {
     case "__CUSTOM__Position":
       propControl = (
         <Position
+          action={action}
+          actionDef={actionDef}
+          propDef={defProp}
+          initialValue={initialValue}
+          extended={props.extended}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "__CUSTOM__Appearance":
+      propControl = (
+        <Appearance
           action={action}
           actionDef={actionDef}
           propDef={defProp}
