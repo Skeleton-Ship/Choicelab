@@ -76,7 +76,7 @@ export function Appearance(props: {
     <div class="inspector-prop appearance">
       {isAllDefault(props, propDef, action) && showCustom === false ? (
         <button
-          class="ui-button"
+          class="ui-button small"
           onClick={() => {
             setShowCustom(true);
           }}
@@ -86,6 +86,9 @@ export function Appearance(props: {
       ) : (
         settingsEl
       )}
+      <button class="ui-button small" onClick={() => {}}>
+        Project Appearance Settings...
+      </button>
     </div>
   );
 }

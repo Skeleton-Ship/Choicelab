@@ -120,6 +120,11 @@
       }
     }
   }
+  // CUSTOM: Appearance
+  &.appearance {
+    display: flex;
+    gap: 8px;
+  }
 }
 
 .panel {
