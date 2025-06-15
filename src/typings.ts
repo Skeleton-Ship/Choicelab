@@ -118,6 +118,7 @@ export interface ViewStore {
 export interface Store {
   project: Project;
   projectPath: string;
+  projectFileName: string;
   history: {
     location: number;
     versions: Array<string>;

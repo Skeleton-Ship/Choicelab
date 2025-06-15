@@ -29,12 +29,16 @@ function parseRawData(iteration: number): Project | LoadError {
 
 export default async function loadProjectData(
   projectPath: string,
-  fileName: string
+  fileName: string,
+  labelArgs?: "settings" | "assets"
 ): Promise<Project | LoadError> {
   let dataPath = await resolve(projectPath, fileName);
   emit("request-project-file", {
     path: dataPath,
-    label: getProjectWindowLabel(projectPath),
+    label: getProjectWindowLabel(
+      projectPath,
+      labelArgs ? labelArgs : undefined
+    ),
   });
   return new Promise((resolveData) => {
     setTimeout(() => {

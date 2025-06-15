@@ -26,6 +26,7 @@ import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
@@ -34,6 +35,10 @@ export default function MainEditor() {
     updatePreview(true);
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
+    // Let Tauri know the window is ready
+    emit("window-ready", {
+      label: getProjectWindowLabel(store.projectPath),
+    });
     // Set up cut/copy listener
     window.addEventListener("cut", (e) => {
       if (getFocusedRegion() === "sequence") {

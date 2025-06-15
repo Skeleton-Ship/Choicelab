@@ -60,11 +60,13 @@ function createViewStore(projectPath: string) {
 
 export default function createDataStore(
   projectData: Project,
-  projectPath: string
+  projectPath: string,
+  projectFileName: string
 ) {
   const store: Store = {
     project: projectData,
     projectPath: projectPath,
+    projectFileName: projectFileName,
     history: {
       location: -1,
       versions: [],

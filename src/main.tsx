@@ -1,9 +1,9 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { emit } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
+import { ProjectSettings } from "./editor/ProjectSettings";
 import MainEditor from "./editor/MainEditor";
 import {
   getStore,
@@ -46,7 +46,7 @@ async function init() {
   if (windowType === "launcher") {
     elements = <Launcher />;
   }
-  if (windowType === "project") {
+  if (windowType === "project" || windowType === "projectSettings") {
     // Get project path
     const projectPathRaw: string = urlParams.get("project_path") || "";
     const fileNameRaw: string = urlParams.get("file_name") || "";
@@ -57,7 +57,11 @@ async function init() {
       return;
     }
     // Load project data
-    let projectData = await loadProjectData(projectPath, fileName);
+    let projectData = await loadProjectData(
+      projectPath,
+      fileName,
+      windowType === "projectSettings" ? "settings" : undefined
+    );
     if (projectData.hasOwnProperty("error")) {
       projectData = projectData as LoadError;
       let title = "",
@@ -80,27 +84,33 @@ async function init() {
     projectData = projectData as Project;
     appWindow.show();
     // Create data store
-    createDataStore(projectData, projectPath);
+    createDataStore(projectData, projectPath, fileName);
     createViewStore(projectPath);
     // Load store
     const store = getStore(),
       viewStore = getViewStore();
-    const label = getProjectWindowLabel(store.projectPath);
-    // Let Rust know that the project was opened
-    emit("window-ready", {
-      label: label,
-    });
-    // Load the default sequence
-    viewStore.currentSequenceId = store.project.sequences[0].id;
     setStore(store);
-    setViewStore(viewStore);
-    // Save initial history version
-    saveHistoryVersion(true);
-    // Create editor
-    elements = <MainEditor />;
-    // Create web folder
-    createWebDir(label);
+    // Load label
+    const label = getProjectWindowLabel(
+      store.projectPath,
+      windowType === "projectSettings" ? "settings" : undefined
+    );
+    if (windowType === "project") {
+      // Load the default sequence
+      viewStore.currentSequenceId = store.project.sequences[0].id;
+      setViewStore(viewStore);
+      // Save initial history version
+      saveHistoryVersion(true);
+      // Create editor
+      elements = <MainEditor />;
+      // Create web folder
+      createWebDir(label);
+    } else if (windowType === "projectSettings") {
+      const pane = urlParams.get("pane") as "general" | "appearance";
+      elements = <ProjectSettings startingPane={pane} />;
+    }
   }
+
   const appDOM = (
     <div id="App" data-focused-region="">
       {elements}

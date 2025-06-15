@@ -1,7 +1,30 @@
-// import { useState } from "preact/hooks";
+import { openProjectSettings } from "../../../settings/openProjectSettings";
+
+export function Appearance() {
+  return (
+    <div class="inspector-prop appearance">
+      <button
+        class="ui-button small"
+        onClick={() => {
+          openProjectSettings("appearance");
+        }}
+      >
+        Project Style Settings...
+      </button>
+    </div>
+  );
+}
+
+/*
+ * NOTE: This all works, it's just disabled until it's time to implement custom appearance controls.
+ */
+/*
+
+import { useState } from "preact/hooks";
 import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { openProjectSettings } from "../../../settings/openProjectSettings";
 
 interface AppearanceSettings {
   font?: string;
@@ -20,10 +43,6 @@ function getPropsObj(props: { [key: string]: any }, action: Action) {
     : action.extendedProps[getPlayerConfig().id];
 }
 
-/*
- * Commented out to disable linter errors — functions work though!
- *
- 
 function getAppearanceProps(
   props: { [key: string]: any },
   propDef: ActionDefProp,
@@ -46,7 +65,6 @@ function isAllDefault(
   });
   return allDefault;
 }
-*/
 
 export function Appearance(props: {
   action: Action;
@@ -60,7 +78,7 @@ export function Appearance(props: {
   const action = props.action;
   const propDef = props.propDef;
   // const propElName = `action_${action.id}_${propDef.name}`;
-  // let [showCustom, setShowCustom] = useState(false);
+  let [showCustom, setShowCustom] = useState(false);
 
   function handleChange(e: InputEvent) {
     const target = e.target;
@@ -75,12 +93,10 @@ export function Appearance(props: {
   //
   // TODO: Iterate through all appearance properties and add controls
   //
-  // const settingsEl = <div>Hey guys</div>;
-  //
+  const settingsEl = <div>Hey guys</div>;
   return (
     <div class="inspector-prop appearance">
-      {/*  
-		isAllDefault(props, propDef, action) && showCustom === false ? (
+      {isAllDefault(props, propDef, action) && showCustom === false ? (
         <button
           class="ui-button small"
           onClick={() => {
@@ -91,11 +107,17 @@ export function Appearance(props: {
         </button>
       ) : (
         settingsEl
-      )
-  */}
-      <button class="ui-button small" onClick={() => {}}>
+      )}
+      <button
+        class="ui-button small"
+        onClick={() => {
+          openProjectSettings();
+        }}
+      >
         Project Style Settings...
       </button>
     </div>
   );
 }
+
+*/

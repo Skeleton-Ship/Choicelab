@@ -108,7 +108,7 @@ pub fn bind_listeners(app: &tauri::App) {
             let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
 
             // If the window label indicates a project, start a preview server for it
-            if window_label.starts_with("project_") {
+            if window_label.starts_with("project_") && ! window_label.starts_with("project_settings_") {
                 let project_id = &window_label[8..];
                 if let Some(preview_path) = crate::file_operations::get_preview_path(project_id) {
                     if let Some(port) = get_next_available_port() {
