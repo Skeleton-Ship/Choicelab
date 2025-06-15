@@ -5,6 +5,7 @@ import Checkbox from "./prop-controls/Checkbox";
 import File from "./prop-controls/File";
 import VariableControl from "./prop-controls/Variable";
 import VariableValueControl from "./prop-controls/VariableValue";
+import { Position } from "./prop-controls/_Custom_Position";
 import { getPlayerConfig } from "../../../player/getPlayerConfig";
 
 export default function ActionPropEditor(props: {
@@ -113,7 +114,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept="image/png, image/jpeg, image/gif"
+          accept=".png, .jpg, .jpeg, .gif"
           filePropName="source"
           action={action}
           actionDef={actionDef}
@@ -130,7 +131,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept="video/webm, video/mp4"
+          accept=".webm, .mp4"
           filePropName="source"
           action={action}
           actionDef={actionDef}
@@ -147,7 +148,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept="audio/mpeg"
+          accept=".mp3"
           filePropName="source"
           action={action}
           actionDef={actionDef}
@@ -164,7 +165,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="text"
-          accept="text/vtt, text/srt"
+          accept=".vtt"
           filePropName="captions"
           action={action}
           actionDef={actionDef}
