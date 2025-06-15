@@ -1,9 +1,7 @@
-import {
-  getAllWebviewWindows,
-  WebviewWindow,
-} from "@tauri-apps/api/webviewWindow";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 import { getStore } from "../../data/dataStore";
+import { getProjectSettingsWindow } from "./getProjectSettingsWindow";
 
 export async function openProjectSettings(
   pane: "general" | "appearance" = "general"
@@ -14,13 +12,10 @@ export async function openProjectSettings(
   const projectPathEncoded = encodeURIComponent(projectPath);
   const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath, "settings");
-  const windows = await getAllWebviewWindows();
-  for (let i = 0; i < windows.length; i++) {
-    const thisWindow = windows[i];
-    if (thisWindow.label === label) {
-      thisWindow.setFocus();
-      return;
-    }
+  const existingWindow = await getProjectSettingsWindow(label);
+  if (existingWindow) {
+    existingWindow.setFocus();
+    return;
   }
   const webview = new WebviewWindow(label, {
     url: `index.html?window_type=projectSettings&project_path=${projectPathEncoded}&file_name=${fileNameEncoded}&pane=${pane}`,

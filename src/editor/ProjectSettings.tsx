@@ -1,67 +1,78 @@
 import { useState, useEffect } from "preact/hooks";
+import { v4 as uuidv4 } from "uuid";
 import { emit } from "@tauri-apps/api/event";
+import { listen } from "@tauri-apps/api/event";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
-import { getStore } from "../data/dataStore";
+import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getPlayerConfig } from "../player/getPlayerConfig";
+import { SettingsPane } from "./settings/SettingsPane";
+import { setMenu } from "../menu/setMenu";
 const appWindow = getCurrentWebviewWindow();
 
-export function ProjectSettings(props: {
-  startingPane: "general" | "appearance";
-}) {
+export function ProjectSettings(props: { startingPane: string }) {
   const store = getStore();
   useEffect(() => {
+    appWindow.setTitle(`${store.project.name} - Project Settings`);
+    appWindow.show();
     // Let Tauri know the window is ready
     emit("window-ready", {
       label: getProjectWindowLabel(store.projectPath, "settings"),
     });
-    appWindow.setTitle(`${store.project.name} - Project Settings`);
+    setMenu("projectSettings");
+    // Focus listeners
+    listen("tauri://focus", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      setMenu("projectSettings");
+    });
+    listen("editor-store-updated", async (event) => {
+      const payload = event.payload as string;
+      const newStore = JSON.parse(payload);
+      setStore(newStore);
+      handleUpdate();
+    });
   }, []);
-  const [pane, setPane] = useState(props.startingPane);
+  const [paneId, setPaneId] = useState(props.startingPane);
   const config = getPlayerConfig();
-  console.log(store, config);
+  const panes = config.projectSettings.panes;
+  const [_refresh, triggerRefresh] = useState(uuidv4());
+  const handleUpdate = async () => {
+    triggerRefresh(uuidv4());
+  };
   return (
     <section aria-label="Tabbed Interface">
       <div role="tablist" aria-label="Tabs">
-        <button
-          role="tab"
-          aria-selected={pane === "general" ? "true" : "false"}
-          aria-controls="pane-general"
-          id="tab-general"
-          onClick={() => {
-            setPane("general");
-          }}
-        >
-          General
-        </button>
-        <button
-          role="tab"
-          aria-selected={pane === "appearance" ? "true" : "false"}
-          aria-controls="pane-appearance"
-          id="tab-appearance"
-          onClick={() => {
-            setPane("appearance");
-          }}
-        >
-          Appearance
-        </button>
+        {panes.map((pane) => {
+          return (
+            <button
+              role="tab"
+              aria-selected={paneId === pane.id ? "true" : "false"}
+              aria-controls={`pane-${pane.id}`}
+              id={`tab-${pane.id}`}
+              onClick={() => {
+                setPaneId(pane.id);
+              }}
+            >
+              {pane.label}
+            </button>
+          );
+        })}
       </div>
-      <div
-        role="tabpanel"
-        id="pane-general"
-        aria-labelledby="tab-general"
-        hidden={pane === "general" ? false : true}
-      >
-        <p>Content for general</p>
-      </div>
-      <div
-        role="tabpanel"
-        id="pane-appearance"
-        aria-labelledby="tab-appearance"
-        hidden={pane === "appearance" ? false : true}
-      >
-        <p>Content for appearance</p>
-      </div>
+      {panes.map((pane) => {
+        return (
+          <div
+            role="tabpanel"
+            id={`pane-${pane.id}`}
+            aria-labelledby={`tab-${pane.id}`}
+            hidden={paneId === pane.id ? false : true}
+          >
+            {pane.id === paneId ? (
+              <SettingsPane id={pane.id} config={config} />
+            ) : null}
+          </div>
+        );
+      })}
     </section>
   );
 }

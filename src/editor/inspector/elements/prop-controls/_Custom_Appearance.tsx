@@ -9,7 +9,7 @@ export function Appearance() {
           openProjectSettings("appearance");
         }}
       >
-        Project Style Settings...
+        Project Appearance...
       </button>
     </div>
   );

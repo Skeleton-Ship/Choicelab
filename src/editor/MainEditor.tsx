@@ -8,7 +8,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
 import { Sequence } from "../typings";
-import { getStore, getViewStore, setViewStore } from "../data/dataStore";
+import {
+  getStore,
+  getViewStore,
+  setStore,
+  setViewStore,
+} from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
 import { saveHistoryVersion } from "../data/history";
 import {
@@ -27,17 +32,19 @@ import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { getProjectSettingsWindow } from "./settings/getProjectSettingsWindow";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
   useEffect(() => {
+    const label = getProjectWindowLabel(store.projectPath);
     setMenu();
     updatePreview(true);
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Let Tauri know the window is ready
     emit("window-ready", {
-      label: getProjectWindowLabel(store.projectPath),
+      label: label,
     });
     // Set up cut/copy listener
     window.addEventListener("cut", (e) => {
@@ -74,6 +81,13 @@ export default function MainEditor() {
       document.querySelector("#App")?.setAttribute("data-focus", "false");
       setViewStore(store);
     });
+    listen("settings-store-updated", async (event) => {
+      const payload = event.payload as string;
+      const newStore = JSON.parse(payload);
+      if (newStore.project.id !== store.project.id) return;
+      setStore(newStore);
+      handleUpdate(true, true);
+    });
     // Close listeners
     async function handleClose() {
       // Clear cache
@@ -82,6 +96,13 @@ export default function MainEditor() {
       emit("clear-cache", {
         path: cachePath,
       });
+      // Close settings window if it's open
+      const projectSettingsWindow = await getProjectSettingsWindow(
+        getProjectWindowLabel(store.projectPath, "settings")
+      );
+      if (projectSettingsWindow) {
+        projectSettingsWindow.destroy();
+      }
       // Close it, baby!
       appWindow.destroy();
     }
@@ -110,6 +131,7 @@ export default function MainEditor() {
     listen("menu-request-quit", () => {
       handleCloseRequest();
     });
+    appWindow.show();
   }, []);
 
   const store = getStore();
@@ -133,7 +155,9 @@ export default function MainEditor() {
       handleUpdatePreview(false);
     }
     // Update menu
-    setMenu();
+    if (await appWindow.isFocused()) {
+      setMenu();
+    }
     // Trigger refresh
     triggerRefresh(uuidv4());
   };

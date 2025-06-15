@@ -16,7 +16,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@surfgreen/choicelab-player-html5": "^0.4.5",
+    "@surfgreen/choicelab-player-html5": "^0.4.6",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2",

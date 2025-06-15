@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { emit, once } from "@tauri-apps/api/event";
+import { emit, emitTo, once } from "@tauri-apps/api/event";
 import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
@@ -44,6 +44,12 @@ export async function saveHistoryVersion(initial: boolean = false) {
     path: cachePath,
     label: getProjectWindowLabel(store.projectPath),
   });
+  // Update settings window, if active
+  emitTo(
+    getProjectWindowLabel(store.projectPath, "settings"),
+    "editor-store-updated",
+    stringify(store)
+  );
 }
 
 /**
@@ -134,6 +140,12 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
         }
       });
       viewStore.selectedNodes = newSelectedNodes;
+      // Update settings window, if active
+      emitTo(
+        getProjectWindowLabel(store.projectPath, "settings"),
+        "editor-store-updated",
+        stringify(store)
+      );
       // Handle final calls
       markUnsaved();
       setStore(store);

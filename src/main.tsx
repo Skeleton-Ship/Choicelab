@@ -82,7 +82,6 @@ async function init() {
       return;
     }
     projectData = projectData as Project;
-    appWindow.show();
     // Create data store
     createDataStore(projectData, projectPath, fileName);
     createViewStore(projectPath);
