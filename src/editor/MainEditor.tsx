@@ -131,7 +131,6 @@ export default function MainEditor() {
     setMenu();
     // Trigger refresh
     triggerRefresh(uuidv4());
-    console.trace();
   };
 
   window.__CHOICELAB_FUNCTIONS__.updateProject = handleUpdate;
