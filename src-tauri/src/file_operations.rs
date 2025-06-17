@@ -151,12 +151,12 @@ pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     }
 }
 
-pub fn load_preview_files(input_folder: &str, project_data: &str, project_id: &str, include_assets: &bool) -> std::io::Result<()> {
+pub fn load_preview_files(input_folder: &str, project_data: &str, project_label: &str, include_assets: &bool) -> std::io::Result<()> {
     // Convert the input folder string to a PathBuf
     let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
 
     // Get the output folder using get_preview_path
-    let output_folder = match get_preview_path(project_id) {
+    let output_folder = match get_preview_path(project_label) {
         Some(path) => path,
         None => {
             return Err(std::io::Error::new(

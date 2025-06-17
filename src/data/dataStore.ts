@@ -42,6 +42,7 @@ function createViewStore(projectPath: string) {
     inTextElement: false,
     focus: false,
     saved: true,
+    previewPort: 0,
     viewSettings: {
       cellWidth: 0,
       cellHeight: 0,

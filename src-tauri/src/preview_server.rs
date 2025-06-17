@@ -8,8 +8,8 @@ async fn serve_file(
     folder: web::Data<PathBuf>,
 ) -> actix_web::Result<HttpResponse> {
     // Determine the file path: "index.html" if None, otherwise the provided path
-    let file_path = folder.join(path.unwrap_or_else(|| "index.html".to_string()));
-    let file = NamedFile::open(file_path)?;
+    let file_path = folder.join(path.clone().unwrap_or_else(|| "index.html".to_string()));
+    let file = NamedFile::open(&file_path)?;
 
     let mut response = file.into_response(&req);
 

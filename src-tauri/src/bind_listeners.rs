@@ -127,8 +127,7 @@ pub fn bind_listeners(app: &tauri::App) {
                 if window_label.starts_with("project_")
                     && !window_label.starts_with("project_settings_")
                 {
-                    let project_id = &window_label[8..];
-                    if let Some(preview_path) = crate::file_operations::get_preview_path(project_id)
+                    if let Some(preview_path) = crate::file_operations::get_preview_path(&window_label)
                     {
                         if let Some(port) = get_next_available_port() {
                             std::thread::spawn(move || {
@@ -151,7 +150,7 @@ pub fn bind_listeners(app: &tauri::App) {
                     } else {
                         eprintln!(
                             "Could not determine preview path for project: {}",
-                            project_id
+                            window_label
                         );
                     }
                 }
@@ -410,10 +409,10 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let project_path = json["projectPath"].as_str().unwrap_or("N/A");
                 let project_data = json["projectData"].as_str().unwrap_or("N/A");
-                let project_id = json["projectId"].as_str().unwrap_or("N/A");
+                let project_label = json["projectLabel"].as_str().unwrap_or("N/A");
                 let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    load_preview_files(project_path, project_data, project_id, &include_assets)
+                    load_preview_files(project_path, project_data, project_label, &include_assets)
                         .unwrap();
                 }
             }

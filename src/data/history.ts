@@ -35,7 +35,7 @@ export async function saveHistoryVersion(initial: boolean = false) {
   const cachePath = await resolve(
     cacheBase,
     "Projects",
-    store.project.id,
+    getProjectWindowLabel(store.projectPath),
     "History"
   );
   emit("save-text-file", {
@@ -105,7 +105,7 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   const versionPath = await resolve(
     cacheBase,
     "Projects",
-    store.project.id,
+    getProjectWindowLabel(store.projectPath),
     "History",
     stepVersion
   );

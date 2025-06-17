@@ -3,6 +3,7 @@ import { emit } from "@tauri-apps/api/event";
 import { Store } from "../typings";
 import { getCell } from "../data/getData";
 import { stringify } from "../utils/stringify";
+import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 function getPreviewId(store: Store) {
   const viewStore = getViewStore();
@@ -33,7 +34,7 @@ export async function updatePreview(includeAssets: boolean) {
   const projectPath = store.projectPath;
   emit("update-preview", {
     projectPath: projectPath,
-    projectId: store.project.id,
+    projectLabel: getProjectWindowLabel(projectPath),
     projectData: stringify(store.project),
     includeAssets: includeAssets,
   });

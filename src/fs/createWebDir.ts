@@ -3,14 +3,12 @@ import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html
 import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
 import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
-import { getStore } from "../data/dataStore";
 
 export async function createWebDir(label: string) {
-  const store = getStore();
   const previewPath = await resolve(
     await appCacheDir(),
     "Projects",
-    store.project.id,
+    label,
     "Preview"
   );
   emit("save-text-file", {
