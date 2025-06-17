@@ -84,6 +84,8 @@ export default function MainEditor() {
     listen("preview-port", (event: any) => {
       if (event && event.payload && event.payload.port) {
         const viewStore = getViewStore();
+        console.log(event.payload.label);
+        if(event.payload.label !== getProjectWindowLabel(viewStore.projectPath)) return;
         viewStore.previewPort = event.payload.port;
         setViewStore(viewStore);
       }

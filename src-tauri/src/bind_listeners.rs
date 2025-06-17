@@ -137,11 +137,10 @@ pub fn bind_listeners(app: &tauri::App) {
                                 let _ = rt.block_on(async move { fut.await });
                             });
                             // Inform the frontend of the assigned port for this window
-                            if let Some(project_window) =
-                                handle_project_open.get_webview_window(window_label)
+                            if let Some(project_window) = handle_project_open.get_webview_window(window_label)
                             {
                                 let _ = project_window
-                                    .emit("preview-port", serde_json::json!({ "port": port }));
+                                    .emit("preview-port", serde_json::json!({ "port": port, "label": window_label }));
                             }
                             assign_port_for_label(window_label, port);
                         } else {
