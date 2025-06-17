@@ -40,6 +40,15 @@ export default function MainEditor() {
     const label = getProjectWindowLabel(store.projectPath);
     setMenu();
     updatePreview(true);
+    // Get preview server
+    listen("preview-port", (event: any) => {
+      if (event && event.payload && event.payload.port) {
+        const viewStore = getViewStore();
+        if (event.payload.label !== label) return;
+        viewStore.previewPort = event.payload.port;
+        setViewStore(viewStore);
+      }
+    });
     // Set the title based on the project name
     appWindow.setTitle(store.project.name);
     // Let Tauri know the window is ready
@@ -80,15 +89,6 @@ export default function MainEditor() {
       viewStore.focus = false;
       document.querySelector("#App")?.setAttribute("data-focus", "false");
       setViewStore(viewStore);
-    });
-    listen("preview-port", (event: any) => {
-      if (event && event.payload && event.payload.port) {
-        const viewStore = getViewStore();
-        console.log(event.payload.label);
-        if(event.payload.label !== getProjectWindowLabel(viewStore.projectPath)) return;
-        viewStore.previewPort = event.payload.port;
-        setViewStore(viewStore);
-      }
     });
     listen("settings-store-updated", async (event) => {
       const payload = event.payload as string;
