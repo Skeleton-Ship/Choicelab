@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { listen } from "@tauri-apps/api/event";
 
 import { makeResizable } from "../functions/makeResizable";
 import { getViewStore } from "../../../data/dataStore";

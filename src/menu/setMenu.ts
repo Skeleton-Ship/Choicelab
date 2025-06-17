@@ -27,7 +27,6 @@ import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
 import { togglePreview } from "../preview/togglePreview";
 import { openProjectSettings } from "../editor/settings/openProjectSettings";
-import { get } from "lodash";
 
 /* 
  * Create and update the app-wide menu.
