@@ -5,6 +5,8 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
 use std::path::PathBuf;
+use tauri::{AppHandle, Manager};
+use crate::globals::PENDING_FILES;
 
 pub fn create_binary_file(
     file_name: &str,
@@ -175,22 +177,6 @@ pub fn load_preview_files(input_folder: &str, project_data: &str, project_id: &s
     let mut file = File::create(project_json_dest)?;
     file.write_all(project_data.as_bytes())?;
 
-    // Copy the contents of the `.web` folder to the top level of the output folder
-	/*
-    let web_folder_src = input_folder.join(".web");
-    for entry in fs::read_dir(web_folder_src)? {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let dest_path = output_folder.join(file_name);
-        if entry.path().is_dir() {
-            fs::create_dir_all(&dest_path)?;
-            fs::copy(entry.path(), dest_path)?;
-        } else {
-            fs::copy(entry.path(), dest_path)?;
-        }
-    }
-	*/
-
     // Copy the `assets` folder to the `project` subfolder in the output folder
 	if *include_assets {
     let assets_folder_src = input_folder.join("Assets");
@@ -210,4 +196,18 @@ pub fn load_preview_files(input_folder: &str, project_data: &str, project_id: &s
 	}
 
     Ok(())
+}
+
+pub fn handle_file_associations(app: AppHandle, files: Vec<PathBuf>) {
+    // This is for the `asset:` protocol to work:
+    let asset_protocol_scope = app.asset_protocol_scope();
+    for file in &files {
+        let _ = asset_protocol_scope.allow_file(file);
+    }
+    let files_js = files
+        .iter()
+        .map(|f| f.to_string_lossy().replace('\\', "\\\\"))
+        .collect::<Vec<_>>();
+    let mut pending = PENDING_FILES.lock().unwrap();
+    pending.extend(files_js);
 }

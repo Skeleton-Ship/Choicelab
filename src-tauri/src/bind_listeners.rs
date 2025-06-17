@@ -3,6 +3,7 @@ use crate::file_operations::{
     read_text_file,
 };
 use crate::globals::PENDING_FILES;
+use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
@@ -12,7 +13,6 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
-use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
@@ -22,8 +22,8 @@ struct Payload {
 
 #[derive(Clone, Serialize)]
 struct HistoryPayload {
-	message: String,
-	version_id: String,
+    message: String,
+    version_id: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -73,83 +73,92 @@ fn release_port_for_label(label: &str) {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
-	// Add native menus
-	app.listen("set-document-edited", move |event| {
-		let json_raw = event.payload();
-		let json_value: Result<Value, _> = from_str(json_raw);
-		match json_value {
-			Ok(json) => {
-				let state = json["state"].as_bool().unwrap_or(false);
-				let window_title = json["windowTitle"].as_str().unwrap_or("");
-				set_document_edited_with_title(state, window_title);
-			}
-			Err(e) => {
-				eprintln!("Error parsing JSON: {}", e);
-			}
-		}
-	});
-	// Add native menus
-	let handle_menus = app_handle.clone();
-	app.listen("add-native-menus", move |_event| {
-	let _ = handle_menus.run_on_main_thread(|| {
-		add_native_menus();
-	});	});
-	// When project is ready, set vibrancy
+    // Add native menus
+    app.listen("set-document-edited", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        match json_value {
+            Ok(json) => {
+                let state = json["state"].as_bool().unwrap_or(false);
+                let window_title = json["windowTitle"].as_str().unwrap_or("");
+                set_document_edited_with_title(state, window_title);
+            }
+            Err(e) => {
+                eprintln!("Error parsing JSON: {}", e);
+            }
+        }
+    });
+    // Add native menus
+    let handle_menus = app_handle.clone();
+    app.listen("add-native-menus", move |_event| {
+        let _ = handle_menus.run_on_main_thread(|| {
+            add_native_menus();
+        });
+    });
+    // When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
     app.listen("window-ready", move |event| {
-        println!("[tauri] window-ready event received");
         // Set vibrancy
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
         match json_value {
-        Ok(json) => {
-            let window_label = json["label"].as_str().unwrap_or("N/A");
-            println!("[tauri] window-ready for label: {}", window_label);
-                        let project_window = handle_project_open
-                .get_webview_window(window_label)
-                .unwrap();
-            let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
-
-            // Emit any pending files (global, not per window)
-            {
-                let mut pending = PENDING_FILES.lock().unwrap();
-                if !pending.is_empty() {
-                    let files = pending.drain(..).collect::<Vec<_>>();
-                    println!("[tauri] Emitting opened-files to {}: {:?}", window_label, files);
-                    if let Some(project_window) = handle_project_open.get_webview_window(window_label) {
-                        let _ = project_window.emit("opened-files", files);
-                    }
-                } else {
-                    println!("[tauri] No pending files for {}", window_label);
-                }
-            }
-
-            // If the window label indicates a project, start a preview server for it
-            if window_label.starts_with("project_") && ! window_label.starts_with("project_settings_") {
-                let project_id = &window_label[8..];
-                if let Some(preview_path) = crate::file_operations::get_preview_path(project_id) {
-                    if let Some(port) = get_next_available_port() {
-                        std::thread::spawn(move || {
-                            let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
-                            let fut = crate::preview_server::start_server(preview_path, port);
-                            let _ = rt.block_on(async move { fut.await });
-                        });
-                        // Inform the frontend of the assigned port for this window
-                        if let Some(project_window) = handle_project_open.get_webview_window(window_label) {
-                            let _ = project_window.emit("preview-port", serde_json::json!({ "port": port }));
+            Ok(json) => {
+                let window_label = json["label"].as_str().unwrap_or("N/A");
+                let project_window = handle_project_open
+                    .get_webview_window(window_label)
+                    .unwrap();
+                let _ = handle_project_open
+                    .run_on_main_thread(|| apply_project_vibrancy(project_window));
+                // Emit any pending files (global, not per window)
+                {
+                    let mut pending = PENDING_FILES.lock().unwrap();
+                    if !pending.is_empty() {
+                        let files = pending.drain(..).collect::<Vec<_>>();
+                        if let Some(project_window) =
+                            handle_project_open.get_webview_window(window_label)
+                        {
+                            let _ = project_window.emit("opened-files", files);
                         }
-                        assign_port_for_label(window_label, port);
                     } else {
-                        eprintln!("No available preview ports (4090–4099)");
                     }
-                } else {
-                    eprintln!("Could not determine preview path for project: {}", project_id);
+                }
+
+                // If the window label indicates a project, start a preview server for it
+                if window_label.starts_with("project_")
+                    && !window_label.starts_with("project_settings_")
+                {
+                    let project_id = &window_label[8..];
+                    if let Some(preview_path) = crate::file_operations::get_preview_path(project_id)
+                    {
+                        if let Some(port) = get_next_available_port() {
+                            std::thread::spawn(move || {
+                                let rt = tokio::runtime::Runtime::new()
+                                    .expect("Failed to create Tokio runtime");
+                                let fut = crate::preview_server::start_server(preview_path, port);
+                                let _ = rt.block_on(async move { fut.await });
+                            });
+                            // Inform the frontend of the assigned port for this window
+                            if let Some(project_window) =
+                                handle_project_open.get_webview_window(window_label)
+                            {
+                                let _ = project_window
+                                    .emit("preview-port", serde_json::json!({ "port": port }));
+                            }
+                            assign_port_for_label(window_label, port);
+                        } else {
+                            eprintln!("No available preview ports (4090–4099)");
+                        }
+                    } else {
+                        eprintln!(
+                            "Could not determine preview path for project: {}",
+                            project_id
+                        );
+                    }
                 }
             }
-        }
-        Err(e) => {
-            eprintln!("Error parsing JSON: {}", e);
-        }
+            Err(e) => {
+                eprintln!("Error parsing JSON: {}", e);
+            }
         }
     });
     // listen to text file saves (emitted on any window)
@@ -162,7 +171,7 @@ pub fn bind_listeners(app: &tauri::App) {
                 let name = json["name"].as_str().unwrap_or("N/A");
                 let contents = json["contents"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 let _ = create_text_file(name, contents, path);
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
@@ -193,8 +202,8 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let name = json["name"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
-				let overwrite = json["overwrite"].as_bool().unwrap_or(false);
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let overwrite = json["overwrite"].as_bool().unwrap_or(false);
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 let _ = create_directory(name, path, &overwrite);
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
@@ -224,7 +233,7 @@ pub fn bind_listeners(app: &tauri::App) {
         match json_value {
             Ok(json) => {
                 let version_path = json["path"].as_str().unwrap_or("N/A");
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 let script_prefix = "window.__CHOICELAB_DATA_RAW__ = `";
                 let script_suffix = "`;";
                 let project_window = handle_request_project
@@ -264,13 +273,14 @@ pub fn bind_listeners(app: &tauri::App) {
                 let file_name = json["fileName"].as_str().unwrap_or("N/A");
                 let file_type = json["fileType"].as_str().unwrap_or("N/A");
                 let contents = json["contents"].as_str().unwrap_or("N/A");
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 let assets_dir = json["assetsPath"].as_str().unwrap_or("N/A");
                 if file_type == "binary" {
                     match create_binary_file(file_name, contents, assets_dir) {
                         Ok(_success) => {
-                            let project_window =
-                                handle_create_asset.get_webview_window(window_label).unwrap();
+                            let project_window = handle_create_asset
+                                .get_webview_window(window_label)
+                                .unwrap();
                             let _ = project_window.emit(
                                 "asset-created",
                                 Payload {
@@ -285,8 +295,9 @@ pub fn bind_listeners(app: &tauri::App) {
                 } else if file_type == "text" {
                     match create_text_file(file_name, contents, assets_dir) {
                         Ok(_success) => {
-                            let project_window =
-                                handle_create_asset.get_webview_window(window_label).unwrap();
+                            let project_window = handle_create_asset
+                                .get_webview_window(window_label)
+                                .unwrap();
                             let _ = project_window.emit(
                                 "asset-created",
                                 Payload {
@@ -315,7 +326,7 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let asset_path = json["assetPath"].as_str().unwrap_or("N/A");
                 let dest_path = json["cachePath"].as_str().unwrap_or("N/A");
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 let id = json["id"].as_str().unwrap_or("N/A");
                 match copy_file(asset_path, dest_path) {
                     Ok(_success) => {
@@ -347,13 +358,19 @@ pub fn bind_listeners(app: &tauri::App) {
         match json_value {
             Ok(json) => {
                 let version_path = json["versionPath"].as_str().unwrap_or("N/A");
-				let version_id = json["versionId"].as_str().unwrap_or("N/A");
-				let window_label = json["label"].as_str().unwrap_or("N/A");
+                let version_id = json["versionId"].as_str().unwrap_or("N/A");
+                let window_label = json["label"].as_str().unwrap_or("N/A");
                 match read_text_file(version_path) {
                     Ok(contents) => {
                         let main_window = handle_history.get_webview_window(window_label).unwrap();
                         main_window
-                            .emit("receive-history-version", HistoryPayload { message: contents, version_id: version_id.to_string() })
+                            .emit(
+                                "receive-history-version",
+                                HistoryPayload {
+                                    message: contents,
+                                    version_id: version_id.to_string(),
+                                },
+                            )
                             .unwrap();
                     }
                     Err(e) => {
@@ -393,10 +410,11 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let project_path = json["projectPath"].as_str().unwrap_or("N/A");
                 let project_data = json["projectData"].as_str().unwrap_or("N/A");
-				let project_id = json["projectId"].as_str().unwrap_or("N/A");
-				let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
+                let project_id = json["projectId"].as_str().unwrap_or("N/A");
+                let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    load_preview_files(project_path, project_data, project_id, &include_assets).unwrap();
+                    load_preview_files(project_path, project_data, project_id, &include_assets)
+                        .unwrap();
                 }
             }
             Err(e) => {
