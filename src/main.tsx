@@ -19,6 +19,8 @@ import { Project, LoadError } from "./typings";
 import "./styles/_style.scss";
 import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
+import { listen } from "@tauri-apps/api/event";
+import loadProject from "./fs/loadProject";
 
 const appWindow = getCurrentWebviewWindow();
 
@@ -38,6 +40,15 @@ async function init() {
     updateProject: () => {},
     updateView: () => {},
   };
+
+  listen("opened-files", async (event) => {
+    if (Array.isArray(event.payload)) {
+      const filePath = event.payload[0];
+      if (filePath.endsWith(".clx")) {
+        loadProject(filePath);
+      }
+    }
+  });
 
   let elements = <></>;
 

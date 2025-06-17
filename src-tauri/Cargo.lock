@@ -622,6 +622,7 @@ dependencies = [
  "hex",
  "home",
  "objc",
+ "once_cell",
  "serde",
  "serde_json",
  "tauri",

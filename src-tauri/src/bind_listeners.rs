@@ -2,6 +2,7 @@ use crate::file_operations::{
     copy_file, create_binary_file, create_directory, create_text_file, load_preview_files,
     read_text_file,
 };
+use crate::globals::PENDING_FILES;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
@@ -96,16 +97,32 @@ pub fn bind_listeners(app: &tauri::App) {
 	// When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
     app.listen("window-ready", move |event| {
+        println!("[tauri] window-ready event received");
         // Set vibrancy
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
         match json_value {
         Ok(json) => {
             let window_label = json["label"].as_str().unwrap_or("N/A");
-            let project_window = handle_project_open
+            println!("[tauri] window-ready for label: {}", window_label);
+                        let project_window = handle_project_open
                 .get_webview_window(window_label)
                 .unwrap();
             let _ = handle_project_open.run_on_main_thread(|| apply_project_vibrancy(project_window));
+
+            // Emit any pending files (global, not per window)
+            {
+                let mut pending = PENDING_FILES.lock().unwrap();
+                if !pending.is_empty() {
+                    let files = pending.drain(..).collect::<Vec<_>>();
+                    println!("[tauri] Emitting opened-files to {}: {:?}", window_label, files);
+                    if let Some(project_window) = handle_project_open.get_webview_window(window_label) {
+                        let _ = project_window.emit("opened-files", files);
+                    }
+                } else {
+                    println!("[tauri] No pending files for {}", window_label);
+                }
+            }
 
             // If the window label indicates a project, start a preview server for it
             if window_label.starts_with("project_") && ! window_label.starts_with("project_settings_") {
