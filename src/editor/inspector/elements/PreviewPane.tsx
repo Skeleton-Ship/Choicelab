@@ -2,22 +2,15 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { listen } from "@tauri-apps/api/event";
 
 import { makeResizable } from "../functions/makeResizable";
+import { getViewStore } from "../../../data/dataStore";
 export function PreviewPane() {
+  const viewStore = getViewStore();
   const previewRef = useRef(null);
-  const [port, setPort] = useState(4091); // Default port
+  const [port, _setPort] = useState(viewStore.previewPort); // Default port
 
   useEffect(() => {
     if (!previewRef.current) return;
     makeResizable(previewRef.current);
-    // Listen for preview-port event from backend
-    const unlisten = listen("preview-port", (event: any) => {
-      if (event && event.payload && event.payload.port) {
-        setPort(event.payload.port);
-      }
-    });
-    return () => {
-      unlisten.then((fn) => fn());
-    };
   }, []);
 
   return (

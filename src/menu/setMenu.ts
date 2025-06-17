@@ -27,6 +27,7 @@ import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
 import { togglePreview } from "../preview/togglePreview";
 import { openProjectSettings } from "../editor/settings/openProjectSettings";
+import { get } from "lodash";
 
 /* 
  * Create and update the app-wide menu.
@@ -390,7 +391,8 @@ export async function setMenu(windowState: string = "project") {
     id: "open_in_browser",
     text: "Open Preview in Browser",
     action: async () => {
-      await open("http://localhost:4091");
+      const port = getViewStore().previewPort;
+      await open(`http://localhost:${port}`);
     },
   });
   previewInBrowser.setEnabled(windowState !== "launcher" ? true : false);

@@ -28,6 +28,7 @@ function getPreviewId(store: Store) {
 
 export async function updatePreview(includeAssets: boolean) {
   const store = getStore();
+  const port = getViewStore().previewPort;
   // Update project files in Tauri
   const projectPath = store.projectPath;
   emit("update-preview", {
@@ -37,7 +38,7 @@ export async function updatePreview(includeAssets: boolean) {
     includeAssets: includeAssets,
   });
   // Get currently selected node
-  const previewUrl = new URL(`http://localhost:4091?time=${Date.now()}`);
+  const previewUrl = new URL(`http://localhost:${port}?time=${Date.now()}`);
   const previewId = getPreviewId(store);
   if (previewId !== false) {
     previewUrl.searchParams.set("start", previewId);

@@ -76,10 +76,17 @@ export default function MainEditor() {
       setViewStore(store);
     });
     listen("tauri://blur", async () => {
-      const store = getViewStore();
+      const viewStore = getViewStore();
       store.focus = false;
       document.querySelector("#App")?.setAttribute("data-focus", "false");
-      setViewStore(store);
+      setViewStore(viewStore);
+    });
+    listen("preview-port", (event: any) => {
+      if (event && event.payload && event.payload.port) {
+        const viewStore = getViewStore();
+        viewStore.previewPort = event.payload.port;
+        setViewStore(viewStore);
+      }
     });
     listen("settings-store-updated", async (event) => {
       const payload = event.payload as string;

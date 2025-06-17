@@ -103,6 +103,7 @@ export interface ViewStore {
   inTextElement: boolean;
   focus: boolean;
   saved: boolean;
+  previewPort: number;
   viewSettings: {
     cellWidth: number;
     cellHeight: number;
