@@ -77,7 +77,7 @@ export default function MainEditor() {
     });
     listen("tauri://blur", async () => {
       const viewStore = getViewStore();
-      store.focus = false;
+      viewStore.focus = false;
       document.querySelector("#App")?.setAttribute("data-focus", "false");
       setViewStore(viewStore);
     });
