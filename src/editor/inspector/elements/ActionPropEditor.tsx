@@ -223,15 +223,17 @@ export default function ActionPropEditor(props: {
       break;
     case "__CUSTOM__Appearance":
       propControl = (
-        <Appearance
-          action={action}
-          actionDef={actionDef}
-          propDef={defProp}
-          initialValue={initialValue}
-          extended={props.extended}
-          store={props.store}
-          update={props.update}
-        />
+        // Temporarily commented out since no props yet
+        // <Appearance
+        //   action={action}
+        //   actionDef={actionDef}
+        //   propDef={defProp}
+        //   initialValue={initialValue}
+        //   extended={props.extended}
+        //   store={props.store}
+        //   update={props.update}
+        // />
+        <Appearance />
       );
       break;
     default:
