@@ -29,7 +29,7 @@
   "identifier": "com.choicelab.choicelab",
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4NzdGMTk3OUFCMzM5NkYKUldSdk9iT2FsL0YzT08vUUc2SkhaUUpweERVRVphNlVvdG5pZFc5cXpvamt2cHdLRXFJMzQrRUsK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyOTQ0NjcyN0M5QUZBM0YKUldRLytwcDhja2FVTXFSQ2lMaXJwd2djdDRRZ3VMUHJUZ2h1VG1vMjhaZ3ExMUNWcnlPV1IrdWIK",
       "endpoints": [
         "https://github.com/austinheller/choicelab-app/releases/download/latest.json"
       ]
