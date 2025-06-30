@@ -8,6 +8,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -26,7 +27,14 @@
   "productName": "Choicelab",
   "mainBinaryName": "Choicelab",
   "identifier": "com.choicelab.choicelab",
-  "plugins": {},
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4NzdGMTk3OUFCMzM5NkYKUldSdk9iT2FsL0YzT08vUUc2SkhaUUpweERVRVphNlVvdG5pZFc5cXpvamt2cHdLRXFJMzQrRUsK",
+      "endpoints": [
+        "https://github.com/austinheller/choicelab-app/releases/download/latest.json"
+      ]
+    }
+  },
   "app": {
     "withGlobalTauri": true,
     "macOSPrivateApi": true,

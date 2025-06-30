@@ -1,3 +1,4 @@
+use crate::globals::PENDING_FILES;
 use home::home_dir;
 use std::error::Error;
 use std::fs;
@@ -6,7 +7,6 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
-use crate::globals::PENDING_FILES;
 
 pub fn create_binary_file(
     file_name: &str,
@@ -126,12 +126,12 @@ pub fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
 
 pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> io::Result<()> {
     let full_path = format!("{}/{}", path, directory_name);
-	let full_path = Path::new(&full_path);
+    let full_path = Path::new(&full_path);
 
-	if *overwrite && full_path.exists() {
-		fs::remove_dir_all(full_path)?;
-	}
-	
+    if *overwrite && full_path.exists() {
+        fs::remove_dir_all(full_path)?;
+    }
+
     // Create the directory
     fs::create_dir(&full_path)?;
 
@@ -141,8 +141,8 @@ pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> i
 pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     // Get the user's home directory
     if let Some(home_path) = home_dir() {
-        let preview_path: PathBuf =
-            home_path.join("Library/Caches/com.choicelab.choicelab/Projects/".to_owned() + id + "/Preview");
+        let preview_path: PathBuf = home_path
+            .join("Library/Caches/com.choicelab.choicelab/Projects/".to_owned() + id + "/Preview");
         // Return the preview path
         Some(preview_path)
     } else {
@@ -151,7 +151,12 @@ pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     }
 }
 
-pub fn load_preview_files(input_folder: &str, project_data: &str, project_label: &str, include_assets: &bool) -> std::io::Result<()> {
+pub fn load_preview_files(
+    input_folder: &str,
+    project_data: &str,
+    project_label: &str,
+    include_assets: &bool,
+) -> std::io::Result<()> {
     // Convert the input folder string to a PathBuf
     let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
 
@@ -178,22 +183,22 @@ pub fn load_preview_files(input_folder: &str, project_data: &str, project_label:
     file.write_all(project_data.as_bytes())?;
 
     // Copy the `assets` folder to the `project` subfolder in the output folder
-	if *include_assets {
-    let assets_folder_src = input_folder.join("Assets");
-    let assets_folder_dest = project_subfolder.join("Assets");
-    fs::create_dir_all(&assets_folder_dest)?;
-    for entry in fs::read_dir(assets_folder_src)? {
-        let entry = entry?;
-        let file_name = entry.file_name();
-        let dest_path = assets_folder_dest.join(file_name);
-        if entry.path().is_dir() {
-            fs::create_dir_all(&dest_path)?;
-            fs::copy(entry.path(), dest_path)?;
-        } else {
-            fs::copy(entry.path(), dest_path)?;
+    if *include_assets {
+        let assets_folder_src = input_folder.join("Assets");
+        let assets_folder_dest = project_subfolder.join("Assets");
+        fs::create_dir_all(&assets_folder_dest)?;
+        for entry in fs::read_dir(assets_folder_src)? {
+            let entry = entry?;
+            let file_name = entry.file_name();
+            let dest_path = assets_folder_dest.join(file_name);
+            if entry.path().is_dir() {
+                fs::create_dir_all(&dest_path)?;
+                fs::copy(entry.path(), dest_path)?;
+            } else {
+                fs::copy(entry.path(), dest_path)?;
+            }
         }
     }
-	}
 
     Ok(())
 }

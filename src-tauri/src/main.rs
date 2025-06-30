@@ -1,8 +1,8 @@
-mod file_operations;
-mod native_bridge_macos;
 mod bind_listeners;
-mod preview_server;
+mod file_operations;
 mod globals;
+mod native_bridge_macos;
+mod preview_server;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
@@ -13,6 +13,7 @@ use file_operations::handle_file_associations;
 fn main() {
     // Run Tauri
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {

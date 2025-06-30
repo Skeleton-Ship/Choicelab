@@ -134,9 +134,16 @@ pub fn bind_listeners(app: &tauri::App) {
                     && !window_label.starts_with("project_settings_")
                 {
                     if let Some(existing_port) = get_port_for_label(window_label) {
-                        let project_window = handle_project_open.get_webview_window(window_label).unwrap();
-                        let _ = project_window.emit("preview-port", serde_json::json!({ "port": existing_port, "label": window_label }));
-                    } else if let Some(preview_path) = crate::file_operations::get_preview_path(&window_label) {
+                        let project_window = handle_project_open
+                            .get_webview_window(window_label)
+                            .unwrap();
+                        let _ = project_window.emit(
+                            "preview-port",
+                            serde_json::json!({ "port": existing_port, "label": window_label }),
+                        );
+                    } else if let Some(preview_path) =
+                        crate::file_operations::get_preview_path(&window_label)
+                    {
                         if let Some(port) = get_next_available_port() {
                             std::thread::spawn(move || {
                                 let rt = tokio::runtime::Runtime::new()
@@ -144,8 +151,13 @@ pub fn bind_listeners(app: &tauri::App) {
                                 let fut = crate::preview_server::start_server(preview_path, port);
                                 let _ = rt.block_on(async move { fut.await });
                             });
-                            let project_window = handle_project_open.get_webview_window(window_label).unwrap();
-                            let _ = project_window.emit("preview-port", serde_json::json!({ "port": port, "label": window_label }));
+                            let project_window = handle_project_open
+                                .get_webview_window(window_label)
+                                .unwrap();
+                            let _ = project_window.emit(
+                                "preview-port",
+                                serde_json::json!({ "port": port, "label": window_label }),
+                            );
                             assign_port_for_label(window_label, port);
                         } else {
                             eprintln!("No available preview ports (4090–4099)");
