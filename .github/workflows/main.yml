@@ -58,6 +58,6 @@ jobs:
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          repo: "austinheller/choicelab-releases"
+          repo: "choicelab-releases"
           releaseCommitish: "main"
           args: ${{ matrix.args }}
