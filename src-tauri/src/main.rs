@@ -19,6 +19,7 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             bind_listeners(app);
+            native_bridge_macos::set_app_handle(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![])

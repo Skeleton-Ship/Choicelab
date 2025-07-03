@@ -55,6 +55,17 @@
         "resizable": false,
         "titleBarStyle": "Overlay",
         "transparent": true
+      },
+      {
+        "label": "whats-new",
+        "url": "index.html?window_type=whatsNew",
+        "title": "",
+        "width": 600,
+        "height": 400,
+        "resizable": false,
+        "titleBarStyle": "Overlay",
+        "transparent": false,
+        "visible": false
       }
     ]
   }

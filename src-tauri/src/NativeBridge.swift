@@ -35,6 +35,14 @@ import Cocoa
 		)
 		visitWebsiteItem.target = NativeBridge.sharedInstance()
 		helpMenu.addItem(visitWebsiteItem)
+
+		let releaseNotesItem = NSMenuItem(
+		  title: "Release Notes",
+		  action: #selector(showReleaseNotes(_:)),
+		  keyEquivalent: ""
+		)
+		releaseNotesItem.target = NativeBridge.sharedInstance()
+		helpMenu.addItem(releaseNotesItem)
 		
 		mainMenu.addItem(helpMenuItem)
 	  }
@@ -88,5 +96,14 @@ import Cocoa
 	if let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link") {
 	  NSWorkspace.shared.open(url)
 	}
+  }
+
+  // Add C function declaration for Rust callback
+  @_silgen_name("menu_release_notes_clicked")
+  func menu_release_notes_clicked()
+
+  @objc func showReleaseNotes(_ sender: NSMenuItem) {
+    // Call into Rust
+    menu_release_notes_clicked()
   }
 }
