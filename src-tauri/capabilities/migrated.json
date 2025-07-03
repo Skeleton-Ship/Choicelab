@@ -39,6 +39,8 @@
     "shell:default",
     "dialog:default",
     "fs:default",
-    "dialog:default"
+    "dialog:default",
+    "updater:default",
+    "process:default"
   ]
 }

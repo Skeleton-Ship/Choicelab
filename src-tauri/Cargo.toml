@@ -1,6 +1,6 @@
 [package]
 name = "choicelab-app"
-version = "0.6.0"
+version = "0.5.9"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -28,6 +28,7 @@ tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 objc = "0.2.7"
 once_cell = "1.21.3"
+tauri-plugin-process = "2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
