@@ -24,10 +24,10 @@
                 <string>com.choicelab.clx</string>
                 <key>UTTypeDescription</key>
                 <string>Choicelab Project</string>
-                <key>UTTypeConformsTo</key>
+                <!-- <key>UTTypeConformsTo</key>
                 <array>
                     <string>public.json</string>
-                </array>
+                </array> -->
                 <key>UTTypeTagSpecification</key>
                 <dict>
                     <key>public.filename-extension</key>
