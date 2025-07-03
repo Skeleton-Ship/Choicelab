@@ -83,6 +83,7 @@ function Toolbar(props: { update: Function }) {
           </div>
         </button>
       </div>
+      <div id="update"></div>
     </div>
   );
 }

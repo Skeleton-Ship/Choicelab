@@ -1,5 +1,7 @@
 @use "../base/mixins";
 
+$update-button-height: 22px;
+
 #toolbar {
   background-color: rgba(255, 255, 255, 0.9);
   -webkit-app-region: drag;
@@ -158,5 +160,36 @@
     @media (prefers-color-scheme: dark) {
       color: var(--heading-text-dark);
     }
+  }
+  #update {
+    position: absolute;
+    right: 0;
+    top: 0;
+    button {
+      display: block;
+      font-size: 12px;
+      background-color: hsl(141, 69%, 40%);
+      font-weight: 500;
+      width: 125px;
+      height: 0;
+      animation: wipe 0.5s ease forwards;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 0 0 0 5px;
+      text-shadow: rgba(0, 0, 0, 0.3) 0 -0.5px 1px;
+      &:active {
+        background-color: hsl(141, 74%, 34%);
+      }
+    }
+  }
+}
+
+@keyframes wipe {
+  from {
+    height: 0;
+  }
+  to {
+    height: $update-button-height;
   }
 }

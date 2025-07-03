@@ -26,6 +26,7 @@ import {
   updatePreview,
 } from "../preview/updatePreview";
 import { setMenu } from "../menu/setMenu";
+import { checkForUpdates } from "../utils/checkForUpdates";
 // App elements
 import Toolbar from "./toolbar/Toolbar";
 import SequenceEl from "./Flowchart";
@@ -141,6 +142,8 @@ export default function MainEditor() {
       handleCloseRequest();
     });
     appWindow.show();
+    // Once ready, check for updates
+    checkForUpdates();
   }, []);
 
   const store = getStore();
