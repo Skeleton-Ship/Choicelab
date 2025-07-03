@@ -10,6 +10,7 @@
     "build": "tauri build",
     "preview": "vite preview",
     "install-all": "cd src-tauri && cargo clean && cargo build && cd ../ && yarn install",
+    "changelog": "node changelog.cjs",
     "version-major": "yarn version --major && node version.cjs",
     "version-minor": "yarn version --minor && node version.cjs",
     "version-patch": "yarn version --patch && node version.cjs",
@@ -29,6 +30,7 @@
     "lodash": "^4.17.21",
     "path": "^0.12.7",
     "preact": "^10.18.2",
+    "preact-markdown": "^2.1.0",
     "uint8-to-base64": "^0.2.0",
     "uuid": "^11.1.0",
     "wavesurfer.js": "^7.8.6"

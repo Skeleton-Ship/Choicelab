@@ -1,5 +1,6 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
+import { WhatsNew } from "./whats-new/WhatsNew";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
@@ -56,6 +57,9 @@ async function init() {
   const windowType: string | null = urlParams.get("window_type");
   if (windowType === "launcher") {
     elements = <Launcher />;
+  }
+  if (windowType === "whatsNew") {
+    elements = <WhatsNew />;
   }
   if (windowType === "project" || windowType === "projectSettings") {
     // Get project path
