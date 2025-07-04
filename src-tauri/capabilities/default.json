@@ -1,15 +1,17 @@
 {
   "identifier": "migrated",
-  "description": "permissions that were migrated from v1",
+  "description": "",
   "local": true,
   "windows": ["*"],
   "permissions": [
     "core:default",
     "fs:allow-read-file",
+    "fs:allow-app-write",
     "fs:allow-exists",
     {
       "identifier": "fs:scope",
       "allow": [
+        "$APPCONFIG/*",
         "$APPCACHE/Preview/*",
         "$APPCACHE/Projects/*",
         "$APPCACHE/Projects/*/assets/*"
