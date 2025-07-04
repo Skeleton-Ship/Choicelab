@@ -3,8 +3,9 @@ import { useEffect } from "preact/hooks";
 import { emit, listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
-const appWindow = getCurrentWebviewWindow();
 import { setMenu } from "../menu/setMenu";
+import { showReleaseNotes } from "../utils/showReleaseNotes";
+const appWindow = getCurrentWebviewWindow();
 
 function Launcher() {
   useEffect(() => {
@@ -20,6 +21,7 @@ function Launcher() {
       if (focused === false) return;
       setMenu("launcher");
     });
+    showReleaseNotes();
   }, []);
   return (
     <div id="launcher" data-tauri-drag-region>

@@ -26,6 +26,7 @@
     "@tauri-apps/plugin-updater": "~2",
     "@types/uuid": "^10.0.0",
     "@ungap/structured-clone": "^1.2.0",
+    "compare-versions": "^6.1.1",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "path": "^0.12.7",
