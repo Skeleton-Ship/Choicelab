@@ -1,4 +1,3 @@
-import { getVersion } from "@tauri-apps/api/app";
 import { resolve, appConfigDir } from "@tauri-apps/api/path";
 import {
   readTextFile,
@@ -12,8 +11,7 @@ async function createAppPreferences() {
   const configPathExists = await exists(appConfigDirPath);
   if (!configPathExists) await mkdir(appConfigDirPath);
   const preferencesPath = await resolve(appConfigDirPath, "Preferences.json");
-  const version = await getVersion();
-  const preferencesObj = { versionNotesSeen: version };
+  const preferencesObj = { versionNotesSeen: "0.0.0" };
   await writeTextFile(
     preferencesPath,
     JSON.stringify(preferencesObj, null, 2),
