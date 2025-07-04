@@ -11,9 +11,9 @@ const matches = changelog.match(h2Regex);
 if (matches.length === 0) return;
 const firstH2Index = changelog.indexOf(matches[0]);
 const nextH2Index = matches[1]
-  ? changelog.indexOf(matches[1])
+  ? changelog.indexOf(matches[1]) + 1
   : changelog.length - 1;
-  const dateRegex = /#### \d\d\d\d-[\dx][\dx]-[\dx][\dx]/g;
+const dateRegex = /#### \d\d\d\d-[\dx][\dx]-[\dx][\dx]/g;
 const dateMatches = changelog.match(dateRegex);
 if (dateMatches) {
   const match = dateMatches[0];
@@ -24,7 +24,7 @@ if (dateMatches) {
     const formattedDate = date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
-      day: "numeric"
+      day: "numeric",
     });
     changelog = changelog.replace(match, `#### ${formattedDate}`);
   }
