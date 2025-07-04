@@ -11,9 +11,9 @@
     "preview": "vite preview",
     "install-all": "cd src-tauri && cargo clean && cargo build && cd ../ && yarn install",
     "changelog": "node changelog.cjs",
-    "version-major": "yarn version --major && node version.cjs",
-    "version-minor": "yarn version --minor && node version.cjs",
-    "version-patch": "yarn version --patch && node version.cjs",
+    "version-major": "yarn version --major && node version.cjs && yarn changelog",
+    "version-minor": "yarn version --minor && node version.cjs && yarn changelog",
+    "version-patch": "yarn version --patch && node version.cjs && yarn changelog",
     "tauri": "tauri"
   },
   "dependencies": {
