@@ -2,18 +2,7 @@
 use objc::runtime::{Class, BOOL, NO, YES};
 use objc::{msg_send, sel, sel_impl};
 use std::sync::OnceLock;
-use tauri::Manager;
-
-async fn reopen_whats_new_window(app: tauri::AppHandle) {
-	let window_index = 1; // matches tauri.conf.json
-    let notes_window =
-        tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
-            .unwrap()
-            .build()
-            .unwrap();
-    let _ = notes_window.show();
-    let _ = notes_window.set_focus();
-}
+use crate::bind_listeners::open_whats_new_window;
 
 pub fn add_native_menus() {
     unsafe {
@@ -53,12 +42,7 @@ pub extern "C" fn menu_release_notes_clicked() {
     // Launch or show the Tauri window with label "whats-new"
     if let Some(app_handle) = APP_HANDLE.get() {
         tauri::async_runtime::block_on(async {
-            if let Some(window) = app_handle.get_window("whats-new") {
-                let _ = window.show();
-                let _ = window.set_focus();
-            } else {
-                let _ = reopen_whats_new_window(app_handle.clone()).await;
-            }
+			open_whats_new_window(app_handle.clone());
         });
     } else {
         eprintln!(

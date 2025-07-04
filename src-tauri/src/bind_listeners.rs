@@ -77,6 +77,22 @@ fn release_port_for_label(label: &str) {
     }
 }
 
+pub fn open_whats_new_window(app: tauri::AppHandle) {
+	if let Some(window) = app.get_window("whats-new") {
+		let _ = window.show();
+		let _ = window.set_focus();
+	} else {
+		let window_index = 1; // matches tauri.conf.json
+		let notes_window =
+			tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
+				.unwrap()
+				.build()
+				.unwrap();
+		let _ = notes_window.show();
+		let _ = notes_window.set_focus();
+	}
+}
+
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
     // Add native menus
@@ -447,4 +463,10 @@ pub fn bind_listeners(app: &tauri::App) {
             }
         }
     });
+	
+	// listen for what's new window to open
+	let handle_whats_new = app_handle.clone();
+	app.listen("whats-new-window", move |_event| {
+		open_whats_new_window(handle_whats_new.clone());
+	});
 }
