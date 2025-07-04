@@ -2,7 +2,7 @@
 
 ## 0.6.0
 
-#### 2025-06-xx
+#### 2025-06-20
 
 - The app now supports **automatic updates**, and will prompt when a new version is available.
 - **Important**: Choicelab projects now end in `.clx` instead of `.json`, and the `assets` folder has been renamed `Assets`. In Choicelab, the CLX file is now what you select when opening a project.

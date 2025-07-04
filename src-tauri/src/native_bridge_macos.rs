@@ -5,13 +5,14 @@ use std::sync::OnceLock;
 use tauri::Manager;
 
 async fn reopen_whats_new_window(app: tauri::AppHandle) {
-    let webview_window =
-        tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(1).unwrap())
+	let window_index = 1; // matches tauri.conf.json
+    let notes_window =
+        tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
             .unwrap()
             .build()
             .unwrap();
-    let _ = webview_window.show();
-    let _ = webview_window.set_focus();
+    let _ = notes_window.show();
+    let _ = notes_window.set_focus();
 }
 
 pub fn add_native_menus() {
