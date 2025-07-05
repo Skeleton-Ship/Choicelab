@@ -5,6 +5,11 @@ import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 
 export async function createWebDir(label: string) {
+  // HTML PLAYER ONLY: Disable logging
+  const playerHTML = playerHTMLDefault.replace(
+    "logging: true",
+    "logging: false"
+  );
   const previewPath = await resolve(
     await appCacheDir(),
     "Projects",
@@ -13,7 +18,7 @@ export async function createWebDir(label: string) {
   );
   emit("save-text-file", {
     name: "index.html",
-    contents: playerHTMLDefault,
+    contents: playerHTML,
     path: previewPath,
     label: label,
   });
