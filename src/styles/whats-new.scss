@@ -17,7 +17,7 @@ $toolbar-offset: 32px;
     width: calc(100% - 10px);
     margin: 0 5px;
     padding: 0 42px;
-    padding-top: 20px;
+    padding-top: 24px;
     padding-bottom: 26px;
     height: calc(100% - #{$toolbar-offset});
     overflow: scroll;
@@ -35,10 +35,10 @@ $toolbar-offset: 32px;
       }
     }
     h1 {
-      font-size: 36px;
+      font-size: 37px;
       font-weight: 200;
-      letter-spacing: -0.01em;
-      margin-bottom: 12px;
+      letter-spacing: -0.015em;
+      margin-bottom: 15px;
       .icon {
         display: inline-block;
         margin-right: 10px;
@@ -59,7 +59,7 @@ $toolbar-offset: 32px;
     h4 {
       display: inline-block;
       font-size: 26px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
     h4 {
       font-weight: 200;
@@ -79,7 +79,7 @@ $toolbar-offset: 32px;
     }
     p,
     li {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 300;
       strong {
         font-weight: 700;
