@@ -5,10 +5,12 @@ import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 
 export async function createWebDir(label: string) {
-  // HTML PLAYER ONLY: Disable logging
-  const playerHTML = playerHTMLDefault.replace(
-    "logging: true",
-    "logging: false"
+  // HTML PLAYER ONLY: Configure initialization
+  let playerHTML = playerHTMLDefault;
+  playerHTML = playerHTML.replace("logging: true", "logging: false");
+  playerHTML = playerHTML.replace(
+    /path: "(.*?)",/g,
+    `path: "./project/project.clx",`
   );
   const previewPath = await resolve(
     await appCacheDir(),
