@@ -152,6 +152,8 @@ export default function MainEditor() {
   const [_viewRefresh, triggerViewRefresh] = useState(uuidv4());
   const handleUpdateView = async () => {
     setMenu();
+    // Update preview
+    handleUpdatePreview(false);
     triggerViewRefresh(uuidv4());
   };
   const handleUpdate = async (
