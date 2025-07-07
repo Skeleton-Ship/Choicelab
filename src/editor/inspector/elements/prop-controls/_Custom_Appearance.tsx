@@ -1,6 +1,7 @@
 import { openProjectSettings } from "../../../settings/openProjectSettings";
 
 export function Appearance() {
+  return null;
   return (
     <div class="inspector-prop appearance">
       <button

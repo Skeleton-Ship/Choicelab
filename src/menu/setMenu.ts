@@ -425,10 +425,12 @@ export async function setMenu(windowState: string = "project") {
       }),
       deleteNodes,
       deleteStem,
+      /*
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
       projectSettings,
+	  */
     ],
   });
 
