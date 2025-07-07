@@ -3,6 +3,7 @@ mod file_operations;
 mod globals;
 mod native_bridge_macos;
 mod preview_server;
+mod check_for_updates;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;

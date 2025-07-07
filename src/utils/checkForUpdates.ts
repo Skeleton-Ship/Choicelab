@@ -1,5 +1,7 @@
 import { check } from "@tauri-apps/plugin-updater";
-import { relaunch } from "@tauri-apps/plugin-process";
+import { emit } from "@tauri-apps/api/event";
+import { handleCloseRequest } from "../fs/handleCloseRequest";
+import spinner from "../assets/spinner.gif";
 
 async function updateToolbar(callback: Function) {
   const toolbar = document.querySelector("#toolbar #update");
@@ -8,22 +10,23 @@ async function updateToolbar(callback: Function) {
   btn.innerText = "Update Ready";
   toolbar.appendChild(btn);
   btn.addEventListener("click", () => {
-    callback();
+    handleCloseRequest(() => {
+      btn.innerText = "Updating...";
+      const progressIndicator = document.createElement("img");
+      progressIndicator.src = spinner;
+      btn.insertBefore(progressIndicator, btn.firstChild);
+      btn.setAttribute("disabled", "");
+      // Run callback from checkForUpdates
+      callback();
+    });
   });
 }
 
 export async function checkForUpdates() {
   const update = await check();
   if (update) {
-    await update.download((event) => {
-      switch (event.event) {
-        case "Finished":
-          console.log("download finished");
-          break;
-      }
-    });
     updateToolbar(async () => {
-      await relaunch();
+      emit("handle-update");
     });
   }
 }

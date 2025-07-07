@@ -2,6 +2,7 @@ use crate::file_operations::{
     copy_file, create_binary_file, create_directory, create_text_file, load_preview_files,
     read_text_file,
 };
+use crate::check_for_updates::update;
 use crate::globals::PENDING_FILES;
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Deserialize, Serialize};
@@ -14,6 +15,7 @@ use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
+
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -117,6 +119,15 @@ pub fn bind_listeners(app: &tauri::App) {
             add_native_menus();
         });
     });
+let handle_update = app_handle.clone();
+	app.listen("handle-update", move |_event| {
+		let handle_update = handle_update.clone();
+		tauri::async_runtime::spawn(async move {
+			if let Err(e) = update(handle_update).await {
+				eprintln!("Update failed: {:?}", e);
+			}
+		});
+	});
     // When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
     app.listen("window-ready", move |event| {

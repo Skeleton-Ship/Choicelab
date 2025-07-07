@@ -166,7 +166,7 @@ $update-button-height: 22px;
     right: 0;
     top: 0;
     button {
-      display: block;
+      display: flex;
       font-size: 12px;
       background-color: hsl(141, 69%, 40%);
       font-weight: 500;
@@ -180,6 +180,17 @@ $update-button-height: 22px;
       text-shadow: rgba(0, 0, 0, 0.3) 0 -0.5px 1px;
       &:active {
         background-color: hsl(141, 74%, 34%);
+      }
+      &[disabled] {
+        opacity: 1;
+        background-color: hsl(195, 100%, 34%);
+      }
+      img {
+        display: inline-block;
+        margin-right: 7px;
+        width: 17px;
+        height: auto;
+        mix-blend-mode: screen;
       }
     }
   }

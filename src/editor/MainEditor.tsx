@@ -1,9 +1,6 @@
 // Libraries
-import { ask } from "@tauri-apps/plugin-dialog";
-import { appCacheDir } from "@tauri-apps/api/path";
 import { listen, emit } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { resolve } from "@tauri-apps/api/path";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
@@ -16,6 +13,7 @@ import {
 } from "../data/dataStore";
 import { getCurrentSequence } from "../data/getData";
 import { saveHistoryVersion } from "../data/history";
+import { handleCloseRequest } from "../fs/handleCloseRequest";
 import {
   handleCutCopy,
   handlePaste,
@@ -33,7 +31,6 @@ import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
-import { getProjectSettingsWindow } from "./settings/getProjectSettingsWindow";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
@@ -99,42 +96,6 @@ export default function MainEditor() {
       handleUpdate(true, true);
     });
     // Close listeners
-    async function handleClose() {
-      // Clear cache
-      const cacheBase = await appCacheDir();
-      const cachePath = await resolve(cacheBase, "Projects");
-      emit("clear-cache", {
-        path: cachePath,
-      });
-      // Close settings window if it's open
-      const projectSettingsWindow = await getProjectSettingsWindow(
-        getProjectWindowLabel(store.projectPath, "settings")
-      );
-      if (projectSettingsWindow) {
-        projectSettingsWindow.destroy();
-      }
-      // Close it, baby!
-      appWindow.destroy();
-    }
-    async function handleCloseRequest() {
-      const store = getViewStore();
-      if (store.saved) {
-        handleClose();
-        return;
-      }
-      const confirm = await ask(
-        "Do you want to save your changes before quitting?",
-        {
-          title: "Quit before saving?",
-          kind: "warning",
-          okLabel: "Go Back",
-          cancelLabel: "Quit Without Saving",
-        }
-      );
-      if (confirm === false) {
-        handleClose();
-      }
-    }
     appWindow.listen("tauri://close-requested", async () => {
       handleCloseRequest();
     });
