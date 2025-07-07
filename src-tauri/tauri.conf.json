@@ -30,9 +30,7 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyOTQ0NjcyN0M5QUZBM0YKUldRLytwcDhja2FVTXFSQ2lMaXJwd2djdDRRZ3VMUHJUZ2h1VG1vMjhaZ3ExMUNWcnlPV1IrdWIK",
-      "endpoints": [
-        "https://github.com/austinheller/choicelab-releases/releases/latest/download/latest.json"
-      ]
+      "endpoints": ["https://releases.choicelab.xyz/latest/latest.json"]
     }
   },
   "app": {
