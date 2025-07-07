@@ -39,7 +39,9 @@ export async function updatePreview(includeAssets: boolean) {
     includeAssets: includeAssets,
   });
   // Get currently selected node
-  const previewUrl = new URL(`http://localhost:${port}?time=${Date.now()}`);
+  const previewUrl = new URL(
+    `http://localhost:${port}?time=${Date.now()}&startMediaOnLoad=false`
+  );
   const previewId = getPreviewId(store);
   if (previewId !== false) {
     previewUrl.searchParams.set("start", previewId);

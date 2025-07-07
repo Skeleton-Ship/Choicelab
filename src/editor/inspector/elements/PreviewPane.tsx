@@ -14,7 +14,10 @@ export function PreviewPane() {
 
   return (
     <div id="project-preview" ref={previewRef}>
-      <iframe id="preview-frame" src={`http://localhost:${port}`}></iframe>
+      <iframe
+        id="preview-frame"
+        src={`http://localhost:${port}?startMediaOnLoad=false`}
+      ></iframe>
       <div class="resizer vertical"></div>
     </div>
   );
