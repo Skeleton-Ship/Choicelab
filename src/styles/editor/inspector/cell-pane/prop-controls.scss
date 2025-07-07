@@ -118,7 +118,7 @@
           top: 50%;
           transform: translate(-50%, -50%);
           @media (prefers-color-scheme: dark) {
-            color: rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.25);
           }
         }
         &:hover {
@@ -129,7 +129,7 @@
           @media (prefers-color-scheme: dark) {
             background-color: rgba(255, 255, 255, 0.05);
             &:after {
-              color: rgba(255, 255, 255, 0.6);
+              background-color: rgba(255, 255, 255, 0.6);
             }
           }
         }
