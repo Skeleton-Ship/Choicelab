@@ -45,4 +45,6 @@ Once you successfully build the app (using the process above):
 1. From GitHub, go to the [Releases page in the choicelab-releases repo](https://github.com/austinheller/choicelab-releases/releases).
 2. Verify the release assets are correct, then publish it.
 3. Take the `latest.json` file, and upload it to the `releases.choicelab.xyz` S3 bucket, in the `/latest` subdirectory.
-   - **Note**: This bucket is owned by Austin's AWS account. Talk to them for the access key.
+   - This bucket is owned by Austin's AWS account. Talk to them for the access key.
+
+**Important**: Amazon S3 caches its resources, so the S3-mirroring CloudFront URL that the app checks for updates — releases.choicelab.xyz/latest/latest.json — doesn't always immediately show the latest JSON. You can force S3 to clear its cache by going to CloudFront in AWS, and [creating an invalidation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation_Requests.html).
