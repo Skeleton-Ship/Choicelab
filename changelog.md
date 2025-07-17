@@ -6,6 +6,7 @@
 
 - The app now supports **automatic updates**, and will prompt when a new version is available.
 - You can see what's new in Choicelab by going to Help -> Release Notes.
+- Now in beta: Visual elements (like text) can be positioned in a 3x3 grid. Expand the preview pane to see how elements will be positioned on large screens.
 - **Important**: Choicelab projects now end in `.clx` instead of `.json`, and the `assets` folder has been renamed `Assets`. In Choicelab, the CLX file is now what you select when opening a project.
 - You can also now open CLX files from the Finder (as long as Choicelab is currently closed).
 
@@ -83,13 +84,13 @@
 
 #### 2024-01-17
 
-- 1b7aa541180cd0d11a2f04f942b9029c84962aac (#1) Fixed an issue where the new project dialog would not open in macOS Ventura.
+- Fixed an issue where the new project dialog would not open in macOS Ventura.
 
 ## 0.1.2
 
 #### 2024-01-04
 
-- bf9b09a4f230e08f591b3fdc57c92f29d8e6fcc9 Fixed an issue that resulted in projects not opening in macOS Monterey and older.
+- Fixed an issue that resulted in projects not opening in macOS Monterey and older.
 
 ## 0.1.1
 
