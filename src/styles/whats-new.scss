@@ -6,7 +6,7 @@ $toolbar-offset: 32px;
   outline: none;
   -webkit-app-region: drag;
   -webkit-user-select: text;
-  background-color: rgba(242, 242, 242, 0.93);
+  background-color: rgba(255, 255, 255, 0.7);
   @media (prefers-color-scheme: dark) {
     background-color: rgba(49, 49, 49, 0.7);
     color: white;
@@ -15,11 +15,14 @@ $toolbar-offset: 32px;
     position: relative;
     top: $toolbar-offset;
     width: calc(100% - 10px);
+    height: calc(100% - #{$toolbar-offset});
     margin: 0 5px;
+    margin-bottom: 10px;
     padding: 0 42px;
     padding-top: 24px;
     padding-bottom: 26px;
-    height: calc(100% - #{$toolbar-offset});
+    padding-left: 42px;
+    padding-right: 66px;
     overflow: scroll;
     .markup {
       margin-left: 55px;
