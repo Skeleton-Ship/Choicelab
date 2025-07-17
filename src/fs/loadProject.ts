@@ -8,13 +8,15 @@ export default async function loadProject(projectFilePath: string) {
   const fileName = await basename(projectFilePath);
   const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath);
+  const screenWidth = window.screen.availWidth;
+  const screenHeight = window.screen.availHeight;
   const webview = new WebviewWindow(label, {
     url: `index.html?window_type=project&project_path=${projectPathEncoded}&file_name=${fileNameEncoded}`,
     title: "",
     titleBarStyle: "overlay",
-    width: 1150,
-    height: 700,
-    minWidth: 600,
+    width: screenWidth - screenWidth / 12,
+    height: screenHeight - screenWidth / 12,
+    minWidth: 700,
     minHeight: 360,
     transparent: true,
     visible: true,
