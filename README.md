@@ -36,6 +36,13 @@ To avoid having to re-notarize the app manually each time, this repo uses the [T
 
 If you need fresh Apple Developer credentials, you'll add them as secret keys to this repo. See the Tauri action docs (above) for more.
 
-### Automatic updates
+### Deploying
 
 Deploying automatic app updates requires a private key that's associated with this repo's GitHub origin. See [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info.
+
+Once you successfully build the app (using the process above):
+
+1. Go to the [Releases page in the choicelab-releases GitHub repo](https://github.com/austinheller/choicelab-releases/releases).
+2. Verify the release assets are correct, then publish it.
+3. Take the `latest.json` file, and upload it to the `releases.choicelab.xyz` S3 bucket, in the `/latest` subdirectory.
+   - **Note**: This bucket is owned by Austin's AWS account. Talk to them for the access key.
