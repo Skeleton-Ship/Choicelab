@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.6.0
+## 0.7
+
+#### 2025-08-xx
+
+- The inspector now notifies if a cell will play very quickly (because it has visual elements, but no media or input actions to anchor them).
+
+## 0.6
 
 #### 2025-07-16
 
