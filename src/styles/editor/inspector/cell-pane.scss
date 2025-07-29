@@ -144,11 +144,13 @@ $node-settings-height: 85px;
   }
 }
 
-$item-margin: clamp(16px, 3.5%, 28px);
+$item-padding: 12px 12px 14px;
+$item-margin: 21px;
+$item-border-radius: 10px;
 
 .inspector-item {
-  padding: 12px 12px 14px;
-  margin: 21px;
+  padding: $item-padding;
+  margin: $item-margin;
   border-radius: 10px;
   background-color: white;
   color: #333333;
@@ -234,7 +236,7 @@ $item-margin: clamp(16px, 3.5%, 28px);
     }
   }
   &:not(:last-of-type) {
-    margin-bottom: $item-margin;
+    margin-bottom: clamp(16px, 3.5%, 28px);
   }
   button.icon {
     appearance: none;
@@ -281,4 +283,23 @@ $item-margin: clamp(16px, 3.5%, 28px);
 .empty-contents {
   height: 100%;
   padding: 1rem;
+}
+
+.cell-plays-quickly {
+  margin: $item-margin;
+  opacity: 0.8;
+  font-size: 12.5px;
+  border: 1px solid var(--accent-color-x-bright);
+  background-color: var(--accent-color-x-pale);
+  padding: 12px 14px;
+  display: inline-block;
+  border-radius: $item-border-radius;
+  p {
+    margin: 0;
+  }
+  @media (prefers-color-scheme: dark) {
+    color: white;
+    border-color: var(--accent-color-dark);
+    background-color: var(--accent-color-x-dark);
+  }
 }

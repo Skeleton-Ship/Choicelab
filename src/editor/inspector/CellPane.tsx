@@ -9,6 +9,7 @@ import ActionInstance from "./elements/ActionInstance";
 import ActionIcon from "./elements/ActionIcon";
 import { getPlayerConfig } from "../../player/getPlayerConfig";
 import { NodeSetting } from "./elements/NodeSetting";
+import { cellPlaysQuickly } from "./functions/cellPlaysQuickly";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -83,6 +84,17 @@ function ActionsEditor(props: { update: Function }) {
           <p class="placeholder">No Actions Added</p>
         ) : (
           editorEls
+        )}
+        {cellPlaysQuickly(node) ? (
+          <aside class="cell-plays-quickly">
+            <p>
+              <strong>This cell may play quickly.</strong> If that's not
+              intentional, you can add media or an input control to make the
+              cell play for longer.
+            </p>
+          </aside>
+        ) : (
+          <></>
         )}
       </div>
     </ul>
