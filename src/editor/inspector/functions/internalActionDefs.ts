@@ -129,6 +129,7 @@ const internalActionDefs: ActionDefs = {
       extendable: true,
       timedElement: true,
       mediaElement: false,
+      inputElement: true,
       flowchart: FCButton,
       editor: {
         iconName: "three-dots",
@@ -172,6 +173,7 @@ const internalActionDefs: ActionDefs = {
       extendable: true,
       timedElement: true,
       mediaElement: false,
+      inputElement: true,
       flowchart: FCInputField,
       editor: {
         iconName: "input-cursor-text",

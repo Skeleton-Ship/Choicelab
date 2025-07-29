@@ -155,6 +155,7 @@ export interface ActionDef {
   props: Array<ActionDefProp>;
   extendable?: boolean;
   timedElement?: boolean;
+  inputElement?: boolean;
   mediaElement?: boolean;
 }
 export interface ActionDefProp {
