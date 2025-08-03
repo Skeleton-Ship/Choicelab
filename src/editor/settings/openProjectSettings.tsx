@@ -22,6 +22,7 @@ export async function openProjectSettings(
     title: "",
     width: 680,
     height: 340,
+    titleBarStyle: "overlay",
     transparent: false,
     resizable: false,
     visible: false,

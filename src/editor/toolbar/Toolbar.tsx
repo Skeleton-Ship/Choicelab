@@ -18,7 +18,7 @@ function Toolbar(props: { update: Function }) {
   const nodeEditorClass = `node-editor ${nodeEditorSelectedClass}`;
   const variablesClass = `variables ${variablesSelectedClass}`;
   return (
-    <div id="toolbar" data-tauri-drag-region>
+    <div class="ui-toolbar" id="toolbar" data-tauri-drag-region>
       <div class="toolbar-region add-nodes left">
         <button
           title="Add Cell"

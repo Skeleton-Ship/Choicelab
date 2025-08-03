@@ -118,7 +118,7 @@ export async function setMenu(windowState: string = "project") {
     items: [
       await MenuItem.new({
         id: "new_project",
-        text: "New Project...",
+        text: "New...",
         accelerator: "CmdOrCtrl+Shift+N",
         action: () => {
           const source =
@@ -128,7 +128,7 @@ export async function setMenu(windowState: string = "project") {
       }),
       await MenuItem.new({
         id: "open_project",
-        text: "Open Project...",
+        text: "Open...",
         accelerator: "CmdOrCtrl+O",
         action: () => {
           openProject();

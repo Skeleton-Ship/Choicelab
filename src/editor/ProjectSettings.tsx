@@ -7,6 +7,8 @@ import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getPlayerConfig } from "../player/getPlayerConfig";
 import { SettingsPane } from "./settings/SettingsPane";
+import { IconGeneral } from "./settings/IconGeneral";
+import { IconAppearance } from "./settings/IconAppearance";
 import { setMenu } from "../menu/setMenu";
 const appWindow = getCurrentWebviewWindow();
 
@@ -42,22 +44,34 @@ export function ProjectSettings(props: { startingPane: string }) {
   };
   return (
     <section aria-label="Tabbed Interface">
-      <div role="tablist" aria-label="Tabs">
-        {panes.map((pane) => {
-          return (
-            <button
-              role="tab"
-              aria-selected={paneId === pane.id ? "true" : "false"}
-              aria-controls={`pane-${pane.id}`}
-              id={`tab-${pane.id}`}
-              onClick={() => {
-                setPaneId(pane.id);
-              }}
-            >
-              {pane.label}
-            </button>
-          );
-        })}
+      <div class="ui-toolbar">
+        <div
+          class="tabs"
+          role="tablist"
+          aria-label="Tabs"
+          data-tauri-drag-region
+        >
+          {panes.map((pane) => {
+            return (
+              <button
+                role="tab"
+                aria-selected={paneId === pane.id ? "true" : "false"}
+                aria-controls={`pane-${pane.id}`}
+                id={`tab-${pane.id}`}
+                onClick={() => {
+                  setPaneId(pane.id);
+                }}
+              >
+                {pane.id === "general" ? (
+                  <IconGeneral />
+                ) : pane.id === "appearance" ? (
+                  <IconAppearance />
+                ) : null}
+                {pane.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
       {panes.map((pane) => {
         return (

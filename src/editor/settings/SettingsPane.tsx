@@ -1,4 +1,5 @@
 import { SettingBoolean } from "./SettingBoolean";
+import { SettingsAppearance } from "./_CUSTOM_SettingsAppearance";
 
 type Pane = {
   label: string;
@@ -31,7 +32,7 @@ export function SettingsPane(props: {
           case "boolean":
             return <SettingBoolean name={name} label={setting.label} />;
           case "__CUSTOM__ProjectAppearance":
-            return <div>Project appearance goes here</div>;
+            return <SettingsAppearance />;
         }
       })}
     </div>

@@ -147,8 +147,8 @@ $field-padding: 4px 6px;
     border: none;
     width: 100%;
     display: block;
-    padding: $field-padding;
     padding-top: 5px;
+    padding: $field-padding;
     padding-bottom: 5px;
     padding-right: 1.5em;
     background-color: transparent;
@@ -311,5 +311,68 @@ $toggle-height: 20px;
 @media (prefers-color-scheme: dark) {
   .ui-number-field {
     @include dark-number-field;
+  }
+}
+
+.ui-toolbar {
+  background-color: rgba(255, 255, 255, 0.9);
+  -webkit-app-region: drag;
+  position: fixed;
+  display: flex;
+  border-style: solid;
+  border-color: rgba(25, 25, 25, 0.14);
+  border-top-width: 0;
+  border-bottom-width: 1px;
+  border-left-width: 0;
+  border-right-width: 0;
+  width: 100%;
+  padding-left: 9px;
+  padding-right: 9px;
+  padding-bottom: 7px;
+  height: var(--toolbar-height);
+  @media (prefers-color-scheme: dark) {
+    background-color: #353535;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .tabs {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    button {
+      appearance: none;
+      background: none;
+      border: none;
+      text-align: center;
+      font-weight: 500;
+      font-size: 12px;
+      opacity: 0.5;
+      svg,
+      img {
+        display: block;
+        width: auto;
+        height: 21px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      @media (prefers-color-scheme: dark) {
+        color: white;
+        svg path,
+        img {
+          fill: white;
+        }
+      }
+      &[aria-selected="true"] {
+        opacity: 1;
+        color: var(--accent-color-bright);
+        background-color: rgba(0, 0, 0, 0.1);
+        svg path,
+        img {
+          fill: var(--accent-color-bright);
+        }
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
   }
 }
