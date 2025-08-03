@@ -1,5 +1,4 @@
-import { createRef } from "preact";
-import { useState } from "preact/hooks";
+import { useState, useRef } from "preact/hooks";
 import { parseNumber } from "../../../utils/parseNumber";
 
 /*
@@ -16,19 +15,23 @@ export default function NumberField(props: {
   onChange: Function;
 }) {
   let supplementalClass = props.class || "";
-  const ref = createRef();
+  const elRef = useRef(null);
   const [value, setValue] = useState(props.value);
   const className = `ui-number-field ${supplementalClass}`;
   function doSpinner(amount: number) {
-    const el = ref.current;
-    const value = parseNumber(el.value, props.decimalPlaces);
-    let newValue = parseNumber(value + amount, props.decimalPlaces);
+    if (elRef.current === null) return;
+    const el = elRef.current as HTMLInputElement;
+    const rawValue = parseNumber(el.value, props.decimalPlaces);
+    let newValue = parseNumber(rawValue + amount, props.decimalPlaces);
     if (typeof props.min !== "undefined" && newValue < props.min) {
       newValue = props.min;
     }
     if (typeof props.max !== "undefined" && newValue > props.max)
       newValue = props.max;
-    ref.current.dispatchEvent(new Event("input", { bubbles: true }));
+    //
+    // TODO: Does using both setValue and dispatchEvent create duplicative setting of data?
+    //
+    el.dispatchEvent(new Event("input", { bubbles: true }));
     setValue(newValue);
     props.onChange(newValue);
   }
@@ -37,16 +40,16 @@ export default function NumberField(props: {
       <input
         name={props.name}
         type="text"
-        ref={ref}
+        ref={elRef}
         min={props.min ? props.min : undefined}
         max={props.max ? props.max : undefined}
         step={props.step ? props.step : 1}
         value={value}
         onChange={(e) => {
           const field = e.target as HTMLInputElement;
-          const value = field.value;
+          const rawValue = field.value;
           const limit = props.decimalPlaces ? props.decimalPlaces : 2;
-          let number = parseNumber(value, limit);
+          let number = parseNumber(rawValue, limit);
           if (typeof props.min !== "undefined" && number < props.min) {
             number = props.min;
           }

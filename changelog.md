@@ -5,6 +5,7 @@
 #### 2025-08-xx
 
 - The inspector now notifies if a cell will play very quickly (because it has visual elements, but no media or input actions to anchor them).
+- Fixed an issue where a cell's settings wouldn't always show the correct values.
 
 ## 0.6
 

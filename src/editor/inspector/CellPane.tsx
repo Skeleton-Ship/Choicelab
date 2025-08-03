@@ -118,6 +118,7 @@ function NodeSettings(props: { update: Function }) {
     settingEls.push(
       <NodeSetting
         node={node}
+        key={`node_${node.id}_setting_${key}`}
         settingName={key}
         store={store}
         playerId={activePlayerId}
