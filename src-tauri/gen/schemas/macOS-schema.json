@@ -2187,6 +2187,18 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the get_accent_color command without any pre-configured scope.",
+          "type": "string",
+          "const": "accent-color:allow-get-accent-color",
+          "markdownDescription": "Enables the get_accent_color command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_accent_color command without any pre-configured scope.",
+          "type": "string",
+          "const": "accent-color:deny-get-accent-color",
+          "markdownDescription": "Denies the get_accent_color command without any pre-configured scope."
+        },
+        {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",
           "type": "string",
           "const": "core:default",

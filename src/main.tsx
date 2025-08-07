@@ -22,10 +22,26 @@ import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
 import { listen } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
+import { accentColor } from "tauri-plugin-accent-color";
 
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
+  // Set accent color
+  accentColor.subscribe((color) => {
+    let accentColorEl = document.querySelector("#accent-color-styles");
+    if (!accentColorEl) {
+      accentColorEl = document.createElement("style");
+      accentColorEl.setAttribute("id", "accent-color-styles");
+    }
+    // TODO: Fill out accent color values
+    accentColorEl.textContent = `
+	  :root { 
+		  --accent-color: ${color};
+	  }
+	  `;
+    document.head.appendChild(accentColorEl);
+  });
   // Region focus listeners
   window.addEventListener("pointerdown", (e) => {
     const targetEl = e.target as HTMLElement;

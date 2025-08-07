@@ -19,6 +19,7 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
+		.plugin(tauri_plugin_accent_color::init())
         .setup(|app| {
             bind_listeners(app);
             native_bridge_macos::set_app_handle(app.handle().clone());
