@@ -2,6 +2,7 @@
 @use "./editor/flowchart";
 @use "./editor/panes";
 @use "./editor/inspector";
+@use "./editor/settings";
 @use "./base/mixins";
 
 #editor {

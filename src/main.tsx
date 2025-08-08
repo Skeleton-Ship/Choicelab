@@ -42,6 +42,21 @@ async function init() {
 	  `;
     document.head.appendChild(accentColorEl);
   });
+  // Window focus
+  listen("tauri://focus", async () => {
+    const focused = await appWindow.isFocused();
+    if (focused === false) return;
+    const store = getViewStore();
+    store.focus = true;
+    document.querySelector("#App")?.setAttribute("data-focus", "true");
+    setViewStore(store);
+  });
+  listen("tauri://blur", async () => {
+    const viewStore = getViewStore();
+    viewStore.focus = false;
+    document.querySelector("#App")?.setAttribute("data-focus", "false");
+    setViewStore(viewStore);
+  });
   // Region focus listeners
   window.addEventListener("pointerdown", (e) => {
     const targetEl = e.target as HTMLElement;

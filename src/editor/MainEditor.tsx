@@ -74,19 +74,7 @@ export default function MainEditor() {
     });
     // Focus listeners
     listen("tauri://focus", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      const store = getViewStore();
-      store.focus = true;
-      document.querySelector("#App")?.setAttribute("data-focus", "true");
       setMenu();
-      setViewStore(store);
-    });
-    listen("tauri://blur", async () => {
-      const viewStore = getViewStore();
-      viewStore.focus = false;
-      document.querySelector("#App")?.setAttribute("data-focus", "false");
-      setViewStore(viewStore);
     });
     listen("settings-store-updated", async (event) => {
       const payload = event.payload as string;

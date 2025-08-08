@@ -43,7 +43,7 @@ export function ProjectSettings(props: { startingPane: string }) {
     triggerRefresh(uuidv4());
   };
   return (
-    <section aria-label="Tabbed Interface">
+    <section id="project-settings" aria-label="Tabbed Interface">
       <div class="ui-toolbar">
         <div
           class="tabs"
@@ -67,7 +67,7 @@ export function ProjectSettings(props: { startingPane: string }) {
                 ) : pane.id === "appearance" ? (
                   <IconAppearance />
                 ) : null}
-                {pane.label}
+                <span>{pane.label}</span>
               </button>
             );
           })}
@@ -77,6 +77,7 @@ export function ProjectSettings(props: { startingPane: string }) {
         return (
           <div
             role="tabpanel"
+            class="settings-pane"
             id={`pane-${pane.id}`}
             aria-labelledby={`tab-${pane.id}`}
             hidden={paneId === pane.id ? false : true}

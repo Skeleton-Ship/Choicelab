@@ -338,14 +338,33 @@ $toggle-height: 20px;
     width: 100%;
     display: flex;
     justify-content: center;
+    gap: 1px;
     button {
       appearance: none;
       background: none;
       border: none;
       text-align: center;
-      font-weight: 500;
-      font-size: 12px;
-      opacity: 0.5;
+      font-weight: 400;
+      font-size: 11.5px;
+      line-height: 1;
+      height: 45px;
+      padding: 0 7px;
+      border-radius: 7px;
+      svg path {
+        opacity: 0.8;
+      }
+      span {
+        opacity: 0.7;
+      }
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.06);
+      }
+      &:active {
+        background-color: rgba(0, 0, 0, 0.1);
+        svg path {
+          opacity: 0.9;
+        }
+      }
       svg,
       img {
         display: block;
@@ -353,6 +372,10 @@ $toggle-height: 20px;
         height: 21px;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 4px;
+        path {
+          fill: rgba(0, 0, 0, 0.7);
+        }
       }
       @media (prefers-color-scheme: dark) {
         color: white;
@@ -362,15 +385,42 @@ $toggle-height: 20px;
         }
       }
       &[aria-selected="true"] {
-        opacity: 1;
         color: var(--accent-color-bright);
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(0, 0, 0, 0.06);
+        svg path,
+        span {
+          opacity: 1;
+        }
         svg path,
         img {
           fill: var(--accent-color-bright);
         }
         @media (prefers-color-scheme: dark) {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.06);
+        }
+      }
+    }
+  }
+}
+
+#App[data-focus="false"] {
+  .ui-toolbar {
+    background-color: #f0f0f0;
+    @media (prefers-color-scheme: dark) {
+      background-color: #3d3d3d;
+    }
+    .tabs {
+      svg path,
+      img {
+        fill: rgba(0, 0, 0, 0.3) !important;
+        @media (prefers-color-scheme: dark) {
+          fill: rgba(255, 255, 255, 0.5) !important;
+        }
+      }
+      button {
+        color: rgba(0, 0, 0, 0.4) !important;
+        @media (prefers-color-scheme: dark) {
+          color: rgba(255, 255, 255, 0.5) !important;
         }
       }
     }
