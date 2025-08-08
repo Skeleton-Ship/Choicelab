@@ -12,6 +12,7 @@ $update-button-height: 22px;
     flex-shrink: 0;
     padding-left: 9px;
     padding-right: 9px;
+    gap: 1px;
     &.spacer {
       flex-basis: 100%;
       flex-shrink: 2;
@@ -20,16 +21,18 @@ $update-button-height: 22px;
       &:hover {
         button {
           background-color: rgba(0, 0, 0, 0.08);
-          &:not(:first-of-type):not(:last-of-type) {
-            border-radius: 0;
-          }
-          &:first-of-type {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-          }
-          &:last-of-type {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
+          @media (prefers-contrast: no-preference) {
+            &:not(:first-of-type):not(:last-of-type) {
+              border-radius: 0;
+            }
+            &:first-of-type {
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
+            }
+            &:last-of-type {
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+            }
           }
           &.selected {
             background-color: rgba(0, 0, 0, 0.15);
@@ -63,7 +66,7 @@ $update-button-height: 22px;
     display: flex;
     width: 52px;
     padding: 5px 0 4px;
-    border-radius: 5px;
+    border-radius: 6px;
     align-items: center;
     justify-content: center;
     background-color: transparent;
@@ -100,9 +103,15 @@ $update-button-height: 22px;
         background-color: rgba(255, 255, 255, 0.08);
       }
     }
+    @media (prefers-contrast: more) {
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      @media (prefers-color-scheme: dark) {
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+    }
     .icon {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -122,7 +131,7 @@ $update-button-height: 22px;
         max-width: 100%;
         height: auto;
         position: relative;
-        top: -2px;
+        top: -3px;
       }
       @media (prefers-color-scheme: dark) {
         @include mixins.invert-icon;

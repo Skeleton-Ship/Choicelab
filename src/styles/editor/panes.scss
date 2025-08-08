@@ -12,6 +12,13 @@
   @media (prefers-color-scheme: dark) {
     border-color: rgba(255, 255, 255, 0.1);
   }
+  // Increase contrast per system setting
+  @media (prefers-contrast: more) {
+    border-color: rgba(0, 0, 0, 0.4);
+    @media (prefers-color-scheme: dark) {
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+  }
   .resizer {
     width: 7px;
     height: 100%;

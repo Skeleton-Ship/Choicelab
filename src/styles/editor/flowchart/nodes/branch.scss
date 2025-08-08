@@ -10,7 +10,7 @@
     }
     .branch-background {
       path {
-        stroke: #308ee5;
+        stroke: var(--accent-color);
         stroke-width: 10;
       }
     }
@@ -23,6 +23,7 @@
     justify-content: center;
     align-items: center;
     outline: none;
+    border-width: 0;
   }
   .branch-background {
     position: absolute;
@@ -43,6 +44,14 @@
         fill: var(--node-bg-dark);
         stroke: rgba(255, 255, 255, 0.2);
         stroke-width: 3;
+      }
+      // Add stroke when system contrast is increased
+      @media (prefers-contrast: more) {
+        stroke: rgba(0, 0, 0, 0.6);
+        stroke-width: 4;
+        @media (prefers-color-scheme: dark) {
+          stroke: rgba(255, 255, 255, 0.8);
+        }
       }
     }
   }
@@ -68,6 +77,13 @@
       @media (prefers-color-scheme: dark) {
         background-color: var(--node-bg-dark);
         outline: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      // Add stroke when system contrast is increased
+      @media (prefers-contrast: more) {
+        outline: 1px solid rgba(0, 0, 0, 0.8);
+        @media (prefers-color-scheme: dark) {
+          outline: 1px solid rgba(255, 255, 255, 0.8);
+        }
       }
       &.selected,
       &.selecting {
