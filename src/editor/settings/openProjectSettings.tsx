@@ -21,9 +21,9 @@ export async function openProjectSettings(
     url: `index.html?window_type=projectSettings&project_path=${projectPathEncoded}&file_name=${fileNameEncoded}&pane=${pane}`,
     title: "",
     width: 680,
-    height: 340,
+    height: 210,
     titleBarStyle: "overlay",
-    transparent: false,
+    transparent: true,
     resizable: false,
     visible: false,
   });

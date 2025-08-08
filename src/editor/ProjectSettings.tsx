@@ -10,12 +10,26 @@ import { SettingsPane } from "./settings/SettingsPane";
 import { IconGeneral } from "./settings/IconGeneral";
 import { IconAppearance } from "./settings/IconAppearance";
 import { setMenu } from "../menu/setMenu";
+import { LogicalSize } from "@tauri-apps/api/dpi";
 const appWindow = getCurrentWebviewWindow();
 
-export function ProjectSettings(props: { startingPane: string }) {
+type PaneId = "general" | "appearance";
+
+async function setWindowSize(paneId: PaneId) {
+  const heights: { general: number; appearance: number } = {
+    general: 210,
+    appearance: 600,
+  };
+  const currentSize = await appWindow.size();
+  const scaleFactor = await appWindow.scaleFactor();
+  const width = currentSize.width / scaleFactor;
+  appWindow.setSize(new LogicalSize(width, heights[paneId]));
+}
+
+export function ProjectSettings(props: { startingPane: PaneId }) {
   const store = getStore();
   useEffect(() => {
-    appWindow.setTitle(`${store.project.name} - Project Settings`);
+    appWindow.setTitle(`${store.project.name} — Project Settings`);
     appWindow.show();
     // Let Tauri know the window is ready
     emit("window-ready", {
@@ -35,13 +49,17 @@ export function ProjectSettings(props: { startingPane: string }) {
       handleUpdate();
     });
   }, []);
-  const [paneId, setPaneId] = useState(props.startingPane);
+
+  const [paneId, setPaneId] = useState<PaneId>(props.startingPane);
   const config = getPlayerConfig();
   const panes = config.projectSettings.panes;
   const [_refresh, triggerRefresh] = useState(uuidv4());
   const handleUpdate = async () => {
     triggerRefresh(uuidv4());
   };
+  useEffect(() => {
+    setWindowSize(paneId);
+  }, [paneId]);
   return (
     <section id="project-settings" aria-label="Tabbed Interface">
       <div class="ui-toolbar">
@@ -52,14 +70,15 @@ export function ProjectSettings(props: { startingPane: string }) {
           data-tauri-drag-region
         >
           {panes.map((pane) => {
+            const id = pane.id as PaneId;
             return (
               <button
                 role="tab"
-                aria-selected={paneId === pane.id ? "true" : "false"}
-                aria-controls={`pane-${pane.id}`}
-                id={`tab-${pane.id}`}
+                aria-selected={paneId === id ? "true" : "false"}
+                aria-controls={`pane-${id}`}
+                id={`tab-${id}`}
                 onClick={() => {
-                  setPaneId(pane.id);
+                  setPaneId(id);
                 }}
               >
                 {pane.id === "general" ? (

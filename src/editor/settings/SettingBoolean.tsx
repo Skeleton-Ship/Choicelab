@@ -5,7 +5,11 @@ import { emitTo } from "@tauri-apps/api/event";
 import { stringify } from "../../utils/stringify";
 import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 
-export function SettingBoolean(props: { name: string; label: string }) {
+export function SettingBoolean(props: {
+  name: string;
+  label: string;
+  description?: string;
+}) {
   const inputName = `projectSettings_${props.name}`;
   const store = getStore();
   const initial =
@@ -34,6 +38,9 @@ export function SettingBoolean(props: { name: string; label: string }) {
       &nbsp;
       <label class="label" for={inputName}>
         {props.label}
+        {props.description ? (
+          <span class="description">{props.description}</span>
+        ) : null}
       </label>
     </div>
   );

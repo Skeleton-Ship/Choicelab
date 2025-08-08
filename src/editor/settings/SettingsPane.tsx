@@ -30,7 +30,13 @@ export function SettingsPane(props: {
         const setting = settings[name];
         switch (setting.type) {
           case "boolean":
-            return <SettingBoolean name={name} label={setting.label} />;
+            return (
+              <SettingBoolean
+                name={name}
+                label={setting.label}
+                description={setting.description}
+              />
+            );
           case "__CUSTOM__ProjectAppearance":
             return <SettingsAppearance />;
         }
