@@ -388,7 +388,7 @@ $toggle-height: 20px;
         }
       }
       &[aria-selected="true"] {
-        color: var(--accent-color-bright);
+        color: var(--accent-color-800);
         background-color: rgba(0, 0, 0, 0.06);
         svg path,
         span {
@@ -396,7 +396,7 @@ $toggle-height: 20px;
         }
         svg path,
         img {
-          fill: var(--accent-color-bright);
+          fill: var(--accent-color-800);
         }
         @media (prefers-color-scheme: dark) {
           background-color: rgba(255, 255, 255, 0.06);

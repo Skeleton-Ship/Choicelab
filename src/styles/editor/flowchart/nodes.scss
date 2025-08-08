@@ -159,7 +159,13 @@
 #App[data-focus="false"] {
   .node.selected,
   .node.selecting {
-    border-color: var(--accent-color-blurred);
+    .contents {
+      border-color: var(--node-color-blurred);
+    }
+  }
+  button.linker {
+    background-color: var(--node-color-blurred);
+    border-color: var(--node-color-blurred);
   }
 }
 

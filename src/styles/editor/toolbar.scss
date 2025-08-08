@@ -89,7 +89,7 @@ $update-button-height: 22px;
         opacity: 1;
       }
       i {
-        color: #2f8ee5;
+        color: var(--accent-color);
       }
     }
     @media (prefers-color-scheme: dark) {
@@ -134,7 +134,9 @@ $update-button-height: 22px;
         top: -3px;
       }
       @media (prefers-color-scheme: dark) {
-        @include mixins.invert-icon;
+        img {
+          @include mixins.invert-icon;
+        }
       }
     }
     span {
@@ -183,6 +185,15 @@ $update-button-height: 22px;
         height: auto;
         mix-blend-mode: screen;
       }
+    }
+  }
+}
+
+#App[data-focus="false"] {
+  button.selected i {
+    color: #999;
+    @media (prefers-color-scheme: dark) {
+      color: #999;
     }
   }
 }

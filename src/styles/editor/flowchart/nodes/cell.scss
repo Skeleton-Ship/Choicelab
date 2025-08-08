@@ -44,6 +44,6 @@
 #App[data-focus="false"] {
   .cell.node.selected .title,
   .cell.node.selecting .title {
-    background-color: var(--accent-color-blurred);
+    background-color: var(--node-color-blurred);
   }
 }
