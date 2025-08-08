@@ -6,6 +6,7 @@
 
 - The app will now follow the system accent color for certain accented controls.
 - In the flowchart and toolbar, the app will now follow the system contrast setting.
+- Buttons will now have the label "Continue" by default.
 - The inspector now notifies if a cell will play very quickly (because it has visual elements, but no media or input actions to anchor them).
 - Certain controls will now blur when the window is not focused.
 - Fixed an issue where a cell's settings wouldn't always show the correct values.

@@ -142,7 +142,7 @@ const internalActionDefs: ActionDefs = {
           label: "Label",
           control: "text",
           required: true,
-          default: "",
+          default: "Continue",
         },
         {
           name: "varToSet",
