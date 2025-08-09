@@ -116,7 +116,6 @@ export function getSystemColor(input: string): AccentColorspace {
 export function setAccentColor(input?: string) {
   const systemColor = getSystemColor(input ? input : "#007AFF");
   const accents = colors[systemColor];
-  console.log(accents);
   let accentColorEl = document.querySelector("#accent-color-styles");
   if (!accentColorEl) {
     accentColorEl = document.createElement("style");
