@@ -90,25 +90,25 @@ export function getSystemColor(input: string): AccentColorspace {
   const blue = ["rgba(0, 122, 255, 1)", "#007AFF"];
   if (blue.includes(input)) color = "blue";
   // Purple
-  const purple = ["rgba(149, 61, 150, 1)"];
+  const purple = ["rgba(149, 61, 150, 1)", "rgba(165, 80, 167, 1)"];
   if (purple.includes(input)) color = "purple";
   // Pink
   const pink = ["rgba(247, 79, 158, 1)"];
   if (pink.includes(input)) color = "pink";
   // Red
-  const red = ["rgba(224, 56, 62, 1)"];
+  const red = ["rgba(224, 56, 62, 1)", "rgba(255, 82, 87, 1)"];
   if (red.includes(input)) color = "red";
   // Orange
   const orange = ["rgba(247, 130, 27, 1)"];
   if (orange.includes(input)) color = "orange";
   // Yellow
-  const yellow = ["rgba(255, 199, 38, 1)"];
+  const yellow = ["rgba(255, 199, 38, 1)", "rgba(255, 198, 0, 1)"];
   if (yellow.includes(input)) color = "yellow";
   // Green
   const green = ["rgba(98, 186, 70, 1)"];
   if (green.includes(input)) color = "green";
   // Graphite
-  const graphite = ["rgba(152, 152, 152, 1)"];
+  const graphite = ["rgba(152, 152, 152, 1)", "rgba(140, 140, 140, 1)"];
   if (graphite.includes(input)) color = "graphite";
   return color;
 }
