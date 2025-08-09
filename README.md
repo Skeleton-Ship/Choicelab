@@ -19,7 +19,7 @@ You'll need a Mac running macOS 14 or later, as well as:
 
 You can use any text editor you want; you don't need Xcode.
 
-Install dependencies with `yarn install`, then run `yarn keygen` to generate a key for updates. (It's recommended that you leave the password field blank.)
+From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for updates. (It's recommended that you leave the password field blank.)
 
 ## Development
 
