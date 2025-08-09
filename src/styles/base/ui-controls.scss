@@ -153,6 +153,63 @@ $field-padding: 4px 6px;
     padding-right: 1.5em;
     background-color: transparent;
   }
+  &.fonts {
+    font-size: 20px;
+    height: 40px;
+    ul,
+    li,
+    span {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  }
+  .menu {
+    position: absolute;
+    top: -8px;
+    left: -15px;
+    margin: 0;
+    padding: 0;
+    width: calc(100% - 20px);
+    background-color: #ededed;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.22) 0 5px 20px;
+    li {
+      list-style: none;
+      &:first-of-type {
+        margin-top: 10px;
+      }
+      &:last-of-type {
+        margin-bottom: 10px;
+      }
+      button {
+        appearance: none;
+        border: none;
+        text-align: left;
+        background: none;
+        display: block;
+        width: 100%;
+        padding: 0 10px;
+        .item-name {
+          display: block;
+          padding: 5px 10px 5px 25px;
+          position: relative;
+          .check {
+            font-family: system-ui;
+            position: absolute;
+            left: 3px;
+          }
+        }
+        &:hover {
+          .item-name {
+            color: white;
+            background-color: var(--accent-color-contrast);
+            border-radius: 8px;
+          }
+        }
+      }
+    }
+  }
 }
 
 @mixin dark-dropdown {

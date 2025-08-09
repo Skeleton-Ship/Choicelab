@@ -41,7 +41,6 @@ export async function loadPlayerFonts() {
     document.head.appendChild(fontStyles);
   }
   const fonts = await getFonts();
-  console.log(fonts);
   // Load fonts
   const fontKeys = Object.keys(fonts.families);
   fontKeys.forEach((id) => {

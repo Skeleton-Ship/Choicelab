@@ -86,8 +86,14 @@
       #appearance-properties {
         width: 75%;
         background-color: var(--settings-bg);
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 15px;
         @media (prefers-color-scheme: dark) {
           background-color: var(--settings-bg-dark);
+        }
+        h2 {
+          font-size: 13px;
         }
       }
     }

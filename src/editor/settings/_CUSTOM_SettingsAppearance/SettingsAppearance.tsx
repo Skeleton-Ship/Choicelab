@@ -1,6 +1,7 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { getStore } from "../../../data/dataStore";
 import { emitTo } from "@tauri-apps/api/event";
+import { loadPlayerFonts } from "../../../utils/loadPlayerFonts";
 import { getProjectWindowLabel } from "../../../utils/getProjectWindowLabel";
 import { stringify } from "../../../utils/stringify";
 import { AppearanceList } from "./List";
@@ -14,6 +15,9 @@ export function SettingsAppearance() {
   const [pane, setPane] = useState("text");
   const initial =
     store.project.settings.player["choicelab-player-html5"]["appearance"];
+  useEffect(() => {
+    loadPlayerFonts();
+  }, []);
   function handleChange(key: string, value: string) {
     const newStore = getStore();
     const settings =
