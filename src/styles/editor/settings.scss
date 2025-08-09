@@ -3,6 +3,8 @@
   height: 100%;
   --settings-toolbar-height: calc(var(--toolbar-height) + 13px);
   --settings-padding: 30px;
+  --settings-bg: #f6f6f6;
+  --settings-bg-dark: #282828;
   .ui-toolbar {
     z-index: 2;
     height: var(--settings-toolbar-height);
@@ -20,9 +22,12 @@
     height: calc(100% - var(--settings-toolbar-height));
     overflow: scroll;
     &#pane-general {
-      background-color: #f6f6f6;
+      background-color: var(--settings-bg);
       padding-left: var(--settings-padding);
       padding-right: var(--settings-padding);
+      @media (prefers-color-scheme: dark) {
+        background-color: var(--settings-bg-dark);
+      }
     }
   }
 }
@@ -35,6 +40,12 @@
     input[type="checkbox"] {
       display: block;
       margin-top: 4px;
+    }
+    label {
+      color: rgba(0, 0, 0, 0.85);
+      @media (prefers-color-scheme: dark) {
+        color: rgba(255, 255, 255, 0.85);
+      }
     }
     .description {
       margin-top: 4px;
