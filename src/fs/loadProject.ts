@@ -23,6 +23,6 @@ export default async function loadProject(projectFilePath: string) {
   });
   webview.once("tauri://created", function () {});
   webview.once("tauri://error", function (e) {
-    console.log(e);
+    console.error(e);
   });
 }

@@ -29,6 +29,6 @@ export async function openProjectSettings(
   });
   webview.once("tauri://created", function () {});
   webview.once("tauri://error", function (e) {
-    console.log(e);
+    console.error(e);
   });
 }
