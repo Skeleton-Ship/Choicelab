@@ -1,15 +1,18 @@
-import fonts from "@surfgreen/choicelab-player-html5/fonts.json";
+import { loadPlayerFonts } from "../../../utils/loadPlayerFonts";
+import { useEffect } from "preact/hooks";
 
 export function AppearanceText(props: {
   initial: any;
   update: (key: string, value: string) => void;
 }) {
   console.log(props.initial);
-  console.log(fonts);
+  useEffect(() => {
+    loadPlayerFonts();
+  }, []);
   return (
     <>
       <div id="headings">
-        <h2>Headings</h2>
+        <h2 style="font-family:'Nebula Sans';">Headings</h2>
       </div>
     </>
   );

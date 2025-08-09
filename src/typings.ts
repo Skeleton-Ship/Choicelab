@@ -180,6 +180,25 @@ export interface ActionDefs {
 export interface LoadError {
   error: string;
 }
+
+export interface PlayerFontStyle {
+  name?: string;
+  style: string;
+  weight: string;
+  url: any;
+}
+
+export interface PlayerFont {
+  name: string;
+  kind: "static" | "variable";
+  defaultStyle: string;
+  styles: Array<PlayerFontStyle>;
+}
+
+export interface PlayerFonts {
+  families: { [key: string]: PlayerFont };
+}
+
 declare global {
   interface Window {
     __CHOICELAB_DATA_RAW__: string;
