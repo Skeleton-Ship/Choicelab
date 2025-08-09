@@ -13,7 +13,6 @@
     }
   }
   .settings-pane {
-    padding-top: 30px;
     top: var(--settings-toolbar-height);
     position: relative;
     z-index: 1;
@@ -22,11 +21,74 @@
     height: calc(100% - var(--settings-toolbar-height));
     overflow: scroll;
     &#pane-general {
+      padding-top: 30px;
       background-color: var(--settings-bg);
       padding-left: var(--settings-padding);
       padding-right: var(--settings-padding);
       @media (prefers-color-scheme: dark) {
         background-color: var(--settings-bg-dark);
+      }
+    }
+    &#pane-appearance {
+      display: flex;
+      #appearance-list {
+        width: 25%;
+        padding: 0;
+        margin: 0;
+        padding-top: 16px;
+        border-right-width: 1px;
+        border-right-style: solid;
+        border-color: rgba(25, 25, 25, 0.14);
+        background-color: rgba(226, 226, 226, 0.6);
+        @media (prefers-color-scheme: dark) {
+          border-color: rgba(255, 255, 255, 0.1);
+          background-color: rgba(36, 36, 36, 0.6);
+        }
+        li {
+          list-style: none;
+          button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: calc(100% - 20px);
+            margin: 0 10px;
+            text-align: left;
+            background: none;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 8px;
+            @media (prefers-color-scheme: dark) {
+              color: rgba(255, 255, 255, 0.85);
+            }
+            &.selected {
+              color: white;
+              background-color: var(--accent-color-800);
+              .icon {
+                border-color: rgba(255, 255, 255, 0.3);
+              }
+            }
+            .icon {
+              display: block;
+              text-align: center;
+              border-radius: 4px;
+              width: 20px;
+              height: 20px;
+              border-width: 1px;
+              border-style: solid;
+              border-color: rgba(0, 0, 0, 0.3);
+              @media (prefers-color-scheme: dark) {
+                border-color: rgba(255, 255, 255, 0.3);
+              }
+            }
+          }
+        }
+      }
+      #appearance-properties {
+        width: 75%;
+        background-color: var(--settings-bg);
+        @media (prefers-color-scheme: dark) {
+          background-color: var(--settings-bg-dark);
+        }
       }
     }
   }
@@ -54,6 +116,25 @@
       color: rgba(0, 0, 0, 0.6);
       @media (prefers-color-scheme: dark) {
         color: rgba(255, 255, 255, 0.6);
+      }
+    }
+  }
+}
+
+#App[data-focus="false"] {
+  #project-settings {
+    #appearance-list {
+      li button.selected {
+        background-color: rgba(0, 0, 0, 0.5);
+        i {
+          color: rgba(0, 0, 0, 0.5);
+        }
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(255, 255, 255, 0.2);
+          i {
+            color: white;
+          }
+        }
       }
     }
   }

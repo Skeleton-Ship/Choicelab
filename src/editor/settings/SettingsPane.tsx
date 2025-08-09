@@ -1,5 +1,5 @@
 import { SettingBoolean } from "./SettingBoolean";
-import { SettingsAppearance } from "./_CUSTOM_SettingsAppearance";
+import { SettingsAppearance } from "./_CUSTOM_SettingsAppearance/SettingsAppearance";
 
 type Pane = {
   label: string;
@@ -25,7 +25,7 @@ export function SettingsPane(props: {
 }) {
   const settings = getSettingsForPane(props.id, props.config);
   return (
-    <div>
+    <>
       {Object.keys(settings).map((name) => {
         const setting = settings[name];
         switch (setting.type) {
@@ -41,6 +41,6 @@ export function SettingsPane(props: {
             return <SettingsAppearance />;
         }
       })}
-    </div>
+    </>
   );
 }
