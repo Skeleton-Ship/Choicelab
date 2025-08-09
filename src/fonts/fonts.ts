@@ -5,25 +5,119 @@ export async function getFonts(): Promise<PlayerFonts> {
     families: {
       inter: {
         name: "Inter",
-        kind: "variable",
-        defaultStyle: "",
         styles: [
           {
+            name: "Thin",
             style: "normal",
-            weight: "100 900",
-            url: await import("./inter-variable/InterVariable.woff2"),
+            weight: "100",
+            url: await import("./inter/Inter-Thin.woff2"),
           },
           {
+            name: "Thin Italic",
             style: "italic",
-            weight: "100 900",
-            url: await import("./inter-variable/InterVariable-Italic.woff2"),
+            weight: "100",
+            url: await import("./inter/Inter-ThinItalic.woff2"),
+          },
+          {
+            name: "Extra Light",
+            style: "normal",
+            weight: "200",
+            url: await import("./inter/Inter-ExtraLight.woff2"),
+          },
+          {
+            name: "Extra Light Italic",
+            style: "italic",
+            weight: "200",
+            url: await import("./inter/Inter-ExtraLightItalic.woff2"),
+          },
+          {
+            name: "Light",
+            style: "normal",
+            weight: "300",
+            url: await import("./inter/Inter-Light.woff2"),
+          },
+          {
+            name: "Light Italic",
+            style: "italic",
+            weight: "300",
+            url: await import("./inter/Inter-LightItalic.woff2"),
+          },
+          {
+            name: "Regular",
+            style: "normal",
+            weight: "400",
+            url: await import("./inter/Inter-Regular.woff2"),
+          },
+          {
+            name: "Regular Italic",
+            style: "italic",
+            weight: "400",
+            url: await import("./inter/Inter-Italic.woff2"),
+          },
+          {
+            name: "Medium",
+            style: "normal",
+            weight: "500",
+            url: await import("./inter/Inter-Medium.woff2"),
+          },
+          {
+            name: "Medium Italic",
+            style: "italic",
+            weight: "500",
+            url: await import("./inter/Inter-MediumItalic.woff2"),
+          },
+          {
+            name: "Semibold",
+            style: "normal",
+            weight: "600",
+            url: await import("./inter/Inter-SemiBold.woff2"),
+          },
+          {
+            name: "Semibold Italic",
+            style: "italic",
+            weight: "600",
+            url: await import("./inter/Inter-SemiBoldItalic.woff2"),
+          },
+          {
+            name: "Bold",
+            style: "normal",
+            weight: "700",
+            url: await import("./inter/Inter-Bold.woff2"),
+          },
+          {
+            name: "Bold Italic",
+            style: "italic",
+            weight: "700",
+            url: await import("./inter/Inter-BoldItalic.woff2"),
+          },
+          {
+            name: "Extra Bold",
+            style: "normal",
+            weight: "800",
+            url: await import("./inter/Inter-ExtraBold.woff2"),
+          },
+          {
+            name: "Extra Bold Italic",
+            style: "italic",
+            weight: "800",
+            url: await import("./inter/Inter-ExtraBoldItalic.woff2"),
+          },
+          {
+            name: "Black",
+            style: "normal",
+            weight: "900",
+            url: await import("./inter/Inter-Black.woff2"),
+          },
+          {
+            name: "Black Italic",
+            style: "italic",
+            weight: "900",
+            url: await import("./inter/Inter-BlackItalic.woff2"),
           },
         ],
       },
       nebulaSans: {
         name: "Nebula Sans",
-        kind: "static",
-        defaultStyle: "Book",
         styles: [
           {
             name: "Light",
