@@ -361,9 +361,16 @@ $toggle-height: 20px;
       }
       &:hover {
         background-color: rgba(0, 0, 0, 0.06);
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(255, 255, 255, 0.06);
+        }
       }
       &:active {
         background-color: rgba(0, 0, 0, 0.1);
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
         svg path {
           opacity: 0.9;
         }
