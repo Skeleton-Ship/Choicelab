@@ -8,62 +8,127 @@ export function FontDropdown(props: {
   initialStyle: string;
   update: (family: string, weight: string, style: string) => void;
 }) {
-  console.log("Initial family:", props.initialFamily);
+  // Setup
   const [fonts, setFonts] = useState<PlayerFonts>({ families: {} });
-  const [menuVisible, setMenuVisible] = useState(false);
+  const [familyMenuVisible, setFamilyMenuVisible] = useState(false);
+  const [styleMenuVisible, setStyleMenuVisible] = useState(false);
   useEffect(() => {
     getFonts().then((fonts) => {
       setFonts(fonts);
     });
   }, []);
-  const keys = Object.keys(fonts.families);
+  // Change handler
   function handleChange(family: string, weight?: string, style?: string) {
     if (!weight) weight = "400";
     if (!style) style = "normal";
     props.update(family, weight, style);
   }
-  let initialFamilyName = "";
+  // Get font family key
+  const keys = Object.keys(fonts.families);
+  let familyId = "";
   keys.forEach((key) => {
-    if (fonts.families[key].name === props.initialFamily) {
-      initialFamilyName = fonts.families[key].name;
-    }
+    if (fonts.families[key].name === props.initialFamily) familyId = key;
+  });
+  // Get font style
+  let initialStyleName = "";
+  keys.forEach((key) => {
+    if (fonts.families[key].name !== props.initialFamily) return;
+    fonts.families[key].styles.forEach((style) => {
+      if (
+        style.style === props.initialStyle &&
+        style.weight === props.initialWeight
+      ) {
+        initialStyleName = style.name;
+      }
+    });
   });
   return (
-    <div
-      class="ui-dropdown fonts large"
-      onClick={() => {
-        setMenuVisible(menuVisible === true ? false : true);
-      }}
-    >
-      {props.initialFamily !== "" ? (
-        <span class="selected-label">{initialFamilyName}</span>
-      ) : null}
-      {menuVisible ? (
-        <ul class="menu">
-          {keys.map((key) => {
-            const familyName = fonts.families[key].name;
-            return (
-              <li>
-                <button
-                  onClick={() => {
-                    handleChange(key);
-                  }}
-                  style={`font-family:"${familyName}";`}
-                >
-                  <span class="item-name">
-                    {familyName === initialFamilyName ? (
-                      <span class="check">✓</span>
-                    ) : (
-                      ""
-                    )}{" "}
-                    {familyName}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+    <div class="fonts-selector">
+      {/* Family */}
+      <div
+        class="ui-dropdown fonts large"
+        onClick={() => {
+          setFamilyMenuVisible(familyMenuVisible === true ? false : true);
+        }}
+      >
+        <button
+          class="selected-label"
+          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};`}
+        >
+          {props.initialFamily !== "" ? props.initialFamily : ""}
+        </button>
+        {familyMenuVisible ? (
+          <ul class="menu">
+            {keys.map((key) => {
+              const familyName = fonts.families[key].name;
+              return (
+                <li>
+                  <button
+                    onClick={() => {
+                      handleChange(familyName);
+                    }}
+                    style={`font-family:"${familyName}";`}
+                  >
+                    <span class="item-name">
+                      {familyName === props.initialFamily ? (
+                        <span class="check">✓</span>
+                      ) : (
+                        ""
+                      )}{" "}
+                      {familyName}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </div>
+      {/* Style */}
+      <div
+        class="ui-dropdown fonts large"
+        onClick={() => {
+          setStyleMenuVisible(styleMenuVisible === true ? false : true);
+        }}
+      >
+        <button
+          class="selected-label"
+          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};`}
+        >
+          {initialStyleName !== "" ? initialStyleName : ""}
+        </button>
+        {styleMenuVisible ? (
+          <ul class="menu">
+            {fonts.families[familyId].styles.map((style) => {
+              const styleName = style.name;
+              return (
+                <li>
+                  <button
+                    onClick={() => {
+                      handleChange(
+                        props.initialFamily,
+                        style.weight,
+                        style.style
+                      );
+                    }}
+                    style={`font-family:"${props.initialFamily}";font-style:${style.style};font-weight:${style.weight}`}
+                  >
+                    <span class="item-name">
+                      {style.weight === props.initialWeight &&
+                      style.style === props.initialStyle ? (
+                        <span class="check">✓</span>
+                      ) : (
+                        ""
+                      )}{" "}
+                      {styleName}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </div>
     </div>
   );
 }

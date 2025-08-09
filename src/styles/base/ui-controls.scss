@@ -155,6 +155,7 @@ $field-padding: 4px 6px;
   }
   &.fonts {
     font-size: 20px;
+    z-index: 1;
     height: 40px;
     ul,
     li,
@@ -162,11 +163,24 @@ $field-padding: 4px 6px;
       user-select: none;
       -webkit-user-select: none;
     }
+    .selected-label {
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      text-align: left;
+      appearance: none;
+      border: none;
+      background: none;
+      min-height: 100%;
+    }
   }
   .menu {
     position: absolute;
     top: -8px;
+    z-index: 2;
     left: -15px;
+    max-height: 320px;
+    overflow: scroll;
     margin: 0;
     padding: 0;
     width: calc(100% - 20px);

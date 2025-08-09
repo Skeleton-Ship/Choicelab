@@ -33,6 +33,7 @@ export default async function loadProjectData(
   labelArgs?: "settings" | "assets"
 ): Promise<Project | LoadError> {
   let dataPath = await resolve(projectPath, fileName);
+  // TODO: If loading settings, load the most recently edited project file available — NOT the one most recently saved
   emit("request-project-file", {
     path: dataPath,
     label: getProjectWindowLabel(

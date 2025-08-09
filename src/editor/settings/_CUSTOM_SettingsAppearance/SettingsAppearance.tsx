@@ -18,11 +18,11 @@ export function SettingsAppearance() {
   useEffect(() => {
     loadPlayerFonts();
   }, []);
-  function handleChange(key: string, value: string) {
+  function handleChange(key: string, newValues: { [key: string]: any }) {
     const newStore = getStore();
     const settings =
       newStore.project.settings.player["choicelab-player-html5"]["appearance"];
-    settings[key] = value;
+    settings[key] = { ...settings[key], ...newValues };
     // Emit update
     emitTo(
       getProjectWindowLabel(store.projectPath),

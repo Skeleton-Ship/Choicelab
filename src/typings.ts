@@ -182,7 +182,7 @@ export interface LoadError {
 }
 
 export interface PlayerFontStyle {
-  name?: string;
+  name: string;
   style: string;
   weight: string;
   url: any;
@@ -190,8 +190,6 @@ export interface PlayerFontStyle {
 
 export interface PlayerFont {
   name: string;
-  kind: "static" | "variable";
-  defaultStyle: string;
   styles: Array<PlayerFontStyle>;
 }
 
