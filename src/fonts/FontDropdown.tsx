@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState, useRef } from "preact/hooks";
 import { PlayerFonts } from "../typings";
 import { getFonts } from "./fonts";
 
@@ -12,12 +12,13 @@ export function FontDropdown(props: {
   const [fonts, setFonts] = useState<PlayerFonts>({ families: {} });
   const [familyMenuVisible, setFamilyMenuVisible] = useState(false);
   const [styleMenuVisible, setStyleMenuVisible] = useState(false);
+  // Load fonts
   useEffect(() => {
     getFonts().then((fonts) => {
       setFonts(fonts);
     });
   }, []);
-  // Change handler
+  // Handle changes to values
   function handleChange(family: string, weight?: string, style?: string) {
     if (!weight) weight = "400";
     if (!style) style = "normal";
@@ -42,10 +43,44 @@ export function FontDropdown(props: {
       }
     });
   });
+  // Handle clicks outside of the dropdown
+  const familyRef = useRef<HTMLDivElement>(null);
+  const styleRef = useRef<HTMLDivElement>(null);
+  function familyOutsideClick() {
+    setFamilyMenuVisible(false);
+  }
+  function styleOutsideClick() {
+    setStyleMenuVisible(false);
+  }
+  useEffect(() => {
+    function handleFamilyClickOutside(event: MouseEvent) {
+      if (
+        familyRef.current &&
+        !familyRef.current.contains(event.target as Node)
+      ) {
+        familyOutsideClick();
+      }
+    }
+    function handleStyleClickOutside(event: MouseEvent) {
+      if (
+        styleRef.current &&
+        !styleRef.current.contains(event.target as Node)
+      ) {
+        styleOutsideClick();
+      }
+    }
+    document.addEventListener("mousedown", handleFamilyClickOutside);
+    document.addEventListener("mousedown", handleStyleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleFamilyClickOutside);
+      document.removeEventListener("mousedown", handleStyleClickOutside);
+    };
+  }, [familyOutsideClick, styleOutsideClick]);
   return (
     <div class="fonts-selector">
       {/* Family */}
       <div
+        ref={familyRef}
         class="ui-dropdown fonts large"
         onClick={() => {
           setFamilyMenuVisible(familyMenuVisible === true ? false : true);
@@ -86,6 +121,7 @@ export function FontDropdown(props: {
       </div>
       {/* Style */}
       <div
+        ref={styleRef}
         class="ui-dropdown fonts large"
         onClick={() => {
           setStyleMenuVisible(styleMenuVisible === true ? false : true);
