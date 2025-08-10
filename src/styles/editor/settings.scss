@@ -131,7 +131,31 @@
           width: 100%;
           .ui-dropdown {
             width: 50%;
+            margin-bottom: 7px;
           }
+        }
+        .font-size-selector {
+          display: flex;
+          min-height: 27px;
+          align-items: center;
+          gap: 5px;
+          input[type="text"] {
+            max-width: 40px;
+            font-variant-numeric: tabular-nums;
+          }
+        }
+        .color-picker {
+          display: flex;
+          align-items: center;
+          input[type="text"] {
+            max-width: 65px;
+            font-size: 11px;
+            font-family: ui-monospace;
+          }
+        }
+        .text-secondary-props {
+          display: flex;
+          gap: 10px;
         }
       }
     }
