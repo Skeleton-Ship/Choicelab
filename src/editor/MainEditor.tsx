@@ -1,5 +1,5 @@
 // Libraries
-import { listen, emit } from "@tauri-apps/api/event";
+import { listen, emit, emitTo } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
@@ -31,6 +31,7 @@ import SequenceEl from "./Flowchart";
 import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { stringify } from "../utils/stringify";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
@@ -72,9 +73,11 @@ export default function MainEditor() {
         handlePaste(handleUpdate);
       }
     });
-    // Focus listeners
-    listen("tauri://focus", async () => {
-      setMenu();
+    listen("request-project-from-parent", async (event) => {
+      const payload = event.payload as { label: string };
+      const label = payload.label as string;
+      const data = stringify(getStore().project);
+      emitTo(label, "receive-project-from-parent", { data: data });
     });
     listen("settings-store-updated", async (event) => {
       const payload = event.payload as string;
@@ -82,6 +85,10 @@ export default function MainEditor() {
       if (newStore.project.id !== store.project.id) return;
       setStore(newStore);
       handleUpdate(true, true);
+    });
+    // Focus listeners
+    listen("tauri://focus", async () => {
+      setMenu();
     });
     // Close listeners
     appWindow.listen("tauri://close-requested", async () => {
