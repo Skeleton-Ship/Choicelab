@@ -26,6 +26,7 @@ export function FontDropdown(props: {
   }
   // Get font family key
   const keys = Object.keys(fonts.families);
+  keys.sort((a, b) => a.localeCompare(b));
   let familyId = "";
   keys.forEach((key) => {
     if (fonts.families[key].name === props.initialFamily) familyId = key;
