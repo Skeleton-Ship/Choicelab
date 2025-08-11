@@ -1,8 +1,8 @@
 {
-  "identifier": "migrated",
-  "description": "",
+  "identifier": "platform-windows",
+  "description": "Capabilities enabled on Windows.",
   "local": true,
-  "platforms": ["macOS", "windows"],
+  "platforms": ["windows"],
   "windows": ["*"],
   "permissions": [
     "core:default",
