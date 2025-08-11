@@ -6,8 +6,8 @@ import { getProjectWindowLabel } from "../../../utils/getProjectWindowLabel";
 import { stringify } from "../../../utils/stringify";
 import { AppearanceList } from "./List";
 import { AppearanceText } from "./AppearanceText";
-import { AppearanceInputs } from "./AppearanceBackground";
-import { AppearanceBackground } from "./AppearanceInputs";
+import { AppearanceBackground } from "./AppearanceBackground";
+import { AppearanceInputs } from "./AppearanceInputs";
 import { AppearanceCustomCSS } from "./AppearanceCustomCSS";
 
 export function SettingsAppearance() {
