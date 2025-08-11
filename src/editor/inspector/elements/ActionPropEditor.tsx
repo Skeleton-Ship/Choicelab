@@ -115,7 +115,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept=".png, .jpg, .jpeg, .gif"
+          accept="image/png,image/jpeg"
           filePropName="source"
           action={action}
           actionDef={actionDef}
@@ -132,7 +132,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept=".webm, .mp4"
+          accept=".webm,.mp4"
           filePropName="source"
           action={action}
           actionDef={actionDef}
@@ -149,7 +149,7 @@ export default function ActionPropEditor(props: {
       propControl = (
         <File
           type="binary"
-          accept=".mp3"
+          accept="audio/mpeg"
           filePropName="source"
           action={action}
           actionDef={actionDef}

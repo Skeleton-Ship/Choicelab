@@ -2,9 +2,9 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { resolve as path_resolve, appCacheDir } from "@tauri-apps/api/path";
 import { emit, once } from "@tauri-apps/api/event";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import { getStore } from "../../../data/dataStore";
+import { getStore } from "../../data/dataStore";
 import { v4 as uuidv4 } from "uuid";
-import { getProjectWindowLabel } from "../../../utils/getProjectWindowLabel";
+import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 
 export default async function getAssetPreviewURL(
   fileName: string,

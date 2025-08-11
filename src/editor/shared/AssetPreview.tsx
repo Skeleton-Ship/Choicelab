@@ -1,13 +1,15 @@
 import { createRef } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import { MediaControl } from "../elements/MediaControl";
-import { Action } from "../../../typings";
+import { MediaControl } from "../inspector/elements/MediaControl";
+import { Action } from "../../typings";
+import { v4 as uuid } from "uuid";
 
 export default function AssetPreview(props: {
   media: string;
+  assetParent: "action" | "none";
   fileName: string;
   fileSrc: string;
-  action: Action;
+  action?: Action;
   update: Function;
 }) {
   function handleMediaSrc(
@@ -39,13 +41,18 @@ export default function AssetPreview(props: {
   ] = useState(false);
   let previewEl = <></>;
   let mediaRef = createRef();
-  let mediaControl = (
-    <MediaControl
-      media={mediaEl}
-      actionId={props.action.id}
-      update={props.update}
-    />
-  );
+  let mediaControl = null;
+  if (props.assetParent === "action" && props.action) {
+    mediaControl = (
+      <MediaControl
+        media={mediaEl}
+        actionId={props.action.id}
+        update={props.update}
+      />
+    );
+  }
+  const mediaId =
+    props.assetParent === "action" && props.action ? props.action.id : uuid();
   switch (props.media) {
     case "image":
       previewEl = (
@@ -53,7 +60,7 @@ export default function AssetPreview(props: {
           <img
             class="media-preview"
             src={mediaSrc}
-            data-id={`media_preview_${props.action.id}`}
+            data-id={`media_preview_${mediaId}`}
             ref={mediaRef}
           />
           {loadingEl}
@@ -66,7 +73,7 @@ export default function AssetPreview(props: {
           <video
             class="media-preview"
             src={mediaSrc}
-            data-id={`media_preview_${props.action.id}`}
+            data-id={`media_preview_${mediaId}`}
             ref={mediaRef}
           ></video>
           {mediaEl !== false ? mediaControl : <></>}
@@ -79,7 +86,7 @@ export default function AssetPreview(props: {
           <audio
             class="media-preview"
             src={mediaSrc}
-            data-id={`media_preview_${props.action.id}`}
+            data-id={`media_preview_${mediaId}`}
             ref={mediaRef}
           ></audio>
           {mediaEl !== false ? mediaControl : <></>}
@@ -98,7 +105,7 @@ export default function AssetPreview(props: {
       if (mediaRef.current !== null) {
         handleMediaSrc(setMediaSrc, props.fileSrc, 0);
         const testEl = document.querySelector(
-          `[data-id="media_preview_${props.action.id}"]`
+          `[data-id="media_preview_${mediaId}"]`
         );
         if (testEl) {
           setMediaEl(testEl);
