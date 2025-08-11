@@ -1,0 +1,8 @@
+{
+    "identifier": "macOS-capabilities",
+      "platforms": ["macOS"],
+      "local": true,
+    "permissions": [
+            "accent-color:allow-get-accent-color"
+    ]
+}

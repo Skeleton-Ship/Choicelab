@@ -21,6 +21,14 @@ You can use any text editor you want; you don't need Xcode.
 
 From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for updates. (It's recommended that you leave the password field blank.)
 
+## DRAFT: Windows
+
+Windows 10 22H2 or later; VS Code recommended
+
+- Follow [Tauri setup instrux](https://tauri.app/start/prerequisites/#windows)
+- Install [Yarn](https://classic.yarnpkg.com/en/)
+- `yarn 
+
 ## Development
 
 Once you're in the repo, run:

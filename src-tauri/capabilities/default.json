@@ -2,6 +2,7 @@
   "identifier": "migrated",
   "description": "",
   "local": true,
+  "platforms": ["macOS", "windows"],
   "windows": ["*"],
   "permissions": [
     "core:default",
@@ -44,7 +45,6 @@
     "fs:default",
     "dialog:default",
     "updater:default",
-    "process:default",
-    "accent-color:allow-get-accent-color"
+    "process:default"
   ]
 }
