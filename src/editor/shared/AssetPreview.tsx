@@ -10,7 +10,7 @@ export default function AssetPreview(props: {
   fileName: string;
   fileSrc: string;
   action?: Action;
-  update: Function;
+  update?: Function;
 }) {
   function handleMediaSrc(
     stateFn: Function,
@@ -43,13 +43,19 @@ export default function AssetPreview(props: {
   let mediaRef = createRef();
   let mediaControl = null;
   if (props.assetParent === "action" && props.action) {
-    mediaControl = (
-      <MediaControl
-        media={mediaEl}
-        actionId={props.action.id}
-        update={props.update}
-      />
-    );
+    if (props.update) {
+      mediaControl = (
+        <MediaControl
+          media={mediaEl}
+          actionId={props.action.id}
+          update={props.update}
+        />
+      );
+    } else {
+      console.error(
+        "No update function was passed to AssetPreview. Media controls will be disabled."
+      );
+    }
   }
   const mediaId =
     props.assetParent === "action" && props.action ? props.action.id : uuid();

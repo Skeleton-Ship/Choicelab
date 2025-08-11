@@ -20,8 +20,8 @@ export default function FileUpload(props: {
   fileParent: "action" | "none";
   action?: Action; // The parent action, if it applies per above
   accept: string; // File types accepted
-  className: string;
-  update: Function;
+  className?: string;
+  update?: Function; // Parent updater function, only passed to <AssetPreview /> to enable control of timing flags
   onCreated: Function;
   onClear: Function;
 }) {
@@ -131,7 +131,7 @@ export default function FileUpload(props: {
           fileName={props.existingFile}
           fileSrc={fileSrc}
           action={props.action}
-          update={props.update}
+          update={props.update ? props.update : undefined}
         />
       </div>
       <div class="file-set-controls">
