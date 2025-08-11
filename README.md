@@ -6,28 +6,18 @@ Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for build
 
 On the frontend side, the app is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool.
 
-As of 2025, it is **macOS only**.
+Currently, the built app is for **macOS only**, but it can be run locally on Windows.
 
 ## Setup
 
-You'll need a Mac running macOS 14 or later, as well as:
+Choicelab can be run locally on macOS 14 and newer, or modern versions of Windows 10 (22H2) and 11:
 
-- [Node.js](https://formulae.brew.sh/formula/node#default) 22 or later
-- [Rust](https://formulae.brew.sh/formula/rust#default) 1.87 or later
-- [Yarn](https://classic.yarnpkg.com/en/)
-- Xcode Command Line Tools (run `xcode-select --install` from your command line)
+1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
+2. Install [Yarn Classic](https://classic.yarnpkg.com/en/); you can run `yarn` to see if you already have it installed. Any installation method should work for Choicelab, though only Homebrew (on Mac) and npm (on Windows) have been verified here.
 
 You can use any text editor you want; you don't need Xcode.
 
 From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for updates. (It's recommended that you leave the password field blank.)
-
-## DRAFT: Windows
-
-Windows 10 22H2 or later; VS Code recommended
-
-- Follow [Tauri setup instrux](https://tauri.app/start/prerequisites/#windows)
-- Install [Yarn](https://classic.yarnpkg.com/en/)
-- `yarn 
 
 ## Development
 
@@ -38,7 +28,7 @@ Once you're in the repo, run:
 
 ## Building
 
-You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the build passes. However, this build **won't be notarized**, so you can't run it on another Mac unless you [disable that Mac's Gatekeeper](https://macreports.com/how-to-disable-gatekeeper-on-mac-and-enable-the-anywhere-option-for-installing-any-software/) (which isn't acceptable for testing on other people's machines).
+You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the build passes. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you [disable that Mac's Gatekeeper](https://macreports.com/how-to-disable-gatekeeper-on-mac-and-enable-the-anywhere-option-for-installing-any-software/) (which isn't acceptable for testing on other people's machines).
 
 To avoid having to re-notarize the app manually each time, this repo uses the [Tauri GitHub action](https://github.com/tauri-apps/tauri-action). Each time there's a push to the **release** branch, the action will automatically build the app, send it to Apple for notarization (using credentials from Austin's Apple Developer account), and if approved, draft a release on GitHub that's ready for you to publish.
 
