@@ -17,6 +17,7 @@ tauri = { version = "2.6.2", features = [ "protocol-asset", "unstable", "macos-p
 tauri-plugin-shell = "2.3.0"
 tauri-plugin-dialog = "2.3.0"
 tauri-plugin-fs = "2.4.0"
+tauri-plugin-os = "2.3.0"
 tauri-plugin-process = "2.3.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

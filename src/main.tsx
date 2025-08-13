@@ -23,15 +23,20 @@ import { createWebDir } from "./fs/createWebDir";
 import { setAccentColor } from "./utils/setAccentColor";
 import { listen } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
-import { accentColor } from "tauri-plugin-accent-color";
-
+import { platform as getPlatform } from "@tauri-apps/plugin-os";
+const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
   // Set accent color
-  accentColor.subscribe((color) => {
-    setAccentColor(color);
-  });
+  if(platform === "macos") {
+    const { accentColor } = await import("tauri-plugin-accent-color");
+    accentColor.subscribe((color: string) => {
+      setAccentColor(color);
+    });
+  } else {
+    setAccentColor();
+  }
   // Window focus
   listen("tauri://focus", async () => {
     const focused = await appWindow.isFocused();
@@ -147,7 +152,7 @@ async function init() {
   }
 
   const appDOM = (
-    <div id="App" data-focused-region="">
+    <div id="App" data-platform={platform} data-focused-region="">
       {elements}
     </div>
   );
