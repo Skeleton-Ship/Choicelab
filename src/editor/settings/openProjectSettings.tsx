@@ -14,6 +14,10 @@ export async function openProjectSettings(
   const label = getProjectWindowLabel(projectPath, "settings");
   const existingWindow = await getProjectSettingsWindow(label);
   if (existingWindow) {
+    const visible = await existingWindow.isVisible();
+    if (visible === false) {
+      existingWindow.show();
+    }
     existingWindow.setFocus();
     return;
   }
