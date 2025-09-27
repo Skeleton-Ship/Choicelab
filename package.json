@@ -25,7 +25,6 @@
     "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-shell": "~2",
     "@tauri-apps/plugin-updater": "~2",
-    "tauri-plugin-accent-color": "git+https://github.com/freethinkel/tauri-plugin-accent-color",
     "@types/uuid": "^10.0.0",
     "@ungap/structured-clone": "^1.2.0",
     "compare-versions": "^6.1.1",
@@ -34,6 +33,7 @@
     "path": "^0.12.7",
     "preact": "^10.18.2",
     "preact-markdown": "^2.1.0",
+    "tauri-plugin-accent-color": "git+https://github.com/freethinkel/tauri-plugin-accent-color",
     "uint8-to-base64": "^0.2.0",
     "uuid": "^11.1.0",
     "wavesurfer.js": "^7.8.6"
