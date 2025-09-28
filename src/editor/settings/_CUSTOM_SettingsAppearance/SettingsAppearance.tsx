@@ -9,12 +9,26 @@ import { AppearanceText } from "./AppearanceText";
 import { AppearanceBackground } from "./AppearanceBackground";
 import { AppearanceInputs } from "./AppearanceInputs";
 import { AppearanceCustomCSS } from "./AppearanceCustomCSS";
+import { createPlayerSettings } from "../../../player/createPlayerSettings";
+import { getPlayerSettings } from "../../../data/getData";
 
 export function SettingsAppearance() {
   const store = getStore();
   const [pane, setPane] = useState("text");
-  const initial =
-    store.project.settings.player["choicelab-player-html5"]["appearance"];
+  let initial = getPlayerSettings(store, "appearance");
+  // If appearance settings don't exist, create them
+  if (!initial) {
+    const newSettings = createPlayerSettings("project", "appearance").settings
+      .appearance;
+    store.project.settings.player["choicelab-player-html5"]["appearance"] =
+      newSettings;
+    initial = newSettings;
+    emitTo(
+      getProjectWindowLabel(store.projectPath),
+      "settings-store-updated",
+      stringify(store)
+    );
+  }
   useEffect(() => {
     loadPlayerFonts();
   }, []);
