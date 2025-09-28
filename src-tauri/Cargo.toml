@@ -17,7 +17,6 @@ tauri = { version = "2.6.2", features = [ "protocol-asset", "unstable", "macos-p
 tauri-plugin-shell = "2.3.0"
 tauri-plugin-dialog = "2.3.0"
 tauri-plugin-fs = "2.4.0"
-tauri-plugin-os = "2.3.0"
 tauri-plugin-process = "2.3.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -28,6 +27,7 @@ actix-web = "4"
 actix-files = "0.6"
 home = "0.5"
 once_cell = "1.21.3"
+tauri-plugin-os = "2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
