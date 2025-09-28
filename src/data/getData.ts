@@ -13,6 +13,8 @@ import {
   Variable,
 } from "../typings";
 import { getViewStore } from "./dataStore";
+import { getPlayerConfig } from "../player/getPlayerConfig";
+import { createPlayerSettings } from "../player/createPlayerSettings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
@@ -238,6 +240,17 @@ function getActionDef(
   return thisActionDef;
 }
 
+function getPlayerSettings(
+  data: Store,
+  key?: string
+): { [key: string]: any } | undefined {
+  let settings = data.project.settings.player[getPlayerConfig().id];
+  if (key !== "" && typeof key !== "undefined") {
+    return settings[key] ? settings[key] : undefined;
+  }
+  return settings;
+}
+
 export {
   getSequence,
   getVariables,
@@ -255,4 +268,5 @@ export {
   nodeExists,
   getAction,
   getActionDef,
+  getPlayerSettings,
 };
