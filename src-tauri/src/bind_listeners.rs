@@ -4,6 +4,7 @@ use crate::file_operations::{
 };
 use crate::check_for_updates::update;
 use crate::globals::PENDING_FILES;
+#[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
@@ -14,6 +15,7 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
+#[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 
@@ -105,6 +107,7 @@ pub fn bind_listeners(app: &tauri::App) {
             Ok(json) => {
                 let state = json["state"].as_bool().unwrap_or(false);
                 let window_title = json["windowTitle"].as_str().unwrap_or("");
+                #[cfg(target_os = "macos")]
                 set_document_edited_with_title(state, window_title);
             }
             Err(e) => {
@@ -116,6 +119,7 @@ pub fn bind_listeners(app: &tauri::App) {
     let handle_menus = app_handle.clone();
     app.listen("add-native-menus", move |_event| {
         let _ = handle_menus.run_on_main_thread(|| {
+                #[cfg(target_os = "macos")]
             add_native_menus();
         });
     });

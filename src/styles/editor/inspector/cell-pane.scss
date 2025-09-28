@@ -12,6 +12,13 @@ $node-settings-height: 85px;
   }
 }
 
+[data-platform="windows"] #node-pane {
+  background-color: rgba(240, 240, 240, 1);
+  @media (prefers-color-scheme: dark) {
+    background-color: rgba(30, 30, 30, 1);
+  }
+}
+
 #available-actions,
 #actions-editor,
 #node-settings {

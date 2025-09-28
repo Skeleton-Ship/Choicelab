@@ -14,3 +14,7 @@
   --pink-faded-light: rgb(255, 141, 191);
   --node-bg-dark: #262627;
 }
+
+[data-platform="windows"] {
+  --toolbar-height: 42px;
+}

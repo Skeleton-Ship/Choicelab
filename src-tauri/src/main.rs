@@ -1,9 +1,10 @@
 mod bind_listeners;
 mod file_operations;
 mod globals;
-mod native_bridge_macos;
 mod preview_server;
 mod check_for_updates;
+#[cfg(target_os = "macos")]
+mod native_bridge_macos;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
@@ -12,16 +13,21 @@ use file_operations::handle_file_associations;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    // Run Tauri
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_shell::init())
-		.plugin(tauri_plugin_accent_color::init())
+        .plugin(tauri_plugin_shell::init());
+
+    #[cfg(target_os = "macos")]
+    let builder = builder.plugin(tauri_plugin_accent_color::init());
+
+    builder
         .setup(|app| {
             bind_listeners(app);
+            #[cfg(target_os = "macos")]
             native_bridge_macos::set_app_handle(app.handle().clone());
             Ok(())
         })

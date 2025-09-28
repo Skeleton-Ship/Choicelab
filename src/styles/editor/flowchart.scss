@@ -26,6 +26,13 @@
   }
 }
 
+#App[data-platform="windows"] #sequence-wrap {
+  background-color: rgba(238, 238, 238, 1);
+  @media (prefers-color-scheme: dark) {
+    background-color: #18181a;
+  }
+}
+
 #sequence {
   width: 100%;
   #empty-flowchart {

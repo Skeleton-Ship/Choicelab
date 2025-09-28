@@ -485,6 +485,12 @@ $toggle-height: 20px;
   }
 }
 
+[data-platform="windows"] {
+  .ui-toolbar {
+    background-color: rgba(255, 255, 255, 1);
+  }
+}
+
 #App[data-focus="false"] {
   .ui-toolbar {
     background-color: #f0f0f0;

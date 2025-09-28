@@ -27,6 +27,7 @@ import { Branch } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
 import { togglePreview } from "../preview/togglePreview";
 import { openProjectSettings } from "../editor/settings/openProjectSettings";
+import { platform as getPlatform } from "@tauri-apps/plugin-os";
 
 /* 
  * Create and update the app-wide menu.
@@ -41,6 +42,7 @@ export async function setMenu(windowState: string = "project") {
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
   const viewStore = getViewStore();
+  const platform = getPlatform();
 
   /*
    * App menu
@@ -440,5 +442,7 @@ export async function setMenu(windowState: string = "project") {
   });
 
   menu.setAsAppMenu();
-  emit("add-native-menus");
+  if (platform === "macos") {
+    emit("add-native-menus");
+  }
 }
