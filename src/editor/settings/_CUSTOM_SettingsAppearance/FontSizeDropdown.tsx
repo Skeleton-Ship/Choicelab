@@ -6,9 +6,11 @@ export function FontSizeDropdown(props: {
   update: (value: string) => void;
 }) {
   let customSize =
+    props.initial !== "var(--font-size-x-small)" &&
     props.initial !== "var(--font-size-small)" &&
     props.initial !== "var(--font-size-medium)" &&
-    props.initial !== "var(--font-size-large)"
+    props.initial !== "var(--font-size-large)" &&
+    props.initial !== "var(--font-size-x-large)"
       ? true
       : false;
   function handleChange(e: TargetedEvent, custom?: boolean) {
@@ -28,14 +30,23 @@ export function FontSizeDropdown(props: {
   }
   return (
     <div class="font-size-selector">
+      <label>Size:</label>
       <div class="ui-dropdown">
-        <label class="sr-only">Font Size:</label>
         <select class="font-size" onChange={handleChange}>
+          <option
+            value="var(--font-size-x-small)"
+            selected={
+              props.initial === "var(--font-size-x-small)" ? true : false
+            }
+          >
+            Extra Small
+          </option>
+
           <option
             value="var(--font-size-small)"
             selected={props.initial === "var(--font-size-small)" ? true : false}
           >
-            Small Size
+            Small
           </option>
           <option
             value="var(--font-size-medium)"
@@ -43,13 +54,21 @@ export function FontSizeDropdown(props: {
               props.initial === "var(--font-size-medium)" ? true : false
             }
           >
-            Medium Size
+            Medium
           </option>
           <option
             value="var(--font-size-large)"
             selected={props.initial === "var(--font-size-large)" ? true : false}
           >
-            Large Size
+            Large
+          </option>
+          <option
+            value="var(--font-size-x-large)"
+            selected={
+              props.initial === "var(--font-size-x-large)" ? true : false
+            }
+          >
+            Extra Large
           </option>
           <option value="" selected={customSize}>
             Custom
