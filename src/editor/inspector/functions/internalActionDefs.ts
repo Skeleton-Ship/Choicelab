@@ -248,6 +248,7 @@ const internalActionDefs: ActionDefs = {
       description:
         "Change the look of the project dynamically during playback.",
       extendable: true,
+      timedElement: true,
       mediaElement: false,
       flowchart: FCAppearance,
       editor: {

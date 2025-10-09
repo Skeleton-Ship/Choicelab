@@ -18,6 +18,9 @@ export function getActionTextLabel(name: string, props: any) {
     case "inputField":
       label = props.label !== "" ? props.label : "Input Field";
       break;
+    case "appearance":
+      label = "Change Appearance";
+      break;
   }
   return label;
 }
