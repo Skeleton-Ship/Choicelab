@@ -7,6 +7,7 @@ import {
   FCAudio,
   FCVideo,
   FCSilence,
+  FCAppearance,
 } from "./internalActionFlowchartEls";
 
 const internalActionDefs: ActionDefs = {
@@ -15,7 +16,7 @@ const internalActionDefs: ActionDefs = {
   actions: [
     {
       name: "text",
-      label: "Text",
+      label: "Show Text",
       description:
         "A block of text that can appear instantly or be associated with a media action.",
       extendable: true,
@@ -39,7 +40,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "audio",
-      label: "Audio",
+      label: "Play Audio",
       description: "Play an audio file.",
       extendable: false,
       mediaElement: true,
@@ -66,7 +67,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "video",
-      label: "Video",
+      label: "Play Video",
       description: "Play a video file.",
       extendable: false,
       mediaElement: true,
@@ -93,7 +94,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "image",
-      label: "Image",
+      label: "Show Image",
       description:
         "An image file that can appear instantly or be associated with a media action.",
       extendable: true,
@@ -124,7 +125,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "button",
-      label: "Button",
+      label: "Show Button",
       description: "A button that, when pressed, advances to the next node.",
       extendable: true,
       timedElement: true,
@@ -168,7 +169,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "inputField",
-      label: "Field",
+      label: "Show Field",
       description: "A fill-in-the-blank field for entering information.",
       extendable: true,
       timedElement: true,
@@ -220,7 +221,7 @@ const internalActionDefs: ActionDefs = {
     },
     {
       name: "silence",
-      label: "Silence",
+      label: "Play Silence",
       description:
         "A block of silence, useful for timing visual elements without audio or video accompaniment.",
       extendable: true,
@@ -240,6 +241,21 @@ const internalActionDefs: ActionDefs = {
           default: 0,
         },
       ],
+    },
+    {
+      name: "appearance",
+      label: "Change Appearance",
+      description:
+        "Change the look of the project dynamically during playback.",
+      extendable: true,
+      mediaElement: false,
+      flowchart: FCAppearance,
+      editor: {
+        iconName: "brush",
+        iconColor: "#fff",
+        iconBackgroundColor: "#2E8EE5",
+      },
+      props: [],
     },
   ],
 };

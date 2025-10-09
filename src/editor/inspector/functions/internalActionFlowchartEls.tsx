@@ -116,3 +116,15 @@ export function FCSilence(props: { duration: number }) {
     </div>
   );
 }
+
+/*
+ * Appearance
+ */
+
+export function FCAppearance() {
+  return (
+    <div>
+      <em>Appearance change</em>
+    </div>
+  );
+}
