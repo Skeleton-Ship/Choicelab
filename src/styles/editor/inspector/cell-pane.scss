@@ -2,7 +2,7 @@
 @use "./cell-pane/prop-controls";
 @use "./cell-pane/media-controls";
 
-$available-actions-height: 105px;
+$available-actions-height: 120px;
 $node-settings-height: 85px;
 
 #node-pane {
@@ -67,7 +67,7 @@ $node-settings-height: 85px;
     font-size: 12px;
     border-radius: 5px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     &.selected {
       background-color: var(--accent-color) !important;
       .action-label {
