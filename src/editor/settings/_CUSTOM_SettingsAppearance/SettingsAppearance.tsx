@@ -36,7 +36,11 @@ export function SettingsAppearance() {
     const newStore = getStore();
     const settings =
       newStore.project.settings.player["choicelab-player-html5"]["appearance"];
-    settings[key] = { ...settings[key], ...newValues };
+    if (key === "customCSS") {
+      settings[key] = newValues.css;
+    } else {
+      settings[key] = { ...settings[key], ...newValues };
+    }
     // Emit update
     emitTo(
       getProjectWindowLabel(store.projectPath),

@@ -34,6 +34,7 @@
     "path": "^0.12.7",
     "preact": "^10.18.2",
     "preact-markdown": "^2.1.0",
+    "prism-code-editor": "^4.1.0",
     "tauri-plugin-accent-color": "git+https://github.com/freethinkel/tauri-plugin-accent-color",
     "uint8-to-base64": "^0.2.0",
     "uuid": "^11.1.0",

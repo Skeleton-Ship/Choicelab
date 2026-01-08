@@ -682,6 +682,11 @@ preact@^10.18.2:
   resolved "https://registry.yarnpkg.com/preact/-/preact-10.27.2.tgz#19b9009c1be801a76a0aaf0fe5ba665985a09312"
   integrity sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg==
 
+prism-code-editor@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/prism-code-editor/-/prism-code-editor-4.1.0.tgz#9788dd49d36f27ae6167a2e7e6b68051021b76dc"
+  integrity sha512-T9EtoIooX0Xoxlrhmp0m1ahzTV0dyAsgPCoTjt2K3+labG/OuKcAchpoGQu2Zuncx8jcrBQVznchAhfdpJLKwA==
+
 process@^0.11.1:
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
