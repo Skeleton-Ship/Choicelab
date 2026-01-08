@@ -17,7 +17,7 @@ Choicelab can be run locally on macOS 14 and newer, or modern versions of Window
 
 You can use any text editor you want; you don't need Xcode.
 
-From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for updates. (It's recommended that you leave the password field blank.)
+From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
 
 ## Development
 
@@ -28,7 +28,7 @@ Once you're in the repo, run:
 
 ## Building
 
-You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the build passes. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you [disable that Mac's Gatekeeper](https://macreports.com/how-to-disable-gatekeeper-on-mac-and-enable-the-anywhere-option-for-installing-any-software/) (which isn't acceptable for testing on other people's machines).
+You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the app runs. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you [disable that Mac's Gatekeeper](https://macreports.com/how-to-disable-gatekeeper-on-mac-and-enable-the-anywhere-option-for-installing-any-software/) (which isn't acceptable for testing on other people's machines).
 
 To avoid having to re-notarize the app manually each time, this repo uses the [Tauri GitHub action](https://github.com/tauri-apps/tauri-action). Each time there's a push to the **release** branch, the action will automatically build the app, send it to Apple for notarization (using credentials from Austin's Apple Developer account), and if approved, draft a release on GitHub that's ready for you to publish.
 
