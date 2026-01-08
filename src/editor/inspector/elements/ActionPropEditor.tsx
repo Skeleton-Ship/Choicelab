@@ -5,7 +5,6 @@ import Checkbox from "./prop-controls/Checkbox";
 import File from "./prop-controls/File";
 import VariableControl from "./prop-controls/Variable";
 import VariableValueControl from "./prop-controls/VariableValue";
-import { Appearance } from "./prop-controls/_Custom_Appearance";
 import { Position } from "./prop-controls/_Custom_Position";
 import { getPlayerConfig } from "../../../player/getPlayerConfig";
 
