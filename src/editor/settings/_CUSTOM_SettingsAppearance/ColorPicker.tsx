@@ -10,7 +10,7 @@ export function ColorPicker(props: {
     props.update(value);
   }
   return (
-    <div class="color-picker">
+    <div class="ui-color-picker">
       <label class="sr-only">Color:</label>
       <input type="color" value={props.initial} onChange={handleChange} />
       <input
