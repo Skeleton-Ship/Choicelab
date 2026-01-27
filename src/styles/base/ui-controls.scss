@@ -515,3 +515,10 @@ $toggle-height: 20px;
     }
   }
 }
+
+::-webkit-scrollbar {
+  @media (prefers-color-scheme: dark) {
+    background-color: #292929;
+    border-radius: 99px;
+  }
+}

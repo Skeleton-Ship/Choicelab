@@ -1,10 +1,12 @@
 import { useEffect } from "preact/hooks";
+import { getFocusedRegion } from "../../../utils/focusedRegion";
 
 export function AppearanceList(props: { pane: string; setPane: Function }) {
   useEffect(() => {
     window.addEventListener(
       "keydown",
       (e) => {
+        if (getFocusedRegion() !== "appearance-list") return;
         switch (e.key) {
           case "ArrowDown":
             switchButton("down");
@@ -30,6 +32,7 @@ export function AppearanceList(props: { pane: string; setPane: Function }) {
           if (dir === "down") nextPane = buttons[0];
           if (dir === "up") nextPane = buttons[buttons.length - 1];
         }
+        nextPane.focus();
         const nextPaneName = nextPane.getAttribute("data-pane");
         if (nextPaneName) {
           props.setPane(nextPaneName);
