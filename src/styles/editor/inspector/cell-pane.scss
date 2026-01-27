@@ -41,7 +41,8 @@ $node-settings-height: 85px;
   position: relative;
   height: $available-actions-height;
   z-index: 3;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   .inner {
     padding: 8px;
     display: flex;

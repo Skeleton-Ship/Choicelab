@@ -531,6 +531,7 @@ $toggle-height: 20px;
 
 ::-webkit-scrollbar {
   border-radius: 99px;
+  background-color: #e9e9e9;
   @media (prefers-color-scheme: dark) {
     background-color: #292929;
     border: 1px solid #1b1b1b;
@@ -539,8 +540,10 @@ $toggle-height: 20px;
 
 ::-webkit-scrollbar-thumb {
   border-radius: 99px;
-  border: 2px solid #292929;
+  background-color: rgba(86, 86, 86, 0.8);
+  border: 2px solid #e9e9e9;
   @media (prefers-color-scheme: dark) {
     background-color: #7c7c7c;
+    border: 2px solid #292929;
   }
 }

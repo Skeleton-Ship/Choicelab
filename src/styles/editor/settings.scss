@@ -110,8 +110,11 @@
             padding: 0 20px;
             margin: 0;
             a {
-              color: #419cff;
+              color: #0068da;
               text-decoration: none;
+              @media (prefers-color-scheme: dark) {
+                color: #419cff;
+              }
             }
           }
           #css-editor {
@@ -119,6 +122,7 @@
             overflow: scroll;
             background-color: #fff;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 12px;
             &.dark {
               background-color: #0d1117;
             }
