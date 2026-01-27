@@ -97,6 +97,20 @@
         @media (prefers-color-scheme: dark) {
           background-color: var(--settings-bg-dark);
         }
+        &[data-pane="inputs"] {
+          .section:not(.font) {
+            display: flex;
+            gap: 12px;
+            label {
+              @media (prefers-color-scheme: dark) {
+                color: #dddddd;
+              }
+            }
+            .ui-number-field {
+              max-width: 55px;
+            }
+          }
+        }
         &[data-pane="custom-css"] {
           padding-left: 0;
           padding-right: 0;
@@ -200,15 +214,6 @@
           input[type="text"] {
             max-width: 40px;
             font-variant-numeric: tabular-nums;
-          }
-        }
-        .color-picker {
-          display: flex;
-          align-items: center;
-          input[type="text"] {
-            max-width: 65px;
-            font-size: 11px;
-            font-family: ui-monospace;
           }
         }
         .text-secondary-props {
