@@ -51,7 +51,11 @@ export function AppearanceBackground(props: {
             fileParent="none"
             accept="image/jpeg,image/png"
             onClear={() => {
-              console.log("Image cleared");
+              props.update("background", {
+                kind: "image",
+                file: "",
+                color: props.initial.color,
+              });
             }}
             onCreated={(file) => {
               props.update("background", {

@@ -13,7 +13,8 @@
   .contents {
     border-radius: 5px;
     padding: 8px;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     .actions {
       padding: 0;
       .action {

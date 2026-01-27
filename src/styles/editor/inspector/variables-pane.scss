@@ -21,7 +21,8 @@ $pane-padding: 14px;
 #variables-list {
   max-width: 100%;
   height: calc(100% - 40px);
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
   position: relative;

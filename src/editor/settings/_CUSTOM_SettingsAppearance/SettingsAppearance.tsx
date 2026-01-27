@@ -51,7 +51,7 @@ export function SettingsAppearance() {
   return (
     <>
       <AppearanceList pane={pane} setPane={setPane} />
-      <div id="appearance-properties">
+      <div id="appearance-properties" data-pane={pane}>
         {pane === "text" ? (
           <AppearanceText initial={initial} update={handleChange} />
         ) : pane === "inputs" ? (
