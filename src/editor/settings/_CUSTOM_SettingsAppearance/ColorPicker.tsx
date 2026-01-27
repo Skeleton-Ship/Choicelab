@@ -1,10 +1,8 @@
-import { TargetedEvent } from "preact/compat";
-
 export function ColorPicker(props: {
   initial: string;
   update: (value: string) => void;
 }) {
-  function handleChange(e: TargetedEvent) {
+  function handleChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const value = target.value;
     props.update(value);
