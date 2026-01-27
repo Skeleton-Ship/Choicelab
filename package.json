@@ -46,6 +46,7 @@
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "@types/ungap__structured-clone": "^1.2.0",
+    "eslint": "^9.39.2",
     "sass": "^1.69.5",
     "typescript": "^5.0.2",
     "vite": "^6.3.5"
