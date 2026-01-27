@@ -174,6 +174,9 @@ $field-padding: 4px 6px;
       background: none;
       min-height: 100%;
       padding: 0;
+      @media (prefers-color-scheme: dark) {
+        color: #dddddd;
+      }
     }
   }
   .menu {
@@ -182,7 +185,8 @@ $field-padding: 4px 6px;
     z-index: 2;
     left: -15px;
     max-height: 320px;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
     margin: 0;
     padding: 0;
     width: calc(100% - 20px);
@@ -190,6 +194,12 @@ $field-padding: 4px 6px;
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.22) 0 5px 20px;
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(27, 27, 27, 0.95);
+      backdrop-filter: blur(10px);
+      outline: 1px solid rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
     li {
       list-style: none;
       &:first-of-type {
@@ -205,11 +215,14 @@ $field-padding: 4px 6px;
         background: none;
         display: block;
         width: 100%;
-        padding: 0 10px;
+        padding: 0 6px;
         .item-name {
           display: block;
           padding: 5px 10px 5px 25px;
           position: relative;
+          @media (prefers-color-scheme: dark) {
+            color: #dddddd;
+          }
           .check {
             font-family: system-ui;
             position: absolute;
@@ -517,8 +530,17 @@ $toggle-height: 20px;
 }
 
 ::-webkit-scrollbar {
+  border-radius: 99px;
   @media (prefers-color-scheme: dark) {
     background-color: #292929;
-    border-radius: 99px;
+    border: 1px solid #1b1b1b;
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  border: 2px solid #292929;
+  @media (prefers-color-scheme: dark) {
+    background-color: #7c7c7c;
   }
 }

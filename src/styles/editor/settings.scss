@@ -204,6 +204,9 @@
         .text-secondary-props {
           display: flex;
           gap: 10px;
+          @media (prefers-color-scheme: dark) {
+            color: #dddddd;
+          }
         }
         .file {
           &.file-not-set {
