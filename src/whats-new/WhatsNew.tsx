@@ -11,7 +11,7 @@ export function WhatsNew() {
   useEffect(() => {
     buildMenu("whatsNew");
     emit("window-ready", {
-      label: "whats-new",
+      label: "whatsNew",
     });
     listen("menu-request-quit", () => {
       appWindow.close();
