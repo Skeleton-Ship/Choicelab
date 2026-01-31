@@ -114,7 +114,7 @@ export default function MainEditor() {
   };
   const handleUpdate = async (
     updateHistory: boolean = true,
-    updatePreview?: boolean
+    updatePreview?: boolean,
   ) => {
     // Update history
     if (updateHistory === true) {
