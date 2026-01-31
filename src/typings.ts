@@ -1,3 +1,5 @@
+import { Menu } from "@tauri-apps/api/menu";
+
 export interface Link {
   to: string;
 }
@@ -116,6 +118,11 @@ export interface ViewStore {
     previewVisible: boolean;
   };
 }
+export type WindowType =
+  | "project"
+  | "projectSettings"
+  | "launcher"
+  | "whatsNew";
 export interface Store {
   project: Project;
   projectPath: string;
@@ -203,6 +210,12 @@ declare global {
     __CHOICELAB_FUNCTIONS__: {
       updateProject: (saveProject?: boolean, updatePreview?: boolean) => void;
       updateView: () => void;
+      menus: {
+        project: Menu | null;
+        projectSettings: Menu | null;
+        launcher: Menu | null;
+        whatsNew: Menu | null;
+      };
     };
     __CHOICELAB_DATA__: Store;
     __CHOICELAB_VIEW__: ViewStore;

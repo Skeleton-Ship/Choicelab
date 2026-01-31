@@ -15,7 +15,9 @@ export default async function newProject(source: string) {
     ],
   });
   const label =
-    source === "launcher" ? "launcher" : getProjectWindowLabel(source);
+    source === "launcher" || source === "whatsNew"
+      ? source
+      : getProjectWindowLabel(source);
   if (projectPath === null) {
     console.error("Could not get project path from save.");
   } else {

@@ -3,21 +3,27 @@ import { canUndo, canRedo } from "../data/history";
 import { undoItem, redoItem } from "./undoRedoItems";
 import { getViewStore } from "../data/dataStore";
 import inTextElement from "../utils/inTextElement";
+import { WindowType } from "../typings";
 
-export function setMenu(windowState: string = "project") {
+export async function setMenu(windowType: WindowType = "project") {
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
   const viewStore = getViewStore();
-  const isProjectState = windowState === "project" ? true : false;
   const states = {
     file: {
+      new_project: {
+        enabled: windowType !== "projectSettings" ? true : false,
+      },
+      open_project: {
+        enabled: windowType !== "projectSettings" ? true : false,
+      },
       save: {
-        enabled: isProjectState === true ? true : false,
+        enabled: windowType === "project" ? true : false,
       },
     },
     edit: {
       undo: {
-        enabled: isProjectState === false ? false : canUndo(),
+        enabled: windowType === "project" ? canUndo() : false,
         action: async () => {
           if (inTextElement() === true) {
             // @ts-ignore
@@ -28,69 +34,73 @@ export function setMenu(windowState: string = "project") {
             undoItem(update);
           }
         },
-        redo: {
-          enabled: isProjectState === false ? false : canRedo(),
-          action: async () => {
-            if (inTextElement() === true) {
-              // @ts-ignore
-              return await PredefinedMenuItem.new({
-                item: "Redo",
-              });
-            } else {
-              redoItem(update);
-            }
-          },
+      },
+      redo: {
+        enabled: windowType === "project" ? canRedo() : false,
+        action: async () => {
+          if (inTextElement() === true) {
+            // @ts-ignore
+            return await PredefinedMenuItem.new({
+              item: "Redo",
+            });
+          } else {
+            redoItem(update);
+          }
         },
       },
     },
     view: {
-      showNodeEditor: {
-        enabled: isProjectState === true ? true : false,
+      show_node_editor: {
+        enabled: windowType === "project" ? true : false,
         checked:
           viewStore && viewStore.viewSettings.paneInView === "node-editor"
             ? true
             : false,
       },
-      showVariables: {
-        enabled: isProjectState === true ? true : false,
+      show_variables: {
+        enabled: windowType === "project" ? true : false,
         checked:
           viewStore && viewStore.viewSettings.paneInView === "variables"
             ? true
             : false,
       },
-      togglePreview: {
-        enabled: isProjectState === true ? true : false,
+      toggle_preview: {
+        enabled: windowType === "project" ? true : false,
+        text:
+          viewStore && viewStore.viewSettings.previewVisible === true
+            ? "Hide Preview"
+            : "Show Preview",
       },
     },
     project: {
-      newCell: {
-        enabled: isProjectState === true ? true : false,
+      new_cell: {
+        enabled: windowType === "project" ? true : false,
       },
-      newBranch: {
-        enabled: isProjectState === true ? true : false,
+      new_branch: {
+        enabled: windowType === "project" ? true : false,
       },
-      setLink: {
+      set_link: {
         enabled:
-          isProjectState === true && viewStore.selectedNodes.length > 0
+          windowType === "project" && viewStore.selectedNodes.length > 0
             ? true
             : false,
       },
-      disconnectLink: {
+      disconnect_link: {
         enabled:
-          isProjectState === true && viewStore.selectedNodes.length > 0
+          windowType === "project" && viewStore.selectedNodes.length > 0
             ? true
             : false,
       },
-      deleteNodes: {
+      delete_nodes: {
         enabled:
-          isProjectState === true &&
+          windowType === "project" &&
           viewStore &&
           viewStore.selectedNodes.length > 0 &&
           viewStore.selectedNodes[0].type !== "start"
             ? true
             : false,
       },
-      deleteStem: {
+      delete_stem: {
         enabled:
           viewStore &&
           viewStore.selectedStem !== false &&
@@ -98,12 +108,24 @@ export function setMenu(windowState: string = "project") {
             ? true
             : false,
       },
-      openInBrowser: {
-        enabled: isProjectState === true ? true : false,
+      open_in_browser: {
+        enabled: windowType === "project" ? true : false,
       },
-      projectSettings: {
-        enabled: isProjectState === true ? true : false,
+      project_settings: {
+        enabled: windowType === "project" ? true : false,
       },
     },
   };
+  const menu = fns.menus[windowType];
+  if (!menu) {
+    console.error(`No menu found for window kind: ${windowType}`);
+    return;
+  }
+  const appMenu = await menu.get("app_submenu");
+  const fileMenu = await menu.get("file_submenu");
+  const editMenu = await menu.get("edit_submenu");
+  const viewMenu = await menu.get("view_submenu");
+  const projectMenu = await menu.get("project_submenu");
+  console.log(appMenu, fileMenu, editMenu, viewMenu, projectMenu);
+  console.log(states);
 }

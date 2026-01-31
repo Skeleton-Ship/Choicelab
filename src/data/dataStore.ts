@@ -24,6 +24,10 @@ function updateView() {
   window.__CHOICELAB_FUNCTIONS__.updateView();
 }
 
+function getMenus() {
+  window.__CHOICELAB_FUNCTIONS__.menus;
+}
+
 function createViewStore(projectPath: string) {
   const store: ViewStore = {
     windowType: "project",
@@ -62,7 +66,7 @@ function createViewStore(projectPath: string) {
 export default function createDataStore(
   projectData: Project,
   projectPath: string,
-  projectFileName: string
+  projectFileName: string,
 ) {
   const store: Store = {
     project: projectData,
@@ -82,6 +86,7 @@ export {
   getViewStore,
   setViewStore,
   updateView,
+  getMenus,
   createDataStore,
   createViewStore,
 };

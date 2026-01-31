@@ -20,7 +20,7 @@ import enterTargetMode from "../editor/flowchart/target-mode/enterTargetMode";
 import handleDisconnectLinks from "../editor/flowchart/general/handleDisconnectLinks";
 import { handleDeleteNodes } from "../editor/flowchart/general/handleDelete";
 import { getStemParent } from "../data/getData";
-import { Branch } from "../typings";
+import { Branch, WindowType } from "../typings";
 import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
 import { togglePreview } from "../preview/togglePreview";
 import { openProjectSettings } from "../editor/settings/openProjectSettings";
@@ -33,12 +33,12 @@ import { setMenu } from "./setMenu";
 
 const appWindow = getCurrentWebviewWindow();
 
-export async function buildMenu(windowState: string = "project") {
+export async function buildMenu(windowType: WindowType) {
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
   const viewStore = getViewStore();
   const platform = getPlatform();
-  const isProjectState = windowState === "project" ? true : false;
+  const isProjectState = windowType === "project" ? true : false;
 
   /*
    * App menu
@@ -62,15 +62,9 @@ export async function buildMenu(windowState: string = "project") {
      */
     },
   });
-  if (windowState === "launcher") {
-    // @ts-ignore
-    quit = await PredefinedMenuItem.new({
-      text: "Quit Choicelab",
-      item: "Quit",
-    });
-  }
   const appSubmenu = await Submenu.new({
     text: "Choicelab",
+    id: "app_submenu",
     items: [
       aboutItem,
       await PredefinedMenuItem.new({
@@ -112,6 +106,7 @@ export async function buildMenu(windowState: string = "project") {
 
   const fileSubmenu = await Submenu.new({
     text: "File",
+    id: "file_submenu",
     items: [
       await MenuItem.new({
         id: "new_project",
@@ -119,7 +114,9 @@ export async function buildMenu(windowState: string = "project") {
         accelerator: "CmdOrCtrl+Shift+N",
         action: () => {
           const source =
-            windowState === "launcher" ? "launcher" : viewStore.projectPath;
+            windowType === "project" || windowType === "projectSettings"
+              ? viewStore.projectPath
+              : windowType;
           newProject(source);
         },
       }),
@@ -165,6 +162,7 @@ export async function buildMenu(windowState: string = "project") {
 
   const editSubmenu = await Submenu.new({
     text: "Edit",
+    id: "edit_submenu",
     items: [
       undo,
       redo,
@@ -193,6 +191,7 @@ export async function buildMenu(windowState: string = "project") {
   const showNodeEditor = await CheckMenuItem.new({
     id: "show_node_editor",
     text: "Show Node Editor",
+    enabled: false,
     accelerator: "CmdOrCtrl+E",
     action: async () => {
       const focused = await appWindow.isFocused();
@@ -204,6 +203,7 @@ export async function buildMenu(windowState: string = "project") {
   const showVariables = await CheckMenuItem.new({
     id: "show_variables",
     text: "Show Variables",
+    enabled: false,
     accelerator: "CmdOrCtrl+R",
     action: async () => {
       const focused = await appWindow.isFocused();
@@ -214,10 +214,7 @@ export async function buildMenu(windowState: string = "project") {
 
   const togglePreviewItem = await MenuItem.new({
     id: "toggle_preview",
-    text:
-      viewStore && viewStore.viewSettings.previewVisible === true
-        ? "Hide Preview"
-        : "Show Preview",
+    text: "Toggle Preview",
     accelerator: "CmdOrCtrl+G",
     enabled: false,
     action: async () => {
@@ -229,6 +226,7 @@ export async function buildMenu(windowState: string = "project") {
 
   const viewSubmenu = await Submenu.new({
     text: "View",
+    id: "view_submenu",
     items: [
       showNodeEditor,
       showVariables,
@@ -353,6 +351,7 @@ export async function buildMenu(windowState: string = "project") {
 
   const projectSubmenu = await Submenu.new({
     text: "Project",
+    id: "project_submenu",
     items: [
       newCell,
       newBranch,
@@ -380,13 +379,14 @@ export async function buildMenu(windowState: string = "project") {
   /*
    * Set the menu
    */
+  let menu = null;
   switch (platform) {
     case "windows":
     case "linux":
       // On Windows and Linux, only show the menu in project windows
       if (isProjectState) {
         const items = [fileSubmenu, editSubmenu, viewSubmenu, projectSubmenu];
-        const menu = await Menu.new({ items: items });
+        menu = await Menu.new({ items: items });
         menu.setAsWindowMenu();
       }
       break;
@@ -399,11 +399,13 @@ export async function buildMenu(windowState: string = "project") {
         viewSubmenu,
         projectSubmenu,
       ];
-      const menu = await Menu.new({ items: items });
+      menu = await Menu.new({ items: items });
       menu.setAsAppMenu();
       // Add native Window and Help menus (via Swift)
       emit("add-native-menus");
       break;
   }
-  setMenu(windowState);
+  if (menu === null) return;
+  fns.menus[windowType] = menu;
+  setMenu(windowType);
 }

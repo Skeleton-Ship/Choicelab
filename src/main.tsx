@@ -16,7 +16,7 @@ import {
 } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
-import { Project, LoadError } from "./typings";
+import { Project, LoadError, WindowType } from "./typings";
 import "./styles/_style.scss";
 import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
@@ -24,12 +24,13 @@ import { setAccentColor } from "./utils/setAccentColor";
 import { listen } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
+import { buildMenu } from "./menu/buildMenu";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
   // Set accent color
-  if(platform === "macos") {
+  if (platform === "macos") {
     const { accentColor } = await import("tauri-plugin-accent-color");
     accentColor.subscribe((color: string) => {
       setAccentColor(color);
@@ -66,6 +67,13 @@ async function init() {
   window.__CHOICELAB_FUNCTIONS__ = {
     updateProject: () => {},
     updateView: () => {},
+    // Note: These live here because the data and view stores don't preserve classes and functions
+    menus: {
+      project: null,
+      projectSettings: null,
+      launcher: null,
+      whatsNew: null,
+    },
   };
 
   listen("opened-files", async (event) => {
@@ -80,7 +88,7 @@ async function init() {
   let elements = <></>;
 
   const urlParams = new URLSearchParams(window.location.search);
-  const windowType: string | null = urlParams.get("window_type");
+  const windowType: WindowType = urlParams.get("window_type") as any;
   if (windowType === "launcher") {
     elements = <Launcher />;
   }
@@ -101,7 +109,7 @@ async function init() {
     let projectData = await loadProjectData(
       projectPath,
       fileName,
-      windowType === "projectSettings" ? "settings" : undefined
+      windowType === "projectSettings" ? "settings" : undefined,
     );
     if (projectData.hasOwnProperty("error")) {
       projectData = projectData as LoadError;
@@ -133,7 +141,7 @@ async function init() {
     // Load label
     const label = getProjectWindowLabel(
       store.projectPath,
-      windowType === "projectSettings" ? "settings" : undefined
+      windowType === "projectSettings" ? "settings" : undefined,
     );
     if (windowType === "project") {
       // Load the default sequence
@@ -151,6 +159,8 @@ async function init() {
     }
   }
 
+  // Build menu
+  await buildMenu(windowType);
   const appDOM = (
     <div id="App" data-platform={platform} data-focused-region="">
       {elements}
