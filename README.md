@@ -14,8 +14,9 @@ Choicelab can be run locally on macOS 14 and newer, or modern versions of Window
 
 1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
 2. Install [Yarn Classic](https://classic.yarnpkg.com/en/); you can run `yarn` to see if you already have it installed. Any installation method should work for Choicelab, though only Homebrew (on Mac) and npm (on Windows) have been verified here.
+3. Install [Git](https://git-scm.com/install), if you don't have it already. Similar to Yarn, any installation method should work.
 
-You can use any text editor you want; you don't need Xcode.
+You can use any text editor you want; you don't need Xcode to build on Mac.
 
 From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
 
