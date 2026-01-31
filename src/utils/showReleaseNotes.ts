@@ -7,7 +7,7 @@ export async function showReleaseNotes() {
   const preferences = await getAppPreferences();
   const thisVersion = await getVersion();
   if (compare(thisVersion, preferences.versionNotesSeen, ">")) {
-    emit("whats-new-window"); // done on Rust side because window is also called by Swift
+    emit("whatsNew-window"); // done on Rust side because window is also called by Swift
     setAppPreferences({
       versionNotesSeen: thisVersion,
     });
