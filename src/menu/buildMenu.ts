@@ -320,7 +320,7 @@ export async function buildMenu(windowType: WindowType) {
       if (selectedStem !== false) {
         const parentBranch: Branch | undefined = getStemParent(
           selectedStem.id,
-          store,
+          store
         );
         if (parentBranch && selectedStem.type !== "noMatch") {
           handleDeleteStem(selectedStem.id, parentBranch.id, update);
@@ -376,11 +376,14 @@ export async function buildMenu(windowType: WindowType) {
     ],
   });
 
+  /*
+   * Window submenu, to be handled by Tauri once functionality is available (see below)
+   *
   const windowSubmenu = await Submenu.new({
     text: "Window",
     id: "window_submenu",
-    items: [],
   });
+  */
 
   const helpSubmenu = await Submenu.new({
     text: "Help",
@@ -393,6 +396,13 @@ export async function buildMenu(windowType: WindowType) {
           const url =
             "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
           await open(url);
+        },
+      }),
+      await MenuItem.new({
+        id: "open_whatsNew",
+        text: "Release Notes",
+        action: async () => {
+          emit("whatsNew-window");
         },
       }),
     ],
@@ -419,20 +429,21 @@ export async function buildMenu(windowType: WindowType) {
       }
       break;
     case "macos":
-      windowSubmenu.setAsWindowsMenuForNSApp();
-      helpSubmenu.setAsHelpMenuForNSApp();
       const items = [
         appSubmenu,
         fileSubmenu,
         editSubmenu,
         viewSubmenu,
         projectSubmenu,
-        windowSubmenu,
-        helpSubmenu,
+        // windowSubmenu,
+        // helpSubmenu,
       ];
       menu = await Menu.new({ items: items });
       // On macOS, show the menu in all windows
       menu.setAsAppMenu();
+      emit("add-native-menus");
+      // await windowSubmenu.setAsWindowsMenuForNSApp();
+      // await helpSubmenu.setAsHelpMenuForNSApp();
       break;
   }
   if (menu === null) return;
