@@ -376,6 +376,28 @@ export async function buildMenu(windowType: WindowType) {
     ],
   });
 
+  const windowSubmenu = await Submenu.new({
+    text: "Window",
+    id: "window_submenu",
+    items: [],
+  });
+
+  const helpSubmenu = await Submenu.new({
+    text: "Help",
+    id: "help_submenu",
+    items: [
+      await MenuItem.new({
+        id: "report_issue",
+        text: "Report Issue or Request Feature...",
+        action: async () => {
+          const url =
+            "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
+          await open(url);
+        },
+      }),
+    ],
+  });
+
   /*
    * Set the menu
    */
@@ -385,24 +407,32 @@ export async function buildMenu(windowType: WindowType) {
     case "linux":
       // On Windows and Linux, only show the menu in project windows
       if (isProjectState) {
-        const items = [fileSubmenu, editSubmenu, viewSubmenu, projectSubmenu];
+        const items = [
+          fileSubmenu,
+          editSubmenu,
+          viewSubmenu,
+          projectSubmenu,
+          helpSubmenu,
+        ];
         menu = await Menu.new({ items: items });
         menu.setAsWindowMenu();
       }
       break;
     case "macos":
-      // On macOS, show the menu in all windows
+      windowSubmenu.setAsWindowsMenuForNSApp();
+      helpSubmenu.setAsHelpMenuForNSApp();
       const items = [
         appSubmenu,
         fileSubmenu,
         editSubmenu,
         viewSubmenu,
         projectSubmenu,
+        windowSubmenu,
+        helpSubmenu,
       ];
       menu = await Menu.new({ items: items });
+      // On macOS, show the menu in all windows
       menu.setAsAppMenu();
-      // Add native Window and Help menus (via Swift)
-      emit("add-native-menus");
       break;
   }
   if (menu === null) return;
