@@ -6,7 +6,7 @@ use crate::check_for_updates::update;
 use crate::globals::PENDING_FILES;
 #[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
 use std::fs;
@@ -28,13 +28,6 @@ struct Payload {
 struct HistoryPayload {
     message: String,
     version_id: String,
-}
-
-#[derive(Serialize, Deserialize)]
-struct Response {
-    code: u32,
-    message: String,
-    path: Option<String>,
 }
 
 fn apply_project_vibrancy(window: WebviewWindow) {
