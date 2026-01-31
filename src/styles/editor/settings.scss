@@ -304,3 +304,12 @@
     }
   }
 }
+
+#App[data-platform="windows"] #project-settings {
+.ui-toolbar {
+  .tabs {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+}

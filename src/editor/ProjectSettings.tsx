@@ -30,6 +30,7 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
   const store = getStore();
   useEffect(() => {
     appWindow.setTitle(`${store.project.name} — Project Settings`);
+    appWindow.setDecorations(false);
     appWindow.show();
     // Let Tauri know the window is ready
     emit("window-ready", {

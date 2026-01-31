@@ -43,6 +43,7 @@ export async function setMenu(windowState: string = "project") {
   const update = fns.updateProject;
   const viewStore = getViewStore();
   const platform = getPlatform();
+  const isProjectState = windowState === "project" ? true : false;
 
   /*
    * App menu
@@ -164,7 +165,7 @@ export async function setMenu(windowState: string = "project") {
       handleUndoRedo("undo", update);
     },
   });
-  const undoState = windowState === "launcher" ? false : canUndo();
+  const undoState = isProjectState === false ? false : canUndo();
   undo.setEnabled(undoState);
   if (inTextElement() === true) {
     // @ts-ignore
@@ -184,7 +185,7 @@ export async function setMenu(windowState: string = "project") {
       handleUndoRedo("redo", update);
     },
   });
-  const redoState = windowState === "launcher" ? false : canRedo();
+  const redoState = isProjectState === true ? canRedo() : false;
   redo.setEnabled(redoState);
   if (inTextElement() === true) {
     // @ts-ignore
@@ -229,7 +230,7 @@ export async function setMenu(windowState: string = "project") {
       showPane("node-editor", update);
     },
   });
-  showNodeEditor.setEnabled(windowState !== "launcher" ? true : false);
+  showNodeEditor.setEnabled(isProjectState === true ? true : false);
   showNodeEditor.setChecked(
     viewStore && viewStore.viewSettings.paneInView === "node-editor"
       ? true
@@ -246,7 +247,7 @@ export async function setMenu(windowState: string = "project") {
       showPane("variables", update);
     },
   });
-  showVariables.setEnabled(windowState !== "launcher" ? true : false);
+  showVariables.setEnabled(isProjectState === true ? true : false);
   showVariables.setChecked(
     viewStore && viewStore.viewSettings.paneInView === "variables"
       ? true
@@ -266,7 +267,7 @@ export async function setMenu(windowState: string = "project") {
       togglePreview(update);
     },
   });
-  togglePreviewItem.setEnabled(windowState !== "launcher" ? true : false);
+  togglePreviewItem.setEnabled(isProjectState === true ? true : false);
   const viewSubmenu = await Submenu.new({
     text: "View",
     items: [
@@ -297,7 +298,7 @@ export async function setMenu(windowState: string = "project") {
       insertNewNode(newCell, update);
     },
   });
-  newCell.setEnabled(windowState !== "launcher" ? true : false);
+  newCell.setEnabled(isProjectState === true ? true : false);
 
   const newBranch = await MenuItem.new({
     id: "new_branch",
@@ -310,7 +311,7 @@ export async function setMenu(windowState: string = "project") {
       insertNewNode(newBranch, update);
     },
   });
-  newBranch.setEnabled(windowState !== "launcher" ? true : false);
+  newBranch.setEnabled(isProjectState === true ? true : false);
 
   const setLink = await MenuItem.new({
     id: "set_link",
@@ -335,7 +336,7 @@ export async function setMenu(windowState: string = "project") {
     },
   });
   let linkItemsEnabled = false;
-  if (windowState !== "launcher" && viewStore.selectedNodes.length > 0) {
+  if (isProjectState === true && viewStore.selectedNodes.length > 0) {
     linkItemsEnabled = true;
   }
   setLink.setEnabled(linkItemsEnabled);
@@ -352,7 +353,7 @@ export async function setMenu(windowState: string = "project") {
     },
   });
   let deleteEnabled = false;
-  if (windowState !== "launcher" && viewStore.selectedNodes.length > 0) {
+  if (isProjectState === true && viewStore.selectedNodes.length > 0) {
     if (viewStore && viewStore.selectedNodes[0].type !== "start") {
       deleteEnabled = true;
     }
@@ -396,7 +397,7 @@ export async function setMenu(windowState: string = "project") {
       await open(`http://localhost:${port}`);
     },
   });
-  previewInBrowser.setEnabled(windowState !== "launcher" ? true : false);
+  previewInBrowser.setEnabled(isProjectState === true ? true : false);
 
   const projectSettings = await MenuItem.new({
     id: "project_settings",
@@ -406,7 +407,7 @@ export async function setMenu(windowState: string = "project") {
       openProjectSettings();
     },
   });
-  projectSettings.setEnabled(windowState !== "launcher" ? true : false);
+  projectSettings.setEnabled(isProjectState === true ? true : false);
 
   const projectSubmenu = await Submenu.new({
     text: "Project",
@@ -441,7 +442,9 @@ export async function setMenu(windowState: string = "project") {
     items: [appSubmenu, fileSubmenu, editSubmenu, viewSubmenu, projectSubmenu],
   });
 
-  menu.setAsAppMenu();
+  if((platform === "macos") || (windowState === "project")) {
+    menu.setAsAppMenu();
+  }
   if (platform === "macos") {
     emit("add-native-menus");
   }

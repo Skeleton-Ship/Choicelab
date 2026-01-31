@@ -1,4 +1,5 @@
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import {platform as getPlatform} from "@tauri-apps/plugin-os";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { resolve, basename } from "@tauri-apps/api/path";
 
@@ -6,6 +7,7 @@ export default async function loadProject(projectFilePath: string) {
   const projectPath = await resolve(projectFilePath, "../");
   const projectPathEncoded = encodeURIComponent(projectPath);
   const fileName = await basename(projectFilePath);
+  const platform = await getPlatform();
   const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath);
   const screenWidth = window.screen.availWidth;
@@ -18,7 +20,7 @@ export default async function loadProject(projectFilePath: string) {
     height: screenHeight - screenWidth / 12,
     minWidth: 700,
     minHeight: 360,
-    transparent: true,
+    transparent: platform === "macos" ? true : false,
     visible: true,
   });
   webview.once("tauri://created", function () {});

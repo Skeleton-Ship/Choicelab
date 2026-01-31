@@ -1,4 +1,5 @@
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 import { getStore } from "../../data/dataStore";
 import { getProjectSettingsWindow } from "./getProjectSettingsWindow";
@@ -9,6 +10,7 @@ export async function openProjectSettings(
   const store = getStore();
   const projectPath = store.projectPath;
   const fileName = store.projectFileName;
+  const platform = await getPlatform();
   const projectPathEncoded = encodeURIComponent(projectPath);
   const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath, "settings");
@@ -27,7 +29,7 @@ export async function openProjectSettings(
     width: 680,
     height: 210,
     titleBarStyle: "overlay",
-    transparent: true,
+    transparent: platform === "macos" ? true : false,
     resizable: false,
     visible: false,
   });
