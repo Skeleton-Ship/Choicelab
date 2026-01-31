@@ -82,7 +82,7 @@ fn release_port_for_label(label: &str) {
 }
 
 pub fn open_whats_new_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_window("whats-new") {
+	if let Some(window) = app.get_window("whatsNew") {
 		let _ = window.show();
 		let _ = window.set_focus();
 	} else {
@@ -481,7 +481,7 @@ let handle_update = app_handle.clone();
 	
 	// listen for what's new window to open
 	let handle_whats_new = app_handle.clone();
-	app.listen("whats-new-window", move |_event| {
+	app.listen("whatsNew-window", move |_event| {
 		open_whats_new_window(handle_whats_new.clone());
 	});
 }

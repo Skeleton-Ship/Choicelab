@@ -56,7 +56,7 @@
         "transparent": true
       },
       {
-        "label": "whats-new",
+        "label": "whatsNew",
         "url": "index.html?window_type=whatsNew",
         "title": "What’s New in Choicelab",
         "hiddenTitle": true,

@@ -39,7 +39,7 @@ pub fn set_app_handle(handle: tauri::AppHandle) {
 
 #[no_mangle]
 pub extern "C" fn menu_release_notes_clicked() {
-    // Launch or show the Tauri window with label "whats-new"
+    // Launch or show the Tauri window with label "whatsNew"
     if let Some(app_handle) = APP_HANDLE.get() {
         tauri::async_runtime::block_on(async {
 			open_whats_new_window(app_handle.clone());
