@@ -20,7 +20,7 @@ export default function RuleInstance(props: {
     fieldName: "variableId" | "operator" | "value",
     e: Event | null,
     varName?: string,
-    directValue?: any
+    directValue?: any,
   ) {
     let value: string | number | boolean;
     if (e !== null && e.target !== null) {
@@ -37,7 +37,7 @@ export default function RuleInstance(props: {
       props.rule.id,
       props.stem.id,
       props.branch.id,
-      store
+      store,
     );
     if (!rule) return;
     let variable: Variable | undefined;
@@ -90,7 +90,7 @@ export default function RuleInstance(props: {
       props.rule.id,
       props.stem.id,
       props.branch.id,
-      store
+      store,
     );
     setStore(newStore);
     props.update();
@@ -103,7 +103,7 @@ export default function RuleInstance(props: {
   // Get a list of variables
   const variables = getVariables(store);
   const varItems: Array<preact.JSX.Element> = [
-    <option value="">Variable</option>,
+    <option value="">Select Variable...</option>,
   ];
   variables.forEach((variable: Variable) => {
     const varItem = <option value={variable.id}>{variable.name}</option>;
