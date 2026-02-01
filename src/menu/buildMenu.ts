@@ -121,7 +121,7 @@ export async function buildMenu(windowType: WindowType) {
         id: "undo",
         accelerator: "CmdOrCtrl+Z",
         enabled: false,
-        action: async () => {
+        action: () => {
           emit("menu-undo");
         },
       }),
@@ -130,7 +130,7 @@ export async function buildMenu(windowType: WindowType) {
         id: "redo",
         accelerator: "CmdOrCtrl+Shift+Z",
         enabled: false,
-        action: async () => {
+        action: () => {
           emit("menu-redo");
         },
       }),
@@ -165,7 +165,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Show Node Editor",
         enabled: false,
         accelerator: "CmdOrCtrl+E",
-        action: async () => {
+        action: () => {
           emit("menu-show-node-editor");
         },
       }),
@@ -174,7 +174,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Show Variables",
         enabled: false,
         accelerator: "CmdOrCtrl+R",
-        action: async () => {
+        action: () => {
           emit("menu-show-variables");
         },
       }),
@@ -186,7 +186,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Toggle Preview",
         accelerator: "CmdOrCtrl+G",
         enabled: false,
-        action: async () => {
+        action: () => {
           emit("menu-toggle-preview");
         },
       }),
@@ -209,7 +209,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "New Cell",
         enabled: false,
         accelerator: "CmdOrCtrl+N",
-        action: async () => {
+        action: () => {
           emit("menu-new-cell");
         },
       }),
@@ -218,7 +218,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "New Branch",
         enabled: false,
         accelerator: "CmdOrCtrl+B",
-        action: async () => {
+        action: () => {
           emit("menu-new-branch");
         },
       }),
@@ -230,7 +230,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Set Link",
         enabled: false,
         accelerator: "CmdOrCtrl+L",
-        action: async () => {
+        action: () => {
           emit("menu-set-link");
         },
       }),
@@ -239,7 +239,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Disconnect Link",
         enabled: false,
         accelerator: "CmdOrCtrl+D",
-        action: async () => {
+        action: () => {
           emit("menu-disconnect-link");
         },
       }),
@@ -250,7 +250,7 @@ export async function buildMenu(windowType: WindowType) {
         id: "open_in_browser",
         text: "Open Preview in Browser",
         enabled: false,
-        action: async () => {
+        action: () => {
           emit("menu-open-preview");
         },
       }),
@@ -262,7 +262,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Delete Node",
         enabled: false,
         accelerator: "CmdOrCtrl+Delete",
-        action: async () => {
+        action: () => {
           emit("menu-delete-nodes");
         },
       }),
@@ -271,7 +271,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Delete Branch Stem",
         enabled: false,
         accelerator: "CmdOrCtrl+Option+Delete",
-        action: async () => {
+        action: () => {
           emit("menu-delete-stem");
         },
       }),
@@ -306,14 +306,14 @@ export async function buildMenu(windowType: WindowType) {
       await MenuItem.new({
         id: "report_issue",
         text: "Report Issue or Request Feature...",
-        action: async () => {
+        action: () => {
           emit("menu-report-issue");
         },
       }),
       await MenuItem.new({
         id: "open_whatsNew",
         text: "Release Notes",
-        action: async () => {
+        action: () => {
           emit("whatsNew-window");
         },
       }),
