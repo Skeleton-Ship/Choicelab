@@ -1,5 +1,4 @@
 import { render } from "preact";
-import { emit } from "@tauri-apps/api/event";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
