@@ -1,4 +1,5 @@
 import { render } from "preact";
+import { emit } from "@tauri-apps/api/event";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -25,7 +26,6 @@ import { setAccentColor } from "./utils/setAccentColor";
 import { listen } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
-import { buildMenu } from "./menu/buildMenu";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
 const platform = getPlatform();
@@ -194,7 +194,9 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
-  await buildMenu(windowType);
+  emit("build-menu", {
+    windowType: windowType,
+  });
   listen("set-menu", async () => {
     const focused = await appWindow.isFocused();
     if (!focused) return;
