@@ -9,7 +9,6 @@ import { getPlayerConfig } from "../player/getPlayerConfig";
 import { SettingsPane } from "./settings/SettingsPane";
 import { IconGeneral } from "./settings/IconGeneral";
 import { IconAppearance } from "./settings/IconAppearance";
-import { setMenu } from "../menu/setMenu";
 import { LogicalSize } from "@tauri-apps/api/dpi";
 const appWindow = getCurrentWebviewWindow();
 
@@ -34,13 +33,6 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
     // Let Tauri know the window is ready
     emit("window-ready", {
       label: getProjectWindowLabel(store.projectPath, "settings"),
-    });
-    setMenu("projectSettings");
-    // Focus listeners
-    listen("tauri://focus", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      setMenu("projectSettings");
     });
     listen("editor-store-updated", async (event) => {
       const payload = event.payload as string;

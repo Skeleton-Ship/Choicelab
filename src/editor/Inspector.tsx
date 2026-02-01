@@ -1,10 +1,14 @@
 import { useEffect, useRef } from "preact/hooks";
+import { listen } from "@tauri-apps/api/event";
 import { getViewStore } from "../data/dataStore";
+import showPane from "./inspector/functions/showPane";
 import { makeResizable } from "./inspector/functions/makeResizable";
 import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
 import VariablesPane from "./inspector/VariablesPane";
 import { PreviewPane } from "./inspector/elements/PreviewPane";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+const appWindow = getCurrentWebviewWindow();
 
 export default function Inspector(props: { update: Function }) {
   // Make resizable
@@ -13,6 +17,19 @@ export default function Inspector(props: { update: Function }) {
     if (!paneRef.current) return;
     makeResizable(paneRef.current);
   }, []);
+
+  // Menu listeners
+  listen("menu-show-node-editor", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    showPane("node-editor", props.update);
+  });
+
+  listen("menu-show-variables", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    showPane("variables", props.update);
+  });
 
   // Contents
   let contents = <></>;

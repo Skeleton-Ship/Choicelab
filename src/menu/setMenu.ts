@@ -1,15 +1,35 @@
-import { PredefinedMenuItem } from "@tauri-apps/api/menu";
+import { MenuItem, PredefinedMenuItem, Submenu } from "@tauri-apps/api/menu";
+import { emit } from "@tauri-apps/api/event";
+import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { canUndo, canRedo } from "../data/history";
 import { undoItem, redoItem } from "./undoRedoItems";
 import { getViewStore } from "../data/dataStore";
 import inTextElement from "../utils/inTextElement";
 import { WindowType } from "../typings";
 
+type SubmenuId = "app" | "file" | "edit" | "view" | "project";
+
+type SubmenuState = {
+  [K in SubmenuId]?: {
+    [key: string]: {
+      enabled?: boolean;
+      checked?: boolean;
+      action?: Function;
+      text?: string;
+    };
+  };
+};
+
 export async function setMenu(windowType: WindowType = "project") {
+  if (!document.hasFocus()) {
+    return;
+  }
+  const platform = getPlatform();
   const fns = window.__CHOICELAB_FUNCTIONS__;
   const update = fns.updateProject;
   const viewStore = getViewStore();
-  const states = {
+  const states: SubmenuState = {
+    app: {},
     file: {
       new_project: {
         enabled: windowType !== "projectSettings" ? true : false,
@@ -121,11 +141,41 @@ export async function setMenu(windowType: WindowType = "project") {
     console.error(`No menu found for window kind: ${windowType}`);
     return;
   }
-  const appMenu = await menu.get("app_submenu");
-  const fileMenu = await menu.get("file_submenu");
-  const editMenu = await menu.get("edit_submenu");
-  const viewMenu = await menu.get("view_submenu");
-  const projectMenu = await menu.get("project_submenu");
-  console.log(appMenu, fileMenu, editMenu, viewMenu, projectMenu);
-  console.log(states);
+  const ids: Array<SubmenuId> = ["app", "file", "edit", "view", "project"];
+  ids.forEach(async (id) => {
+    const submenu = (await menu.get(`${id}_submenu`)) as Submenu;
+    const commands = states[id];
+    if (!submenu || !commands) {
+      console.error(`No submenu or commands found for this id:`, id);
+      return;
+    }
+    const stateKeys = Object.keys(commands);
+    stateKeys.forEach(async (keyName) => {
+      const item = (await submenu.get(keyName)) as MenuItem;
+      const state = commands[keyName];
+      if (!item || !state) {
+        console.warn(
+          `No item or state found for this submenu and commands:`,
+          submenu,
+          commands
+        );
+        return;
+      }
+      if (typeof state.enabled !== "undefined") {
+        await item.setEnabled(state.enabled);
+      }
+    });
+  });
+  if (platform === "macos") {
+    menu.setAsAppMenu();
+    // On macOS, show the menu in all windows
+    if (platform === "macos") {
+      emit("add-native-menus");
+    }
+  } else if (
+    (platform === "windows" || platform === "linux") &&
+    windowType === "project"
+  ) {
+    menu.setAsWindowMenu();
+  }
 }

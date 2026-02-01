@@ -3,23 +3,16 @@ import { useEffect } from "preact/hooks";
 import { emit, listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
-import { setMenu } from "../menu/setMenu";
 import { showReleaseNotes } from "../utils/showReleaseNotes";
 const appWindow = getCurrentWebviewWindow();
 
 function Launcher() {
   useEffect(() => {
-    setMenu("launcher");
     emit("window-ready", {
       label: "launcher",
     });
     listen("menu-request-quit", () => {
       appWindow.close();
-    });
-    listen("tauri://focus", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      setMenu("launcher");
     });
     showReleaseNotes();
   }, []);

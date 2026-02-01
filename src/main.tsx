@@ -5,6 +5,7 @@ import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { message } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import { ProjectSettings } from "./editor/ProjectSettings";
+import newProject from "./fs/newProject";
 import MainEditor from "./editor/MainEditor";
 import {
   getStore,
@@ -25,10 +26,14 @@ import { listen } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { buildMenu } from "./menu/buildMenu";
+import { setMenu } from "./menu/setMenu";
+import openProject from "./fs/openProject";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
 async function init() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const windowType: WindowType = urlParams.get("window_type") as any;
   // Set accent color
   if (platform === "macos") {
     const { accentColor } = await import("tauri-plugin-accent-color");
@@ -39,19 +44,25 @@ async function init() {
     setAccentColor();
   }
   // Window focus
-  listen("tauri://focus", async () => {
-    const focused = await appWindow.isFocused();
-    if (focused === false) return;
-    const store = getViewStore();
-    store.focus = true;
+  window.addEventListener("focus", () => {
+    if (!document.hasFocus()) return;
     document.querySelector("#App")?.setAttribute("data-focus", "true");
-    setViewStore(store);
-  });
-  listen("tauri://blur", async () => {
+    // Update view store
     const viewStore = getViewStore();
-    viewStore.focus = false;
+    if (viewStore) {
+      viewStore.focus = true;
+      setViewStore(viewStore);
+    }
+    // Update menu
+    setMenu(windowType);
+  });
+  window.addEventListener("blur", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "false");
-    setViewStore(viewStore);
+    const viewStore = getViewStore();
+    if (viewStore) {
+      viewStore.focus = false;
+      setViewStore(viewStore);
+    }
   });
   // Region focus listeners
   window.addEventListener("pointerdown", (e) => {
@@ -62,6 +73,17 @@ async function init() {
     if (document.activeElement !== null) {
       setFocusedRegion(document.activeElement);
     }
+  });
+  // Global menu listeners
+  listen("menu-new-project", () => {
+    if (windowType !== "project" && windowType !== "launcher") return;
+    const source =
+      windowType === "project" ? getViewStore().projectPath : windowType;
+    newProject(source);
+  });
+  listen("menu-open-project", () => {
+    if (windowType !== "project" && windowType !== "launcher") return;
+    openProject();
   });
 
   window.__CHOICELAB_FUNCTIONS__ = {
@@ -87,8 +109,7 @@ async function init() {
 
   let elements = <></>;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const windowType: WindowType = urlParams.get("window_type") as any;
+  // Determine component to load
   if (windowType === "launcher") {
     elements = <Launcher />;
   }
@@ -109,7 +130,7 @@ async function init() {
     let projectData = await loadProjectData(
       projectPath,
       fileName,
-      windowType === "projectSettings" ? "settings" : undefined,
+      windowType === "projectSettings" ? "settings" : undefined
     );
     if (projectData.hasOwnProperty("error")) {
       projectData = projectData as LoadError;
@@ -141,7 +162,7 @@ async function init() {
     // Load label
     const label = getProjectWindowLabel(
       store.projectPath,
-      windowType === "projectSettings" ? "settings" : undefined,
+      windowType === "projectSettings" ? "settings" : undefined
     );
     if (windowType === "project") {
       // Load the default sequence
@@ -160,7 +181,6 @@ async function init() {
   }
 
   // Build menu
-  await buildMenu(windowType);
   const appDOM = (
     <div id="App" data-platform={platform} data-focused-region="">
       {elements}
@@ -168,6 +188,12 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
+  await buildMenu(windowType);
+  listen("set-menu", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    setMenu(windowType);
+  });
 }
 
 init();

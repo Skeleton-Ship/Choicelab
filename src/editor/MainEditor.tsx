@@ -1,24 +1,26 @@
 // Libraries
 import { listen, emit, emitTo } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { open } from "@tauri-apps/plugin-shell";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
-import { Sequence } from "../typings";
+import { Branch, Sequence } from "../typings";
 import {
   getStore,
   getViewStore,
   setStore,
   setViewStore,
 } from "../data/dataStore";
-import { getCurrentSequence } from "../data/getData";
-import { saveHistoryVersion } from "../data/history";
+import { getCurrentSequence, getStemParent } from "../data/getData";
+import { handleUndoRedo, saveHistoryVersion } from "../data/history";
 import { handleCloseRequest } from "../fs/handleCloseRequest";
 import {
   handleCutCopy,
   handlePaste,
 } from "./flowchart/general/handleCopyPaste";
 import { getFocusedRegion } from "../utils/focusedRegion";
+import { togglePreview } from "../preview/togglePreview";
 import {
   updatePreview as handleUpdatePreview,
   updatePreview,
@@ -32,12 +34,24 @@ import Inspector from "./Inspector";
 import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { stringify } from "../utils/stringify";
+import { saveProject } from "../fs/saveProject";
+import { createBranch, createCell } from "../data/createNode";
+import insertNewNode from "./flowchart/general/insertNewNode";
+import enterTargetMode from "./flowchart/target-mode/enterTargetMode";
+import handleDisconnectLinks from "./flowchart/general/handleDisconnectLinks";
+import {
+  handleDeleteNodes,
+  handleDeleteStem,
+} from "./flowchart/general/handleDelete";
+import { openProjectSettings } from "./settings/openProjectSettings";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
+  /*
+   * TODO: Return and unmount listeners
+   */
   useEffect(() => {
     const label = getProjectWindowLabel(store.projectPath);
-    setMenu();
     updatePreview(true);
     // Get preview server
     listen("preview-port", (event: any) => {
@@ -86,16 +100,90 @@ export default function MainEditor() {
       setStore(newStore);
       handleUpdate(true, true);
     });
-    // Focus listeners
-    listen("tauri://focus", async () => {
-      setMenu();
-    });
     // Close listeners
     appWindow.listen("tauri://close-requested", async () => {
       handleCloseRequest();
     });
-    listen("menu-request-quit", () => {
+    // Menu events
+    listen("menu-request-quit", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
       handleCloseRequest();
+    });
+    listen("menu-save-project", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      saveProject();
+    });
+    listen("menu-toggle-preview", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      togglePreview(handleUpdate);
+    });
+    listen("menu-open-preview", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const port = getViewStore().previewPort;
+      await open(`http://localhost:${port}`);
+    });
+    listen("menu-undo", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      handleUndoRedo("undo", handleUpdate);
+    });
+    listen("menu-redo", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      handleUndoRedo("redo", handleUpdate);
+    });
+    listen("menu-new-cell", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const newCell = createCell();
+      insertNewNode(newCell, handleUpdate);
+    });
+    listen("menu-new-branch", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const newBranch = createBranch();
+      insertNewNode(newBranch, handleUpdate);
+    });
+    listen("menu-set-link", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      enterTargetMode({
+        update: handleUpdate,
+      });
+    });
+    listen("menu-disconnect-link", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      handleDisconnectLinks(handleUpdate);
+    });
+    listen("menu-delete-nodes", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      handleDeleteNodes(handleUpdate);
+    });
+    listen("menu-delete-stem", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      const store = getStore();
+      const selectedStem = getViewStore().selectedStem;
+      if (selectedStem !== false) {
+        const parentBranch: Branch | undefined = getStemParent(
+          selectedStem.id,
+          store
+        );
+        if (parentBranch && selectedStem.type !== "noMatch") {
+          handleDeleteStem(selectedStem.id, parentBranch.id, handleUpdate);
+        }
+      }
+    });
+    listen("menu-open-project-settings", async () => {
+      const focused = await appWindow.isFocused();
+      if (focused === false) return;
+      openProjectSettings();
     });
     appWindow.show();
     // Once ready, check for updates
@@ -114,7 +202,7 @@ export default function MainEditor() {
   };
   const handleUpdate = async (
     updateHistory: boolean = true,
-    updatePreview?: boolean,
+    updatePreview?: boolean
   ) => {
     // Update history
     if (updateHistory === true) {
@@ -123,10 +211,6 @@ export default function MainEditor() {
     // Update preview
     if (typeof updatePreview === "undefined" || updatePreview === true) {
       handleUpdatePreview(false);
-    }
-    // Update menu
-    if (await appWindow.isFocused()) {
-      setMenu();
     }
     // Trigger refresh
     triggerRefresh(uuidv4());

@@ -10,63 +10,29 @@ import {
   CheckMenuItem,
   Submenu,
 } from "@tauri-apps/api/menu";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import showPane from "../editor/inspector/functions/showPane";
-import { createCell, createBranch } from "../data/createNode";
-import insertNewNode from "../editor/flowchart/general/insertNewNode";
 import { emit } from "@tauri-apps/api/event";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
-import enterTargetMode from "../editor/flowchart/target-mode/enterTargetMode";
-import handleDisconnectLinks from "../editor/flowchart/general/handleDisconnectLinks";
-import { handleDeleteNodes } from "../editor/flowchart/general/handleDelete";
-import { getStemParent } from "../data/getData";
-import { Branch, WindowType } from "../typings";
-import { handleDeleteStem } from "../editor/flowchart/general/handleDelete";
-import { togglePreview } from "../preview/togglePreview";
-import { openProjectSettings } from "../editor/settings/openProjectSettings";
 import { open } from "@tauri-apps/plugin-shell";
-import { saveProject } from "../fs/saveProject";
-import openProject from "../fs/openProject";
-import newProject from "../fs/newProject";
-import { getStore, getViewStore } from "../data/dataStore";
-import { setMenu } from "./setMenu";
 
-const appWindow = getCurrentWebviewWindow();
+type WindowType = "project" | "projectSettings" | "launcher" | "whatsNew";
 
 export async function buildMenu(windowType: WindowType) {
   const fns = window.__CHOICELAB_FUNCTIONS__;
-  const update = fns.updateProject;
-  const viewStore = getViewStore();
   const platform = getPlatform();
-  const isProjectState = windowType === "project" ? true : false;
 
   /*
    * App menu
    */
-  const aboutItem = await MenuItem.new({
-    id: "about",
-    text: "About Choicelab",
-    enabled: false,
-    action: () => {},
-  });
-  let quit = await MenuItem.new({
-    id: "request-quit",
-    text: "Quit Choicelab",
-    accelerator: "CmdOrCtrl+Q",
-    action: () => {
-      /* Emit a request to quit, responded to in MainEditor
-       */
-      emit("menu-request-quit");
-      /*
-     SIDE NOTE: There's an argument to be made that some of the `action` props in other menu items in this function could do the same thing, just emit requests, and put the function body wherever else it's best suited. (Stuff that calls the main React `update` handler, in particular.) But until setMenu gets too unwieldy, this approach is fine.
-     */
-    },
-  });
   const appSubmenu = await Submenu.new({
     text: "Choicelab",
     id: "app_submenu",
     items: [
-      aboutItem,
+      await MenuItem.new({
+        id: "about",
+        text: "About Choicelab",
+        enabled: false,
+        action: () => {},
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -87,22 +53,20 @@ export async function buildMenu(windowType: WindowType) {
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      quit,
+      await MenuItem.new({
+        id: "request-quit",
+        text: "Quit Choicelab",
+        accelerator: "CmdOrCtrl+Q",
+        action: () => {
+          emit("menu-request-quit");
+        },
+      }),
     ],
   });
 
   /*
    * File menu
    */
-
-  const save = await MenuItem.new({
-    text: "Save",
-    accelerator: "CmdOrCtrl+S",
-    enabled: false,
-    action: () => {
-      saveProject();
-    },
-  });
 
   const fileSubmenu = await Submenu.new({
     text: "File",
@@ -113,11 +77,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "New...",
         accelerator: "CmdOrCtrl+Shift+N",
         action: () => {
-          const source =
-            windowType === "project" || windowType === "projectSettings"
-              ? viewStore.projectPath
-              : windowType;
-          newProject(source);
+          emit("menu-new-project");
         },
       }),
       await MenuItem.new({
@@ -125,13 +85,21 @@ export async function buildMenu(windowType: WindowType) {
         text: "Open...",
         accelerator: "CmdOrCtrl+O",
         action: () => {
-          openProject();
+          emit("menu-open-project");
         },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      save,
+      await MenuItem.new({
+        text: "Save",
+        id: "save",
+        accelerator: "CmdOrCtrl+S",
+        enabled: false,
+        action: () => {
+          emit("menu-save-project");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -146,26 +114,28 @@ export async function buildMenu(windowType: WindowType) {
    * Edit menu
    */
 
-  // Undo
-  let undo = await MenuItem.new({
-    text: "Undo",
-    accelerator: "CmdOrCtrl+Z",
-    enabled: false,
-  });
-
-  // Redo
-  let redo = await MenuItem.new({
-    text: "Redo",
-    accelerator: "CmdOrCtrl+Shift+Z",
-    enabled: false,
-  });
-
   const editSubmenu = await Submenu.new({
     text: "Edit",
     id: "edit_submenu",
     items: [
-      undo,
-      redo,
+      await MenuItem.new({
+        text: "Undo",
+        id: "undo",
+        accelerator: "CmdOrCtrl+Z",
+        enabled: false,
+        action: async () => {
+          emit("menu-undo");
+        },
+      }),
+      await MenuItem.new({
+        text: "Redo",
+        id: "redo",
+        accelerator: "CmdOrCtrl+Shift+Z",
+        enabled: false,
+        action: async () => {
+          emit("menu-redo");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -188,52 +158,40 @@ export async function buildMenu(windowType: WindowType) {
    * View menu
    */
 
-  const showNodeEditor = await CheckMenuItem.new({
-    id: "show_node_editor",
-    text: "Show Node Editor",
-    enabled: false,
-    accelerator: "CmdOrCtrl+E",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      showPane("node-editor", update);
-    },
-  });
-
-  const showVariables = await CheckMenuItem.new({
-    id: "show_variables",
-    text: "Show Variables",
-    enabled: false,
-    accelerator: "CmdOrCtrl+R",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      showPane("variables", update);
-    },
-  });
-
-  const togglePreviewItem = await MenuItem.new({
-    id: "toggle_preview",
-    text: "Toggle Preview",
-    accelerator: "CmdOrCtrl+G",
-    enabled: false,
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      togglePreview(update);
-    },
-  });
-
   const viewSubmenu = await Submenu.new({
     text: "View",
     id: "view_submenu",
     items: [
-      showNodeEditor,
-      showVariables,
+      await CheckMenuItem.new({
+        id: "show_node_editor",
+        text: "Show Node Editor",
+        enabled: false,
+        accelerator: "CmdOrCtrl+E",
+        action: async () => {
+          emit("menu-show-node-editor");
+        },
+      }),
+      await CheckMenuItem.new({
+        id: "show_variables",
+        text: "Show Variables",
+        enabled: false,
+        accelerator: "CmdOrCtrl+R",
+        action: async () => {
+          emit("menu-show-variables");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      togglePreviewItem,
+      await MenuItem.new({
+        id: "toggle_preview",
+        text: "Toggle Preview",
+        accelerator: "CmdOrCtrl+G",
+        enabled: false,
+        action: async () => {
+          emit("menu-toggle-preview");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -244,135 +202,93 @@ export async function buildMenu(windowType: WindowType) {
    * Project menu
    */
 
-  const newCell = await MenuItem.new({
-    id: "new_cell",
-    text: "New Cell",
-    enabled: false,
-    accelerator: "CmdOrCtrl+N",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      const newCell = createCell();
-      insertNewNode(newCell, update);
-    },
-  });
-
-  const newBranch = await MenuItem.new({
-    id: "new_branch",
-    text: "New Branch",
-    enabled: false,
-    accelerator: "CmdOrCtrl+B",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      const newBranch = createBranch();
-      insertNewNode(newBranch, update);
-    },
-  });
-
-  const setLink = await MenuItem.new({
-    id: "set_link",
-    text: "Set Link",
-    enabled: false,
-    accelerator: "CmdOrCtrl+L",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      enterTargetMode({
-        update: update,
-      });
-    },
-  });
-  const disconnectLink = await MenuItem.new({
-    id: "disconnect_link",
-    text: "Disconnect Link",
-    enabled: false,
-    accelerator: "CmdOrCtrl+D",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      handleDisconnectLinks(update);
-    },
-  });
-
-  const deleteNodes = await MenuItem.new({
-    id: "delete_nodes",
-    text: "Delete Node",
-    enabled: false,
-    accelerator: "CmdOrCtrl+Delete",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      handleDeleteNodes(update);
-    },
-  });
-
-  const deleteStem = await MenuItem.new({
-    id: "delete_stem",
-    text: "Delete Branch Stem",
-    enabled: false,
-    accelerator: "CmdOrCtrl+Option+Delete",
-    action: async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
-      const store = getStore();
-      const selectedStem = viewStore.selectedStem;
-      if (selectedStem !== false) {
-        const parentBranch: Branch | undefined = getStemParent(
-          selectedStem.id,
-          store
-        );
-        if (parentBranch && selectedStem.type !== "noMatch") {
-          handleDeleteStem(selectedStem.id, parentBranch.id, update);
-        }
-      }
-    },
-  });
-
-  const previewInBrowser = await MenuItem.new({
-    id: "open_in_browser",
-    text: "Open Preview in Browser",
-    enabled: false,
-    action: async () => {
-      const port = getViewStore().previewPort;
-      await open(`http://localhost:${port}`);
-    },
-  });
-
-  const projectSettings = await MenuItem.new({
-    id: "project_settings",
-    text: "Project Settings...",
-    enabled: false,
-    accelerator: "CmdOrControl+Shift+,",
-    action: () => {
-      openProjectSettings();
-    },
-  });
-
   const projectSubmenu = await Submenu.new({
     text: "Project",
     id: "project_submenu",
     items: [
-      newCell,
-      newBranch,
+      await MenuItem.new({
+        id: "new_cell",
+        text: "New Cell",
+        enabled: false,
+        accelerator: "CmdOrCtrl+N",
+        action: async () => {
+          emit("menu-new-cell");
+        },
+      }),
+      await MenuItem.new({
+        id: "new_branch",
+        text: "New Branch",
+        enabled: false,
+        accelerator: "CmdOrCtrl+B",
+        action: async () => {
+          emit("menu-new-branch");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      setLink,
-      disconnectLink,
+      await MenuItem.new({
+        id: "set_link",
+        text: "Set Link",
+        enabled: false,
+        accelerator: "CmdOrCtrl+L",
+        action: async () => {
+          emit("menu-set-link");
+        },
+      }),
+      await MenuItem.new({
+        id: "disconnect_link",
+        text: "Disconnect Link",
+        enabled: false,
+        accelerator: "CmdOrCtrl+D",
+        action: async () => {
+          emit("menu-disconnect-link");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      previewInBrowser,
+      await MenuItem.new({
+        id: "open_in_browser",
+        text: "Open Preview in Browser",
+        enabled: false,
+        action: async () => {
+          emit("menu-open-preview");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      deleteNodes,
-      deleteStem,
+      await MenuItem.new({
+        id: "delete_nodes",
+        text: "Delete Node",
+        enabled: false,
+        accelerator: "CmdOrCtrl+Delete",
+        action: async () => {
+          emit("menu-delete-nodes");
+        },
+      }),
+      await MenuItem.new({
+        id: "delete_stem",
+        text: "Delete Branch Stem",
+        enabled: false,
+        accelerator: "CmdOrCtrl+Option+Delete",
+        action: async () => {
+          emit("menu-delete-stem");
+        },
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      projectSettings,
+      await MenuItem.new({
+        id: "project_settings",
+        text: "Project Settings...",
+        enabled: false,
+        accelerator: "CmdOrControl+Shift+,",
+        action: () => {
+          emit("menu-open-project-settings");
+        },
+      }),
     ],
   });
 
@@ -416,7 +332,7 @@ export async function buildMenu(windowType: WindowType) {
     case "windows":
     case "linux":
       // On Windows and Linux, only show the menu in project windows
-      if (isProjectState) {
+      if (windowType === "project") {
         const items = [
           fileSubmenu,
           editSubmenu,
@@ -425,7 +341,6 @@ export async function buildMenu(windowType: WindowType) {
           helpSubmenu,
         ];
         menu = await Menu.new({ items: items });
-        menu.setAsWindowMenu();
       }
       break;
     case "macos":
@@ -439,14 +354,13 @@ export async function buildMenu(windowType: WindowType) {
         // helpSubmenu,
       ];
       menu = await Menu.new({ items: items });
-      // On macOS, show the menu in all windows
-      menu.setAsAppMenu();
-      emit("add-native-menus");
       // await windowSubmenu.setAsWindowsMenuForNSApp();
       // await helpSubmenu.setAsHelpMenuForNSApp();
       break;
   }
   if (menu === null) return;
   fns.menus[windowType] = menu;
-  setMenu(windowType);
+  emit("set-menu", {
+    windowType: windowType,
+  });
 }
