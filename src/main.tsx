@@ -28,6 +28,7 @@ import loadProject from "./fs/loadProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
+import { buildMenu } from "./menu/buildMenu";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -194,14 +195,7 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
-  emit("build-menu", {
-    windowType: windowType,
-  });
-  listen("set-menu", async () => {
-    const focused = await appWindow.isFocused();
-    if (!focused) return;
-    setMenu(windowType);
-  });
+  buildMenu(windowType);
 }
 
 init();

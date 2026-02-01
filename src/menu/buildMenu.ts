@@ -12,8 +12,8 @@ import {
 } from "@tauri-apps/api/menu";
 import { emit } from "@tauri-apps/api/event";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
-
-type WindowType = "project" | "projectSettings" | "launcher" | "whatsNew";
+import { setMenu } from "./setMenu";
+import { WindowType } from "../typings";
 
 export async function buildMenu(windowType: WindowType) {
   const platform = getPlatform();
@@ -360,7 +360,5 @@ export async function buildMenu(windowType: WindowType) {
       break;
   }
   if (menu === null) return;
-  emit("set-menu", {
-    windowType: windowType,
-  });
+  setMenu(windowType);
 }
