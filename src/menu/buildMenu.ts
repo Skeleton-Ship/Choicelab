@@ -29,7 +29,9 @@ export async function buildMenu(windowType: WindowType) {
         id: "about",
         text: "About Choicelab",
         enabled: false,
-        action: () => { },
+        action: () => { 
+          emit("menu-about");
+        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
