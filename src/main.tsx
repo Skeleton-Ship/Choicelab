@@ -85,7 +85,13 @@ async function init() {
     if (windowType !== "project" && windowType !== "launcher") return;
     openProject();
   });
-
+  listen("menu-report-issue", async () =>{
+    const focused = await appWindow.isFocused();
+    if(!focused) return;
+    const url =
+      "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
+    await open(url);
+  });
   window.__CHOICELAB_FUNCTIONS__ = {
     updateProject: () => {},
     updateView: () => {},

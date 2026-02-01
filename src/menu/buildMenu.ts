@@ -12,7 +12,6 @@ import {
 } from "@tauri-apps/api/menu";
 import { emit } from "@tauri-apps/api/event";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
-import { open } from "@tauri-apps/plugin-shell";
 
 type WindowType = "project" | "projectSettings" | "launcher" | "whatsNew";
 
@@ -309,9 +308,7 @@ export async function buildMenu(windowType: WindowType) {
         id: "report_issue",
         text: "Report Issue or Request Feature...",
         action: async () => {
-          const url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
-          await open(url);
+          emit("menu-report-issue");
         },
       }),
       await MenuItem.new({
