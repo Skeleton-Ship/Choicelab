@@ -2,21 +2,19 @@
 
 Choicelab lets you make rich branching narratives, then publish them on the web, where they'll play on any device or screen.
 
-Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is built with HTML, CSS, and JavaScript — but the generated apps are much faster and _much_ smaller. While the app is mostly frontend, the backend is written in Rust (like Tauri) for handling basic setup, file management, and windowing — and a tiny bit of [Swift](https://developer.apple.com/swift/) to polyfill functionality Tauri doesn't have yet.
+Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is typically written in HTML, CSS, and JavaScript — but because Tauri uses the system's native webview for rendering, the generated apps are much faster and _much_ smaller.
 
-On the frontend side, the app is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool.
+The frontend is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool. The backend handles basic setup, file management, and windowing, and is written in Rust like Tauri itself (with a sprinkle of [Swift](https://developer.apple.com/swift/) to polyfill functionality Tauri doesn't have yet).
 
-Currently, the built app is for **macOS only**, but it can be run locally on Windows.
+A pre-built _alpha_ version of the app is available for both Mac and Windows.
 
 ## Setup
 
-Choicelab can be run locally on macOS 14 and newer, or modern versions of Windows 10 (22H2) and 11:
+Development requires macOS 14 and newer, or Windows 10 (version 22H2) and 11:
 
 1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
 2. Install [Yarn Classic](https://classic.yarnpkg.com/en/); you can run `yarn` to see if you already have it installed. Any installation method should work for Choicelab, though only Homebrew (on Mac) and npm (on Windows) have been verified here.
 3. Install [Git](https://git-scm.com/install), if you don't have it already. Similar to Yarn, any installation method should work.
-
-You can use any text editor you want; you don't need Xcode to build on Mac.
 
 From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
 
@@ -29,7 +27,7 @@ Once you're in the repo, run:
 
 ## Building
 
-You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the app runs. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you [disable that Mac's Gatekeeper](https://macreports.com/how-to-disable-gatekeeper-on-mac-and-enable-the-anywhere-option-for-installing-any-software/) (which isn't acceptable for testing on other people's machines).
+You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the app runs. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you disable that Mac's Gatekeeper (which isn't acceptable for testing on other people's machines).
 
 To avoid having to re-notarize the app manually each time, this repo uses the [Tauri GitHub action](https://github.com/tauri-apps/tauri-action). Each time there's a push to the **release** branch, the action will automatically build the app, send it to Apple for notarization (using credentials from Austin's Apple Developer account), and if approved, draft a release on GitHub that's ready for you to publish.
 
