@@ -16,7 +16,6 @@ import { platform as getPlatform } from "@tauri-apps/plugin-os";
 type WindowType = "project" | "projectSettings" | "launcher" | "whatsNew";
 
 export async function buildMenu(windowType: WindowType) {
-  const fns = window.__CHOICELAB_FUNCTIONS__;
   const platform = getPlatform();
 
   /*
@@ -30,7 +29,7 @@ export async function buildMenu(windowType: WindowType) {
         id: "about",
         text: "About Choicelab",
         enabled: false,
-        action: () => {},
+        action: () => { },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -338,6 +337,7 @@ export async function buildMenu(windowType: WindowType) {
           helpSubmenu,
         ];
         menu = await Menu.new({ items: items });
+        menu.setAsWindowMenu();
       }
       break;
     case "macos":
@@ -353,10 +353,11 @@ export async function buildMenu(windowType: WindowType) {
       menu = await Menu.new({ items: items });
       // await windowSubmenu.setAsWindowsMenuForNSApp();
       // await helpSubmenu.setAsHelpMenuForNSApp();
+      menu.setAsAppMenu();
+      emit("add-native-menus");
       break;
   }
   if (menu === null) return;
-  fns.menus[windowType] = menu;
   emit("set-menu", {
     windowType: windowType,
   });

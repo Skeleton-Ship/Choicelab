@@ -1,10 +1,6 @@
-import { MenuItem, PredefinedMenuItem, Submenu } from "@tauri-apps/api/menu";
 import { emit } from "@tauri-apps/api/event";
-import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { canUndo, canRedo } from "../data/history";
-import { undoItem, redoItem } from "./undoRedoItems";
 import { getViewStore } from "../data/dataStore";
-import inTextElement from "../utils/inTextElement";
 import { WindowType } from "../typings";
 
 type SubmenuId = "app" | "file" | "edit" | "view" | "project";
@@ -14,7 +10,6 @@ type SubmenuState = {
     [key: string]: {
       enabled?: boolean;
       checked?: boolean;
-      action?: Function;
       text?: string;
     };
   };
@@ -24,9 +19,6 @@ export async function setMenu(windowType: WindowType = "project") {
   if (!document.hasFocus()) {
     return;
   }
-  const platform = getPlatform();
-  const fns = window.__CHOICELAB_FUNCTIONS__;
-  const update = fns.updateProject;
   const viewStore = getViewStore();
   const states: SubmenuState = {
     app: {},
@@ -43,30 +35,10 @@ export async function setMenu(windowType: WindowType = "project") {
     },
     edit: {
       undo: {
-        enabled: windowType === "project" ? canUndo() : false,
-        action: async () => {
-          if (inTextElement() === true) {
-            // @ts-ignore
-            return await PredefinedMenuItem.new({
-              item: "Undo",
-            });
-          } else {
-            undoItem(update);
-          }
-        },
+        enabled: windowType === "project" || windowType === "projectSettings" ? canUndo() : false,
       },
       redo: {
-        enabled: windowType === "project" ? canRedo() : false,
-        action: async () => {
-          if (inTextElement() === true) {
-            // @ts-ignore
-            return await PredefinedMenuItem.new({
-              item: "Redo",
-            });
-          } else {
-            redoItem(update);
-          }
-        },
+        enabled: windowType === "project" || windowType === "projectSettings" ? canRedo() : false,
       },
     },
     view: {
@@ -136,46 +108,30 @@ export async function setMenu(windowType: WindowType = "project") {
       },
     },
   };
-  const menu = fns.menus[windowType];
-  if (!menu) {
-    console.error(`No menu found for window kind: ${windowType}`);
-    return;
-  }
-  const ids: Array<SubmenuId> = ["app", "file", "edit", "view", "project"];
-  ids.forEach(async (id) => {
-    const submenu = (await menu.get(`${id}_submenu`)) as Submenu;
-    const commands = states[id];
-    if (!submenu || !commands) {
-      console.error(`No submenu or commands found for this id:`, id);
+  const menuIds: Array<SubmenuId> = ["app", "file", "edit", "view", "project"];
+  menuIds.forEach(async (menuId) => {
+    const commands = states[menuId];
+    if (!commands) {
+      console.error(`No commands found for this menu id:`, menuId);
       return;
     }
     const stateKeys = Object.keys(commands);
     stateKeys.forEach(async (keyName) => {
-      const item = (await submenu.get(keyName)) as MenuItem;
       const state = commands[keyName];
-      if (!item || !state) {
+      if (!state) {
         console.warn(
           `No item or state found for this submenu and commands:`,
-          submenu,
+          menuId,
           commands
         );
         return;
       }
-      if (typeof state.enabled !== "undefined") {
-        await item.setEnabled(state.enabled);
-      }
+        emit("set-menu-item-state", {
+          id: keyName,
+          enabled: state.enabled ? state.enabled : undefined,
+          checked: state.checked ? state.checked : undefined,
+          text: state.text ? state.text : undefined,
+        });
+      });
     });
-  });
-  if (platform === "macos") {
-    menu.setAsAppMenu();
-    // On macOS, show the menu in all windows
-    if (platform === "macos") {
-      emit("add-native-menus");
-    }
-  } else if (
-    (platform === "windows" || platform === "linux") &&
-    windowType === "project"
-  ) {
-    menu.setAsWindowMenu();
-  }
 }
