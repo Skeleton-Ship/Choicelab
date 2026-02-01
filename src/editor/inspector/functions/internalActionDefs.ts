@@ -7,7 +7,6 @@ import {
   FCAudio,
   FCVideo,
   FCSilence,
-  FCAppearance,
 } from "./internalActionFlowchartEls";
 
 const internalActionDefs: ActionDefs = {
@@ -159,12 +158,12 @@ const internalActionDefs: ActionDefs = {
           className: "col-2",
           required: true,
         },
-        {
-          name: "saveInputs",
-          label: "Save Input Fields When Clicked",
-          control: "boolean",
-          default: true,
-        },
+        // {
+        //   name: "saveInputs",
+        //   label: "Save Input Fields When Clicked",
+        //   control: "boolean",
+        //   default: true,
+        // },
       ],
     },
     {
