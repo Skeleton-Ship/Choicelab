@@ -80,6 +80,16 @@ export function canRedo() {
 }
 
 export async function handleUndoRedo(undoOrRedo: string, update: Function) {
+  // First, see if we need to treat this like a regular text edit undo/redo
+  if (inTextElement() === true) {
+    // @ts-ignore
+    if (undoOrRedo === "undo") {
+      await emit("menu-undo-text");
+    } else {
+      await emit("menu-redo-text");
+    }
+    return;
+  }
   // Get project history
   const store = getStore();
   const viewStore = getViewStore();
