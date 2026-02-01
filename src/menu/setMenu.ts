@@ -129,8 +129,8 @@ export async function setMenu(windowType: WindowType = "project") {
         emit("set-menu-item-state", {
           submenu: menuId + "_submenu",
           id: keyName,
-          enabled: state.enabled ? state.enabled : undefined,
-          checked: state.checked ? state.checked : undefined,
+          enabled: state.enabled !== undefined ? state.enabled : undefined,
+          checked: state.checked !== undefined ? state.checked : undefined,
           text: state.text ? state.text : undefined,
         });
       });

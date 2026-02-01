@@ -15,6 +15,7 @@ use tauri::Emitter;
 use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
+use tauri::menu::{MenuItemKind, IsMenuItem};
 #[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
@@ -477,4 +478,138 @@ let handle_update = app_handle.clone();
 	app.listen("whatsNew-window", move |_event| {
 		open_whats_new_window(handle_whats_new.clone());
 	});
+
+    // listen for menu events
+    let handle_menu_item_state = app_handle.clone();
+    app.listen("set-menu-item-state", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        match json_value {
+            Ok(json) => {
+                let submenu_id = json["submenu"].as_str().unwrap_or("N/A").to_string();
+                let item_id = json["id"].as_str().unwrap_or("N/A").to_string();
+                let enabled: Option<bool> = json["enabled"].as_bool();
+                let checked: Option<bool> = json["checked"].as_bool();
+                let text = json["text"].as_str().unwrap_or("").to_string();
+
+                let handle = handle_menu_item_state.clone();
+                let _ = handle_menu_item_state.run_on_main_thread(move || {
+                    // Try to get the menu - on macOS use app menu, on Windows/Linux use window menu
+                    let menu_opt = {
+                        #[cfg(target_os = "macos")]
+                        {
+                            handle.app_handle().menu()
+                        }
+                        #[cfg(not(target_os = "macos"))]
+                        {
+                            handle.get_focused_window()
+                                .and_then(|w| w.menu())
+                        }
+                    };
+
+                    if let Some(menu) = menu_opt {
+                        println!("Menu found! Looking for submenu: {}, item: {}", submenu_id, item_id);
+                        let items = menu.items().unwrap_or_default();
+                        println!("Menu has {} top-level items", items.len());
+
+                        // Iterate through menu items to find the submenu
+                        let mut found_submenu = false;
+                        for menu_item in items {
+                            if let MenuItemKind::Submenu(submenu) = menu_item.kind() {
+                                if submenu.id().as_ref() == submenu_id.as_str() {
+                                    println!("Found submenu: {}", submenu_id);
+                                    found_submenu = true;
+
+                                    // Get the menu item by ID from the submenu
+                                    if let Some(item) = submenu.get(&item_id) {
+                                        println!("Found item: {}", item_id);
+                                        // Update properties based on what was provided
+                                        match item.kind() {
+                                            MenuItemKind::MenuItem(menu_item) => {
+                                                // Update enabled state if provided
+                                                if let Some(enabled_val) = enabled {
+                                                    let _ = menu_item.set_enabled(enabled_val);
+                                                }
+                                                // Update text if provided
+                                                if !text.is_empty() {
+                                                    let _ = menu_item.set_text(&text);
+                                                }
+                                            }
+                                            MenuItemKind::Check(check_item) => {
+                                                // Update enabled state if provided
+                                                if let Some(enabled_val) = enabled {
+                                                    let _ = check_item.set_enabled(enabled_val);
+                                                }
+                                                // Update checked state if provided
+                                                if let Some(checked_val) = checked {
+                                                    let _ = check_item.set_checked(checked_val);
+                                                }
+                                                // Update text if provided
+                                                if !text.is_empty() {
+                                                    let _ = check_item.set_text(&text);
+                                                }
+                                            }
+                                            _ => {
+                                                eprintln!("Unsupported menu item type for id: {}", item_id);
+                                            }
+                                        }
+                                    } else {
+                                        eprintln!("Menu item not found: {}", item_id);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        if !found_submenu {
+                            eprintln!("Submenu not found: {}", submenu_id);
+                        }
+                    } else {
+                        eprintln!("No menu found");
+                    }
+                });
+            }
+            Err(e) => {
+                eprintln!("Error parsing JSON: {}", e);
+            }
+        }
+    });
+
+    // Listen for menu item clicks
+    app.on_menu_event(move |app_handle, event| {
+        let menu_id = event.id().as_ref();
+        println!("Menu item clicked: {}", menu_id);
+
+        // Map menu item IDs to event names
+        let event_name = match menu_id {
+            "about" => "menu-about",
+            "request-quit" => "menu-request-quit",
+            "new_project" => "menu-new-project",
+            "open_project" => "menu-open-project",
+            "save" => "menu-save-project",
+            "undo" => "menu-undo",
+            "redo" => "menu-redo",
+            "show_node_editor" => "menu-show-node-editor",
+            "show_variables" => "menu-show-variables",
+            "toggle_preview" => "menu-toggle-preview",
+            "new_cell" => "menu-new-cell",
+            "new_branch" => "menu-new-branch",
+            "set_link" => "menu-set-link",
+            "disconnect_link" => "menu-disconnect-link",
+            "open_in_browser" => "menu-open-preview",
+            "delete_nodes" => "menu-delete-nodes",
+            "delete_stem" => "menu-delete-stem",
+            "project_settings" => "menu-open-project-settings",
+            "report_issue" => "menu-report-issue",
+            "open_whatsNew" => "whatsNew-window",
+            _ => {
+                eprintln!("Unknown menu item: {}", menu_id);
+                return;
+            }
+        };
+
+        // Emit the event
+        let _ = app_handle.emit(event_name, ());
+    });
+
 }

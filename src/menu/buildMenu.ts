@@ -29,9 +29,6 @@ export async function buildMenu(windowType: WindowType) {
         id: "about",
         text: "About Choicelab",
         enabled: false,
-        action: () => { 
-          emit("menu-about");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -57,9 +54,6 @@ export async function buildMenu(windowType: WindowType) {
         id: "request-quit",
         text: "Quit Choicelab",
         accelerator: "CmdOrCtrl+Q",
-        action: () => {
-          emit("menu-request-quit");
-        },
       }),
     ],
   });
@@ -76,17 +70,11 @@ export async function buildMenu(windowType: WindowType) {
         id: "new_project",
         text: "New...",
         accelerator: "CmdOrCtrl+Shift+N",
-        action: () => {
-          emit("menu-new-project");
-        },
       }),
       await MenuItem.new({
         id: "open_project",
         text: "Open...",
         accelerator: "CmdOrCtrl+O",
-        action: () => {
-          emit("menu-open-project");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -96,9 +84,6 @@ export async function buildMenu(windowType: WindowType) {
         id: "save",
         accelerator: "CmdOrCtrl+S",
         enabled: false,
-        action: () => {
-          emit("menu-save-project");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -123,18 +108,12 @@ export async function buildMenu(windowType: WindowType) {
         id: "undo",
         accelerator: "CmdOrCtrl+Z",
         enabled: false,
-        action: () => {
-          emit("menu-undo");
-        },
       }),
       await MenuItem.new({
         text: "Redo",
         id: "redo",
         accelerator: "CmdOrCtrl+Shift+Z",
         enabled: false,
-        action: () => {
-          emit("menu-redo");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -167,18 +146,12 @@ export async function buildMenu(windowType: WindowType) {
         text: "Show Node Editor",
         enabled: false,
         accelerator: "CmdOrCtrl+E",
-        action: () => {
-          emit("menu-show-node-editor");
-        },
       }),
       await CheckMenuItem.new({
         id: "show_variables",
         text: "Show Variables",
         enabled: false,
         accelerator: "CmdOrCtrl+R",
-        action: () => {
-          emit("menu-show-variables");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -188,9 +161,6 @@ export async function buildMenu(windowType: WindowType) {
         text: "Toggle Preview",
         accelerator: "CmdOrCtrl+G",
         enabled: false,
-        action: () => {
-          emit("menu-toggle-preview");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -211,18 +181,12 @@ export async function buildMenu(windowType: WindowType) {
         text: "New Cell",
         enabled: false,
         accelerator: "CmdOrCtrl+N",
-        action: () => {
-          emit("menu-new-cell");
-        },
       }),
       await MenuItem.new({
         id: "new_branch",
         text: "New Branch",
         enabled: false,
         accelerator: "CmdOrCtrl+B",
-        action: () => {
-          emit("menu-new-branch");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -232,18 +196,12 @@ export async function buildMenu(windowType: WindowType) {
         text: "Set Link",
         enabled: false,
         accelerator: "CmdOrCtrl+L",
-        action: () => {
-          emit("menu-set-link");
-        },
       }),
       await MenuItem.new({
         id: "disconnect_link",
         text: "Disconnect Link",
         enabled: false,
         accelerator: "CmdOrCtrl+D",
-        action: () => {
-          emit("menu-disconnect-link");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -252,9 +210,6 @@ export async function buildMenu(windowType: WindowType) {
         id: "open_in_browser",
         text: "Open Preview in Browser",
         enabled: false,
-        action: () => {
-          emit("menu-open-preview");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -264,18 +219,12 @@ export async function buildMenu(windowType: WindowType) {
         text: "Delete Node",
         enabled: false,
         accelerator: "CmdOrCtrl+Delete",
-        action: () => {
-          emit("menu-delete-nodes");
-        },
       }),
       await MenuItem.new({
         id: "delete_stem",
         text: "Delete Branch Stem",
         enabled: false,
         accelerator: "CmdOrCtrl+Option+Delete",
-        action: () => {
-          emit("menu-delete-stem");
-        },
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
@@ -285,9 +234,6 @@ export async function buildMenu(windowType: WindowType) {
         text: "Project Settings...",
         enabled: false,
         accelerator: "CmdOrControl+Shift+,",
-        action: () => {
-          emit("menu-open-project-settings");
-        },
       }),
     ],
   });
@@ -308,16 +254,10 @@ export async function buildMenu(windowType: WindowType) {
       await MenuItem.new({
         id: "report_issue",
         text: "Report Issue or Request Feature...",
-        action: () => {
-          emit("menu-report-issue");
-        },
       }),
       await MenuItem.new({
         id: "open_whatsNew",
         text: "Release Notes",
-        action: () => {
-          emit("whatsNew-window");
-        },
       }),
     ],
   });
