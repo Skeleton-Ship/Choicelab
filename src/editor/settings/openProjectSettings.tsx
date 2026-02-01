@@ -10,7 +10,7 @@ export async function openProjectSettings(
   const store = getStore();
   const projectPath = store.projectPath;
   const fileName = store.projectFileName;
-  const platform = await getPlatform();
+  const platform = getPlatform();
   const projectPathEncoded = encodeURIComponent(projectPath);
   const fileNameEncoded = encodeURIComponent(fileName);
   const label = getProjectWindowLabel(projectPath, "settings");
