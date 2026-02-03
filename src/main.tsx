@@ -74,6 +74,8 @@ async function init() {
     }
   });
   // Global menu listeners
+  // TODO: Narrow scope of all three listeners to just the current appWindow
+  // And for #3 specifically, remove the focus hnalder
   listen("menu-new-project", () => {
     if (windowType !== "project" && windowType !== "launcher") return;
     const source =

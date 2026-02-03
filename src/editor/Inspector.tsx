@@ -19,6 +19,7 @@ export default function Inspector(props: { update: Function }) {
   }, []);
 
   // Menu listeners
+  // TODO: Remove focus and narrow listener scope to window
   listen("menu-show-node-editor", async () => {
     const focused = await appWindow.isFocused();
     if (!focused) return;
