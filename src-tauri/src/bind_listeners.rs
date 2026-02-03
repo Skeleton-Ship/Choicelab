@@ -500,7 +500,6 @@ let handle_update = app_handle.clone();
                         {
                             handle.app_handle().menu()
                         }
-						// TODO: Figure out why this doesn't load the menu on Windows
                         #[cfg(not(target_os = "macos"))]
                         {
                             // Try to get menu from any webview window that has one
@@ -511,21 +510,17 @@ let handle_update = app_handle.clone();
                     };
 
                     if let Some(menu) = menu_opt {
-                        println!("Menu found! Looking for submenu: {}, item: {}", submenu_id, item_id);
                         let items = menu.items().unwrap_or_default();
-                        println!("Menu has {} top-level items", items.len());
 
                         // Iterate through menu items to find the submenu
                         let mut found_submenu = false;
                         for menu_item in items {
                             if let MenuItemKind::Submenu(submenu) = menu_item.kind() {
                                 if submenu.id().as_ref() == submenu_id.as_str() {
-                                    println!("Found submenu: {}", submenu_id);
                                     found_submenu = true;
 
                                     // Get the menu item by ID from the submenu
                                     if let Some(item) = submenu.get(&item_id) {
-                                        println!("Found item: {}", item_id);
                                         // Update properties based on what was provided
                                         match item.kind() {
                                             MenuItemKind::MenuItem(menu_item) => {
@@ -568,7 +563,6 @@ let handle_update = app_handle.clone();
                             eprintln!("Submenu not found: {}", submenu_id);
                         }
                     } else {
-                        eprintln!("No menu found");
                     }
                 });
             }
@@ -581,7 +575,6 @@ let handle_update = app_handle.clone();
     // Listen for menu item clicks
     app.on_menu_event(move |app_handle, event| {
         let menu_id = event.id().as_ref();
-        println!("Menu item clicked: {}", menu_id);
 
         // Map menu item IDs to event names
         let event_name = match menu_id {
