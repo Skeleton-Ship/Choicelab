@@ -16,9 +16,6 @@ type SubmenuState = {
 };
 
 export async function setMenu(windowType: WindowType = "project") {
-  if (!document.hasFocus()) {
-    return;
-  }
   const viewStore = getViewStore();
   const states: SubmenuState = {
     app: {},
