@@ -12,7 +12,7 @@ export function AppearanceCustomCSS(props: {
 }) {
   const [themeClass, setThemeClass] = useState("");
   useEffect(async () => {
-    const theme = await getCurrentWindow().theme();
+    const theme = await getCurrentWindow().theme() || "light";
     // you need to call unlisten if your handler goes out of scope e.g. the component is unmounted
     const decoded = props.initial.customCSS.replace(/\\n/g, "\n");
     const editor = basicEditor("#css-editor", {
