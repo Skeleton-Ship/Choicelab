@@ -104,70 +104,48 @@ export default function MainEditor() {
     appWindow.listen("tauri://close-requested", async () => {
       handleCloseRequest();
     });
-    // Menu events
-    listen("menu-request-quit", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    // Menu events - Rust now emits only to the focused window,
+    // so we use appWindow.listen() to receive window-specific events
+    appWindow.listen("menu-request-quit", async () => {
       handleCloseRequest();
     });
-    listen("menu-save-project", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-save-project", async () => {
+      console.log("Request to save");
       saveProject();
     });
-    listen("menu-toggle-preview", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-toggle-preview", async () => {
       togglePreview(handleUpdate);
     });
-    listen("menu-open-preview", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-open-preview", async () => {
       const port = getViewStore().previewPort;
       await open(`http://localhost:${port}`);
     });
-    listen("menu-undo", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-undo", async () => {
       handleUndoRedo("undo", handleUpdate);
     });
-    listen("menu-redo", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-redo", async () => {
       handleUndoRedo("redo", handleUpdate);
     });
-    listen("menu-new-cell", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-new-cell", async () => {
       const newCell = createCell();
       insertNewNode(newCell, handleUpdate);
     });
-    listen("menu-new-branch", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-new-branch", async () => {
       const newBranch = createBranch();
       insertNewNode(newBranch, handleUpdate);
     });
-    listen("menu-set-link", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-set-link", async () => {
       enterTargetMode({
         update: handleUpdate,
       });
     });
-    listen("menu-disconnect-link", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-disconnect-link", async () => {
       handleDisconnectLinks(handleUpdate);
     });
-    listen("menu-delete-nodes", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-delete-nodes", async () => {
       handleDeleteNodes(handleUpdate);
     });
-    listen("menu-delete-stem", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-delete-stem", async () => {
       const store = getStore();
       const selectedStem = getViewStore().selectedStem;
       if (selectedStem !== false) {
@@ -180,9 +158,7 @@ export default function MainEditor() {
         }
       }
     });
-    listen("menu-open-project-settings", async () => {
-      const focused = await appWindow.isFocused();
-      if (focused === false) return;
+    appWindow.listen("menu-open-project-settings", async () => {
       openProjectSettings();
     });
     appWindow.show();

@@ -13,8 +13,6 @@ import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { resolve } from "@tauri-apps/api/path";
 
 export async function saveProject() {
-  const focused = await appWindow.isFocused();
-  if (focused === false) return;
   const store = getStore(),
     viewStore = getViewStore();
   // Update app version

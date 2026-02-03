@@ -128,9 +128,6 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   once(
     "receive-history-version",
     (event: { payload: { version_id: string; message: string } }) => {
-      // No longer needed since window is now identified in Rust
-      // const focused = await appWindow.isFocused();
-      // if (focused === false) return;
       const payload = event.payload;
       if (payload.version_id !== stepVersion) {
         return;

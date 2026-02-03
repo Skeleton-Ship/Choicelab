@@ -502,8 +502,10 @@ let handle_update = app_handle.clone();
                         }
                         #[cfg(not(target_os = "macos"))]
                         {
-                            handle.get_focused_window()
-                                .and_then(|w| w.menu())
+                            // Try to get menu from any webview window that has one
+                            handle.webview_windows()
+                                .values()
+                                .find_map(|w| w.menu())
                         }
                     };
 
@@ -608,8 +610,24 @@ let handle_update = app_handle.clone();
             }
         };
 
-        // Emit the event
-        let _ = app_handle.emit(event_name, ());
+        // Events that should go to all windows (global actions)
+        let global_events = ["menu-about", "menu-new-project", "menu-open-project",
+                            "menu-report-issue", "whatsNew-window"];
+
+        if global_events.contains(&event_name) {
+            // Emit globally for app-wide actions
+            let _ = app_handle.emit(event_name, ());
+        } else {
+            // Emit only to the focused window for window-specific actions
+            for window in app_handle.webview_windows().values() {
+                if window.is_focused().unwrap_or(false) {
+                    let _ = window.emit(event_name, ());
+                    return;
+                }
+            }
+            // Fallback: if no focused window found, emit globally
+            let _ = app_handle.emit(event_name, ());
+        }
     });
 
 }

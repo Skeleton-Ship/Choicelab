@@ -44,8 +44,7 @@ async function init() {
     setAccentColor();
   }
   // Window focus
-  window.addEventListener("focus", () => {
-    if (!document.hasFocus()) return;
+  listen("tauri://focus", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "true");
     // Update view store
     const viewStore = getViewStore();
@@ -56,8 +55,8 @@ async function init() {
     // Update menu
     setMenu(windowType);
   });
-  window.addEventListener("blur", async () => {
-    document.querySelector("#App")?.setAttribute("data-focus", "false");
+  listen("tauri://blur", async() => {
+        document.querySelector("#App")?.setAttribute("data-focus", "false");
     const viewStore = getViewStore();
     if (viewStore) {
       viewStore.focus = false;
