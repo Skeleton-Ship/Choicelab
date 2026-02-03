@@ -1,5 +1,6 @@
 import FileUpload from "../../shared/FileUpload";
 import { useState } from "preact/hooks";
+import { ColorPicker } from "./ColorPicker";
 
 export function AppearanceBackground(props: {
   initial: any;
@@ -39,7 +40,7 @@ export function AppearanceBackground(props: {
           </label>
         </div>
       </div>
-      {kind === "image" && (
+      {kind === "image" ? (
         <div class="section">
           <FileUpload
             type="binary"
@@ -65,7 +66,21 @@ export function AppearanceBackground(props: {
             }}
           />
         </div>
-      )}
+      ) : kind === "color" ? (
+        <div class="section">
+          <ColorPicker
+            key="color-picker-background"
+            initial={props.initial.background.color}
+            update={(color) => {
+              props.update("background", {
+                kind: "color",
+                file: props.initial.background.file,
+                color: color,
+              });
+            }}
+          />
+        </div>
+      ) : null}
     </>
   );
 }
