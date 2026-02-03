@@ -500,6 +500,7 @@ let handle_update = app_handle.clone();
                         {
                             handle.app_handle().menu()
                         }
+						// TODO: Figure out why this doesn't load the menu on Windows
                         #[cfg(not(target_os = "macos"))]
                         {
                             // Try to get menu from any webview window that has one
