@@ -156,6 +156,7 @@ $field-padding: 4px 6px;
   }
   &.fonts {
     font-size: 18px;
+    line-height: 23px;
     border-radius: 6px;
     z-index: 1;
     height: 32px;
@@ -179,18 +180,28 @@ $field-padding: 4px 6px;
         color: #dddddd;
       }
     }
+    .menu {
+      li {
+        button {
+          .item-name {
+            padding-top: 8px;
+            padding-bottom: 8px;
+          }
+        }
+      }
+    }
   }
   .menu {
     position: absolute;
     top: -8px;
     z-index: 2;
-    left: -15px;
+    left: 0;
     max-height: 320px;
     overflow-x: hidden;
     overflow-y: scroll;
     margin: 0;
     padding: 0;
-    width: calc(100% - 20px);
+    width: 100%;
     background-color: #ededed;
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.15);

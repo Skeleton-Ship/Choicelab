@@ -197,6 +197,7 @@ export interface PlayerFontStyle {
 
 export interface PlayerFont {
   name: string;
+  sizeFactor?: number;
   styles: Array<PlayerFontStyle>;
 }
 

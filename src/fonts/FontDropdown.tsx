@@ -31,8 +31,11 @@ export function FontDropdown(props: {
   keys.forEach((key) => {
     if (fonts.families[key].name === props.initialFamily) familyId = key;
   });
-  // Get font style
+  // Get font style and sizeFactor
   let initialStyleName = "";
+  const familySizeFactor = familyId
+    ? fonts.families[familyId].sizeFactor ?? 1
+    : 1;
   keys.forEach((key) => {
     if (fonts.families[key].name !== props.initialFamily) return;
     fonts.families[key].styles.forEach((style) => {
@@ -89,7 +92,7 @@ export function FontDropdown(props: {
       >
         <button
           class="selected-label"
-          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};`}
+          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};font-size:${familySizeFactor}em;`}
         >
           {props.initialFamily !== "" ? props.initialFamily : ""}
         </button>
@@ -97,13 +100,14 @@ export function FontDropdown(props: {
           <ul class="menu">
             {keys.map((key) => {
               const familyName = fonts.families[key].name;
+              const sf = fonts.families[key].sizeFactor ?? 1;
               return (
                 <li>
                   <button
                     onClick={() => {
                       handleChange(familyName);
                     }}
-                    style={`font-family:"${familyName}";`}
+                    style={`font-family:"${familyName}";font-size:${sf}em;`}
                   >
                     <span class="item-name">
                       {familyName === props.initialFamily ? (
@@ -130,7 +134,7 @@ export function FontDropdown(props: {
       >
         <button
           class="selected-label"
-          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};`}
+          style={`font-family:"${props.initialFamily}";font-style:${props.initialStyle};font-weight:${props.initialWeight};font-size:${familySizeFactor}em;`}
         >
           {initialStyleName !== "" ? initialStyleName : ""}
         </button>
@@ -148,7 +152,7 @@ export function FontDropdown(props: {
                         style.style
                       );
                     }}
-                    style={`font-family:"${props.initialFamily}";font-style:${style.style};font-weight:${style.weight}`}
+                    style={`font-family:"${props.initialFamily}";font-style:${style.style};font-weight:${style.weight};font-size:${familySizeFactor}em`}
                   >
                     <span class="item-name">
                       {style.weight === props.initialWeight &&
