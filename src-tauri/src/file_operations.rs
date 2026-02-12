@@ -1,5 +1,5 @@
 use crate::globals::PENDING_FILES;
-use home::home_dir;
+use dirs::cache_dir;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -142,16 +142,12 @@ pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> i
 }
 
 pub fn get_preview_path(id: &str) -> Option<PathBuf> {
-    // Get the user's home directory
-    if let Some(home_path) = home_dir() {
-        let preview_path: PathBuf = home_path
-            .join("Library/Caches/com.choicelab.choicelab/Projects/".to_owned() + id + "/Preview");
-        // Return the preview path
-        Some(preview_path)
-    } else {
-        println!("Could not determine the home directory");
-        None
-    }
+    cache_dir().map(|cache| {
+        cache
+            .join("com.choicelab.choicelab/Projects")
+            .join(id)
+            .join("Preview")
+    })
 }
 
 pub fn load_preview_files(
