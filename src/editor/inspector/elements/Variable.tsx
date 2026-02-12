@@ -37,13 +37,13 @@ export default function VariableEl(props: {
   function handleChange(
     field: "name" | "varType" | "description" | "startingValue",
     target: EventTarget | null,
-    directValue?: any
+    directValue?: any,
   ) {
     // Get var in store
     const store = getStore();
     const varInStore: Variable | undefined = getVariable(
       props.instance.id,
-      store
+      store,
     );
     if (!varInStore) {
       console.error("Variable not found in store.");
@@ -103,6 +103,7 @@ export default function VariableEl(props: {
       type="text"
       class="ui-text-field"
       value={startingValue}
+      autoCorrect="off"
       onChange={(e) => {
         handleChange("startingValue", e.target);
       }}
@@ -149,6 +150,7 @@ export default function VariableEl(props: {
             type="text"
             id={nameField}
             class="ui-text-field"
+            autoCorrect="off"
             value={variable.name}
             onChange={(e) => {
               handleChange("name", e.target);
