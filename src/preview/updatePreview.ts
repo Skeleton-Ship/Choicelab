@@ -4,6 +4,7 @@ import { Store } from "../typings";
 import { getCell } from "../data/getData";
 import { stringify } from "../utils/stringify";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { updatePreviewFonts } from "./updatePreviewFonts";
 
 function getPreviewId(store: Store) {
   const viewStore = getViewStore();
@@ -38,6 +39,8 @@ export async function updatePreview(includeAssets: boolean) {
     projectData: stringify(store.project),
     includeAssets: includeAssets,
   });
+  // Update preview fonts (skips work if font families haven't changed)
+  updatePreviewFonts();
   // Get currently selected node
   const previewUrl = new URL(
     `http://localhost:${port}?time=${Date.now()}&startMediaOnLoad=false`

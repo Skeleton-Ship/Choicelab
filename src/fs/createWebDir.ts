@@ -3,6 +3,7 @@ import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html
 import playerCSSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.css?raw";
 import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js?raw";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
+import { updatePreviewFonts } from "../preview/updatePreviewFonts";
 
 export async function createWebDir(label: string) {
   // HTML PLAYER ONLY: Configure initialization
@@ -11,6 +12,10 @@ export async function createWebDir(label: string) {
   playerHTML = playerHTML.replace(
     /path: "(.*?)",/g,
     `path: "./project/project.clx",`
+  );
+  playerHTML = playerHTML.replace(
+    '<link rel="stylesheet" type="text/css" href="/choicelab.css" />',
+    '<link rel="stylesheet" type="text/css" href="/choicelab.css" />\n    <link rel="stylesheet" type="text/css" href="/fonts.css" />'
   );
   const previewPath = await resolve(
     await appCacheDir(),
@@ -36,4 +41,6 @@ export async function createWebDir(label: string) {
     path: previewPath,
     label: label,
   });
+  // Generate and write fonts.css for the preview
+  await updatePreviewFonts();
 }

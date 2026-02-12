@@ -13,6 +13,9 @@ pub fn create_binary_file(
     contents: &str,
     directory: &str,
 ) -> Result<(), std::io::Error> {
+    // Create the destination directory if it doesn't exist
+    fs::create_dir_all(directory)?;
+
     // Create the full path by joining the directory and filename
     let file_path = Path::new(directory).join(file_name);
 

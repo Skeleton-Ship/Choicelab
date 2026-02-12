@@ -232,6 +232,23 @@ let handle_update = app_handle.clone();
         }
     });
 
+    // listen to binary file saves (e.g. font files for preview)
+    app.listen("save-binary-file", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        match json_value {
+            Ok(json) => {
+                let name = json["name"].as_str().unwrap_or("N/A");
+                let contents = json["contents"].as_str().unwrap_or("N/A");
+                let path = json["path"].as_str().unwrap_or("N/A");
+                let _ = create_binary_file(name, contents, path);
+            }
+            Err(e) => {
+                eprintln!("Error parsing JSON: {}", e);
+            }
+        }
+    });
+
     // listen to directory creation requests
     let handle_project_dir = app_handle.clone();
     app.listen("create-directory", move |event| {
