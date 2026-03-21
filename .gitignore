@@ -23,3 +23,6 @@ src-tauri/macos
 *.njsproj
 *.sln
 *.sw?
+
+# Possibly temporary
+CLAUDE.md
