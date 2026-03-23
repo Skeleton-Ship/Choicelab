@@ -13,12 +13,6 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 
 ## 1. Reliability & performance
 
-### 1a. Fix Event Listener Memory Leaks (High Impact, Low Effort)
-
-**Problem**: Multiple `addEventListener()` calls in `useEffect()` hooks return no cleanup function. `MainEditor.tsx` even has a `TODO: Return and unmount listeners` comment.
-**Fix**: Add cleanup return functions to all `useEffect` calls that attach DOM/document event listeners.
-**Files**: `src/editor/MainEditor.tsx`, `src/editor/Flowchart.tsx`, and other component files with bare event listeners in effects.
-
 ### 1b. Replace Polling with Proper Async Coordination (Medium Impact, Medium Effort)
 
 **Problem**: `src/fs/loadProjectData.ts` retries up to 550+ times in a loop, with `await delay()` sprinkled in, to wait for data to appear on `window.__CHOICELAB_DATA_RAW__`. This is a timing workaround, not a real solution.
@@ -126,8 +120,7 @@ yarn add -D husky lint-staged
 
 | #   | Suggestion                                       | Effort | Impact                     |
 | --- | ------------------------------------------------ | ------ | -------------------------- |
-| 1   | Fix event listener cleanup (`useEffect` returns) | Low    | High reliability           |
-| 2   | Extend ESLint to TypeScript                      | Low    | High DX + reliability      |
+| 1   | Extend ESLint to TypeScript                      | Low    | High DX + reliability      |
 | 3   | Add Prettier                                     | Low    | Medium DX                  |
 | 4   | Add `.editorconfig`                              | Low    | Low DX                     |
 | 5   | Add Vitest + data layer tests                    | Medium | High long-term reliability |

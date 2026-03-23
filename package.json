@@ -17,6 +17,7 @@
     "version-major": "yarn version --major && node scripts/version.cjs && yarn changelog",
     "version-minor": "yarn version --minor && node scripts/version.cjs && yarn changelog",
     "version-patch": "yarn version --patch && node scripts/version.cjs && yarn changelog",
+    "lint": "eslint src",
     "tauri": "tauri"
   },
   "dependencies": {
@@ -51,6 +52,7 @@
     "eslint": "^9.39.2",
     "sass": "^1.69.5",
     "typescript": "^5.0.2",
+    "typescript-eslint": "^8.57.1",
     "vite": "^6.3.5"
   }
 }
