@@ -58,7 +58,7 @@ export default function TargetMode(props: { update: Function }) {
   useEffect(() => {
     // Activate click event when target mode is active
     const sequenceEl = document.querySelector("#sequence-wrap")!;
-    sequenceEl.addEventListener("click", (e) => {
+    const clickHandler = (e: Event) => {
       const viewStore = getViewStore();
       if (viewStore.targetMode.active === false) return;
       e.preventDefault();
@@ -74,7 +74,11 @@ export default function TargetMode(props: { update: Function }) {
       if (destinationId && destinationId !== targetMode.nodeId) {
         exitTargetMode(destinationId);
       }
-    });
+    };
+    sequenceEl.addEventListener("click", clickHandler);
+    return () => {
+      sequenceEl.removeEventListener("click", clickHandler);
+    };
   }, []);
   // Elements
   const initialStore = getViewStore();

@@ -14,11 +14,15 @@ import { cellPlaysQuickly } from "./functions/cellPlaysQuickly";
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
   useEffect(() => {
-    document.addEventListener("pointerup", () => {
+    const pointerUpHandler = () => {
       if (getFocusedRegion() !== "available-actions") {
         selectDef("");
       }
-    });
+    };
+    document.addEventListener("pointerup", pointerUpHandler);
+    return () => {
+      document.removeEventListener("pointerup", pointerUpHandler);
+    };
   }, []);
   function handleAddAction(actionDef: ActionDef) {
     addAction(actionDef, props.update);

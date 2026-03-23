@@ -31,7 +31,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
   // On mount...
   useEffect(() => {
     // Set shift, arrow key events
-    document.addEventListener("keydown", (e) => {
+    const keydownHandler = (e: KeyboardEvent) => {
       if (e.key === "Shift" && inTextElement() === false) {
         const viewStore = getViewStore();
         if (viewStore.focus === true) {
@@ -50,8 +50,8 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         e.preventDefault();
         handleKeyNavigation(e.key, props.update);
       }
-    });
-    document.addEventListener("keyup", (e) => {
+    };
+    const keyupHandler = (e: KeyboardEvent) => {
       if (e.key === "Shift" && inTextElement() === false) {
         const viewStore = getViewStore();
         if (viewStore.focus === true) {
@@ -61,7 +61,13 @@ export default function SequenceEl(props: { id: string; update: Function }) {
           // props.update(false, false);
         }
       }
-    });
+    };
+    document.addEventListener("keydown", keydownHandler);
+    document.addEventListener("keyup", keyupHandler);
+    return () => {
+      document.removeEventListener("keydown", keydownHandler);
+      document.removeEventListener("keyup", keyupHandler);
+    };
   }, []);
   // On each refresh...
   useEffect(() => {

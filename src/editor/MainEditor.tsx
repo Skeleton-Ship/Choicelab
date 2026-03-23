@@ -47,14 +47,11 @@ import { openProjectSettings } from "./settings/openProjectSettings";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
-  /*
-   * TODO: Return and unmount listeners
-   */
   useEffect(() => {
     const label = getProjectWindowLabel(store.projectPath);
     updatePreview(true);
     // Get preview server
-    listen("preview-port", (event: any) => {
+    const unlistenPreviewPort = listen("preview-port", (event: any) => {
       if (event && event.payload && event.payload.port) {
         const viewStore = getViewStore();
         if (event.payload.label !== label) return;
@@ -68,32 +65,35 @@ export default function MainEditor() {
     emit("window-ready", {
       label: label,
     });
-    // Set up cut/copy listener
-    window.addEventListener("cut", (e) => {
+    // Set up cut/copy/paste listeners
+    const cutHandler = (e: Event) => {
       if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("cut", handleUpdate);
       }
-    });
-    window.addEventListener("copy", (e) => {
+    };
+    const copyHandler = (e: Event) => {
       if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("copy", handleUpdate);
       }
-    });
-    window.addEventListener("paste", (e) => {
+    };
+    const pasteHandler = (e: Event) => {
       if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handlePaste(handleUpdate);
       }
-    });
-    listen("request-project-from-parent", async (event) => {
+    };
+    window.addEventListener("cut", cutHandler);
+    window.addEventListener("copy", copyHandler);
+    window.addEventListener("paste", pasteHandler);
+    const unlistenRequestProject = listen("request-project-from-parent", async (event) => {
       const payload = event.payload as { label: string };
       const label = payload.label as string;
       const data = stringify(getStore().project);
       emitTo(label, "receive-project-from-parent", { data: data });
     });
-    listen("settings-store-updated", async (event) => {
+    const unlistenSettingsStore = listen("settings-store-updated", async (event) => {
       const payload = event.payload as string;
       const newStore = JSON.parse(payload);
       if (newStore.project.id !== store.project.id) return;
@@ -101,51 +101,51 @@ export default function MainEditor() {
       handleUpdate(true, true);
     });
     // Close listeners
-    appWindow.listen("tauri://close-requested", async () => {
+    const unlistenCloseRequested = appWindow.listen("tauri://close-requested", async () => {
       handleCloseRequest();
     });
     // Menu events - Rust now emits only to the focused window,
     // so we use appWindow.listen() to receive window-specific events
-    appWindow.listen("menu-request-quit", async () => {
+    const unlistenMenuQuit = appWindow.listen("menu-request-quit", async () => {
       handleCloseRequest();
     });
-    appWindow.listen("menu-save-project", async () => {
+    const unlistenMenuSave = appWindow.listen("menu-save-project", async () => {
       console.log("Request to save");
       saveProject();
     });
-    appWindow.listen("menu-toggle-preview", async () => {
+    const unlistenMenuTogglePreview = appWindow.listen("menu-toggle-preview", async () => {
       togglePreview(handleUpdate);
     });
-    appWindow.listen("menu-open-preview", async () => {
+    const unlistenMenuOpenPreview = appWindow.listen("menu-open-preview", async () => {
       const port = getViewStore().previewPort;
       await open(`http://localhost:${port}`);
     });
-    appWindow.listen("menu-undo", async () => {
+    const unlistenMenuUndo = appWindow.listen("menu-undo", async () => {
       handleUndoRedo("undo", handleUpdate);
     });
-    appWindow.listen("menu-redo", async () => {
+    const unlistenMenuRedo = appWindow.listen("menu-redo", async () => {
       handleUndoRedo("redo", handleUpdate);
     });
-    appWindow.listen("menu-new-cell", async () => {
+    const unlistenMenuNewCell = appWindow.listen("menu-new-cell", async () => {
       const newCell = createCell();
       insertNewNode(newCell, handleUpdate);
     });
-    appWindow.listen("menu-new-branch", async () => {
+    const unlistenMenuNewBranch = appWindow.listen("menu-new-branch", async () => {
       const newBranch = createBranch();
       insertNewNode(newBranch, handleUpdate);
     });
-    appWindow.listen("menu-set-link", async () => {
+    const unlistenMenuSetLink = appWindow.listen("menu-set-link", async () => {
       enterTargetMode({
         update: handleUpdate,
       });
     });
-    appWindow.listen("menu-disconnect-link", async () => {
+    const unlistenMenuDisconnectLink = appWindow.listen("menu-disconnect-link", async () => {
       handleDisconnectLinks(handleUpdate);
     });
-    appWindow.listen("menu-delete-nodes", async () => {
+    const unlistenMenuDeleteNodes = appWindow.listen("menu-delete-nodes", async () => {
       handleDeleteNodes(handleUpdate);
     });
-    appWindow.listen("menu-delete-stem", async () => {
+    const unlistenMenuDeleteStem = appWindow.listen("menu-delete-stem", async () => {
       const store = getStore();
       const selectedStem = getViewStore().selectedStem;
       if (selectedStem !== false) {
@@ -158,12 +158,34 @@ export default function MainEditor() {
         }
       }
     });
-    appWindow.listen("menu-open-project-settings", async () => {
+    const unlistenMenuProjectSettings = appWindow.listen("menu-open-project-settings", async () => {
       openProjectSettings();
     });
     appWindow.show();
     // Once ready, check for updates
     checkForUpdates();
+    return () => {
+      window.removeEventListener("cut", cutHandler);
+      window.removeEventListener("copy", copyHandler);
+      window.removeEventListener("paste", pasteHandler);
+      unlistenPreviewPort.then((fn) => fn());
+      unlistenRequestProject.then((fn) => fn());
+      unlistenSettingsStore.then((fn) => fn());
+      unlistenCloseRequested.then((fn) => fn());
+      unlistenMenuQuit.then((fn) => fn());
+      unlistenMenuSave.then((fn) => fn());
+      unlistenMenuTogglePreview.then((fn) => fn());
+      unlistenMenuOpenPreview.then((fn) => fn());
+      unlistenMenuUndo.then((fn) => fn());
+      unlistenMenuRedo.then((fn) => fn());
+      unlistenMenuNewCell.then((fn) => fn());
+      unlistenMenuNewBranch.then((fn) => fn());
+      unlistenMenuSetLink.then((fn) => fn());
+      unlistenMenuDisconnectLink.then((fn) => fn());
+      unlistenMenuDeleteNodes.then((fn) => fn());
+      unlistenMenuDeleteStem.then((fn) => fn());
+      unlistenMenuProjectSettings.then((fn) => fn());
+    };
   }, []);
 
   const store = getStore();

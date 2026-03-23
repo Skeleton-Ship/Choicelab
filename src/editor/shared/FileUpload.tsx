@@ -41,7 +41,7 @@ export default function FileUpload(props: {
     // Listen to file when uploaded
     if (!filePickerEl.current) return;
     const filePicker = filePickerEl.current;
-    filePicker.addEventListener("change", () => {
+    const changeHandler = () => {
       if (!filePicker.files) return;
       const file = filePicker.files[0];
       if (filePicker.files.length == 1) {
@@ -84,7 +84,11 @@ export default function FileUpload(props: {
             console.error("Error reading file:", error);
           });
       }
-    });
+    };
+    filePicker.addEventListener("change", changeHandler);
+    return () => {
+      filePicker.removeEventListener("change", changeHandler);
+    };
   }, []);
   // Show file if it's set
   const [fileSrc, setFileSrc] = useState("");
