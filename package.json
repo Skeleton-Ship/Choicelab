@@ -15,9 +15,9 @@
     "install-all": "cd src-tauri && cargo build && cd ../ && bun install",
     "upgrade-all": "bun update && cd src-tauri && cargo update",
     "changelog": "node scripts/changelog.cjs",
-    "version-major": "bumpp major --execute 'node scripts/version.cjs && bun run changelog'",
-    "version-minor": "bumpp minor --execute 'node scripts/version.cjs && bun run changelog'",
-    "version-patch": "bumpp patch --execute 'node scripts/version.cjs && bun run changelog'",
+    "version-major": "git diff-index --quiet HEAD -- && bumpp major --no-push --execute 'node scripts/version.cjs && bun run changelog'",
+    "version-minor": "git diff-index --quiet HEAD -- && bumpp minor --no-push --execute 'node scripts/version.cjs && bun run changelog'",
+    "version-patch": "git diff-index --quiet HEAD -- && bumpp patch --no-push --execute 'node scripts/version.cjs && bun run changelog'",
     "lint": "eslint src",
     "tauri": "tauri"
   },

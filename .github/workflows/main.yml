@@ -33,14 +33,11 @@ jobs:
       - name: Add x86_64 macOS target
         run: rustup target add x86_64-apple-darwin
 
-      - name: Setup Node.js + cache
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"
-          cache: "yarn"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install frontend dependencies
-        run: yarn install
+        run: bun install
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0

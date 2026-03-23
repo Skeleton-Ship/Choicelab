@@ -1,7 +1,7 @@
 {
   "build": {
-    "beforeDevCommand": "yarn preDev",
-    "beforeBuildCommand": "yarn preBuild",
+    "beforeDevCommand": "bun run preDev",
+    "beforeBuildCommand": "bun run preBuild",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },

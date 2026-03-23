@@ -47,17 +47,6 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 **Fix**: Preact has a first-party reactive primitive — `@preact/signals` — that is a natural fit. Signals are reactive values that automatically re-render components that read them, eliminating the `update()` callback pattern. Because signals are module-level (not React Context), they work naturally in Tauri's multi-window architecture. The migration can be incremental: start with `ViewStore` (UI-only state), then migrate `Store` (project data). The window global pattern for cross-window data passing can stay for inter-window IPC specifically.
 **Files**: `src/data/dataStore.ts`, `src/editor/MainEditor.tsx`, all component files that receive `update: Function` props. New `src/data/signals.ts`.
 
-### 2b. Extend ESLint to TypeScript Files (High Impact, Low Effort)
-
-**Problem**: `eslint.config.js` only targets `**/*.js`. The entire TypeScript codebase gets no lint coverage.
-**Fix**: Add `typescript-eslint` to the config and extend rules to `*.ts` and `*.tsx` files. This unlocks type-aware lint rules that catch real bugs (e.g., unhandled promise rejections, `any` type spread, unused variables).
-
-```bash
-yarn add -D typescript-eslint
-```
-
-**File**: `eslint.config.js`
-
 ### 2c. Add a Code Formatter (High Impact, Low Effort)
 
 **Problem**: No formatter is configured. Code style consistency depends entirely on individual IDE settings.
@@ -86,7 +75,7 @@ yarn add -D typescript-eslint
 **Fix**: Add Vitest (shares Vite config, zero extra setup needed). Start by testing the data layer and utility functions.
 
 ```bash
-yarn add -D vitest
+bun add -D vitest
 ```
 
 **Files**: New `src/**/*.test.ts` files; updated `package.json` with `"test": "vitest"` script.
@@ -97,7 +86,7 @@ yarn add -D vitest
 **Fix**: Add `husky` + `lint-staged` to run ESLint + Prettier on staged files before each commit.
 
 ```bash
-yarn add -D husky lint-staged
+bun add -D husky lint-staged
 ```
 
 **Files**: New `.husky/pre-commit`, updated `package.json`
@@ -120,8 +109,7 @@ yarn add -D husky lint-staged
 
 | #   | Suggestion                                       | Effort | Impact                     |
 | --- | ------------------------------------------------ | ------ | -------------------------- |
-| 1   | Extend ESLint to TypeScript                      | Low    | High DX + reliability      |
-| 3   | Add Prettier                                     | Low    | Medium DX                  |
+| 1   | Add Prettier                                     | Low    | Medium DX                  |
 | 4   | Add `.editorconfig`                              | Low    | Low DX                     |
 | 5   | Add Vitest + data layer tests                    | Medium | High long-term reliability |
 | 6   | Project file validation on load                  | Low    | Medium reliability         |

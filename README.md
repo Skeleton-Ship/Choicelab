@@ -13,21 +13,21 @@ A pre-built _alpha_ version of the app is available for both Mac and Windows.
 Development requires macOS 14 and newer, or Windows 10 (version 22H2) and 11:
 
 1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
-2. Install [Yarn Classic](https://classic.yarnpkg.com/en/); you can run `yarn` to see if you already have it installed. Any installation method should work for Choicelab, though only Homebrew (on Mac) and npm (on Windows) have been verified here.
-3. Install [Git](https://git-scm.com/install), if you don't have it already. Similar to Yarn, any installation method should work.
+2. Install [Bun](https://bun.sh/package-manager); you can run `bun` to see if you already have it installed.
+3. Install [Git](https://git-scm.com/install), if you don't have it already. Any installation method should work.
 
-From this repo, install dependencies with `yarn install-all`. Then, run `yarn keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
+From this repo, install dependencies with `bun install-all`. Then, run `bun keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
 
 ## Development
 
 Once you're in the repo, run:
 
-- `yarn install-all` to install all dependencies for Rust + Node
-- `yarn dev` to run the app locally
+- `bun install-all` to install all dependencies for Rust + Node
+- `bun dev` to run the app locally
 
 ## Building
 
-You can run `yarn build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the app runs. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you disable that Mac's Gatekeeper (which isn't acceptable for testing on other people's machines).
+You can run `bun build` to build a copy of the app locally, which is fine for your own testing purposes and to make sure the app runs. However, this build **won't be notarized**, so on macOS, you can't run it on another Mac unless you disable that Mac's Gatekeeper (which isn't acceptable for testing on other people's machines).
 
 To avoid having to re-notarize the app manually each time, this repo uses the [Tauri GitHub action](https://github.com/tauri-apps/tauri-action). Each time there's a push to the **release** branch, the action will automatically build the app, send it to Apple for notarization (using credentials from Austin's Apple Developer account), and if approved, draft a release on GitHub that's ready for you to publish.
 
