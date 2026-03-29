@@ -6,107 +6,6 @@ $update-button-height: 22px;
   align-items: flex-end;
   justify-content: space-between;
   z-index: 3;
-  .toolbar-region {
-    display: flex;
-    height: calc(100% - 31px);
-    flex-grow: 0;
-    flex-shrink: 0;
-    padding-left: 9px;
-    padding-right: 9px;
-    gap: 1px;
-    &.spacer {
-      flex-basis: 100%;
-      flex-shrink: 2;
-    }
-    &.button-group {
-      &:hover {
-        button {
-          background-color: rgba(0, 0, 0, 0.08);
-          @media (prefers-contrast: no-preference) {
-            &:not(:first-of-type):not(:last-of-type) {
-              border-radius: 0;
-            }
-            &:first-of-type {
-              border-top-right-radius: 0;
-              border-bottom-right-radius: 0;
-            }
-            &:last-of-type {
-              border-top-left-radius: 0;
-              border-bottom-left-radius: 0;
-            }
-          }
-          &.selected {
-            background-color: rgba(0, 0, 0, 0.15);
-          }
-          &:active:not(:disabled):not(.selected) {
-            background-color: rgba(0, 0, 0, 0.15);
-          }
-          &.selected:active {
-            background-color: rgba(0, 0, 0, 0.2);
-          }
-          @media (prefers-color-scheme: dark) {
-            background-color: rgba(255, 255, 255, 0.08);
-            &.selected {
-              background-color: rgba(255, 255, 255, 0.2);
-            }
-            &:active:not(:disabled):not(.selected) {
-              background-color: rgba(255, 255, 255, 0.3);
-            }
-            &.selected:active {
-              background-color: rgba(255, 255, 255, 0.2);
-            }
-          }
-        }
-      }
-    }
-  }
-  button {
-    -webkit-app-region: no-drag;
-    border: none;
-    background-color: transparent;
-    display: flex;
-    width: 52px;
-    height: 100%;
-    padding: 2px 0;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    cursor: auto;
-    &:disabled {
-      opacity: 0.3;
-    }
-    &:hover:not(:disabled) {
-      background-color: rgba(0, 0, 0, 0.08);
-    }
-    &.selected {
-      background-color: rgba(0, 0, 0, 0.08);
-    }
-    @media (prefers-color-scheme: dark) {
-      &:hover:not(:disabled) {
-        background-color: rgba(255, 255, 255, 0.08);
-      }
-      &.selected {
-        background-color: rgba(255, 255, 255, 0.08);
-      }
-    }
-    @media (prefers-contrast: more) {
-      border: 1px solid rgba(0, 0, 0, 0.8);
-      @media (prefers-color-scheme: dark) {
-        border: 1px solid rgba(255, 255, 255, 0.8);
-      }
-    }
-    .icon {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      @media (prefers-color-scheme: dark) {
-        img {
-          @include mixins.invert-icon;
-        }
-      }
-    }
-  }
   .title {
     font-size: 14px;
     font-weight: 700;
@@ -152,14 +51,6 @@ $update-button-height: 22px;
     }
   }
 }
-
-#App[data-focus="false"] {
-  #toolbar button {
-    opacity: 0.8;
-    filter: saturate(0);
-  }
-}
-
 @keyframes wipe {
   from {
     height: 0;

@@ -38,13 +38,8 @@ function Toolbar(props: { update: Function }) {
   }
   const viewStore = getViewStore();
   const paneInView = viewStore.viewSettings.paneInView;
-  const nodeEditorSelectedClass =
-    paneInView === "node-editor" ? "selected" : "";
-  const variablesSelectedClass = paneInView === "variables" ? "selected" : "";
-  const nodeEditorClass = `node-editor ${nodeEditorSelectedClass}`;
-  const variablesClass = `variables ${variablesSelectedClass}`;
   return (
-    <div class="ui-toolbar" id="toolbar" data-tauri-drag-region>
+    <div class="ui-toolbar labels-hidden" id="toolbar" data-tauri-drag-region>
       <div class="toolbar-region add-nodes left">
         <button
           title="Add Cell"
@@ -76,10 +71,17 @@ function Toolbar(props: { update: Function }) {
         </button>
       </div>
       <div class="toolbar-region spacer"></div>
-      <div class="toolbar-region button-group panes right">
+      <div
+        class="toolbar-region right"
+        role="tablist"
+        aria-label="Inspector Pane"
+      >
         <button
+          role="tab"
+          aria-selected={paneInView === "node-editor" ? "true" : "false"}
+          aria-controls="panel-node-editor"
+          id="tab-node-editor"
           title="Node Editor"
-          class={nodeEditorClass}
           onClick={() => {
             handleSelectPane("node-editor");
           }}
@@ -87,30 +89,25 @@ function Toolbar(props: { update: Function }) {
           <div class="icon node-editor">
             <LightningIcon
               size={toolbarIconSizeTall}
-              state={
-                viewStore.viewSettings.paneInView !== "node-editor"
-                  ? "Inactive"
-                  : ""
-              }
+              state={paneInView !== "node-editor" ? "Inactive" : ""}
               darkMode={currentTheme === "dark"}
             />
           </div>
         </button>
         <button
+          role="tab"
+          aria-selected={paneInView === "variables" ? "true" : "false"}
+          aria-controls="panel-variables"
+          id="tab-variables"
           title="Variables"
-          class={variablesClass}
           onClick={() => {
             handleSelectPane("variables");
           }}
         >
-          <div class="icon node-editor">
+          <div class="icon variables">
             <VariablesIcon
               size={toolbarIconSize}
-              state={
-                viewStore.viewSettings.paneInView !== "variables"
-                  ? "Inactive"
-                  : ""
-              }
+              state={paneInView !== "variables" ? "Inactive" : ""}
               darkMode={currentTheme === "dark"}
             />
           </div>

@@ -67,13 +67,28 @@ export default function Inspector(props: { update: Function }) {
         );
       }
     }
-  } else if (paneInView === "variables") {
-    contents = <VariablesPane update={props.update} />;
   }
   return (
     <div id="node-pane" class="pane right" ref={paneRef}>
       <div class="resizer horizontal"></div>
-      <div class="pane-contents">{contents}</div>
+      <div
+        role="tabpanel"
+        id="panel-node-editor"
+        aria-labelledby="tab-node-editor"
+        hidden={paneInView !== "node-editor"}
+      >
+        {paneInView === "node-editor" ? contents : null}
+      </div>
+      <div
+        role="tabpanel"
+        id="panel-variables"
+        aria-labelledby="tab-variables"
+        hidden={paneInView !== "variables"}
+      >
+        {paneInView === "variables" ? (
+          <VariablesPane update={props.update} />
+        ) : null}
+      </div>
     </div>
   );
 }

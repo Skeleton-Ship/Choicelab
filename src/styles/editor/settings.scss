@@ -8,7 +8,7 @@
   .ui-toolbar {
     z-index: 2;
     height: var(--settings-toolbar-height);
-    .tabs {
+    [role="tablist"] {
       padding-top: 28px;
     }
   }
@@ -306,10 +306,10 @@
 }
 
 #App[data-platform="windows"] #project-settings {
-.ui-toolbar {
-  .tabs {
-    padding-top: 6px;
-    padding-bottom: 6px;
+  .ui-toolbar {
+    [role="tablist"] {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
   }
-}
 }

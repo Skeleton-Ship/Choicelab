@@ -54,13 +54,8 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
   }, [paneId]);
   return (
     <section id="project-settings" aria-label="Tabbed Interface">
-      <div class="ui-toolbar">
-        <div
-          class="tabs"
-          role="tablist"
-          aria-label="Tabs"
-          data-tauri-drag-region
-        >
+      <div class="ui-toolbar labels-visible">
+        <div role="tablist" aria-label="Tabs" data-tauri-drag-region>
           {panes.map((pane) => {
             const id = pane.id as PaneId;
             return (
