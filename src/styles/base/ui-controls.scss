@@ -472,8 +472,8 @@ $toggle-height: 20px;
       font-weight: 400;
       font-size: 11.5px;
       line-height: 1;
-      height: 45px;
-      padding: 0 7px;
+      height: 54px;
+      padding: 0 10px;
       border-radius: 7px;
       svg path {
         opacity: 0.8;
@@ -501,17 +501,19 @@ $toggle-height: 20px;
       img {
         display: block;
         width: auto;
-        height: 21px;
+        height: 30px;
         margin-left: auto;
         margin-right: auto;
         margin-bottom: 4px;
-        path {
-          fill: rgba(0, 0, 0, 0.7);
+        &:not(.color-icon) {
+          path {
+            fill: rgba(0, 0, 0, 0.7);
+          }
         }
       }
       @media (prefers-color-scheme: dark) {
         color: white;
-        svg path,
+        svg:not(.color-icon) path,
         img {
           fill: white;
         }
@@ -523,7 +525,7 @@ $toggle-height: 20px;
         span {
           opacity: 1;
         }
-        svg path,
+        svg:not(.color-icon) path,
         img {
           fill: var(--accent-color-800);
         }

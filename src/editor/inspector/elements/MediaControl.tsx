@@ -1,8 +1,8 @@
 import { JSX } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { Action } from "../../../typings";
-import PlayIcon from "../../../assets/icon-play.svg";
-import PauseIcon from "../../../assets/icon-pause.svg";
+import PlayIcon from "../../../assets/icons/mono/icon-play.svg";
+import PauseIcon from "../../../assets/icons/mono/icon-pause.svg";
 import { getActionParent } from "../../../utils/getActionParent";
 import { getActionDef } from "../functions/getActionDef";
 import { timeableActionInUse } from "../functions/timeableActionInUse";

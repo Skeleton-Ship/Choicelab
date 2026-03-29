@@ -6,9 +6,9 @@ import { Action, Store, Cell } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
 import { getExtendedActionDefs } from "../../../player/getExtendedActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
-import IconDelete from "../../../assets/icon-delete.svg";
-import IconActionEnabled from "../../../assets/icon-action-enabled.svg";
-import IconActionDisabled from "../../../assets/icon-action-disabled.svg";
+import IconDelete from "../../../assets/icons/mono/icon-action-collapse.svg";
+import IconActionEnabled from "../../../assets/icons/mono/icon-action-enabled.svg";
+import IconActionDisabled from "../../../assets/icons/mono/icon-action-disabled.svg";
 import ActionIcon from "./ActionIcon";
 
 function moveAction(arr: Array<any>, old_index: number, new_index: number) {

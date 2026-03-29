@@ -7,8 +7,8 @@ import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getPlayerConfig } from "../player/getPlayerConfig";
 import { SettingsPane } from "./settings/SettingsPane";
-import { IconGeneral } from "./settings/IconGeneral";
-import { IconAppearance } from "./settings/IconAppearance";
+import { GearIcon } from "./shared/ColorIcon";
+import { PaintbrushIcon } from "./shared/ColorIcon";
 import { LogicalSize } from "@tauri-apps/api/dpi";
 const appWindow = getCurrentWebviewWindow();
 
@@ -74,9 +74,9 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
                 }}
               >
                 {pane.id === "general" ? (
-                  <IconGeneral />
+                  <GearIcon size={50} />
                 ) : pane.id === "appearance" ? (
-                  <IconAppearance />
+                  <PaintbrushIcon size={50} />
                 ) : null}
                 <span>{pane.label}</span>
               </button>

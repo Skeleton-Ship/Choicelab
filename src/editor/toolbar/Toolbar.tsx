@@ -1,12 +1,38 @@
 import { createCell, createBranch } from "../../data/createNode";
 import insertNewNode from "../flowchart/general/insertNewNode";
-import iconBranch from "../../assets/icon-add-branch.svg";
-import iconCell from "../../assets/icon-add-cell.svg";
 import { getViewStore } from "../../data/dataStore";
 import showPane from "../inspector/functions/showPane";
 import { togglePreview } from "../../preview/togglePreview";
+import { NewCellIcon, VariablesIcon } from "../shared/ColorIcon";
+import { NewBranchIcon } from "../shared/ColorIcon";
+import { PlayIcon } from "../shared/ColorIcon";
+import { LightningIcon } from "../shared/ColorIcon";
+import { useState, useEffect } from "preact/hooks";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 function Toolbar(props: { update: Function }) {
+  const toolbarIconSize = 34;
+  const toolbarIconSizeTall = 28;
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
+  useEffect(() => {
+    getCurrentWindow()
+      .theme()
+      .then((theme) => {
+        console.log(theme);
+        setCurrentTheme(theme || "light");
+      });
+    let unlisten: (() => void) | null = null;
+    getCurrentWindow()
+      .onThemeChanged(({ payload: theme }) => {
+        setCurrentTheme(theme);
+      })
+      .then((fn) => {
+        unlisten = fn;
+      });
+    return () => {
+      if (unlisten) unlisten();
+    };
+  }, []);
   function handleSelectPane(paneName: string) {
     showPane(paneName, props.update);
   }
@@ -28,7 +54,10 @@ function Toolbar(props: { update: Function }) {
           }}
         >
           <div className="icon new-cell">
-            <img src={iconCell} alt="Add Cell" />
+            <NewCellIcon
+              size={toolbarIconSize}
+              darkMode={currentTheme === "dark"}
+            />
           </div>
         </button>
         <button
@@ -39,7 +68,10 @@ function Toolbar(props: { update: Function }) {
           }}
         >
           <div className="icon new-branch">
-            <img src={iconBranch} alt="Add Branch" />
+            <NewBranchIcon
+              size={toolbarIconSize}
+              darkMode={currentTheme === "dark"}
+            />
           </div>
         </button>
       </div>
@@ -53,7 +85,15 @@ function Toolbar(props: { update: Function }) {
           }}
         >
           <div class="icon node-editor">
-            <i class="bi bi-lightning-fill"></i>
+            <LightningIcon
+              size={toolbarIconSizeTall}
+              state={
+                viewStore.viewSettings.paneInView !== "node-editor"
+                  ? "Inactive"
+                  : ""
+              }
+              darkMode={currentTheme === "dark"}
+            />
           </div>
         </button>
         <button
@@ -64,7 +104,15 @@ function Toolbar(props: { update: Function }) {
           }}
         >
           <div class="icon node-editor">
-            <i class="bi bi-braces-asterisk"></i>
+            <VariablesIcon
+              size={toolbarIconSize}
+              state={
+                viewStore.viewSettings.paneInView !== "variables"
+                  ? "Inactive"
+                  : ""
+              }
+              darkMode={currentTheme === "dark"}
+            />
           </div>
         </button>
       </div>
@@ -79,7 +127,13 @@ function Toolbar(props: { update: Function }) {
           }}
         >
           <div class="icon preview">
-            <i class="bi bi-play-fill"></i>
+            <PlayIcon
+              size={toolbarIconSizeTall}
+              state={
+                viewStore.viewSettings.previewVisible !== true ? "Inactive" : ""
+              }
+              darkMode={currentTheme === "dark"}
+            />
           </div>
         </button>
       </div>

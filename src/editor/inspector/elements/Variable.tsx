@@ -2,7 +2,7 @@ import { Variable } from "../../../typings";
 import { getVariable } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
-import IconDelete from "../../../assets/icon-delete.svg";
+import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
 import NumberField from "./NumberField";
 
 export default function VariableEl(props: {
@@ -37,13 +37,13 @@ export default function VariableEl(props: {
   function handleChange(
     field: "name" | "varType" | "description" | "startingValue",
     target: EventTarget | null,
-    directValue?: any,
+    directValue?: any
   ) {
     // Get var in store
     const store = getStore();
     const varInStore: Variable | undefined = getVariable(
       props.instance.id,
-      store,
+      store
     );
     if (!varInStore) {
       console.error("Variable not found in store.");

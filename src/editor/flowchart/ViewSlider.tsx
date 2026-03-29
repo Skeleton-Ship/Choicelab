@@ -1,7 +1,7 @@
 import { getViewStore, setViewStore } from "../../data/dataStore";
 import setSequenceDimensions from "./general/setSequenceDimensions";
 import setViewSettings from "../../utils/setViewSettings";
-import IconSlider from "../../assets/icon-slider.svg";
+import IconSlider from "../../assets/icons/mono/icon-slider.svg";
 
 export default function ViewSlider(props: { update: Function }) {
   const viewStore = getViewStore();

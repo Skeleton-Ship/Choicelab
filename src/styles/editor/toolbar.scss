@@ -8,6 +8,7 @@ $update-button-height: 22px;
   z-index: 3;
   .toolbar-region {
     display: flex;
+    height: calc(100% - 31px);
     flex-grow: 0;
     flex-shrink: 0;
     padding-left: 9px;
@@ -65,7 +66,8 @@ $update-button-height: 22px;
     background-color: transparent;
     display: flex;
     width: 52px;
-    padding: 5px 0 4px;
+    height: 100%;
+    padding: 2px 0;
     border-radius: 6px;
     align-items: center;
     justify-content: center;
@@ -77,27 +79,12 @@ $update-button-height: 22px;
     &:hover:not(:disabled) {
       background-color: rgba(0, 0, 0, 0.08);
     }
-    &:active:not(:disabled) {
-      background-color: rgba(0, 0, 0, 0.12);
-      .icon {
-        opacity: 0.85;
-      }
-    }
     &.selected {
       background-color: rgba(0, 0, 0, 0.08);
-      .icon {
-        opacity: 1;
-      }
-      i {
-        color: var(--accent-color);
-      }
     }
     @media (prefers-color-scheme: dark) {
       &:hover:not(:disabled) {
         background-color: rgba(255, 255, 255, 0.08);
-      }
-      &:active:not(:disabled) {
-        background-color: rgba(255, 255, 255, 0.12);
       }
       &.selected {
         background-color: rgba(255, 255, 255, 0.08);
@@ -110,37 +97,14 @@ $update-button-height: 22px;
       }
     }
     .icon {
-      width: 18px;
-      height: 18px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.65;
-      &.preview {
-        i {
-          font-size: 22px;
-          top: -2px;
-        }
-      }
-      i {
-        position: relative;
-        font-size: 18px;
-        line-height: 1;
-      }
-      img {
-        max-width: 100%;
-        height: auto;
-        position: relative;
-        top: -3px;
-      }
+      height: 100%;
+      display: flex;
+      align-items: center;
       @media (prefers-color-scheme: dark) {
         img {
           @include mixins.invert-icon;
         }
       }
-    }
-    span {
-      display: none;
     }
   }
   .title {
@@ -190,11 +154,9 @@ $update-button-height: 22px;
 }
 
 #App[data-focus="false"] {
-  button.selected i {
-    color: #999;
-    @media (prefers-color-scheme: dark) {
-      color: #999;
-    }
+  #toolbar button {
+    opacity: 0.8;
+    filter: saturate(0);
   }
 }
 
