@@ -37,6 +37,8 @@ export default function Inspector(props: { update: Function }) {
   const viewStore = getViewStore();
   // First, see what view we're in
   const paneInView = viewStore.viewSettings.paneInView;
+  const previewPane =
+    viewStore.viewSettings.previewVisible === true ? <PreviewPane /> : null;
   if (paneInView === "node-editor") {
     if (viewStore.selectedNodes.length <= 0) {
       // If no node is selected
@@ -47,18 +49,11 @@ export default function Inspector(props: { update: Function }) {
     } else {
       const node = viewStore.selectedNodes[0];
       const cellPane = <CellPane update={props.update} />;
-      const previewPane =
-        viewStore.viewSettings.previewVisible === true ? <PreviewPane /> : null;
       if (node.type === "start") {
-        contents = <>{previewPane}</>;
+        contents = <p class="placeholder">No Options Available</p>;
       }
       if (node.type === "cell") {
-        contents = (
-          <>
-            {previewPane}
-            {cellPane}
-          </>
-        );
+        contents = <>{cellPane}</>;
       } else if (node.type === "branch") {
         contents = (
           <>
@@ -71,6 +66,14 @@ export default function Inspector(props: { update: Function }) {
   return (
     <div id="node-pane" class="pane right" ref={paneRef}>
       <div class="resizer horizontal"></div>
+      <div
+        role="tabpanel"
+        id="panel-preview"
+        aria-labelledby="tab-preview"
+        hidden={!viewStore.viewSettings.previewVisible}
+      >
+        {previewPane}
+      </div>
       <div
         role="tabpanel"
         id="panel-node-editor"

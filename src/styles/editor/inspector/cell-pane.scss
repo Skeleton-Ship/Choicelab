@@ -5,25 +5,6 @@
 $available-actions-height: 120px;
 $node-settings-height: 85px;
 
-#node-pane {
-  background-color: rgba(240, 240, 240, 0.7);
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(30, 30, 30, 0.8);
-  }
-}
-
-[data-platform="windows"] #node-pane {
-  background-color: rgba(240, 240, 240, 1);
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(30, 30, 30, 1);
-  }
-}
-
-#node-pane > div[role="tabpanel"] {
-  width: 100%;
-  height: 100%;
-}
-
 #available-actions,
 #actions-editor,
 #node-settings {
@@ -90,10 +71,7 @@ $node-settings-height: 85px;
 
 #actions-editor {
   z-index: 2;
-  height: calc(
-    100% - #{$available-actions-height} - #{$node-settings-height} -
-      var(--preview-height)
-  );
+  height: calc(100% - #{$available-actions-height} - #{$node-settings-height});
   .props {
     display: flex;
     flex-wrap: wrap;

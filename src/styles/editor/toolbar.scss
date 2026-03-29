@@ -3,9 +3,6 @@
 $update-button-height: 22px;
 
 #toolbar {
-  align-items: flex-end;
-  justify-content: space-between;
-  z-index: 3;
   .title {
     font-size: 14px;
     font-weight: 700;
@@ -14,6 +11,27 @@ $update-button-height: 22px;
     color: var(--heading-text-light);
     @media (prefers-color-scheme: dark) {
       color: var(--heading-text-dark);
+    }
+  }
+  #button-add-cell {
+    svg {
+      margin-right: -3px;
+    }
+  }
+  #button-add-branch {
+    svg {
+      margin-right: -3px;
+    }
+  }
+  #tab-variables {
+    svg {
+      margin-top: -3px;
+    }
+  }
+  #tab-preview {
+    svg {
+      margin-right: -4px;
+      margin-top: -3px;
     }
   }
   #update {

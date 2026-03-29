@@ -437,13 +437,13 @@ $toggle-height: 20px;
 }
 
 .ui-toolbar {
-  background-color: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(#ffffff, #f8f8f8 8%, #f3f3f3);
   -webkit-app-region: drag;
   position: fixed;
   display: flex;
   justify-content: center;
   border-style: solid;
-  border-color: rgba(25, 25, 25, 0.14);
+  border-color: rgba(25, 25, 25, 0.2);
   border-top-width: 0;
   border-bottom-width: 1px;
   border-left-width: 0;
@@ -453,6 +453,9 @@ $toggle-height: 20px;
   padding-right: 9px;
   padding-bottom: 7px;
   height: var(--toolbar-height);
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 3;
   @media (prefers-color-scheme: dark) {
     background-color: #353535;
     border-color: rgba(255, 255, 255, 0.1);
@@ -464,12 +467,15 @@ $toggle-height: 20px;
   button {
     -webkit-app-region: no-drag;
     border: none;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
     appearance: none;
-    background: none;
     background: transparent;
     height: 100%;
+    flex-basis: 80px;
+    max-width: 100px;
     padding: 6px 10px;
     border-radius: 7px;
     align-items: center;
@@ -502,24 +508,36 @@ $toggle-height: 20px;
         border: 1px solid rgba(255, 255, 255, 0.8);
       }
     }
+    &[aria-selected="true"] {
+      background-color: rgba(0, 0, 0, 0.06);
+      span {
+        opacity: 1;
+        color: var(--accent-color-contrast);
+      }
+      svg:not(.color-icon) path {
+        fill: var(--accent-color-800);
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      &[aria-selected="true"] {
+        background-color: rgba(255, 255, 255, 0.06);
+      }
+    }
     svg {
       flex-grow: 0;
       flex-shrink: 0;
     }
-    svg path {
-      opacity: 0.8;
-    }
     span {
-      width: 100%;
+      margin-top: 1px;
       opacity: 0.7;
+      white-space: nowrap;
     }
     svg,
     img {
       display: block;
       width: auto;
       height: 30px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-top: -2px;
       &:not(.color-icon) {
         path {
           fill: rgba(0, 0, 0, 0.7);
@@ -528,54 +546,19 @@ $toggle-height: 20px;
     }
     @media (prefers-color-scheme: dark) {
       color: white;
-      svg:not(.color-icon) path,
-      img {
+      svg:not(.color-icon) path {
         fill: white;
-      }
-    }
-  }
-  &.labels-visible {
-    button {
-      width: 82px;
-      height: 54px;
-    }
-  }
-  /* Tab-specific styling */
-  [role="tablist"] {
-    display: flex;
-    justify-content: center;
-    gap: 1px;
-    button {
-      &[aria-selected="true"] {
-        color: var(--accent-color-800);
-        background-color: rgba(0, 0, 0, 0.06);
-        svg path,
-        span {
-          opacity: 1;
-        }
-        svg:not(.color-icon) path,
-        img {
-          fill: var(--accent-color-800);
-        }
-      }
-      @media (prefers-color-scheme: dark) {
-        &[aria-selected="true"] {
-          background-color: rgba(255, 255, 255, 0.06);
-        }
       }
     }
   }
   .toolbar-region {
     display: flex;
     height: calc(100% - 31px);
-    flex-grow: 0;
-    flex-shrink: 0;
     padding-left: 9px;
     padding-right: 9px;
     gap: 1px;
     &.spacer {
-      flex-basis: 100%;
-      flex-shrink: 2;
+      flex-grow: 1;
     }
   }
 }
@@ -588,7 +571,7 @@ $toggle-height: 20px;
 
 #App[data-focus="false"] {
   .ui-toolbar {
-    background-color: #f0f0f0;
+    background: #f0f0f0;
     @media (prefers-color-scheme: dark) {
       background-color: #3d3d3d;
     }
@@ -597,14 +580,7 @@ $toggle-height: 20px;
       filter: saturate(0);
     }
     [role="tablist"] {
-      svg:not(.color-icon) path,
-      img {
-        fill: rgba(0, 0, 0, 0.3) !important;
-        @media (prefers-color-scheme: dark) {
-          fill: rgba(255, 255, 255, 0.5) !important;
-        }
-      }
-      button {
+      svg:not(.color-icon) path {
         color: rgba(0, 0, 0, 0.4) !important;
         @media (prefers-color-scheme: dark) {
           color: rgba(255, 255, 255, 0.5) !important;
