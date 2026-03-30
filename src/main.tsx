@@ -2,7 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { message } from "@tauri-apps/plugin-dialog";
+import { message, confirm } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import { ProjectSettings } from "./editor/ProjectSettings";
 import newProject from "./fs/newProject";
@@ -17,13 +17,15 @@ import {
 } from "./data/dataStore";
 import { saveHistoryVersion } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
+import { stringify } from "./utils/stringify";
 import { Project, LoadError, WindowType } from "./typings";
 import "./styles/_style.scss";
 import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
 import { setAccentColor } from "./utils/setAccentColor";
-import { listen } from "@tauri-apps/api/event";
+import { listen, emit, once } from "@tauri-apps/api/event";
 import loadProject from "./fs/loadProject";
+import { needsMigration, migrateProject } from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
@@ -159,6 +161,32 @@ async function init() {
       return;
     }
     projectData = projectData as Project;
+    // Migrate legacy projects that predate the asset registry
+    if (windowType === "project" && needsMigration(projectData)) {
+      const confirmed = await confirm(
+        "Once updated, this project can't be opened in older versions.",
+        {
+          title: "This project needs to be updated for this version of Choicelab.",
+          okLabel: "Update",
+          cancelLabel: "Cancel",
+        }
+      );
+      if (!confirmed) {
+        appWindow.close();
+        return;
+      }
+      projectData = migrateProject(projectData);
+      await new Promise<void>((resolveSave) => {
+        once("migration-saved", () => resolveSave());
+        emit("save-text-file", {
+          name: fileName,
+          contents: stringify(projectData as Project),
+          path: projectPath,
+          callback: "migration-saved",
+          label: getProjectWindowLabel(projectPath),
+        });
+      });
+    }
     // Create data store
     createDataStore(projectData, projectPath, fileName);
     createViewStore(projectPath);

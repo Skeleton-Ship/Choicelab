@@ -25,6 +25,7 @@ export default async function createProjectFile(name: string) {
     variables: {
       items: [],
     },
+    assets: [],
     sequences: [createSequence()],
   };
   const blankProjectStr = stringify(blankProject);

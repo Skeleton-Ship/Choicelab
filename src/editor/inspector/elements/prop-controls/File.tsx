@@ -1,6 +1,6 @@
 import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, Asset, Store } from "../../../../typings";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 import { updatePreview } from "../../../../preview/updatePreview";
 import FileUpload from "../../../shared/FileUpload";
@@ -36,17 +36,16 @@ export default function File(props: {
     props.update();
   }
   // Method: File created
-  function handleCreated(file: any) {
-    // Store file
+  function handleCreated(asset: Asset) {
+    // Store asset ID
     const store = getStore(); // get store again, because asset creation can cause the store to fall out-of-date
     const storedAction: Action | undefined = getAction(props.action.id, store);
     if (storedAction) {
-      // storedAction.props[props.filePropName] = file.name;
       const propsObj =
         props.extended === false
           ? storedAction.props
           : storedAction.extendedProps[getPlayerConfig().id];
-      propsObj[props.filePropName] = file.name;
+      propsObj[props.filePropName] = asset.id;
       setStore(store);
       props.update(true, false);
       setTimeout(() => {

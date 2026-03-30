@@ -3,8 +3,10 @@ import { useState, useEffect } from "preact/hooks";
 import { emit, once } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
-import { getViewStore } from "../../data/dataStore";
-import { Action } from "../../typings";
+import { getStore, getViewStore, setStore } from "../../data/dataStore";
+import { getAsset } from "../../data/getData";
+import { createAsset } from "../../data/createNode";
+import { Action, Asset } from "../../typings";
 import readFileUpload from "./readFileUpload";
 import getAssetPreviewURL from "./getAssetPreviewURL";
 import AssetPreview from "./AssetPreview";
@@ -76,7 +78,11 @@ export default function FileUpload(props: {
             };
             emit("create-asset", jsonData);
             once("asset-created", async () => {
-              props.onCreated(file);
+              const store = getStore();
+              const asset = createAsset(file.name, props.fileKind as Asset["type"]);
+              store.project.assets.push(asset);
+              setStore(store);
+              props.onCreated(asset);
               setLoading(false);
             });
           })
@@ -101,6 +107,13 @@ export default function FileUpload(props: {
       }
     });
   }
+  // Resolve display filename from asset registry
+  const displayFileName = (() => {
+    if (!props.existingFile) return props.existingFile;
+    const store = getStore();
+    const asset = getAsset(props.existingFile, store);
+    return asset ? asset.fileName : props.existingFile;
+  })();
   // Get action if file upload is associated with it
   let id = uuid();
   if (props.fileParent === "action" && props.action) {
@@ -132,7 +145,7 @@ export default function FileUpload(props: {
         <AssetPreview
           assetParent={props.fileParent}
           media={props.fileKind}
-          fileName={props.existingFile}
+          fileName={displayFileName}
           fileSrc={fileSrc}
           action={props.action}
           update={props.update ? props.update : undefined}

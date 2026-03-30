@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Cell, Branch, Stem, Rule, StartNode } from "../typings";
+import { Cell, Branch, Stem, Rule, StartNode, Asset } from "../typings";
 import { createPlayerSettings } from "../player/createPlayerSettings";
 
 function createCell(): Cell {
@@ -68,4 +68,12 @@ function createStart(): StartNode {
   return start;
 }
 
-export { createCell, createBranch, createBranchStem, createRule, createStart };
+function createAsset(fileName: string, type: Asset["type"]): Asset {
+  return {
+    id: uuidv4(),
+    fileName: fileName,
+    type: type,
+  };
+}
+
+export { createCell, createBranch, createBranchStem, createRule, createStart, createAsset };

@@ -67,6 +67,11 @@ export interface Variable {
   varType: string;
   startingValue: string | number | boolean;
 }
+export interface Asset {
+  id: string;
+  fileName: string;
+  type: "image" | "audio" | "video" | "captions";
+}
 export interface Project {
   name: string;
   id: string;
@@ -82,6 +87,7 @@ export interface Project {
   variables: {
     items: Array<Variable>;
   };
+  assets: Array<Asset>;
   sequences: Array<Sequence>;
 }
 export interface ProjectHistory {

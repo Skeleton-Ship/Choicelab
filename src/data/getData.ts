@@ -11,6 +11,7 @@ import {
   ActionDef,
   ActionDefs,
   Variable,
+  Asset,
 } from "../typings";
 import { getViewStore } from "./dataStore";
 import { getPlayerConfig } from "../player/getPlayerConfig";
@@ -240,6 +241,14 @@ function getActionDef(
   return thisActionDef;
 }
 
+function getAsset(id: string, data: Store): Asset | undefined {
+  return data.project.assets.find((asset: Asset) => asset.id === id);
+}
+
+function getAssets(data: Store): Array<Asset> {
+  return data.project.assets;
+}
+
 function getPlayerSettings(
   data: Store,
   key?: string
@@ -268,5 +277,7 @@ export {
   nodeExists,
   getAction,
   getActionDef,
+  getAsset,
+  getAssets,
   getPlayerSettings,
 };

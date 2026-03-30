@@ -57,10 +57,10 @@ export function AppearanceBackground(props: {
                 color: props.initial.color,
               });
             }}
-            onCreated={(file) => {
+            onCreated={(asset) => {
               props.update("background", {
                 kind: "image",
-                file: file.name,
+                file: asset.id,
                 color: props.initial.color,
               });
             }}

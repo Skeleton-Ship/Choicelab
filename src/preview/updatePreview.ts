@@ -5,6 +5,7 @@ import { getCell } from "../data/getData";
 import { stringify } from "../utils/stringify";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { updatePreviewFonts } from "./updatePreviewFonts";
+import { resolveAssetsForPlayer } from "./resolveAssetsForPlayer";
 
 function getPreviewId(store: Store) {
   const viewStore = getViewStore();
@@ -32,11 +33,13 @@ export async function updatePreview(includeAssets: boolean) {
   const store = getStore();
   const port = getViewStore().previewPort;
   // Update project files in Tauri
+  // Resolve asset registry IDs back to filenames for the player
   const projectPath = store.projectPath;
+  const playerProject = resolveAssetsForPlayer(store.project);
   emit("update-preview", {
     projectPath: projectPath,
     projectLabel: getProjectWindowLabel(projectPath),
-    projectData: stringify(store.project),
+    projectData: stringify(playerProject),
     includeAssets: includeAssets,
   });
   // Update preview fonts (skips work if font families haven't changed)
