@@ -64,7 +64,7 @@ export default function Inspector(props: { update: Function }) {
     }
   }
   return (
-    <div id="node-pane" class="pane right" ref={paneRef}>
+    <div id="inspector" class="pane right" ref={paneRef}>
       <div class="resizer horizontal"></div>
       <div
         role="tabpanel"
