@@ -15,6 +15,9 @@ Development requires macOS 14 and newer, or Windows 10 (version 22H2) and 11:
 1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
 2. Install [Bun](https://bun.sh/package-manager); you can run `bun` to see if you already have it installed.
 3. Install [Git](https://git-scm.com/install), if you don't have it already. Any installation method should work.
+4. **If you're using Windows on ARM**, two extra tools are required:
+   - In the Visual Studio installer, go to Modify -> Individual Components, and select **"MSVC v143 - VS 2022 C++ ARM64/ARM64EC build tools (Latest)"**.
+   - [Install LLVM for Windows on ARM](https://github.com/llvm/llvm-project/releases) — download the `woa64` installer and select "Add LLVM to the system PATH" during setup. This is required by the `ring` cryptography crate, which MSVC alone can't compile on ARM64.
 
 From this repo, install dependencies with `bun install-all`. Then, run `bun keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
 
