@@ -6,7 +6,9 @@
   "packageManager": "bun@1.3.11",
   "scripts": {
     "preDev": "vite",
-    "preBuild": "tsc && vite build",
+    "preBuild": "bun run gen-vocab && tsc && vite build",
+    "gen-vocab": "bun scripts/embeddings/trim-glove.ts",
+    "test-classifier": "bun scripts/embeddings/test-classifier.ts",
     "dev": "tauri dev",
     "keygen": "bun run tauri signer generate -w ~/.tauri/myapp.key",
     "build": "export TAURI_SIGNING_PRIVATE_KEY=~/.tauri/myapp.key && tauri build",
@@ -52,6 +54,7 @@
     "@types/ungap__structured-clone": "^1.2.0",
     "bumpp": "^11.0.1",
     "eslint": "^9.39.2",
+    "fflate": "^0.8.2",
     "sass": "^1.69.5",
     "typescript": "^5.0.2",
     "typescript-eslint": "^8.57.1",

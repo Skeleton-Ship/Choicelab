@@ -1,6 +1,6 @@
 # Choicelab
 
-Choicelab lets you make rich branching narratives, then publish them on the web, where they'll play on any device or screen.
+Choicelab is a desktop app that lets writers and multimedia designers create rich branching narrative stories, then publish them on the web, where they'll play on any device or screen. This, here, is the source code to the app. You found it!
 
 Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is typically written in HTML, CSS, and JavaScript — but because Tauri uses the system's native webview for rendering, the generated apps are much faster and _much_ smaller.
 
@@ -27,6 +27,12 @@ Once you're in the repo, run:
 
 - `bun install-all` to install all dependencies for Rust + Node
 - `bun dev` to run the app locally
+
+### Updating the branching logic vocabulary
+
+Choicelab embeds a small word vector (based on [GloVe](https://nlp.stanford.edu/projects/glove/)) of common English words found in story questions and input choices (`vocab.json`). This enables the ability for Choicelab to automatically generate variables and branch stems for authors.
+
+The GloVe-powered word list is committed to this repo; it only needs to be changed if the _target words_ in `classifyInputLabel.ts` change. To update the list, delete the existing `vocab.json`, then run `bun run gen-vocab` to download the full GloVe vector and regenerate the list.
 
 ## Building
 
