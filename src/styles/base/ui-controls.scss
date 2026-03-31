@@ -567,6 +567,9 @@ $toggle-height: 20px;
 [data-platform="windows"] {
   .ui-toolbar {
     background-color: rgba(255, 255, 255, 1);
+    .toolbar-region {
+      height: calc(100% - 9px);
+    }
   }
 }
 

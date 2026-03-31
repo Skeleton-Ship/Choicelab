@@ -14,6 +14,6 @@
 
 #inspector :is(#panel-node-editor, #panel-variables) {
   width: 100%;
-  height: calc(100% - var(--preview-height));
+  height: calc(100% - var(--preview-height) - 1px);
   position: relative;
 }

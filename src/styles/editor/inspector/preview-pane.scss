@@ -1,6 +1,6 @@
-#project-preview {
+#panel-preview {
   position: relative;
-  height: var(--preview-height);
+  height: calc(var(--preview-height) + 1px);
   // Note: min-height and max-height are set in JS
   z-index: 3;
   iframe {

@@ -13,9 +13,12 @@ const appWindow = getCurrentWebviewWindow();
 export default function Inspector(props: { update: Function }) {
   // Make resizable
   const paneRef = useRef(null);
+  const previewRef = useRef(null);
   useEffect(() => {
     if (!paneRef.current) return;
     makeResizable(paneRef.current);
+        if (!previewRef.current) return;
+    makeResizable(previewRef.current);
   }, []);
 
   // Menu listeners
@@ -70,9 +73,11 @@ export default function Inspector(props: { update: Function }) {
         role="tabpanel"
         id="panel-preview"
         aria-labelledby="tab-preview"
+        ref={previewRef}
         hidden={!viewStore.viewSettings.previewVisible}
       >
         {previewPane}
+        <div class="resizer vertical"></div>
       </div>
       <div
         role="tabpanel"
