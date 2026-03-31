@@ -163,10 +163,13 @@ async function init() {
     projectData = projectData as Project;
     // Migrate legacy projects that predate the asset registry
     if (windowType === "project" && needsMigration(projectData)) {
+      const titleWindows = "Project Update Required";
+      const messageText1 = "This project needs to be updated for this version of Choicelab.";
+      const messageText2 = "Once updated, this project can't be opened in older versions.";
       const confirmed = await confirm(
-        "Once updated, this project can't be opened in older versions.",
+        platform === "macos" ? messageText2 : messageText1 + " " + messageText2,
         {
-          title: "This project needs to be updated for this version of Choicelab.",
+          title: platform === "macos" ? messageText1 : titleWindows,
           okLabel: "Update",
           cancelLabel: "Cancel",
         }
