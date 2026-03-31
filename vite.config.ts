@@ -1,11 +1,27 @@
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 
+function svgPrefixIdsPlugin(
+  code: string,
+  _config: unknown,
+  state: { filePath?: string }
+): string {
+  const filename =
+    state.filePath?.split(/[\\/]/).pop()?.replace(/\.svg$/, "") ?? "icon";
+  const prefix = filename.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
+  return code
+    .replace(/\bid="([^"]+)"/g, `id="${prefix}-$1"`)
+    .replace(/\burl\(#([^)]+)\)/g, `url(#${prefix}-$1)`);
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [
     svgr({
-      svgrOptions: { jsxRuntime: "classic" },
+      svgrOptions: {
+        jsxRuntime: "classic",
+        plugins: [svgPrefixIdsPlugin, "@svgr/plugin-jsx"],
+      },
     }),
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
