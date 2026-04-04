@@ -179,7 +179,8 @@
     position: relative;
     z-index: 2;
     max-height: 290px;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
   /* Box borders + arrow */
   .decorations {
