@@ -1,10 +1,22 @@
 @use "../../base/mixins";
 
+#node-settings {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
 #branch-editor {
   padding: 0;
-  height: 100%;
+  height: calc(100% - 85px);
+  margin: 0;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  @media (prefers-color-scheme: dark) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
   .stem-index {
     @include mixins.stem-index(27);
     & {

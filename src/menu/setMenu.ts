@@ -80,6 +80,11 @@ export async function setMenu(windowType: WindowType = "project") {
             ? true
             : false,
       },
+      autofill: {
+        enabled:
+          windowType === "project" && viewStore.autoGenerateLabel !== null,
+        text: viewStore.autoGenerateLabel ?? "Autofill Variables",
+      },
       delete_nodes: {
         enabled:
           windowType === "project" &&

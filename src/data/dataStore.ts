@@ -42,6 +42,7 @@ function createViewStore(projectPath: string) {
     shiftDown: false,
     selectedNodes: [],
     selectedStem: false,
+    autoGenerateLabel: null,
     clipboardListener: false,
     inTextElement: false,
     focus: false,

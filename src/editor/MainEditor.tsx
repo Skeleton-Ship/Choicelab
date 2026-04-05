@@ -161,6 +161,9 @@ export default function MainEditor() {
     const unlistenMenuProjectSettings = appWindow.listen("menu-open-project-settings", async () => {
       openProjectSettings();
     });
+    const unlistenMenuAutofill = appWindow.listen("menu-autofill", async () => {
+      // TODO: apply auto-generation plan
+    });
     appWindow.show();
     // Once ready, check for updates
     checkForUpdates();
@@ -185,6 +188,7 @@ export default function MainEditor() {
       unlistenMenuDeleteNodes.then((fn) => fn());
       unlistenMenuDeleteStem.then((fn) => fn());
       unlistenMenuProjectSettings.then((fn) => fn());
+      unlistenMenuAutofill.then((fn) => fn());
     };
   }, []);
 

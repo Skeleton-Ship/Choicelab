@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { getFocusedRegion } from "../../utils/focusedRegion";
-import { getStore, getViewStore } from "../../data/dataStore";
+import { getStore, getViewStore, setViewStore } from "../../data/dataStore";
 import { getCell } from "../../data/getData";
 import { Cell, Action, ActionDef } from "../../typings";
 import addAction from "./functions/addAction";
@@ -10,6 +10,14 @@ import ActionIcon from "./elements/ActionIcon";
 import { getPlayerConfig } from "../../player/getPlayerConfig";
 import { NodeSetting } from "./elements/NodeSetting";
 import { cellPlaysQuickly } from "./functions/cellPlaysQuickly";
+import {
+  cellQualifiesForAutoGeneration,
+  buildAutoGenerationPlan,
+  getAutoGenerateLabel,
+  AutoGenerationPlan,
+} from "../../data/autoGenerate";
+import { AutoGenerateButton } from "./elements/AutoGenerateButton";
+import { setMenu } from "../../menu/setMenu";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -105,7 +113,10 @@ function ActionsEditor(props: { update: Function }) {
   );
 }
 
-function NodeSettings(props: { update: Function }) {
+function NodeSettings(props: {
+  update: Function;
+  plan: AutoGenerationPlan | null;
+}) {
   const store = getStore(),
     viewStore = getViewStore();
   const selectedNodeId = viewStore.selectedNodes[0].id;
@@ -133,17 +144,61 @@ function NodeSettings(props: { update: Function }) {
   });
   return (
     <ul id="node-settings">
-      <div class="inner">{settingEls}</div>
+      <div class="inner">
+        <div class="col-1">{settingEls}</div>
+        <div class="col-2">
+          <AutoGenerateButton plan={props.plan} context="cell" />
+        </div>
+      </div>
     </ul>
   );
 }
 
 export default function CellPane(props: { update: Function }) {
+  const selectedNodeId = getViewStore().selectedNodes[0]?.id ?? "";
+  const [plan, setPlan] = useState<AutoGenerationPlan | null>(null);
+
+  function setAutoGenerateLabel(label: string | null) {
+    const viewStore = getViewStore();
+    viewStore.autoGenerateLabel = label;
+    setViewStore(viewStore);
+    setMenu();
+  }
+
+  useEffect(() => {
+    setPlan(null);
+    setAutoGenerateLabel(null);
+    if (!selectedNodeId) return;
+    const store = getStore();
+    const cell = getCell(selectedNodeId, store);
+    if (!cell) return;
+
+    if (!cellQualifiesForAutoGeneration(cell, internalActionDefs.actions))
+      return;
+
+    const controller = new AbortController();
+    buildAutoGenerationPlan(
+      cell,
+      store,
+      internalActionDefs.actions,
+      controller.signal
+    )
+      .then((plan) => {
+        setPlan(plan);
+        setAutoGenerateLabel(getAutoGenerateLabel(plan, "cell"));
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") console.error("[AutoGenerate]", err);
+      });
+
+    return () => controller.abort();
+  }, [selectedNodeId]);
+
   return (
     <>
       <AvailableActions update={props.update} />
       <ActionsEditor update={props.update} />
-      <NodeSettings update={props.update} />
+      <NodeSettings update={props.update} plan={plan} />
     </>
   );
 }

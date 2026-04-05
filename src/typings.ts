@@ -107,6 +107,7 @@ export interface ViewStore {
   shiftDown: boolean;
   selectedNodes: Array<AnyNode>;
   selectedStem: Stem | false;
+  autoGenerateLabel: string | null;
   clipboardListener: boolean;
   inTextElement: boolean;
   focus: boolean;

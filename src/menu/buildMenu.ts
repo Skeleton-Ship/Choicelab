@@ -203,6 +203,11 @@ export async function buildMenu(windowType: WindowType) {
         enabled: false,
         accelerator: "CmdOrCtrl+D",
       }),
+      await MenuItem.new({
+        id: "autofill",
+        text: "Autofill Variables",
+        enabled: false,
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),

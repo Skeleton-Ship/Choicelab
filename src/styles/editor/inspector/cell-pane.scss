@@ -80,11 +80,21 @@ $node-settings-height: 85px;
 
 #node-settings {
   height: $node-settings-height;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   .inner {
     padding: 15px;
     display: flex;
+    gap: 15px;
+  }
+  .col-1,
+  .col-2 {
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
+  }
+  .col-1 {
+    flex: 1;
   }
   .node-setting {
     width: 100%;
