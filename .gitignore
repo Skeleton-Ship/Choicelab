@@ -24,5 +24,8 @@ src-tauri/macos
 *.sln
 *.sw?
 
+# Choicelab project files (used for testing)
+*.clx
+
 # Possibly temporary
 CLAUDE.md
