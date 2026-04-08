@@ -87,23 +87,32 @@ export default function MainEditor() {
     window.addEventListener("cut", cutHandler);
     window.addEventListener("copy", copyHandler);
     window.addEventListener("paste", pasteHandler);
-    const unlistenRequestProject = listen("request-project-from-parent", async (event) => {
-      const payload = event.payload as { label: string };
-      const label = payload.label as string;
-      const data = stringify(getStore().project);
-      emitTo(label, "receive-project-from-parent", { data: data });
-    });
-    const unlistenSettingsStore = listen("settings-store-updated", async (event) => {
-      const payload = event.payload as string;
-      const newStore = JSON.parse(payload);
-      if (newStore.project.id !== store.project.id) return;
-      setStore(newStore);
-      handleUpdate(true, true);
-    });
+    const unlistenRequestProject = listen(
+      "request-project-from-parent",
+      async (event) => {
+        const payload = event.payload as { label: string };
+        const label = payload.label as string;
+        const data = stringify(getStore().project);
+        emitTo(label, "receive-project-from-parent", { data: data });
+      }
+    );
+    const unlistenSettingsStore = listen(
+      "settings-store-updated",
+      async (event) => {
+        const payload = event.payload as string;
+        const newStore = JSON.parse(payload);
+        if (newStore.project.id !== store.project.id) return;
+        setStore(newStore);
+        handleUpdate(true, true);
+      }
+    );
     // Close listeners
-    const unlistenCloseRequested = appWindow.listen("tauri://close-requested", async () => {
-      handleCloseRequest();
-    });
+    const unlistenCloseRequested = appWindow.listen(
+      "tauri://close-requested",
+      async () => {
+        handleCloseRequest();
+      }
+    );
     // Menu events - Rust now emits only to the focused window,
     // so we use appWindow.listen() to receive window-specific events
     const unlistenMenuQuit = appWindow.listen("menu-request-quit", async () => {
@@ -113,13 +122,19 @@ export default function MainEditor() {
       console.log("Request to save");
       saveProject();
     });
-    const unlistenMenuTogglePreview = appWindow.listen("menu-toggle-preview", async () => {
-      togglePreview(handleUpdate);
-    });
-    const unlistenMenuOpenPreview = appWindow.listen("menu-open-preview", async () => {
-      const port = getViewStore().previewPort;
-      await open(`http://localhost:${port}`);
-    });
+    const unlistenMenuTogglePreview = appWindow.listen(
+      "menu-toggle-preview",
+      async () => {
+        togglePreview(handleUpdate);
+      }
+    );
+    const unlistenMenuOpenPreview = appWindow.listen(
+      "menu-open-preview",
+      async () => {
+        const port = getViewStore().previewPort;
+        await open(`http://localhost:${port}`);
+      }
+    );
     const unlistenMenuUndo = appWindow.listen("menu-undo", async () => {
       handleUndoRedo("undo", handleUpdate);
     });
@@ -130,38 +145,54 @@ export default function MainEditor() {
       const newCell = createCell();
       insertNewNode(newCell, handleUpdate);
     });
-    const unlistenMenuNewBranch = appWindow.listen("menu-new-branch", async () => {
-      const newBranch = createBranch();
-      insertNewNode(newBranch, handleUpdate);
-    });
+    const unlistenMenuNewBranch = appWindow.listen(
+      "menu-new-branch",
+      async () => {
+        const newBranch = createBranch();
+        insertNewNode(newBranch, handleUpdate);
+      }
+    );
     const unlistenMenuSetLink = appWindow.listen("menu-set-link", async () => {
       enterTargetMode({
         update: handleUpdate,
       });
     });
-    const unlistenMenuDisconnectLink = appWindow.listen("menu-disconnect-link", async () => {
-      handleDisconnectLinks(handleUpdate);
-    });
-    const unlistenMenuDeleteNodes = appWindow.listen("menu-delete-nodes", async () => {
-      handleDeleteNodes(handleUpdate);
-    });
-    const unlistenMenuDeleteStem = appWindow.listen("menu-delete-stem", async () => {
-      const store = getStore();
-      const selectedStem = getViewStore().selectedStem;
-      if (selectedStem !== false) {
-        const parentBranch: Branch | undefined = getStemParent(
-          selectedStem.id,
-          store
-        );
-        if (parentBranch && selectedStem.type !== "noMatch") {
-          handleDeleteStem(selectedStem.id, parentBranch.id, handleUpdate);
+    const unlistenMenuDisconnectLink = appWindow.listen(
+      "menu-disconnect-link",
+      async () => {
+        handleDisconnectLinks(handleUpdate);
+      }
+    );
+    const unlistenMenuDeleteNodes = appWindow.listen(
+      "menu-delete-nodes",
+      async () => {
+        handleDeleteNodes(handleUpdate);
+      }
+    );
+    const unlistenMenuDeleteStem = appWindow.listen(
+      "menu-delete-stem",
+      async () => {
+        const store = getStore();
+        const selectedStem = getViewStore().selectedStem;
+        if (selectedStem !== false) {
+          const parentBranch: Branch | undefined = getStemParent(
+            selectedStem.id,
+            store
+          );
+          if (parentBranch && selectedStem.type !== "noMatch") {
+            handleDeleteStem(selectedStem.id, parentBranch.id, handleUpdate);
+          }
         }
       }
-    });
-    const unlistenMenuProjectSettings = appWindow.listen("menu-open-project-settings", async () => {
-      openProjectSettings();
-    });
+    );
+    const unlistenMenuProjectSettings = appWindow.listen(
+      "menu-open-project-settings",
+      async () => {
+        openProjectSettings();
+      }
+    );
     const unlistenMenuAutofill = appWindow.listen("menu-autofill", async () => {
+      console.log("Autofill event from menu");
       // TODO: apply auto-generation plan
     });
     appWindow.show();

@@ -609,6 +609,7 @@ let handle_update = app_handle.clone();
             "new_branch" => "menu-new-branch",
             "set_link" => "menu-set-link",
             "disconnect_link" => "menu-disconnect-link",
+			"autofill" => "menu-autofill",
             "open_in_browser" => "menu-open-preview",
             "delete_nodes" => "menu-delete-nodes",
             "delete_stem" => "menu-delete-stem",
