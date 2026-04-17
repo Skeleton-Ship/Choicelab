@@ -184,6 +184,9 @@ pub fn load_preview_files(
     // Copy the `assets` folder to the `project` subfolder in the output folder
     if *include_assets {
         let assets_folder_src = input_folder.join("Assets");
+        if !assets_folder_src.exists() {
+            return Ok(());
+        }
         let assets_folder_dest = project_subfolder.join("Assets");
         fs::create_dir_all(&assets_folder_dest)?;
         for entry in fs::read_dir(assets_folder_src)? {

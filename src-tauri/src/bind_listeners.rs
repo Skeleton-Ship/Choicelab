@@ -469,8 +469,9 @@ let handle_update = app_handle.clone();
                 let project_label = json["projectLabel"].as_str().unwrap_or("N/A");
                 let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    load_preview_files(project_path, project_data, project_label, &include_assets)
-                        .unwrap();
+                    if let Err(e) = load_preview_files(project_path, project_data, project_label, &include_assets) {
+                        eprintln!("Error loading preview files: {}", e);
+                    }
                 }
             }
             Err(e) => {
