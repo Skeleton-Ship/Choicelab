@@ -1,13 +1,22 @@
 /*
  * Auto-generation logic for variables, action bindings, and branch stems.
  *
- * All functions here are pure data transformations or async reads — no store
- * mutations. The plan types describe exactly what would be written; callers
- * apply the plan via normal store mutations.
+ * Plan functions are pure data transformations or async reads.
+ * applyAutoGenerationPlan performs the actual store mutations.
+ * The apply-callback registry lets the menu handler trigger whichever pane
+ * is currently active without the panes needing to know about each other.
  */
 
 import { v4 as uuidv4 } from "uuid";
-import { Action, ActionDef, Branch, Cell, Stem, Store, Variable } from "../typings";
+import {
+  Action,
+  ActionDef,
+  Branch,
+  Cell,
+  Stem,
+  Store,
+  Variable,
+} from "../typings";
 import { classifyInputLabel } from "../utils/classifyInputLabel";
 import { getVariables } from "./getData";
 
@@ -16,10 +25,7 @@ import { getVariables } from "./getData";
 /**
  * Returns only the input-element actions from a cell (buttons and input fields).
  */
-export function getInputActions(
-  cell: Cell,
-  actionDefs: ActionDef[]
-): Action[] {
+export function getInputActions(cell: Cell, actionDefs: ActionDef[]): Action[] {
   return cell.actions.filter((action) => {
     const def = actionDefs.find((d) => d.name === action.name);
     return def?.inputElement === true;
@@ -117,10 +123,7 @@ export function getPrecedingCell(
   const matches: Cell[] = [];
   for (const sequence of store.project.sequences) {
     for (const node of sequence.nodes) {
-      if (
-        node.type === "cell" &&
-        (node as Cell).link?.to === branchId
-      ) {
+      if (node.type === "cell" && (node as Cell).link?.to === branchId) {
         matches.push(node as Cell);
       }
     }
@@ -142,7 +145,7 @@ export interface PlannedVariable {
 /** An action whose varToSet (and optionally value) should be updated. */
 export interface PlannedActionUpdate {
   actionId: string;
-  varToSet: string;           // variable ID
+  varToSet: string; // variable ID
   /** Only set for button actions; undefined for input fields. */
   value?: string;
 }
@@ -358,7 +361,106 @@ export async function buildAutoGenerationPlanFromBranch(
 ): Promise<AutoGenerationPlan | undefined> {
   const precedingCell = getPrecedingCell(branch.id, store);
   if (!precedingCell) return undefined;
-  if (!cellQualifiesForAutoGeneration(precedingCell, actionDefs)) return undefined;
+  if (!cellQualifiesForAutoGeneration(precedingCell, actionDefs))
+    return undefined;
 
   return buildAutoGenerationPlan(precedingCell, store, actionDefs, signal);
+}
+
+// ── Apply ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Applies an auto-generation plan to a copy of the store and returns it.
+ * The caller is responsible for writing the result back via setStore().
+ */
+export function applyAutoGenerationPlan(
+  plan: AutoGenerationPlan,
+  store: Store
+): Store {
+  // 1. Add the new variable.
+  store.project.variables.items.push({
+    id: plan.variable.id,
+    name: plan.variable.name,
+    varType: plan.variable.varType,
+    startingValue: plan.variable.startingValue,
+    description: plan.variable.description,
+  });
+
+  // 2. Update action props.
+  for (const sequence of store.project.sequences) {
+    for (const node of sequence.nodes) {
+      if (!node.actions) continue;
+      for (const action of node.actions) {
+        const update = plan.actionUpdates.find((u) => u.actionId === action.id);
+        if (!update) continue;
+        action.props.varToSet = update.varToSet;
+        if (update.value !== undefined) action.props.value = update.value;
+      }
+    }
+  }
+
+  // 3. Apply stem work if present.
+  if (plan.stemWork) {
+    const { branchId, reuse, add } = plan.stemWork;
+    for (const sequence of store.project.sequences) {
+      const branchNode = sequence.nodes.find((n) => n.id === branchId);
+      if (!branchNode) continue;
+      const branch = branchNode as Branch;
+
+      // Overwrite rules on reused stems (preserve their existing link).
+      for (const stemReuse of reuse) {
+        const stem = branch.stems.find((s) => s.id === stemReuse.stemId);
+        if (!stem) continue;
+        stem.rules = [
+          {
+            id: uuidv4(),
+            type: "variable",
+            variableId: stemReuse.variableId,
+            operator: "equals",
+            value: stemReuse.value,
+          },
+        ];
+      }
+
+      // Insert new stems before the noMatch stem.
+      const noMatchIndex = branch.stems.findIndex((s) => s.type === "noMatch");
+      const insertAt = noMatchIndex >= 0 ? noMatchIndex : branch.stems.length;
+      const newStems: Stem[] = add.map((planned) => ({
+        id: planned.id,
+        type: "rules",
+        match: "all",
+        rules: [
+          {
+            id: uuidv4(),
+            type: "variable",
+            variableId: planned.variableId,
+            operator: "equals",
+            value: planned.value,
+          },
+        ],
+        link: { to: "" },
+      }));
+      branch.stems.splice(insertAt, 0, ...newStems);
+    }
+  }
+
+  return store;
+}
+
+// ── Apply-callback registry ───────────────────────────────────────────────────
+// The active pane registers its handleApply function here so the menu handler
+// in MainEditor can trigger it without knowing which pane is visible.
+
+let _applyCallback: (() => void) | null = null;
+
+export function registerApplyCallback(fn: () => void): void {
+  _applyCallback = fn;
+}
+
+export function clearApplyCallback(): void {
+  _applyCallback = null;
+}
+
+export function triggerApply(): void {
+  _applyCallback?.();
 }

@@ -43,6 +43,7 @@ import {
   handleDeleteNodes,
   handleDeleteStem,
 } from "./flowchart/general/handleDelete";
+import { triggerApply } from "../data/autoGenerate";
 import { openProjectSettings } from "./settings/openProjectSettings";
 const appWindow = getCurrentWebviewWindow();
 
@@ -192,8 +193,7 @@ export default function MainEditor() {
       }
     );
     const unlistenMenuAutofill = appWindow.listen("menu-autofill", async () => {
-      console.log("Autofill event from menu");
-      // TODO: apply auto-generation plan
+      triggerApply();
     });
     appWindow.show();
     // Once ready, check for updates

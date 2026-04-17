@@ -13,11 +13,15 @@ import { cellPlaysQuickly } from "./functions/cellPlaysQuickly";
 import {
   cellQualifiesForAutoGeneration,
   buildAutoGenerationPlan,
+  applyAutoGenerationPlan,
   getAutoGenerateLabel,
+  registerApplyCallback,
+  clearApplyCallback,
   AutoGenerationPlan,
 } from "../../data/autoGenerate";
 import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
+import { setStore } from "../../data/dataStore";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
@@ -116,6 +120,7 @@ function ActionsEditor(props: { update: Function }) {
 function NodeSettings(props: {
   update: Function;
   plan: AutoGenerationPlan | null;
+  onApply: () => void;
 }) {
   const store = getStore(),
     viewStore = getViewStore();
@@ -147,7 +152,7 @@ function NodeSettings(props: {
       <div class="inner">
         <div class="col-1">{settingEls}</div>
         <div class="col-2">
-          <AutoGenerateButton plan={props.plan} context="cell" />
+          <AutoGenerateButton plan={props.plan} context="cell" onApply={props.onApply} />
         </div>
       </div>
     </ul>
@@ -165,9 +170,20 @@ export default function CellPane(props: { update: Function }) {
     setMenu();
   }
 
+  function handleApply() {
+    if (!plan) return;
+    const newStore = applyAutoGenerationPlan(plan, getStore());
+    setStore(newStore);
+    setPlan(null);
+    setAutoGenerateLabel(null);
+    clearApplyCallback();
+    props.update();
+  }
+
   useEffect(() => {
     setPlan(null);
     setAutoGenerateLabel(null);
+    clearApplyCallback();
     if (!selectedNodeId) return;
     const store = getStore();
     const cell = getCell(selectedNodeId, store);
@@ -186,6 +202,7 @@ export default function CellPane(props: { update: Function }) {
       .then((plan) => {
         setPlan(plan);
         setAutoGenerateLabel(getAutoGenerateLabel(plan, "cell"));
+        registerApplyCallback(handleApply);
       })
       .catch((err) => {
         if (err.name !== "AbortError") console.error("[AutoGenerate]", err);
@@ -198,7 +215,7 @@ export default function CellPane(props: { update: Function }) {
     <>
       <AvailableActions update={props.update} />
       <ActionsEditor update={props.update} />
-      <NodeSettings update={props.update} plan={plan} />
+      <NodeSettings update={props.update} plan={plan} onApply={handleApply} />
     </>
   );
 }

@@ -7,11 +7,15 @@ import internalActionDefs from "./functions/internalActionDefs";
 import {
   branchQualifiesForAutoGeneration,
   buildAutoGenerationPlanFromBranch,
+  applyAutoGenerationPlan,
   getAutoGenerateLabel,
+  registerApplyCallback,
+  clearApplyCallback,
   AutoGenerationPlan,
 } from "../../data/autoGenerate";
 import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
+import { setStore } from "../../data/dataStore";
 
 export default function BranchPane(props: { update: Function }) {
   const store = getStore(),
@@ -26,9 +30,20 @@ export default function BranchPane(props: { update: Function }) {
     setMenu();
   }
 
+  function handleApply() {
+    if (!plan) return;
+    const newStore = applyAutoGenerationPlan(plan, getStore());
+    setStore(newStore);
+    setPlan(null);
+    setAutoGenerateLabel(null);
+    clearApplyCallback();
+    props.update();
+  }
+
   useEffect(() => {
     setPlan(null);
     setAutoGenerateLabel(null);
+    clearApplyCallback();
     if (!selectedNodeId) return;
     const currentStore = getStore();
     const branch = getBranch(selectedNodeId, currentStore);
@@ -44,7 +59,10 @@ export default function BranchPane(props: { update: Function }) {
       .then((result) => {
         const resolved = result ?? null;
         setPlan(resolved);
-        if (resolved) setAutoGenerateLabel(getAutoGenerateLabel(resolved, "branch"));
+        if (resolved) {
+          setAutoGenerateLabel(getAutoGenerateLabel(resolved, "branch"));
+          registerApplyCallback(handleApply);
+        }
       })
       .catch((err) => {
         if (err.name !== "AbortError") console.error("[AutoGenerate]", err);
@@ -83,7 +101,7 @@ export default function BranchPane(props: { update: Function }) {
       </ul>
       <ul id="node-settings">
         <div class="inner">
-          <AutoGenerateButton plan={plan} context="branch" />
+          <AutoGenerateButton plan={plan} context="branch" onApply={handleApply} />
         </div>
       </ul>
     </>
