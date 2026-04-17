@@ -1,6 +1,7 @@
 import FileUpload from "../../shared/FileUpload";
 import { useState } from "preact/hooks";
 import { ColorPicker } from "./ColorPicker";
+import { Asset } from "../../../typings";
 
 export function AppearanceBackground(props: {
   initial: any;
@@ -57,7 +58,7 @@ export function AppearanceBackground(props: {
                 color: props.initial.color,
               });
             }}
-            onCreated={(asset) => {
+            onCreated={(asset: Asset) => {
               props.update("background", {
                 kind: "image",
                 file: asset.id,

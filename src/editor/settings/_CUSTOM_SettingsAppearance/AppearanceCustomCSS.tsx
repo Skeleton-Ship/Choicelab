@@ -11,31 +11,33 @@ export function AppearanceCustomCSS(props: {
   update: (key: string, newValues: { [key: string]: any }) => void;
 }) {
   const [themeClass, setThemeClass] = useState("");
-  useEffect(async () => {
-    const theme = await getCurrentWindow().theme() || "light";
-    // you need to call unlisten if your handler goes out of scope e.g. the component is unmounted
-    const decoded = props.initial.customCSS.replace(/\\n/g, "\n");
-    const editor = basicEditor("#css-editor", {
-      language: "css",
-      theme: getEditorTheme(theme),
-      value: decoded,
-      onUpdate: () => {
-        props.update("customCSS", {
-          css: editor.value,
-        });
-      },
-    });
-    setThemeClass(theme);
-    const unlisten = await getCurrentWindow().onThemeChanged(
-      ({ payload: theme }) => {
-        editor.setOptions({
-          theme: getEditorTheme(theme),
-        });
-        setThemeClass(theme);
-      }
-    );
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    (async () => {
+      const theme = (await getCurrentWindow().theme()) || "light";
+      const decoded = props.initial.customCSS.replace(/\\n/g, "\n");
+      const editor = basicEditor("#css-editor", {
+        language: "css",
+        theme: getEditorTheme(theme),
+        value: decoded,
+        onUpdate: () => {
+          props.update("customCSS", {
+            css: editor.value,
+          });
+        },
+      });
+      setThemeClass(theme);
+      unlisten = await getCurrentWindow().onThemeChanged(
+        ({ payload: theme }) => {
+          editor.setOptions({
+            theme: getEditorTheme(theme),
+          });
+          setThemeClass(theme);
+        }
+      );
+    })();
     return () => {
-      unlisten();
+      unlisten?.();
     };
   }, []);
   return (

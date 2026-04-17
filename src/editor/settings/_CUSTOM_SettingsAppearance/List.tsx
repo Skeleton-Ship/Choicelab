@@ -32,7 +32,7 @@ export function AppearanceList(props: { pane: string; setPane: Function }) {
           if (dir === "down") nextPane = buttons[0];
           if (dir === "up") nextPane = buttons[buttons.length - 1];
         }
-        nextPane.focus();
+        (nextPane as HTMLElement).focus();
         const nextPaneName = nextPane.getAttribute("data-pane");
         if (nextPaneName) {
           props.setPane(nextPaneName);

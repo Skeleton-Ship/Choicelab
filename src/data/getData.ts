@@ -15,7 +15,6 @@ import {
 } from "../typings";
 import { getViewStore } from "./dataStore";
 import { getPlayerConfig } from "../player/getPlayerConfig";
-import { createPlayerSettings } from "../player/createPlayerSettings";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
