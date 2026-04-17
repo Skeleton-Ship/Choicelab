@@ -166,6 +166,7 @@ const internalActionDefs: ActionDefs = {
         // },
       ],
     },
+    /*
     {
       name: "inputField",
       label: "Show Input Field",
@@ -218,6 +219,7 @@ const internalActionDefs: ActionDefs = {
         },
       ],
     },
+	*/
     {
       name: "silence",
       label: "Play Silence",
