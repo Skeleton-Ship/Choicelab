@@ -5,7 +5,7 @@
     "": {
       "name": "choicelab-app",
       "dependencies": {
-        "@surfgreen/choicelab-player-html5": "^0.10.1",
+        "@surfgreen/choicelab-player-html5": "^1.0.0",
         "@tauri-apps/api": "^2.0.0",
         "@tauri-apps/plugin-dialog": "~2",
         "@tauri-apps/plugin-fs": "~2",
@@ -247,7 +247,7 @@
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.60.0", "", { "os": "win32", "cpu": "x64" }, "sha512-PrsWNQ8BuE00O3Xsx3ALh2Df8fAj9+cvvX9AIA6o4KpATR98c9mud4XtDWVvsEuyia5U4tVSTKygawyJkjm60w=="],
 
-    "@surfgreen/choicelab-player-html5": ["@surfgreen/choicelab-player-html5@0.10.1", "", { "dependencies": { "uuid": "^10.0.0" } }, "sha512-wv6koZSjAFhBL5iIBOl+qFy6EidSBpIm45opgBgOCKfAoTsMXmKVNqKyL4aRVSHtMzAgkl5GjkMXoH5LO4QT8A=="],
+    "@surfgreen/choicelab-player-html5": ["@surfgreen/choicelab-player-html5@1.0.0", "", { "dependencies": { "uuid": "^10.0.0" } }, "sha512-K/VDWYGLxkJbCf0tTVVtJJ6EIvYuzVQYod30U3G2+2BXcAvXMbO6pWdyNEGacWXm8IF83oDqWgxzFOPKh2q6gw=="],
 
     "@svgr/babel-plugin-add-jsx-attribute": ["@svgr/babel-plugin-add-jsx-attribute@8.0.0", "", { "peerDependencies": { "@babel/core": "^7.0.0-0" } }, "sha512-b9MIk7yhdS1pMCZM8VeNfUlSKVRhsHZNMl5O9SfaX0l0t5wjdgu4IDzGB8bpnGBBOjGST3rRFVsaaEtI4W6f7g=="],
 

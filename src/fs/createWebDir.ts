@@ -11,7 +11,7 @@ export async function createWebDir(label: string) {
   playerHTML = playerHTML.replace("logging: true", "logging: false");
   playerHTML = playerHTML.replace(
     /path: "(.*?)",/g,
-    `path: "./project/project.clx",`
+    `path: "./project/project.json",`
   );
   playerHTML = playerHTML.replace(
     '<link rel="stylesheet" type="text/css" href="/choicelab.css" />',

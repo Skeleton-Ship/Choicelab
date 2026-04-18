@@ -177,7 +177,7 @@ pub fn load_preview_files(
     fs::create_dir_all(&project_subfolder)?;
 
     // Write `project_data` to `project.clx` in the `project` subfolder
-    let project_json_dest = project_subfolder.join("project.clx");
+    let project_json_dest = project_subfolder.join("project.json");
     let mut file = File::create(project_json_dest)?;
     file.write_all(project_data.as_bytes())?;
 
