@@ -150,49 +150,28 @@ pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     })
 }
 
-pub fn load_preview_files(
-    input_folder: &str,
+fn write_project_files(
+    input_folder: &Path,
     project_data: &str,
-    project_label: &str,
-    include_assets: &bool,
+    output_dir: &PathBuf,
+    include_assets: bool,
 ) -> std::io::Result<()> {
-    // Convert the input folder string to a PathBuf
-    let input_folder: PathBuf = Path::new(input_folder).to_path_buf();
-
-    // Get the output folder using get_preview_path
-    let output_folder = match get_preview_path(project_label) {
-        Some(path) => path,
-        None => {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::NotFound,
-                "Output folder not found",
-            ))
-        }
-    };
-
-    // Define the project subfolder path
-    let project_subfolder = output_folder.join("project");
-
-    // Ensure the output folder and project subfolder exist
+    let project_subfolder = output_dir.join("project");
     fs::create_dir_all(&project_subfolder)?;
 
-    // Write `project_data` to `project.clx` in the `project` subfolder
-    let project_json_dest = project_subfolder.join("project.json");
-    let mut file = File::create(project_json_dest)?;
+    let mut file = File::create(project_subfolder.join("project.json"))?;
     file.write_all(project_data.as_bytes())?;
 
-    // Copy the `assets` folder to the `project` subfolder in the output folder
-    if *include_assets {
-        let assets_folder_src = input_folder.join("Assets");
-        if !assets_folder_src.exists() {
+    if include_assets {
+        let assets_src = input_folder.join("Assets");
+        if !assets_src.exists() {
             return Ok(());
         }
-        let assets_folder_dest = project_subfolder.join("Assets");
-        fs::create_dir_all(&assets_folder_dest)?;
-        for entry in fs::read_dir(assets_folder_src)? {
+        let assets_dest = project_subfolder.join("Assets");
+        fs::create_dir_all(&assets_dest)?;
+        for entry in fs::read_dir(assets_src)? {
             let entry = entry?;
-            let file_name = entry.file_name();
-            let dest_path = assets_folder_dest.join(file_name);
+            let dest_path = assets_dest.join(entry.file_name());
             if entry.path().is_dir() {
                 fs::create_dir_all(&dest_path)?;
                 fs::copy(entry.path(), dest_path)?;
@@ -203,6 +182,32 @@ pub fn load_preview_files(
     }
 
     Ok(())
+}
+
+pub fn load_preview_files(
+    input_folder: &str,
+    project_data: &str,
+    project_label: &str,
+    include_assets: &bool,
+) -> std::io::Result<()> {
+    let output_dir = match get_preview_path(project_label) {
+        Some(path) => path,
+        None => {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "Output folder not found",
+            ))
+        }
+    };
+    write_project_files(Path::new(input_folder), project_data, &output_dir, *include_assets)
+}
+
+pub fn export_project_files(
+    input_folder: &str,
+    project_data: &str,
+    export_dir: &str,
+) -> std::io::Result<()> {
+    write_project_files(Path::new(input_folder), project_data, &PathBuf::from(export_dir), true)
 }
 
 pub fn handle_file_associations(app: AppHandle, files: Vec<PathBuf>) {

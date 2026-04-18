@@ -1,6 +1,6 @@
 use crate::file_operations::{
-    copy_file, create_binary_file, create_directory, create_text_file, load_preview_files,
-    read_text_file,
+    copy_file, create_binary_file, create_directory, create_text_file, export_project_files,
+    load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
 use crate::globals::PENDING_FILES;
@@ -479,6 +479,26 @@ let handle_update = app_handle.clone();
             }
         }
     });
+    app.listen("export-project", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        match json_value {
+            Ok(json) => {
+                let project_path = json["projectPath"].as_str().unwrap_or("N/A");
+                let project_data = json["projectData"].as_str().unwrap_or("N/A");
+                let export_dir = json["exportDir"].as_str().unwrap_or("N/A");
+                if project_path != "N/A" && project_data != "N/A" && export_dir != "N/A" {
+                    if let Err(e) = export_project_files(project_path, project_data, export_dir) {
+                        eprintln!("Error exporting project files: {}", e);
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Error parsing JSON: {}", e);
+            }
+        }
+    });
+
     // Listen for window close to release preview port
     app.listen("tauri://close-requested", move |event| {
         let json_raw = event.payload();
