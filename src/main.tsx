@@ -2,7 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { message, confirm } from "@tauri-apps/plugin-dialog";
+import { message, confirm, save } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import { ProjectSettings } from "./editor/ProjectSettings";
 import newProject from "./fs/newProject";
@@ -30,6 +30,8 @@ import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
 import { buildMenu } from "./menu/buildMenu";
+import { exportProject, getExportDirName } from "./fs/exportProject";
+import { desktopDir, resolve } from "@tauri-apps/api/path";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -77,7 +79,7 @@ async function init() {
   });
   // Global menu listeners
   // TODO: Narrow scope of all three listeners to just the current appWindow
-  // And for #3 specifically, remove the focus hnalder
+  // And for #3 specifically, remove the focus handler
   listen("menu-new-project", () => {
     if (windowType !== "project" && windowType !== "launcher") return;
     const source =
@@ -88,9 +90,21 @@ async function init() {
     if (windowType !== "project" && windowType !== "launcher") return;
     openProject();
   });
-  listen("menu-report-issue", async () =>{
+  listen("menu-export-project", async () => {
+    const vs = getViewStore();
+    const defaultName = getExportDirName(vs.projectName);
+    const defaultPath = await resolve(await desktopDir(), defaultName);
+    if (windowType !== "project" && windowType !== "projectSettings") return;
+    const exportDir = await save({
+      defaultPath: defaultPath, // e.g. "my-project"
+    });
+    if (exportDir) {
+      exportProject(exportDir);
+    }
+  });
+  listen("menu-report-issue", async () => {
     const focused = await appWindow.isFocused();
-    if(!focused) return;
+    if (!focused) return;
     const url =
       "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
     await open(url);
@@ -164,8 +178,10 @@ async function init() {
     // Migrate legacy projects that predate the asset registry
     if (windowType === "project" && needsMigration(projectData)) {
       const titleWindows = "Project Update Required";
-      const messageText1 = "This project needs to be updated for this version of Choicelab.";
-      const messageText2 = "Once updated, this project can't be opened in older versions.";
+      const messageText1 =
+        "This project needs to be updated for this version of Choicelab.";
+      const messageText2 =
+        "Once updated, this project can't be opened in older versions.";
       const confirmed = await confirm(
         platform === "macos" ? messageText2 : messageText1 + " " + messageText2,
         {
@@ -192,7 +208,7 @@ async function init() {
     }
     // Create data store
     createDataStore(projectData, projectPath, fileName);
-    createViewStore(projectPath);
+    createViewStore(projectPath, projectData.name);
     // Load store
     const store = getStore(),
       viewStore = getViewStore();

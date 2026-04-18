@@ -28,10 +28,11 @@ function getMenus() {
   window.__CHOICELAB_FUNCTIONS__.menus;
 }
 
-function createViewStore(projectPath: string) {
+function createViewStore(projectPath: string, projectName: string) {
   const store: ViewStore = {
     windowType: "project",
     projectPath: projectPath,
+    projectName: projectName,
     currentSequenceId: "",
     targetMode: {
       active: false,
@@ -67,7 +68,7 @@ function createViewStore(projectPath: string) {
 export default function createDataStore(
   projectData: Project,
   projectPath: string,
-  projectFileName: string,
+  projectFileName: string
 ) {
   const store: Store = {
     project: projectData,

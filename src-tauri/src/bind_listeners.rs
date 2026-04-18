@@ -621,6 +621,7 @@ let handle_update = app_handle.clone();
             "new_project" => "menu-new-project",
             "open_project" => "menu-open-project",
             "save" => "menu-save-project",
+			"export" => "menu-export-project",
             "undo" => "menu-undo",
             "redo" => "menu-redo",
             "show_node_editor" => "menu-show-node-editor",

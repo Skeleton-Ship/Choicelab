@@ -5,42 +5,27 @@ import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { updatePreviewFonts } from "../preview/updatePreviewFonts";
 
+export function patchPlayerHTML(html: string): string {
+  return html
+    .replace("logging: true", "logging: false")
+    .replace(/path: "(.*?)",/g, `path: "./project/project.json",`)
+    .replace(
+      '<link rel="stylesheet" type="text/css" href="/choicelab.css" />',
+      '<link rel="stylesheet" type="text/css" href="/choicelab.css" />\n    <link rel="stylesheet" type="text/css" href="/fonts.css" />'
+    );
+}
+
+export { playerCSSDefault, playerJSDefault };
+
 export async function createWebDir(label: string) {
-  // HTML PLAYER ONLY: Configure initialization
-  let playerHTML = playerHTMLDefault;
-  playerHTML = playerHTML.replace("logging: true", "logging: false");
-  playerHTML = playerHTML.replace(
-    /path: "(.*?)",/g,
-    `path: "./project/project.json",`
-  );
-  playerHTML = playerHTML.replace(
-    '<link rel="stylesheet" type="text/css" href="/choicelab.css" />',
-    '<link rel="stylesheet" type="text/css" href="/choicelab.css" />\n    <link rel="stylesheet" type="text/css" href="/fonts.css" />'
-  );
   const previewPath = await resolve(
     await appCacheDir(),
     "Projects",
     label,
     "Preview"
   );
-  emit("save-text-file", {
-    name: "index.html",
-    contents: playerHTML,
-    path: previewPath,
-    label: label,
-  });
-  emit("save-text-file", {
-    name: "choicelab.css",
-    contents: playerCSSDefault,
-    path: previewPath,
-    label: label,
-  });
-  emit("save-text-file", {
-    name: "choicelab.js",
-    contents: playerJSDefault,
-    path: previewPath,
-    label: label,
-  });
-  // Generate and write fonts.css for the preview
+  emit("save-text-file", { name: "index.html", contents: patchPlayerHTML(playerHTMLDefault), path: previewPath, label });
+  emit("save-text-file", { name: "choicelab.css", contents: playerCSSDefault, path: previewPath, label });
+  emit("save-text-file", { name: "choicelab.js", contents: playerJSDefault, path: previewPath, label });
   await updatePreviewFonts();
 }

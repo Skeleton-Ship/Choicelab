@@ -96,6 +96,7 @@ export interface ProjectHistory {
 }
 export interface ViewStore {
   windowType: string;
+  projectName: string;
   projectPath: string;
   currentSequenceId: string;
   targetMode: {

@@ -88,6 +88,15 @@ export async function buildMenu(windowType: WindowType) {
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
+      await MenuItem.new({
+        text: "Export...",
+        id: "export",
+        accelerator: "CmdOrCtrl+E",
+        enabled: false,
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
       await PredefinedMenuItem.new({
         text: "Close Window",
         item: "CloseWindow",

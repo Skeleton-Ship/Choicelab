@@ -29,13 +29,25 @@ export async function setMenu(windowType: WindowType = "project") {
       save: {
         enabled: windowType === "project" ? true : false,
       },
+      export: {
+        enabled:
+          windowType === "project" || windowType === "projectSettings"
+            ? true
+            : false,
+      },
     },
     edit: {
       undo: {
-        enabled: windowType === "project" || windowType === "projectSettings" ? canUndo() : false,
+        enabled:
+          windowType === "project" || windowType === "projectSettings"
+            ? canUndo()
+            : false,
       },
       redo: {
-        enabled: windowType === "project" || windowType === "projectSettings" ? canRedo() : false,
+        enabled:
+          windowType === "project" || windowType === "projectSettings"
+            ? canRedo()
+            : false,
       },
     },
     view: {
@@ -128,13 +140,13 @@ export async function setMenu(windowType: WindowType = "project") {
         );
         return;
       }
-        emit("set-menu-item-state", {
-          submenu: menuId + "_submenu",
-          id: keyName,
-          enabled: state.enabled !== undefined ? state.enabled : undefined,
-          checked: state.checked !== undefined ? state.checked : undefined,
-          text: state.text ? state.text : undefined,
-        });
+      emit("set-menu-item-state", {
+        submenu: menuId + "_submenu",
+        id: keyName,
+        enabled: state.enabled !== undefined ? state.enabled : undefined,
+        checked: state.checked !== undefined ? state.checked : undefined,
+        text: state.text ? state.text : undefined,
       });
     });
+  });
 }
