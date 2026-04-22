@@ -154,13 +154,13 @@ export async function buildMenu(windowType: WindowType) {
         id: "show_node_editor",
         text: "Show Node Editor",
         enabled: false,
-        accelerator: "CmdOrCtrl+E",
+        accelerator: "CmdOrCtrl+R",
       }),
       await CheckMenuItem.new({
         id: "show_variables",
         text: "Show Variables",
         enabled: false,
-        accelerator: "CmdOrCtrl+R",
+        accelerator: "CmdOrCtrl+T",
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
