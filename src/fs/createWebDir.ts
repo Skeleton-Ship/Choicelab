@@ -10,8 +10,8 @@ export function patchPlayerHTML(html: string): string {
     .replace("logging: true", "logging: false")
     .replace(/path: "(.*?)",/g, `path: "./project/project.json",`)
     .replace(
-      '<link rel="stylesheet" type="text/css" href="/choicelab.css" />',
-      '<link rel="stylesheet" type="text/css" href="/choicelab.css" />\n    <link rel="stylesheet" type="text/css" href="/fonts.css" />'
+      '<link id="player-fonts" data-href="./fonts.css" />',
+      '<link id="player-fonts" rel="stylesheet" href="./fonts.css" />'
     );
 }
 

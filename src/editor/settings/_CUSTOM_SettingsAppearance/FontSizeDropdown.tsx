@@ -6,11 +6,11 @@ export function FontSizeDropdown(props: {
   update: (value: string) => void;
 }) {
   let customSize =
-    props.initial !== "var(--font-size-x-small)" &&
-    props.initial !== "var(--font-size-small)" &&
-    props.initial !== "var(--font-size-medium)" &&
-    props.initial !== "var(--font-size-large)" &&
-    props.initial !== "var(--font-size-x-large)"
+    props.initial !== "var(--font-size-xs)" &&
+    props.initial !== "var(--font-size-sm)" &&
+    props.initial !== "var(--font-size-md)" &&
+    props.initial !== "var(--font-size-lg)" &&
+    props.initial !== "var(--font-size-xl)"
       ? true
       : false;
   function handleChange(e: TargetedEvent, custom?: boolean) {
@@ -34,39 +34,33 @@ export function FontSizeDropdown(props: {
       <div class="ui-dropdown">
         <select class="font-size" onChange={handleChange}>
           <option
-            value="var(--font-size-x-small)"
-            selected={
-              props.initial === "var(--font-size-x-small)" ? true : false
-            }
+            value="var(--font-size-xs)"
+            selected={props.initial === "var(--font-size-xs)" ? true : false}
           >
             Extra Small
           </option>
 
           <option
-            value="var(--font-size-small)"
-            selected={props.initial === "var(--font-size-small)" ? true : false}
+            value="var(--font-size-sm)"
+            selected={props.initial === "var(--font-size-sm)" ? true : false}
           >
             Small
           </option>
           <option
-            value="var(--font-size-medium)"
-            selected={
-              props.initial === "var(--font-size-medium)" ? true : false
-            }
+            value="var(--font-size-md)"
+            selected={props.initial === "var(--font-size-md)" ? true : false}
           >
             Medium
           </option>
           <option
-            value="var(--font-size-large)"
-            selected={props.initial === "var(--font-size-large)" ? true : false}
+            value="var(--font-size-lg)"
+            selected={props.initial === "var(--font-size-lg)" ? true : false}
           >
             Large
           </option>
           <option
-            value="var(--font-size-x-large)"
-            selected={
-              props.initial === "var(--font-size-x-large)" ? true : false
-            }
+            value="var(--font-size-xl)"
+            selected={props.initial === "var(--font-size-xl)" ? true : false}
           >
             Extra Large
           </option>
