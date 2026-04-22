@@ -49,8 +49,8 @@
         "url": "index.html?window_type=launcher",
         "title": "Launcher",
         "hiddenTitle": true,
-        "width": 600,
-        "height": 400,
+        "width": 650,
+        "height": 375,
         "resizable": false,
         "titleBarStyle": "Overlay",
         "transparent": true

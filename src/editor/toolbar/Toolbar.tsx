@@ -18,7 +18,6 @@ function Toolbar(props: { update: Function }) {
     getCurrentWindow()
       .theme()
       .then((theme) => {
-        console.log(theme);
         setCurrentTheme(theme || "light");
       });
     let unlisten: (() => void) | null = null;

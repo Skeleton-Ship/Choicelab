@@ -39,3 +39,5 @@ export const VariablesIcon = makeIcon("Variables", {
   states: ["Inactive"],
   hasDarkMode: true,
 });
+export const NewProjectIcon = makeIcon("NewProject");
+export const OpenProjectIcon = makeIcon("OpenProject");

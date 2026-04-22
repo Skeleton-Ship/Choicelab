@@ -1,13 +1,22 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { useEffect } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { emit, listen } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
+import { NewProjectIcon, OpenProjectIcon } from "../editor/shared/ColorIcon";
 import { showReleaseNotes } from "../utils/showReleaseNotes";
 const appWindow = getCurrentWebviewWindow();
+import LogoSvg from "../assets/launcher/Logo-Text.svg?react";
+import Splash from "../assets/launcher/Splash.png";
+import SplashDark from "../assets/launcher/Splash-DarkMode.png";
 
 function Launcher() {
+  const [theme, setTheme] = useState("light");
   useEffect(() => {
+    appWindow.theme().then((thisTheme) => {
+      if (!thisTheme) return;
+      setTheme(thisTheme);
+    });
     emit("window-ready", {
       label: "launcher",
     });
@@ -15,22 +24,40 @@ function Launcher() {
       appWindow.close();
     });
     showReleaseNotes();
+    let unlisten: (() => void) | null = null;
+    appWindow
+      .onThemeChanged(({ payload: theme }) => {
+        setTheme(theme);
+      })
+      .then((fn) => {
+        unlisten = fn;
+      });
+    return () => {
+      if (unlisten) unlisten();
+    };
   }, []);
   return (
     <div id="launcher" data-tauri-drag-region>
+      <figure>
+        <img src={theme === "dark" ? SplashDark : Splash} />
+      </figure>
       <div className="contents">
-        <h1>Choicelab</h1>
+        <h1>
+          <LogoSvg />
+        </h1>
         <div class="buttons">
           <button
-            className="ui-button large"
+            className="ui-button x-large"
             onClick={() => {
               newProject("launcher");
             }}
           >
-            New Project...
+            <NewProjectIcon size={24} />
+            New...
           </button>
-          <button className="ui-button large" onClick={openProject}>
-            Open Project...
+          <button className="ui-button x-large" onClick={openProject}>
+            <OpenProjectIcon size={24} />
+            Open...
           </button>
         </div>
         <aside id="alpha-alert">

@@ -89,7 +89,7 @@ export async function buildMenu(windowType: WindowType) {
         item: "Separator",
       }),
       await MenuItem.new({
-        text: "Export...",
+        text: "Export for Web...",
         id: "export",
         accelerator: "CmdOrCtrl+E",
         enabled: false,
