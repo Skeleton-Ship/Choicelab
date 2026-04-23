@@ -5,7 +5,7 @@
     "": {
       "name": "choicelab-app",
       "dependencies": {
-        "@surfgreen/choicelab-player-html5": "^1.1.3",
+        "@surfgreen/choicelab-player-html5": "^1.2.0",
         "@tauri-apps/api": "^2.0.0",
         "@tauri-apps/plugin-dialog": "~2",
         "@tauri-apps/plugin-fs": "~2",
@@ -247,7 +247,7 @@
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.60.0", "", { "os": "win32", "cpu": "x64" }, "sha512-PrsWNQ8BuE00O3Xsx3ALh2Df8fAj9+cvvX9AIA6o4KpATR98c9mud4XtDWVvsEuyia5U4tVSTKygawyJkjm60w=="],
 
-    "@surfgreen/choicelab-player-html5": ["@surfgreen/choicelab-player-html5@1.1.3", "", { "dependencies": { "uuid": "^10.0.0" } }, "sha512-vIzBbVPgCHhcqWatRVvshsVxtUw7C8ZBQsBbb8aIGwEyS9YUxZpLK0LAi9zH94DvKH4AlC1uf3KEVu8gSHiaSg=="],
+    "@surfgreen/choicelab-player-html5": ["@surfgreen/choicelab-player-html5@1.2.0", "", { "dependencies": { "can-autoplay": "^3.0.2", "uuid": "^10.0.0" } }, "sha512-zu2SvNI7/pkCA1joqCPz/BD5GPeV42VQ+YwzzryYCst1tc1v8ONrRKHMCtZsnpBNoiedxLcmaKaX9khJWSsV+Q=="],
 
     "@svgr/babel-plugin-add-jsx-attribute": ["@svgr/babel-plugin-add-jsx-attribute@8.0.0", "", { "peerDependencies": { "@babel/core": "^7.0.0-0" } }, "sha512-b9MIk7yhdS1pMCZM8VeNfUlSKVRhsHZNMl5O9SfaX0l0t5wjdgu4IDzGB8bpnGBBOjGST3rRFVsaaEtI4W6f7g=="],
 
@@ -374,6 +374,8 @@
     "callsites": ["callsites@3.1.0", "", {}, "sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ=="],
 
     "camelcase": ["camelcase@6.3.0", "", {}, "sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA=="],
+
+    "can-autoplay": ["can-autoplay@3.0.2", "", {}, "sha512-Ih6wc7yJB4TylS/mLyAW0Dj5Nh3Gftq/g966TcxgvpNCOzlbqTs85srAq7mwIspo4w8gnLCVVGroyCHfh6l9aA=="],
 
     "caniuse-lite": ["caniuse-lite@1.0.30001781", "", {}, "sha512-RdwNCyMsNBftLjW6w01z8bKEvT6e/5tpPVEgtn22TiLGlstHOVecsX2KHFkD5e/vRnIE4EGzpuIODb3mtswtkw=="],
 
