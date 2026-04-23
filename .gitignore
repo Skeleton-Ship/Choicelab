@@ -17,6 +17,7 @@ src-tauri/macos
 !.vscode/extensions.json
 .idea
 .claude
+debug/*
 .DS_Store
 *.suo
 *.ntvs*
