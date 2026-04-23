@@ -62,6 +62,12 @@ const internalActionDefs: ActionDefs = {
           label: "Caption File",
           control: "captions",
         },
+        {
+          name: "endCell",
+          label: "End cell when played through",
+          control: "boolean",
+          default: false,
+        },
       ],
     },
     {
@@ -88,6 +94,12 @@ const internalActionDefs: ActionDefs = {
           name: "captions",
           label: "Caption File",
           control: "captions",
+        },
+        {
+          name: "endCell",
+          label: "End cell when played through",
+          control: "boolean",
+          default: false,
         },
       ],
     },
