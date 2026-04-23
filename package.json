@@ -6,7 +6,7 @@
   "packageManager": "bun@1.3.11",
   "scripts": {
     "preDev": "vite",
-    "preBuild": "bun run gen-vocab && tsc && vite build",
+    "preBuild": "bun run acknowledgments && bun run gen-vocab && tsc && vite build",
     "gen-vocab": "bun scripts/embeddings/trim-glove.ts",
     "test-classifier": "bun scripts/embeddings/test-classifier.ts",
     "dev": "tauri dev",
@@ -16,6 +16,7 @@
     "clean": "cd src-tauri && cargo clean && cd ../",
     "install-all": "cd src-tauri && cargo build && cd ../ && bun install",
     "upgrade-all": "bun update && cd src-tauri && cargo update",
+    "acknowledgments": "node scripts/acknowledgments.cjs",
     "changelog": "node scripts/changelog.cjs",
     "version-major": "git diff-index --quiet HEAD -- && bumpp major --no-push --execute 'node scripts/version.cjs && bun run changelog'",
     "version-minor": "git diff-index --quiet HEAD -- && bumpp minor --no-push --execute 'node scripts/version.cjs && bun run changelog'",

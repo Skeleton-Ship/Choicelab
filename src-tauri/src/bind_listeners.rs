@@ -91,6 +91,22 @@ pub fn open_whats_new_window(app: tauri::AppHandle) {
 	}
 }
 
+pub fn open_acknowledgments_window(app: tauri::AppHandle) {
+	if let Some(window) = app.get_window("acknowledgments") {
+		let _ = window.show();
+		let _ = window.set_focus();
+	} else {
+		let window_index = 2; // matches tauri.conf.json
+		let ack_window =
+			tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
+				.unwrap()
+				.build()
+				.unwrap();
+		let _ = ack_window.show();
+		let _ = ack_window.set_focus();
+	}
+}
+
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
     // Add native menus
@@ -517,6 +533,12 @@ let handle_update = app_handle.clone();
 		open_whats_new_window(handle_whats_new.clone());
 	});
 
+	// listen for acknowledgments window to open
+	let handle_acknowledgments = app_handle.clone();
+	app.listen("acknowledgments-window", move |_event| {
+		open_acknowledgments_window(handle_acknowledgments.clone());
+	});
+
     // listen for menu events
     let handle_menu_item_state = app_handle.clone();
     app.listen("set-menu-item-state", move |event| {
@@ -638,6 +660,7 @@ let handle_update = app_handle.clone();
             "project_settings" => "menu-open-project-settings",
             "report_issue" => "menu-report-issue",
             "open_whatsNew" => "whatsNew-window",
+            "open_acknowledgments" => "acknowledgments-window",
             _ => {
                 eprintln!("Unknown menu item: {}", menu_id);
                 return;
@@ -646,7 +669,7 @@ let handle_update = app_handle.clone();
 
         // Events that should go to all windows (global actions)
         let global_events = ["menu-about", "menu-new-project", "menu-open-project",
-                            "menu-report-issue", "whatsNew-window"];
+                            "menu-report-issue", "whatsNew-window", "acknowledgments-window"];
 
         if global_events.contains(&event_name) {
             // Emit globally for app-wide actions

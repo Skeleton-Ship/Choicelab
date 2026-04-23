@@ -273,6 +273,10 @@ export async function buildMenu(windowType: WindowType) {
         id: "open_whatsNew",
         text: "Release Notes",
       }),
+      await MenuItem.new({
+        id: "open_acknowledgments",
+        text: "Acknowledgments",
+      }),
     ],
   });
 

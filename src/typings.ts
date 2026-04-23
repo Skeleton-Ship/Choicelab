@@ -130,7 +130,8 @@ export type WindowType =
   | "project"
   | "projectSettings"
   | "launcher"
-  | "whatsNew";
+  | "whatsNew"
+  | "acknowledgments";
 export interface Store {
   project: Project;
   projectPath: string;
@@ -224,6 +225,7 @@ declare global {
         projectSettings: Menu | null;
         launcher: Menu | null;
         whatsNew: Menu | null;
+        acknowledgments: Menu | null;
       };
     };
     __CHOICELAB_DATA__: Store;

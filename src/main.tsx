@@ -1,6 +1,7 @@
 import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
+import { Acknowledgments } from "./acknowledgments/Acknowledgments";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { message, confirm, save } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
@@ -118,6 +119,7 @@ async function init() {
       projectSettings: null,
       launcher: null,
       whatsNew: null,
+      acknowledgments: null,
     },
   };
 
@@ -138,6 +140,9 @@ async function init() {
   }
   if (windowType === "whatsNew") {
     elements = <WhatsNew />;
+  }
+  if (windowType === "acknowledgments") {
+    elements = <Acknowledgments />;
   }
   if (windowType === "project" || windowType === "projectSettings") {
     // Get project path

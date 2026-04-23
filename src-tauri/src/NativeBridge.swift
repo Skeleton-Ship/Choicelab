@@ -43,7 +43,15 @@ import Cocoa
 		)
 		releaseNotesItem.target = NativeBridge.sharedInstance()
 		helpMenu.addItem(releaseNotesItem)
-		
+
+		let acknowledgmentsItem = NSMenuItem(
+		  title: "Acknowledgments",
+		  action: #selector(showAcknowledgments(_:)),
+		  keyEquivalent: ""
+		)
+		acknowledgmentsItem.target = NativeBridge.sharedInstance()
+		helpMenu.addItem(acknowledgmentsItem)
+
 		mainMenu.addItem(helpMenuItem)
 	  }
 
@@ -103,7 +111,13 @@ import Cocoa
   func menu_release_notes_clicked()
 
   @objc func showReleaseNotes(_ sender: NSMenuItem) {
-    // Call into Rust
     menu_release_notes_clicked()
+  }
+
+  @_silgen_name("menu_acknowledgments_clicked")
+  func menu_acknowledgments_clicked()
+
+  @objc func showAcknowledgments(_ sender: NSMenuItem) {
+    menu_acknowledgments_clicked()
   }
 }

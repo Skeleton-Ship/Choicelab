@@ -2,7 +2,7 @@
 use objc::runtime::{Class, BOOL, NO, YES};
 use objc::{msg_send, sel, sel_impl};
 use std::sync::OnceLock;
-use crate::bind_listeners::open_whats_new_window;
+use crate::bind_listeners::{open_whats_new_window, open_acknowledgments_window};
 
 pub fn add_native_menus() {
     unsafe {
@@ -39,14 +39,22 @@ pub fn set_app_handle(handle: tauri::AppHandle) {
 
 #[no_mangle]
 pub extern "C" fn menu_release_notes_clicked() {
-    // Launch or show the Tauri window with label "whatsNew"
     if let Some(app_handle) = APP_HANDLE.get() {
         tauri::async_runtime::block_on(async {
 			open_whats_new_window(app_handle.clone());
         });
     } else {
-        eprintln!(
-            "ERROR: AppHandle not set. Call set_app_handle() early in your Tauri main function."
-        );
+        eprintln!("ERROR: AppHandle not set. Call set_app_handle() early in your Tauri main function.");
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn menu_acknowledgments_clicked() {
+    if let Some(app_handle) = APP_HANDLE.get() {
+        tauri::async_runtime::block_on(async {
+            open_acknowledgments_window(app_handle.clone());
+        });
+    } else {
+        eprintln!("ERROR: AppHandle not set. Call set_app_handle() early in your Tauri main function.");
     }
 }
