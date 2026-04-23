@@ -3,7 +3,7 @@ import playerHTMLDefault from "@surfgreen/choicelab-player-html5/dist/index.html
 import { getStore } from "../data/dataStore";
 import { resolveAssetsForPlayer } from "../preview/resolveAssetsForPlayer";
 import { writeFontsToDir } from "../preview/updatePreviewFonts";
-import { patchPlayerHTML, playerCSSDefault, playerJSDefault } from "./createWebDir";
+import { patchPlayerHTML, playerCSSDefault, playerJSDefault, getBackgroundColor } from "./createWebDir";
 import { stringify } from "../utils/stringify";
 import { slugify } from "../utils/slugify";
 
@@ -14,7 +14,7 @@ export function getExportDirName(projectName: string): string {
 export async function exportProject(exportDir: string): Promise<void> {
   const store = getStore();
 
-  emit("save-text-file", { name: "index.html", contents: patchPlayerHTML(playerHTMLDefault), path: exportDir });
+  emit("save-text-file", { name: "index.html", contents: patchPlayerHTML(playerHTMLDefault, getBackgroundColor()), path: exportDir });
   emit("save-text-file", { name: "choicelab.css", contents: playerCSSDefault, path: exportDir });
   emit("save-text-file", { name: "choicelab.js", contents: playerJSDefault, path: exportDir });
 

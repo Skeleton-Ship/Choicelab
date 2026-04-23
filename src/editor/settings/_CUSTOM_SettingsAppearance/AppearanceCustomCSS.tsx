@@ -21,6 +21,7 @@ export function AppearanceCustomCSS(props: {
         theme: getEditorTheme(theme),
         value: decoded,
         onUpdate: () => {
+          if (editor.value === decoded) return;
           props.update("customCSS", {
             css: editor.value,
           });
