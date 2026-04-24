@@ -3,7 +3,7 @@ use crate::file_operations::{
     load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
-use crate::globals::PENDING_FILES;
+use crate::globals::{mark_app_ready, PENDING_FILES};
 #[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Serialize};
@@ -151,6 +151,7 @@ let handle_update = app_handle.clone();
         match json_value {
             Ok(json) => {
                 let window_label = json["label"].as_str().unwrap_or("N/A");
+                mark_app_ready();
                 let project_window = handle_project_open
                     .get_webview_window(window_label)
                     .unwrap();

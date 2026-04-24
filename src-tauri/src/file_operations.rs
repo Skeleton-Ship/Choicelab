@@ -1,4 +1,5 @@
-use crate::globals::PENDING_FILES;
+use crate::globals::{APP_READY, PENDING_FILES};
+use std::sync::atomic::Ordering;
 use dirs::cache_dir;
 use std::error::Error;
 use std::fs;
@@ -6,7 +7,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
 use std::path::PathBuf;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 
 pub fn create_binary_file(
     file_name: &str,
@@ -220,6 +221,20 @@ pub fn handle_file_associations(app: AppHandle, files: Vec<PathBuf>) {
         .iter()
         .map(|f| f.to_string_lossy().replace('\\', "\\\\"))
         .collect::<Vec<_>>();
-    let mut pending = PENDING_FILES.lock().unwrap();
-    pending.extend(files_js);
+
+    if APP_READY.load(Ordering::SeqCst) {
+        // App is already running — emit directly to the first available window.
+        // Every window listens for opened-files, so whichever is open will handle it.
+        let windows = app.webview_windows();
+        let target = windows
+            .get("launcher")
+            .or_else(|| windows.values().next());
+        if let Some(window) = target {
+            let _ = window.emit("opened-files", &files_js);
+        }
+    } else {
+        // Cold start — queue for the window-ready drain path.
+        let mut pending = PENDING_FILES.lock().unwrap();
+        pending.extend(files_js);
+    }
 }
