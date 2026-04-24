@@ -1,3 +1,6 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 mod bind_listeners;
 mod file_operations;
 mod globals;
@@ -12,9 +15,6 @@ use file_operations::handle_file_associations;
 use std::path::PathBuf;
 #[cfg(target_os = "windows")]
 use tauri::Manager;
-
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
     let builder = tauri::Builder::default()
