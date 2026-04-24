@@ -5,10 +5,11 @@ import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 import { NewProjectIcon, OpenProjectIcon } from "../editor/shared/ColorIcon";
 import { showReleaseNotes } from "../utils/showReleaseNotes";
-const appWindow = getCurrentWebviewWindow();
 import LogoSvg from "../assets/launcher/Logo-Text.svg?react";
 import Splash from "../assets/launcher/Splash.png";
 import SplashDark from "../assets/launcher/Splash-DarkMode.png";
+
+const appWindow = getCurrentWebviewWindow();
 
 function Launcher() {
   const [theme, setTheme] = useState("light");
