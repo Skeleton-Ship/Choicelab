@@ -22,6 +22,27 @@ fn get_pending_files() -> Vec<String> {
     PENDING_FILES.lock().unwrap().drain(..).collect()
 }
 
+#[tauri::command]
+fn open_folder(path: String) {
+    #[cfg(target_os = "macos")]
+    let _ = std::process::Command::new("open").arg(&path).spawn();
+    #[cfg(target_os = "windows")]
+    let _ = std::process::Command::new("explorer").arg(&path).spawn();
+}
+
+#[tauri::command]
+fn list_assets_dir(path: String) -> Vec<String> {
+    std::fs::read_dir(&path)
+        .map(|entries| {
+            entries
+                .filter_map(|e| e.ok())
+                .filter_map(|e| e.file_name().into_string().ok())
+                .filter(|name| !name.starts_with('.'))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
 fn main() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -76,7 +97,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files])
+        .invoke_handler(tauri::generate_handler![get_pending_files, list_assets_dir, open_folder])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {
