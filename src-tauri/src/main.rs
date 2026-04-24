@@ -11,10 +11,16 @@ mod native_bridge_macos;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
+use globals::PENDING_FILES;
 #[cfg(target_os = "windows")]
 use std::path::PathBuf;
 #[cfg(target_os = "windows")]
 use tauri::Manager;
+
+#[tauri::command]
+fn get_pending_files() -> Vec<String> {
+    PENDING_FILES.lock().unwrap().drain(..).collect()
+}
 
 fn main() {
     let builder = tauri::Builder::default()
@@ -70,7 +76,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![get_pending_files])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

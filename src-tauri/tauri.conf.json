@@ -54,32 +54,6 @@
         "resizable": false,
         "titleBarStyle": "Overlay",
         "transparent": true
-      },
-      {
-        "label": "whatsNew",
-        "url": "index.html?window_type=whatsNew",
-        "title": "What’s New in Choicelab",
-        "hiddenTitle": true,
-        "width": 600,
-        "height": 400,
-        "x": 600,
-        "y": 400,
-        "resizable": false,
-        "titleBarStyle": "Overlay",
-        "transparent": true,
-        "visible": false
-      },
-      {
-        "label": "acknowledgments",
-        "url": "index.html?window_type=acknowledgments",
-        "title": "Acknowledgments",
-        "hiddenTitle": false,
-        "width": 620,
-        "height": 520,
-        "resizable": true,
-        "titleBarStyle": "Overlay",
-        "transparent": true,
-        "visible": false
       }
     ]
   }

@@ -3,7 +3,7 @@ use crate::file_operations::{
     load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
-use crate::globals::{mark_app_ready, PENDING_FILES};
+use crate::globals::mark_app_ready;
 #[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Serialize};
@@ -76,34 +76,50 @@ fn release_port_for_label(label: &str) {
 }
 
 pub fn open_whats_new_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_window("whatsNew") {
+	if let Some(window) = app.get_webview_window("whatsNew") {
 		let _ = window.show();
 		let _ = window.set_focus();
 	} else {
-		let window_index = 1; // matches tauri.conf.json
-		let notes_window =
-			tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
-				.unwrap()
-				.build()
-				.unwrap();
-		let _ = notes_window.show();
-		let _ = notes_window.set_focus();
+		let builder = tauri::WebviewWindowBuilder::new(
+			&app,
+			"whatsNew",
+			tauri::WebviewUrl::App("index.html?window_type=whatsNew".into()),
+		)
+		.title("What's New in Choicelab")
+		.inner_size(600.0, 400.0)
+		.position(600.0, 400.0)
+		.resizable(false)
+		.transparent(true);
+		#[cfg(target_os = "macos")]
+		let builder = builder
+			.hidden_title(true)
+			.title_bar_style(tauri::TitleBarStyle::Overlay);
+		let window = builder.build().unwrap();
+		let _ = window.show();
+		let _ = window.set_focus();
 	}
 }
 
 pub fn open_acknowledgments_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_window("acknowledgments") {
+	if let Some(window) = app.get_webview_window("acknowledgments") {
 		let _ = window.show();
 		let _ = window.set_focus();
 	} else {
-		let window_index = 2; // matches tauri.conf.json
-		let ack_window =
-			tauri::WebviewWindowBuilder::from_config(&app, &app.config().app.windows.get(window_index).unwrap())
-				.unwrap()
-				.build()
-				.unwrap();
-		let _ = ack_window.show();
-		let _ = ack_window.set_focus();
+		let builder = tauri::WebviewWindowBuilder::new(
+			&app,
+			"acknowledgments",
+			tauri::WebviewUrl::App("index.html?window_type=acknowledgments".into()),
+		)
+		.title("Acknowledgments")
+		.inner_size(620.0, 520.0)
+		.resizable(true)
+		.transparent(true);
+		#[cfg(target_os = "macos")]
+		let builder = builder
+			.title_bar_style(tauri::TitleBarStyle::Overlay);
+		let window = builder.build().unwrap();
+		let _ = window.show();
+		let _ = window.set_focus();
 	}
 }
 
@@ -157,19 +173,6 @@ let handle_update = app_handle.clone();
                     .unwrap();
                 let _ = handle_project_open
                     .run_on_main_thread(|| apply_project_vibrancy(project_window));
-                // Emit any pending files (global, not per window)
-                {
-                    let mut pending = PENDING_FILES.lock().unwrap();
-                    if !pending.is_empty() {
-                        let files = pending.drain(..).collect::<Vec<_>>();
-                        if let Some(project_window) =
-                            handle_project_open.get_webview_window(window_label)
-                        {
-                            let _ = project_window.emit("opened-files", files);
-                        }
-                    } else {
-                    }
-                }
 
                 // If the window label indicates a project, start a preview server for it
                 if window_label.starts_with("project_")

@@ -25,6 +25,7 @@ import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
 import { setAccentColor } from "./utils/setAccentColor";
 import { listen, emit, once } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
 import { needsMigration, migrateProject } from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
@@ -131,6 +132,17 @@ async function init() {
       }
     }
   });
+
+  // Cold-start: retrieve any files that were queued before this listener was ready.
+  // invoke is request/response so it always arrives regardless of listen() timing.
+  if (windowType === "launcher") {
+    invoke<string[]>("get_pending_files").then((files) => {
+      const filePath = files[0];
+      if (filePath?.endsWith(".clx")) {
+        loadProject(filePath);
+      }
+    });
+  }
 
   let elements = <></>;
 
