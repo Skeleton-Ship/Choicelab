@@ -2,16 +2,16 @@
 
 ## 1.0.0
 
-#### 2026-04-24
+### 2026-04-24
 
-###### New features
+#### New features
 
 - **Autofill** can analyze input buttons in a cell and automatically create variables and branch stems. Qualifying cells will show an "Autofill" button in the inspector, as well as enable a command in the Project menu.
 - **Appearance controls** let you customize the look and feel of a project. Change the font, background color, the look of input buttons, and even add custom CSS to your project.
 - **Exporting a project** is finally possible! An export will bundle your project, any assets, and the Choicelab player into a single directory you can upload to your own site, or a service like itch.io.
 - **Preliminary Windows support** is here! Use Choicelab on Windows 11, with the same functionality as the Mac version.
 
-###### Enhancements
+#### Enhancements
 
 - The app now follows the system accent color for certain controls.
 - Improved the appearance of the app icon, the launcher, and the app toolbar icons.
@@ -22,7 +22,7 @@
 - Video and audio actions now have the ability to force a cell to end (useful for setting a timer on player choices).
 - Buttons now show the label "Continue" by default.
 
-##### Fixes
+#### Fixes
 
 - Certain controls will now blur when a window isn't focused.
 - Fixed an issue where a cell's settings wouldn't always show the correct values.
@@ -31,7 +31,7 @@
 
 ## 0.6
 
-#### 2025-07-16
+### 2025-07-16
 
 - The app now supports **automatic updates**, and will prompt when a new version is available.
 - You can see what's new in Choicelab by going to Help -> Release Notes.
@@ -43,7 +43,7 @@
 
 ## 0.5.2
 
-#### 2025-05-28
+### 2025-05-28
 
 - Media files displayed in the sidebar now load much faster.
 - Fixed an issue that caused the Window and Help menus to constantly disappear and re-appear.
@@ -51,14 +51,14 @@
 
 ## 0.5.1
 
-#### 2025-05-27
+### 2025-05-27
 
 - Fixed an issue that caused some text to not appear in preview.
 - Fixed an issue where toggling preview on a non-start cell wouldn't show the selected cell until selected again.
 
 ## 0.5.0
 
-#### 2025-05-27
+### 2025-05-27
 
 - The Choicelab player now supports timeable actions.
 - Previewing has been improved, so you can now:
@@ -74,7 +74,7 @@
 
 ## 0.4.0
 
-#### 2025-04-17
+### 2025-04-17
 
 - Internal: Players can now add their own props to actions.
 - In the editor, timeable actions (text, images, inputs) can now be timed to media actions (video, audio).
@@ -83,7 +83,7 @@
 
 ## 0.3.0
 
-#### 2024-08-27
+### 2024-08-27
 
 - First version of preview functionality. Press the ▶️ button in the toolbar to open the project in a web view, and test a project from its start point.
 - Cells now feature transition time and navigation point settings that allow for greater control over the pacing and navigation of a project.
@@ -95,42 +95,42 @@
 
 ## 0.2.2
 
-#### 2024-08-12
+### 2024-08-12
 
 - Fixed an issue where numbers added to rules would not parse correctly.
 
 ## 0.2.1
 
-#### 2024-08-11
+### 2024-08-11
 
 - Fixed an issue where special characters (like double quotes, and newlines) weren't properly escaped during project save.
 
 ## 0.2.0
 
-#### 2024-08-11
+### 2024-08-11
 
 - Add support for the Silence action, which can eventually be used to time visual elements without any accompanying audio or video.
 
 ## 0.1.3
 
-#### 2024-01-17
+### 2024-01-17
 
 - Fixed an issue where the new project dialog would not open in macOS Ventura.
 
 ## 0.1.2
 
-#### 2024-01-04
+### 2024-01-04
 
 - Fixed an issue that resulted in projects not opening in macOS Monterey and older.
 
 ## 0.1.1
 
-#### 2024-01-03
+### 2024-01-03
 
 - No-match branch stems now appear last in the branch order, and are deletable with the shortcut Cmd+Option+Del.
 
 ## 0.1.0
 
-#### 2024-01-03
+### 2024-01-03
 
 - Initial release.
