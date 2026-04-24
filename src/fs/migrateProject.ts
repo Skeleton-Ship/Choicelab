@@ -16,6 +16,20 @@ function findOrCreateAsset(
   return asset.id;
 }
 
+export function normalizeProjectMetadata(project: Project): Project {
+  const raw = project as any;
+  if (raw.app !== undefined && raw.appVersion === undefined && raw.schemaVersion !== undefined) {
+    return project;
+  }
+  const version = raw.appVersion ?? raw.app?.version ?? "";
+  const { appVersion: _removed, ...rest } = raw;
+  return {
+    ...rest,
+    schemaVersion: 2,
+    app: { creator: "Choicelab", version },
+  } as Project;
+}
+
 export function needsMigration(project: Project): boolean {
   return !Array.isArray((project as any).assets);
 }

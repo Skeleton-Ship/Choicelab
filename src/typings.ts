@@ -73,9 +73,13 @@ export interface Asset {
   type: "image" | "audio" | "video" | "captions";
 }
 export interface Project {
+  schemaVersion: number;
   name: string;
   id: string;
-  appVersion: string;
+  app: {
+    creator: string;
+    version: string;
+  };
   settings: {
     activePlayer: string;
     player: any;

@@ -18,7 +18,7 @@ export async function saveProject() {
   // Update app version
   const appVersion = await getVersion();
   const update = window.__CHOICELAB_FUNCTIONS__.updateProject;
-  store.project.appVersion = appVersion;
+  store.project.app.version = appVersion;
   // Pass to back-end
   emit("save-text-file", {
     name: `${store.project.name}.clx`,

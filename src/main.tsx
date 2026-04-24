@@ -27,7 +27,7 @@ import { setAccentColor } from "./utils/setAccentColor";
 import { listen, emit, once } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
-import { needsMigration, migrateProject } from "./fs/migrateProject";
+import { needsMigration, migrateProject, normalizeProjectMetadata } from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
@@ -251,6 +251,8 @@ async function init() {
         }
       }
     }
+    // Normalize legacy metadata fields
+    projectData = normalizeProjectMetadata(projectData as Project);
     // Create data store
     createDataStore(projectData, projectPath, fileName);
     createViewStore(projectPath, projectData.name);

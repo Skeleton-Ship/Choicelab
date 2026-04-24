@@ -9,9 +9,13 @@ export default async function createProjectFile(name: string) {
   const appVersion = await getVersion();
   const playerSettings = createPlayerSettings("project");
   const blankProject: Project = {
+    schemaVersion: 2,
     name: name,
     id: uuidv4(),
-    appVersion: appVersion,
+    app: {
+      creator: "Choicelab",
+      version: appVersion,
+    },
     settings: {
       activePlayer: playerSettings.id,
       player: {
