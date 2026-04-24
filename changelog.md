@@ -17,6 +17,7 @@
 - Improved the appearance of the app icon, the launcher, and the app toolbar icons.
 - The inspector now notifies if a cell will play very quickly (because it has visual elements, but no media or input actions to anchor them).
 - In the flowchart and toolbar, the app now follows the system contrast setting.
+- The app will now close when all windows are closed.
 - Video actions can be set to _cover_ the whole screen, or _contain_ themselves in the viewport.
 - Video and audio actions now have the ability to force a cell to end (useful for setting a timer on player choices).
 - Buttons now show the label "Continue" by default.

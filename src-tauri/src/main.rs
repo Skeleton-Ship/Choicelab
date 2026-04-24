@@ -14,7 +14,6 @@ use file_operations::handle_file_associations;
 use globals::PENDING_FILES;
 #[cfg(target_os = "windows")]
 use std::path::PathBuf;
-#[cfg(target_os = "windows")]
 use tauri::Manager;
 
 #[tauri::command]
