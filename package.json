@@ -6,7 +6,7 @@
   "packageManager": "bun@1.3.11",
   "scripts": {
     "preDev": "vite",
-    "preBuild": "bun run acknowledgments && bun run gen-vocab && tsc && vite build",
+    "preBuild": "bun run acknowledgments && bun run gen-vocab && NODE_OPTIONS=--max-old-space-size=4096 tsc && NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "gen-vocab": "bun scripts/embeddings/trim-glove.ts",
     "test-classifier": "bun scripts/embeddings/test-classifier.ts",
     "dev": "tauri dev",
