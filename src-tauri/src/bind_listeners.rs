@@ -310,25 +310,21 @@ let handle_update = app_handle.clone();
             Ok(json) => {
                 let version_path = json["path"].as_str().unwrap_or("N/A");
                 let window_label = json["label"].as_str().unwrap_or("N/A");
-                let script_prefix = "window.__CHOICELAB_DATA_RAW__ = `";
-                let script_suffix = "`;";
                 let project_window = handle_request_project
                     .get_webview_window(window_label)
                     .unwrap();
                 match read_text_file(version_path) {
                     Ok(contents) => {
-                        let script_text = format!("{}{}{}", script_prefix, contents, script_suffix);
-                        let script_text_ref: &str = &script_text;
-                        let _ = project_window.eval(script_text_ref);
+                        let encoded = serde_json::to_string(&contents).unwrap_or_else(|_| "\"\"".to_string());
+                        let script_text = format!("window.__CHOICELAB_DATA_RAW__ = {};", encoded);
+                        let _ = project_window.eval(&script_text);
                         project_window
                             .emit("receive-project-file", Payload { message: contents })
                             .unwrap();
                     }
                     Err(e) => {
-                        let contents = "__INVALID_CHOICELAB_FILE__";
-                        let script_text = format!("{}{}{}", script_prefix, contents, script_suffix);
-                        let script_text_ref: &str = &script_text;
-                        let _ = project_window.eval(script_text_ref);
+                        let script_text = "window.__CHOICELAB_DATA_RAW__ = \"__INVALID_CHOICELAB_FILE__\";";
+                        let _ = project_window.eval(script_text);
                         eprintln!("Error reading project file: {}", e);
                     }
                 }

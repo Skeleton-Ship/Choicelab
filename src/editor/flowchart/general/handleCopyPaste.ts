@@ -93,7 +93,7 @@ function handleCutCopy(action: string, update: Function) {
   let clipboardContents = {
     ChoicelabNodes: selectedNodes,
   };
-  const clipboardStr: string = stringify(clipboardContents, false);
+  const clipboardStr: string = stringify(clipboardContents);
   const type = "text/plain";
   const blob = new Blob([clipboardStr], { type });
   const data = [new ClipboardItem({ [type]: blob })];

@@ -2,6 +2,30 @@ import { Project, Asset, AnyNode, Action, Sequence } from "../typings";
 import { createAsset } from "../data/createNode";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 
+function unescapeString(str: string): string {
+  // Reverses the double-escaping introduced by the old stringify's manual escapeString pass.
+  // JSON.parse has already run, so spurious backslashes added before quotes and whitespace
+  // control characters are now literal chars in memory — strip them.
+  return str
+    .replace(/((?:\\\\)*)\\"/g, (_, p1) => `${p1}"`)
+    .replace(/((?:\\\\)*)\\\n/g, (_, p1) => `${p1}\n`)
+    .replace(/((?:\\\\)*)\\\r/g, (_, p1) => `${p1}\r`)
+    .replace(/((?:\\\\)*)\\\t/g, (_, p1) => `${p1}\t`);
+}
+
+function unescapeObjectValues(obj: any): any {
+  if (typeof obj === "string") return unescapeString(obj);
+  if (Array.isArray(obj)) return obj.map(unescapeObjectValues);
+  if (typeof obj === "object" && obj !== null) {
+    const result: any = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) result[key] = unescapeObjectValues(obj[key]);
+    }
+    return result;
+  }
+  return obj;
+}
+
 const ASSET_CONTROLS = new Set(["image", "audio", "video", "captions"]);
 
 function findOrCreateAsset(
@@ -23,8 +47,9 @@ export function normalizeProjectMetadata(project: Project): Project {
   }
   const version = raw.appVersion ?? raw.app?.version ?? "";
   const { appVersion: _removed, ...rest } = raw;
+  const unescaped = unescapeObjectValues(rest);
   return {
-    ...rest,
+    ...unescaped,
     schemaVersion: 2,
     app: { creator: "Choicelab", version },
   } as Project;
