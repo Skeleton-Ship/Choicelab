@@ -9,7 +9,7 @@
 - **Autofill** can analyze input buttons in a cell and automatically create variables and branch stems. Qualifying cells will show an "Autofill" button in the inspector, as well as enable a command in the Project menu.
 - **Appearance controls** let you customize the look and feel of a project. Change the font, background color, the look of input buttons, and even add custom CSS to your project.
 - **Exporting a project** is finally possible! An export will bundle your project, any assets, and the Choicelab player into a single directory you can upload to your own site, or a service like itch.io.
-- **Preliminary Windows support** is here! Use Choicelab on Windows 11, with the same functionality as the Mac version.
+- **Windows support** is here! Use Choicelab on Windows 11, with the same functionality as the Mac version.
 
 #### Enhancements
 
