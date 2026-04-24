@@ -2,10 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 // Path to the package.json file
-const packageJsonPath = path.join(__dirname, "package.json");
+const packageJsonPath = path.join(__dirname, "../package.json");
 
 // Path to the TOML file
-const tomlFilePath = path.join(__dirname, "/src-tauri/Cargo.toml");
+const tomlFilePath = path.join(__dirname, "../src-tauri/Cargo.toml");
 
 // Read the package.json file
 fs.readFile(packageJsonPath, "utf8", (err, data) => {
