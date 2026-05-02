@@ -6,6 +6,9 @@ import {
   FCAudio,
   FCVideo,
   FCSilence,
+  FCBackgroundAudio,
+  FCBackgroundVideo,
+  FCEndBackground,
 } from "./internalActionFlowchartEls";
 
 const internalActionDefs: ActionDefs = {
@@ -108,6 +111,7 @@ const internalActionDefs: ActionDefs = {
         },
       ],
     },
+    /*
     {
       name: "image",
       label: "Show Image",
@@ -139,6 +143,7 @@ const internalActionDefs: ActionDefs = {
         },
       ],
     },
+	*/
     {
       name: "button",
       label: "Show Button",
@@ -238,6 +243,139 @@ const internalActionDefs: ActionDefs = {
     },
 	*/
     {
+      name: "backgroundAudio",
+      label: "Play Background Audio",
+      description:
+        "Play an audio file in the background without blocking cell progression.",
+      extendable: false,
+      mediaElement: false,
+      flowchart: FCBackgroundAudio,
+      editor: {
+        iconName: "volume-up-fill",
+        iconColor: "white",
+        iconBackgroundColor: "#0097A7",
+      },
+      props: [
+        {
+          name: "source",
+          label: "Audio File",
+          control: "audio",
+          className: "hide-label",
+          required: true,
+        },
+        {
+          name: "loop",
+          label: "Loop",
+          control: "boolean",
+          default: false,
+        },
+        {
+          name: "persist",
+          label: "Persist across cells",
+          control: "boolean",
+          default: false,
+        },
+        {
+          name: "name",
+          label: "Name",
+          control: "text",
+          default: "",
+        },
+      ],
+    },
+    {
+      name: "backgroundVideo",
+      label: "Play Background Video",
+      description:
+        "Play a video file in the background without blocking cell progression.",
+      extendable: false,
+      mediaElement: false,
+      flowchart: FCBackgroundVideo,
+      editor: {
+        iconName: "film",
+        iconColor: "white",
+        iconBackgroundColor: "#1B7F5A",
+      },
+      props: [
+        {
+          name: "source",
+          label: "Video File",
+          control: "video",
+          className: "hide-label",
+          required: true,
+        },
+        {
+          name: "loop",
+          label: "Loop",
+          control: "boolean",
+          default: false,
+        },
+        {
+          name: "muted",
+          label: "Muted",
+          control: "boolean",
+          default: false,
+        },
+        {
+          name: "persist",
+          label: "Persist across cells",
+          control: "boolean",
+          default: false,
+        },
+        {
+          name: "name",
+          label: "Name",
+          control: "text",
+          default: "",
+        },
+      ],
+    },
+    {
+      name: "endBackgroundAudio",
+      label: "End Background Audio",
+      description: "Stop a named background audio.",
+      extendable: false,
+      mediaElement: false,
+      flowchart: FCEndBackground,
+      editor: {
+        iconName: "stop-fill",
+        iconColor: "white",
+        iconBackgroundColor: "#0097A7",
+      },
+      props: [
+        {
+          name: "name",
+          label: "Name",
+          control: "text",
+          required: true,
+          default: "",
+        },
+      ],
+    },
+    {
+      name: "endBackgroundVideo",
+      label: "End Background Video",
+      description: "Stop a named background video.",
+      extendable: false,
+      mediaElement: false,
+      flowchart: FCEndBackground,
+      editor: {
+        iconName: "stop-fill",
+        iconColor: "white",
+        iconBackgroundColor: "#1B7F5A",
+      },
+      props: [
+        {
+          name: "name",
+          label: "Name",
+          control: "text",
+          required: true,
+          default: "",
+        },
+      ],
+    },
+    /*
+    {
       name: "silence",
       label: "Play Silence",
       description:
@@ -260,6 +398,7 @@ const internalActionDefs: ActionDefs = {
         },
       ],
     },
+	*/
   ],
 };
 

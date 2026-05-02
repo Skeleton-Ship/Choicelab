@@ -209,12 +209,44 @@ export function mediaEnded(id: string) {
   }
 }
 
+export function endBackgroundItem(type: "audio" | "video", name: string) {
+  const store = getStore();
+  const registry = type === "audio" ? store.playback.backgroundAudio : store.playback.backgroundVideo;
+  const el = registry[name];
+  if (!el) return;
+  delete registry[name];
+  if (type === "audio") {
+    const startVolume = el.volume;
+    const interval = 16;
+    const steps = 300 / interval;
+    const volumeStep = startVolume / steps;
+    let currentStep = 0;
+    const fade = setInterval(() => {
+      currentStep++;
+      el.volume = Math.max(0, el.volume - volumeStep);
+      if (currentStep >= steps) {
+        clearInterval(fade);
+        el.pause();
+        el.parentNode?.removeChild(el);
+      }
+    }, interval);
+  } else {
+    el.classList.add("clear");
+    setTimeout(() => {
+      el.pause();
+      el.parentNode?.removeChild(el);
+    }, 300);
+  }
+}
+
 export function clearMediaItems(delay: number) {
   const store = getStore();
   const media = store.playback.media;
   clearScrubber();
   media.items = [];
   media.currentItem = false;
+  media.pendingBackgroundMedia = [];
+  media.playing = false;
   setControlState("disabled");
   const bgLayer = store.playback.rootEl.querySelector(".cl-background");
   bgLayer?.classList.add("clear");
@@ -225,6 +257,26 @@ export function clearMediaItems(delay: number) {
     mediaItemEls.forEach((el) => {
       el.parentNode?.removeChild(el);
     });
+    const bgMediaEls = store.playback.rootEl.querySelectorAll(
+      ".cl-background .cl-background-media:not([data-persist])"
+    );
+    bgMediaEls.forEach((el) => {
+      (el as HTMLMediaElement).pause();
+      const name = (el as HTMLElement).dataset.bgName;
+      if (name) {
+        if (el.tagName === "AUDIO") delete store.playback.backgroundAudio[name];
+        if (el.tagName === "VIDEO") delete store.playback.backgroundVideo[name];
+      }
+      el.parentNode?.removeChild(el);
+    });
     bgLayer?.classList.remove("clear");
+    // If background media is still active after cleanup, keep controls enabled
+    const hasBackgroundMedia =
+      Object.keys(store.playback.backgroundAudio).length > 0 ||
+      Object.keys(store.playback.backgroundVideo).length > 0;
+    if (hasBackgroundMedia) {
+      media.playing = true;
+      setControlState("playing");
+    }
   }, delay);
 }

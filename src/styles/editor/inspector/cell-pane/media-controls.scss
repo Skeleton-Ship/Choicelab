@@ -35,7 +35,8 @@
     gap: 8px;
     display: flex;
     align-items: center;
-    &.video {
+    &.video,
+    &.backgroundVideo {
       position: absolute;
       bottom: 10px;
       left: 10px;
@@ -45,7 +46,8 @@
       border-radius: 8px;
       background-color: rgba(56, 56, 57, 0.95);
     }
-    &.audio {
+    &.audio,
+    &.backgroundAudio {
       padding: 0;
       .scrubber {
         display: none;

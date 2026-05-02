@@ -102,6 +102,11 @@ export function MediaControl(props: {
     };
   }, []);
 
+  const actionDef = getActionDef(action);
+  const isAudio = action.name === "audio" || action.name === "backgroundAudio";
+  const isVideo = action.name === "video" || action.name === "backgroundVideo";
+  const supportsTimedElements = actionDef?.mediaElement === true;
+
   const timeableActions = cell.actions
     .map((action) => {
       const def = getActionDef(action);
@@ -178,13 +183,11 @@ export function MediaControl(props: {
 
   return (
     <>
-      {action.name === "audio" && (
+      {isAudio && (
         <Waveform el={media} actionId={props.actionId} flags={timingFlagEls} />
       )}
       <div
-        class={`media-controls ${action.name} ${
-          action.name === "video" ? "overlay" : ""
-        }`}
+        class={`media-controls ${action.name} ${isVideo ? "overlay" : ""}`}
       >
         <button
           class="play-button"
@@ -202,26 +205,30 @@ export function MediaControl(props: {
         </button>
         <span class="current-time">{currentTimeLabel}</span>
         <div class="scrubber" ref={scrubberRef}>
-          {action.name === "video" ? timingFlagEls : null}
+          {isVideo ? timingFlagEls : null}
           <div class="progress"></div>
           <div class="base"></div>
         </div>
-        <button
-          class={`small ui-button timeable-actions-button ${
-            action.name === "video" ? "dark-mode" : ""
-          }`}
-          onClick={() => showActionsPane(!actionsPaneVisible)}
-        >
-          Actions...
-        </button>
+        {supportsTimedElements && (
+          <button
+            class={`small ui-button timeable-actions-button ${
+              isVideo ? "dark-mode" : ""
+            }`}
+            onClick={() => showActionsPane(!actionsPaneVisible)}
+          >
+            Actions...
+          </button>
+        )}
       </div>
-      <MiniPanel
-        visible={actionsPaneVisible}
-        origin="top-right"
-        className={`timeable-els ${action.name}`}
-      >
-        {timeableEls}
-      </MiniPanel>
+      {supportsTimedElements && (
+        <MiniPanel
+          visible={actionsPaneVisible}
+          origin="top-right"
+          className={`timeable-els ${action.name}`}
+        >
+          {timeableEls}
+        </MiniPanel>
+      )}
     </>
   );
 }

@@ -65,4 +65,46 @@
       }
     }
   }
+  .action.backgroundAudio,
+  .action.endBackgroundAudio {
+    div, em {
+      border-radius: 5px;
+      padding: 5px;
+      color: #007a87;
+      background-color: #e0f7fa;
+      @media (prefers-color-scheme: dark) {
+        color: #4dd0e1;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: #1a3f44;
+      }
+      i {
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+  }
+  .action.backgroundVideo,
+  .action.endBackgroundVideo {
+    div, em {
+      border-radius: 5px;
+      padding: 5px;
+      color: #1b7f5a;
+      background-color: #e8f5ee;
+      @media (prefers-color-scheme: dark) {
+        color: #66bb9a;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: #1a3d2e;
+      }
+      i {
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+  }
+  .action.endBackgroundAudio,
+  .action.endBackgroundVideo {
+    div, em {
+      opacity: 0.75;
+    }
+  }
 }

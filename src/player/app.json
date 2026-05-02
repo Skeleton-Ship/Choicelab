@@ -107,6 +107,27 @@
               ]
             }
           ]
+        },
+        "backgroundVideo": {
+          "props": [
+            {
+              "name": "fit",
+              "label": "Fit",
+              "className": "col-2",
+              "control": "dropdown",
+              "default": "cover",
+              "options": [
+                {
+                  "value": "cover",
+                  "label": "Cover"
+                },
+                {
+                  "value": "contain",
+                  "label": "Contain"
+                }
+              ]
+            }
+          ]
         }
       }
     }

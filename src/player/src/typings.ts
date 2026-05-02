@@ -61,7 +61,10 @@ export interface Store {
           pause: Function;
         };
       }>;
+      pendingBackgroundMedia: HTMLMediaElement[];
     };
+    backgroundAudio: Record<string, HTMLAudioElement>;
+    backgroundVideo: Record<string, HTMLVideoElement>;
     logging: boolean;
     events: { [key: string]: Array<Event> };
     currentCell: string;

@@ -7,7 +7,7 @@ import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { updatePreviewFonts } from "./updatePreviewFonts";
 import { resolveAssetsForPlayer } from "./resolveAssetsForPlayer";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
-import { patchPlayerHTML, playerHTMLDefault, getBackgroundColor } from "../fs/createWebDir";
+import { patchPlayerHTML, playerHTMLDefault, playerCSSDefault, playerJSDefault, getBackgroundColor } from "../fs/createWebDir";
 
 function getPreviewId(store: Store) {
   const viewStore = getViewStore();
@@ -48,6 +48,8 @@ export async function updatePreview(includeAssets: boolean) {
   const label = getProjectWindowLabel(projectPath);
   const previewPath = await resolve(await appCacheDir(), "Projects", label, "Preview");
   emit("save-text-file", { name: "index.html", contents: patchPlayerHTML(playerHTMLDefault, getBackgroundColor()), path: previewPath, label });
+  emit("save-text-file", { name: "choicelab.js", contents: playerJSDefault, path: previewPath, label });
+  emit("save-text-file", { name: "choicelab.css", contents: playerCSSDefault, path: previewPath, label });
   // Update preview fonts (skips work if font families haven't changed)
   updatePreviewFonts();
   // Get currently selected node

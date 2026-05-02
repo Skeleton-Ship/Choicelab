@@ -1,6 +1,27 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ViteDevServer } from "vite";
 import { fileURLToPath } from "url";
 import svgr from "vite-plugin-svgr";
+
+const playerDistDir = fileURLToPath(new URL("./src/player/dist", import.meta.url));
+
+function watchPlayerDist() {
+  return {
+    name: "watch-player-dist",
+    configureServer(server: ViteDevServer) {
+      server.watcher.add(playerDistDir);
+      server.watcher.on("change", (file: string) => {
+        const normalized = file.replaceAll("\\", "/");
+        if (!normalized.includes("/player/dist/")) return;
+        server.moduleGraph.fileToModulesMap.forEach((mods, key) => {
+          if (key.includes("/player/dist/")) {
+            mods.forEach((mod) => server.moduleGraph.invalidateModule(mod));
+          }
+        });
+        server.ws.send({ type: "full-reload" });
+      });
+    },
+  };
+}
 
 function svgPrefixIdsPlugin(
   code: string,
@@ -24,6 +45,7 @@ export default defineConfig(async () => ({
         plugins: [svgPrefixIdsPlugin, "@svgr/plugin-jsx"],
       },
     }),
+    watchPlayerDist(),
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

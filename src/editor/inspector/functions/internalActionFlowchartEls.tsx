@@ -118,6 +118,49 @@ export function FCSilence(props: { duration: number }) {
 }
 
 /*
+ * Background Audio
+ */
+export function FCBackgroundAudio(props: { source: string }) {
+  let label = <span class="no-src">Audio</span>;
+  if (typeof props.source !== "undefined" && props.source !== "") {
+    label = (
+      <div>
+        <i class="bi bi-music-note-beamed"></i>
+        {props.source}
+      </div>
+    );
+  }
+  return <>{label}</>;
+}
+
+/*
+ * Background Video
+ */
+export function FCBackgroundVideo(props: { source: string }) {
+  let label = <span class="no-src">Video</span>;
+  if (props.source && props.source !== "") {
+    label = (
+      <div>
+        <i class="bi bi-camera-video-fill"></i>
+        {props.source}
+      </div>
+    );
+  }
+  return <>{label}</>;
+}
+
+/*
+ * End Background Audio / Video
+ */
+export function FCEndBackground(props: { name: string }) {
+  return (
+    <div>
+      <em>Stop: {props.name || "..."}</em>
+    </div>
+  );
+}
+
+/*
  * Appearance
  */
 

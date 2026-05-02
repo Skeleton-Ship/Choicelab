@@ -89,6 +89,18 @@ export function createMediaControls() {
 }
 
 /*
+ * Enable controls without changing play/pause state — safe to call when foreground media may already be active
+ */
+export function ensureControlsEnabled() {
+  const rootEl = getStore().playback.rootEl;
+  const controls = rootEl.querySelector(".cl-controls") as Element;
+  const playControl = controls.querySelector(".play.button");
+  if (!playControl || !playControl.hasAttribute("disabled")) return;
+  playControl.removeAttribute("disabled");
+  playControl.classList.add("idle");
+}
+
+/*
  * Enable/disable playback controls, set play/pause button state
  */
 export function setControlState(state: string) {

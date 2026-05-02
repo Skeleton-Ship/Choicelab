@@ -45,13 +45,22 @@ function Choicelab() {
                   tapEvent: undefined,
                 },
                 items: [],
+                pendingBackgroundMedia: [],
               },
+              backgroundAudio: {},
+              backgroundVideo: {},
             },
           };
-          // Enable autoplay immediately if the browser already permits it
-          canAutoplay.audio().then(({ result }) => {
-            if (result) enableAutoplay();
-          });
+          // Enable autoplay immediately if the browser permits it, unless the
+          // host has requested deferred autoplay (e.g. editor preview context)
+          const startMediaOnLoad = new URLSearchParams(window.location.search).get("startMediaOnLoad") !== "false";
+          if (startMediaOnLoad) {
+            canAutoplay.audio().then(({ result }) => {
+              if (result) enableAutoplay();
+            });
+          }
+          // Unlock autoplay on first user interaction regardless of startMediaOnLoad
+          document.addEventListener("click", () => enableAutoplay(), { once: true });
           // Add starting values to variables
           const playbackVars = window.__CHOICELAB__.playback.variables;
           window.__CHOICELAB__.project.variables.items.forEach((thisVar) => {
@@ -118,6 +127,10 @@ function Choicelab() {
           const bgLayer = document.createElement("div");
           bgLayer.classList.add("cl-background");
           props.root.appendChild(bgLayer);
+          // Create persist layer for background media that survives cell transitions
+          const persistLayer = document.createElement("div");
+          persistLayer.classList.add("cl-persist-layer");
+          props.root.appendChild(persistLayer);
           // Create media controls
           const mediaControls = createMediaControls();
           const playButton = mediaControls.querySelector(".play.button") as HTMLElement;

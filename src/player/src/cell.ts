@@ -8,6 +8,10 @@ import { action as buttonAction } from "./actions/button";
 import { action as audioAction } from "./actions/audio";
 import { action as videoAction } from "./actions/video";
 import { action as silenceAction } from "./actions/silence";
+import { action as backgroundAudioAction } from "./actions/backgroundAudio";
+import { action as backgroundVideoAction } from "./actions/backgroundVideo";
+import { action as endBackgroundAudioAction } from "./actions/endBackgroundAudio";
+import { action as endBackgroundVideoAction } from "./actions/endBackgroundVideo";
 import { log, error } from "./logging";
 import { navigate } from "./navigation";
 import { enqueueMedia, clearMediaItems, forceEndMedia } from "./media";
@@ -22,6 +26,10 @@ const actionDefs = {
   silence: silenceAction,
   audio: audioAction,
   video: videoAction,
+  backgroundAudio: backgroundAudioAction,
+  backgroundVideo: backgroundVideoAction,
+  endBackgroundAudio: endBackgroundAudioAction,
+  endBackgroundVideo: endBackgroundVideoAction,
 };
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

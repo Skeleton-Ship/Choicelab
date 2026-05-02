@@ -5,6 +5,8 @@ export function enableAutoplay() {
   const media = getStore().playback.media;
   if (media.autoplay) return;
   media.autoplay = true;
+  media.pendingBackgroundMedia.forEach((el) => el.play().catch(() => {}));
+  media.pendingBackgroundMedia = [];
   if (media.currentItem && !media.playing) {
     playMedia();
   }

@@ -50,10 +50,11 @@ export default function FileUpload(props: {
         setLoading(true);
         // First, make sure the file type is valid
         let isValidType = false;
+        const fileExt = "." + file.name.split(".").pop()?.toLowerCase();
         const acceptedTypes = props.accept.split(",");
         acceptedTypes.forEach((fileType: string) => {
           fileType = fileType.trim();
-          if (fileType === file.type) {
+          if (fileType === file.type || fileType === fileExt) {
             isValidType = true;
           }
         });
