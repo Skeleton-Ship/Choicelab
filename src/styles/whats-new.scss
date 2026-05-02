@@ -6,11 +6,13 @@ $toolbar-offset: 32px;
   outline: none;
   -webkit-app-region: drag;
   -webkit-user-select: text;
+  user-select: text;
   background-color: var(--standard-window-bg-color);
   @media (prefers-color-scheme: dark) {
     color: white;
   }
   .inner {
+    -webkit-app-region: no-drag;
     position: relative;
     top: $toolbar-offset;
     width: calc(100% - 10px);
@@ -19,6 +21,7 @@ $toolbar-offset: 32px;
     margin-bottom: 10px;
     padding: 0 42px;
     padding-top: 24px;
+    z-index: 10;
     padding-bottom: 26px;
     padding-left: 42px;
     padding-right: 66px;
