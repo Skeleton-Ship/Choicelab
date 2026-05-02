@@ -33,6 +33,7 @@ import {
   normalizeProjectMetadata,
 } from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
+import { open } from "@tauri-apps/plugin-shell";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
 import { buildMenu } from "./menu/buildMenu";
