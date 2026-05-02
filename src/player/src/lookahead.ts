@@ -14,7 +14,7 @@ function getNextCells(cell: Cell): Cell[] {
     return next.stems
       .map((stem) => {
         const node = stem.link?.to ? getNode(stem.link.to) : null;
-        return node?.type === "cell" ? (node as unknown as Cell) : null;
+        return node && node.type === "cell" ? (node as unknown as Cell) : null;
       })
       .filter((c): c is Cell => c !== null);
   }
