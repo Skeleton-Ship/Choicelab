@@ -44,7 +44,7 @@ If you need fresh Apple Developer credentials, you'll add them as secret keys to
 
 ## Deploying
 
-Deploying automatic app updates requires creating a Tauri private key, then associating it with the [choicelab-app repo on GitHub](https://github.com/austinheller/choicelab-app). See [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info.
+Deploying automatic app updates requires creating a Tauri private key, then associating it with the [choicelab-app repo on GitHub](https://github.com/Skeleton-Ship/Choicelab). See [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info.
 
 Once you successfully build the app (using the process above):
 
