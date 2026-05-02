@@ -28,6 +28,8 @@ export function registerMedia(props: {
   type: string;
   el?: any;
   fn?: { play: Function; pause: Function };
+  buildIn?: string;
+  buildOut?: string;
 }) {
   const store = getStore();
   const thisMedia = getMediaById(props.id);
@@ -43,6 +45,8 @@ export function registerMedia(props: {
     type: props.type,
     fn: props.fn ? props.fn : undefined,
     el: props.el ? props.el : undefined,
+    buildIn: props.buildIn,
+    buildOut: props.buildOut,
   };
   media.items.push(mediaItem);
   // Add media to DOM
@@ -58,7 +62,7 @@ export function registerMedia(props: {
       const videoEl = mediaItem.el as HTMLVideoElement;
       videoEl.classList.add("cl-action");
       videoEl.classList.add("cl-media");
-      bgLayer.appendChild(videoEl);
+      if (!videoEl.parentNode) bgLayer.appendChild(videoEl);
       break;
   }
   // Trigger play function
@@ -121,6 +125,7 @@ export function enqueueMedia(id: string) {
   store.playback.rootEl
     .querySelector(".cl-background .cl-media.active")
     ?.classList.remove("active");
+  if (mediaItem.buildIn === "none") mediaItem.el.classList.add("no-fade-in");
   mediaItem.el.classList.add("active");
   // Enable play control
   setControlState("enabled");
@@ -231,17 +236,23 @@ export function endBackgroundItem(type: "audio" | "video", name: string) {
       }
     }, interval);
   } else {
-    el.classList.add("clear");
-    setTimeout(() => {
+    if ((el as HTMLElement).dataset.buildOut === "none") {
       el.pause();
       el.parentNode?.removeChild(el);
-    }, 300);
+    } else {
+      el.classList.add("clear");
+      setTimeout(() => {
+        el.pause();
+        el.parentNode?.removeChild(el);
+      }, 300);
+    }
   }
 }
 
 export function clearMediaItems(delay: number) {
   const store = getStore();
   const media = store.playback.media;
+  const fadeOut = media.currentItem === false || media.currentItem.buildOut !== "none";
   clearScrubber();
   media.items = [];
   media.currentItem = false;
@@ -249,7 +260,14 @@ export function clearMediaItems(delay: number) {
   media.playing = false;
   setControlState("disabled");
   const bgLayer = store.playback.rootEl.querySelector(".cl-background");
-  bgLayer?.classList.add("clear");
+  if (fadeOut) {
+    bgLayer?.classList.add("clear");
+  } else {
+    // Instant removal: remove active media elements immediately without animation
+    store.playback.rootEl
+      .querySelectorAll(".cl-background .cl-media")
+      .forEach((el) => el.parentNode?.removeChild(el));
+  }
   setTimeout(() => {
     const mediaItemEls = store.playback.rootEl.querySelectorAll(
       ".cl-background .cl-media"

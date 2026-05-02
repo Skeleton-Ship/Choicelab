@@ -109,6 +109,26 @@ const internalActionDefs: ActionDefs = {
           control: "boolean",
           default: false,
         },
+        {
+          name: "buildIn",
+          label: "Build In",
+          control: "dropdown",
+          default: "fade",
+          options: [
+            { value: "fade", label: "Fade" },
+            { value: "none", label: "None" },
+          ],
+        },
+        {
+          name: "buildOut",
+          label: "Build Out",
+          control: "dropdown",
+          default: "fade",
+          options: [
+            { value: "fade", label: "Fade" },
+            { value: "none", label: "None" },
+          ],
+        },
       ],
     },
     /*
@@ -327,6 +347,26 @@ const internalActionDefs: ActionDefs = {
           label: "Name",
           control: "text",
           default: "",
+        },
+        {
+          name: "buildIn",
+          label: "Build In",
+          control: "dropdown",
+          default: "fade",
+          options: [
+            { value: "fade", label: "Fade" },
+            { value: "none", label: "None" },
+          ],
+        },
+        {
+          name: "buildOut",
+          label: "Build Out",
+          control: "dropdown",
+          default: "fade",
+          options: [
+            { value: "fade", label: "Fade" },
+            { value: "none", label: "None" },
+          ],
         },
       ],
     },

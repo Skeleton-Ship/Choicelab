@@ -189,6 +189,14 @@ html {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  animation: fade-in 0.3s ease forwards;
+}
+
+.cl-background .cl-background-media.no-fade-in,
+.cl-persist-layer .cl-background-media.no-fade-in {
+  opacity: 1;
+  animation: none;
 }
 
 .cl-background .cl-background-media.fit-contain,
@@ -201,8 +209,23 @@ html {
   animation: fade-out 0.3s ease forwards;
 }
 
+.cl-lookahead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .cl-background .cl-media.active {
   display: block;
+  opacity: 0;
+  animation: fade-in 0.3s ease forwards;
+}
+
+.cl-background .cl-media.active.no-fade-in {
+  opacity: 1;
+  animation: none;
 }
 
 /*

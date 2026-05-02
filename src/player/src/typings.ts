@@ -25,6 +25,8 @@ export interface MediaItem {
     play: Function;
     pause: Function;
   };
+  buildIn?: string;
+  buildOut?: string;
 }
 
 export interface HistoryPoint {

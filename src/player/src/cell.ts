@@ -18,6 +18,7 @@ import { enqueueMedia, clearMediaItems, forceEndMedia } from "./media";
 import { recordHistoryPoint } from "./history";
 import { getActionTiming } from "./media/actionTiming";
 import { forceReflow } from "./utils/forceReflow";
+import { cleanupStaleLookaheads, preloadLookaheadVideos } from "./lookahead";
 
 const actionDefs = {
   text: textAction,
@@ -65,6 +66,9 @@ export async function runCell(cell: Cell) {
   // Prevent cell from playing twice
   if (store.playback.currentCell === cell.id) return;
   store.playback.currentCell = cell.id;
+
+  // Remove lookahead elements that belong to branches not taken
+  cleanupStaleLookaheads(cell);
   if (settings && settings.navigationPoint === true)
     recordHistoryPoint(cell.id);
   log("Playing cell:", cell);
@@ -156,6 +160,9 @@ export async function runCell(cell: Cell) {
   if (media.items.length > 0) {
     enqueueMedia(media.items[0].id);
   }
+
+  // Pre-insert hidden video elements for the next possible cell(s)
+  preloadLookaheadVideos(cell);
 
   // Check if cell is done
   const checkCellDone = setInterval(() => {

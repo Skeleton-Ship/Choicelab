@@ -5,32 +5,41 @@ import { registerMedia, mediaEnded } from "../media";
 const action = {
   render: (action: ActionForPlayback, done: Function) => {
     const store = getStore();
-    let video = document.createElement("video");
-    const src = store.project.projectPath + "/Assets/" + action.props.source;
-    if (action.extendedProps.fit) {
-      video.classList.add(`fit-${action.extendedProps.fit}`);
+
+    // Promote lookahead element if one was pre-inserted for this action
+    const lookahead = store.playback.rootEl.querySelector(
+      `[data-lookahead-id="${action.id}"]`
+    ) as HTMLVideoElement | null;
+
+    let video: HTMLVideoElement;
+    if (lookahead) {
+      video = lookahead;
+      delete video.dataset.lookaheadId;
+      video.classList.remove("cl-lookahead");
+    } else {
+      video = document.createElement("video");
+      video.setAttribute("src", store.project.projectPath + "/Assets/" + action.props.source);
+      video.setAttribute("playsinline", "");
     }
-    video.setAttribute("src", src);
-    video.setAttribute("playsinline", "");
-    if (action.props.muted) {
-      video.muted = true;
-    }
+
+    if (action.extendedProps.fit) video.classList.add(`fit-${action.extendedProps.fit}`);
+    if (action.props.muted) video.muted = true;
+
     let endCell = false;
-    if (action.props.hasOwnProperty("endCell")) {
-      endCell = action.props.endCell;
-    }
+    if (action.props.hasOwnProperty("endCell")) endCell = action.props.endCell;
+
     registerMedia({
       id: action.id,
       type: "video",
       el: video,
+      buildIn: action.props.buildIn,
+      buildOut: action.props.buildOut,
     });
     video.addEventListener(
       "ended",
       () => {
         mediaEnded(action.id);
-        done({
-          forceEnd: endCell,
-        });
+        done({ forceEnd: endCell });
       },
       { once: true }
     );
