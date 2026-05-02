@@ -40,7 +40,6 @@ function createViewStore(projectPath: string, projectName: string) {
       nodeId: "",
       stemId: "",
     },
-    shiftDown: false,
     selectedNodes: [],
     selectedStem: false,
     autoGenerateLabel: null,

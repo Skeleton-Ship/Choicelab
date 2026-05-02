@@ -32,15 +32,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
   useEffect(() => {
     // Set shift, arrow key events
     const keydownHandler = (e: KeyboardEvent) => {
-      if (e.key === "Shift" && inTextElement() === false) {
-        const viewStore = getViewStore();
-        if (viewStore.focus === true) {
-          viewStore.shiftDown = true;
-          setViewStore(viewStore);
-          updateView();
-          // props.update(false, false);
-        }
-      } else if (
+      if (
         getFocusedRegion() === "sequence" &&
         (e.key === "ArrowUp" ||
           e.key === "ArrowDown" ||
@@ -51,17 +43,7 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         handleKeyNavigation(e.key, props.update);
       }
     };
-    const keyupHandler = (e: KeyboardEvent) => {
-      if (e.key === "Shift" && inTextElement() === false) {
-        const viewStore = getViewStore();
-        if (viewStore.focus === true) {
-          viewStore.shiftDown = false;
-          setViewStore(viewStore);
-          updateView();
-          // props.update(false, false);
-        }
-      }
-    };
+    const keyupHandler = (e: KeyboardEvent) => {};
     document.addEventListener("keydown", keydownHandler);
     document.addEventListener("keyup", keyupHandler);
     return () => {

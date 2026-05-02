@@ -109,7 +109,6 @@ export interface ViewStore {
     nodeId: string;
     stemId?: string;
   };
-  shiftDown: boolean;
   selectedNodes: Array<AnyNode>;
   selectedStem: Stem | false;
   autoGenerateLabel: string | null;

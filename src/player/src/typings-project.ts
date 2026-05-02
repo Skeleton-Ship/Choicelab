@@ -104,7 +104,6 @@ export interface Store {
     nodeId: string;
     stemId?: string;
   };
-  shiftDown: boolean;
   selectedNodes: Array<AnyNode>;
   selectedStem: Stem | false;
   clipboardListener: boolean;
