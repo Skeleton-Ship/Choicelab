@@ -1,12 +1,11 @@
-import { useEffect, useState, useRef } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { getSequence } from "../data/getData";
 import positionNodes from "./flowchart/linking/positionNodes";
 import drawArrows from "./flowchart/linking/drawArrows";
 import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
 import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
 import { Sequence, AnyNode } from "../typings";
-import { getViewStore, setViewStore, updateView } from "../data/dataStore";
-import inTextElement from "../utils/inTextElement";
+import { getViewStore } from "../data/dataStore";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import handleKeyNavigation from "./flowchart/general/handleKeyNavigation";
 
@@ -21,10 +20,6 @@ import ViewSlider from "./flowchart/ViewSlider";
  *
  */
 export default function SequenceEl(props: { id: string; update: Function }) {
-  // Set up selection
-  // @ts-ignore
-  const [selectedNodes, setSelectedNodes] = useState<AnyNode[]>([]);
-  ("");
   // Listeners for arrows
   const arrowsRef = useRef(null);
   const svgRef = useRef(null);
@@ -43,12 +38,11 @@ export default function SequenceEl(props: { id: string; update: Function }) {
         handleKeyNavigation(e.key, props.update);
       }
     };
-    const keyupHandler = (e: KeyboardEvent) => {};
     document.addEventListener("keydown", keydownHandler);
-    document.addEventListener("keyup", keyupHandler);
+    // document.addEventListener("keyup", keyupHandler);
     return () => {
       document.removeEventListener("keydown", keydownHandler);
-      document.removeEventListener("keyup", keyupHandler);
+      //   document.removeEventListener("keyup", keyupHandler);
     };
   }, []);
   // On each refresh...
