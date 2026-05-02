@@ -54,3 +54,9 @@ Once you successfully build the app (using the process above):
    - This bucket is owned by Austin's AWS account. Talk to them for the access key.
 
 **Important**: Amazon S3 caches its resources, so the S3-mirroring CloudFront URL that the app checks for updates — releases.choicelab.xyz/latest/latest.json — doesn't always immediately show the latest JSON. You can force S3 to clear its cache by going to CloudFront in AWS, and [creating an invalidation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation_Requests.html).
+
+## License
+
+The Choicelab editor (everything outside of `src/player/`) is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. See [LICENSE](LICENSE) for details.
+
+The Choicelab player (`src/player/`) is licensed under the **MIT License**. This means you can embed the player in your own projects — including commercial or proprietary ones — without GPL obligations. See [src/player/LICENSE](src/player/LICENSE) for details.
