@@ -680,6 +680,7 @@ let handle_update = app_handle.clone();
             "delete_nodes" => "menu-delete-nodes",
             "delete_stem" => "menu-delete-stem",
             "project_settings" => "menu-open-project-settings",
+			"open_help" => "menu-open-help",
             "report_issue" => "menu-report-issue",
             "open_whatsNew" => "whatsNew-window",
             "open_acknowledgments" => "acknowledgments-window",
@@ -690,7 +691,7 @@ let handle_update = app_handle.clone();
         };
 
         // Events that should go to all windows (global actions)
-        let global_events = ["menu-about", "menu-new-project", "menu-open-project",
+        let global_events = ["menu-about", "menu-new-project", "menu-open-project", "menu-open-help",
                             "menu-report-issue", "whatsNew-window", "acknowledgments-window"];
 
         if global_events.contains(&event_name) {

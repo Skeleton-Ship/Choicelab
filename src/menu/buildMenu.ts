@@ -266,8 +266,15 @@ export async function buildMenu(windowType: WindowType) {
     id: "help_submenu",
     items: [
       await MenuItem.new({
+        id: "open_help",
+        text: "Choicelab Help",
+      }),
+      await MenuItem.new({
         id: "report_issue",
         text: "Report Issue or Request Feature...",
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
       }),
       await MenuItem.new({
         id: "open_whatsNew",

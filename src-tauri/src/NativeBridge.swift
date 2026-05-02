@@ -28,6 +28,14 @@ import Cocoa
 		// Mark as official Help menu
 		NSApp.helpMenu = helpMenu
 
+		let choicelabHelpItem = NSMenuItem(
+		  title: "Choicelab Help",
+		  action: #selector(openHelp(_:)),
+		  keyEquivalent: ""
+		)
+		choicelabHelpItem.target = NativeBridge.sharedInstance()
+		helpMenu.addItem(choicelabHelpItem)
+
 		let visitWebsiteItem = NSMenuItem(
 		  title: "Report Issue or Request Feature...",
 		  action: #selector(openWebsite(_:)),
@@ -35,6 +43,8 @@ import Cocoa
 		)
 		visitWebsiteItem.target = NativeBridge.sharedInstance()
 		helpMenu.addItem(visitWebsiteItem)
+
+		helpMenu.addItem(NSMenuItem.separator())
 
 		let releaseNotesItem = NSMenuItem(
 		  title: "Release Notes",
@@ -100,8 +110,14 @@ import Cocoa
   }
   private static let _sharedInstance = NativeBridge()
 
+  @objc func openHelp(_ sender: NSMenuItem) {
+	if let url = URL(string: "https://choicelab.xyz/docs/") {
+	  NSWorkspace.shared.open(url)
+	}
+  }
+
   @objc func openWebsite(_ sender: NSMenuItem) {
-	if let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link") {
+	if let url = URL(string: "https://github.com/Skeleton-Ship/Choicelab/issues") {
 	  NSWorkspace.shared.open(url)
 	}
   }

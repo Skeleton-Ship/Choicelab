@@ -27,7 +27,11 @@ import { setAccentColor } from "./utils/setAccentColor";
 import { listen, emit, once } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
-import { needsMigration, migrateProject, normalizeProjectMetadata } from "./fs/migrateProject";
+import {
+  needsMigration,
+  migrateProject,
+  normalizeProjectMetadata,
+} from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
@@ -105,11 +109,16 @@ async function init() {
       exportProject(exportDir);
     }
   });
+  listen("menu-open-help", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    const url = "https://choicelab.xyz/docs/";
+    await open(url);
+  });
   listen("menu-report-issue", async () => {
     const focused = await appWindow.isFocused();
     if (!focused) return;
-    const url =
-      "https://docs.google.com/forms/d/e/1FAIpQLSdXVX91Ze0jAmu9FOaqEvMv-VxYFPYOeQVcuQt9YdShwSSXKQ/viewform?usp=sf_link";
+    const url = "https://github.com/Skeleton-Ship/Choicelab/issues";
     await open(url);
   });
   window.__CHOICELAB_FUNCTIONS__ = {
@@ -225,7 +234,11 @@ async function init() {
       });
     }
     // Warn about files in Assets that aren't registered in the project
-    if (windowType === "project" && Array.isArray(projectData.assets) && !assetsScanShown) {
+    if (
+      windowType === "project" &&
+      Array.isArray(projectData.assets) &&
+      !assetsScanShown
+    ) {
       assetsScanShown = true;
       const assetsPath = await resolve(projectPath, "Assets");
       const diskEntries = await invoke<string[]>("list_assets_dir", {
@@ -241,7 +254,10 @@ async function init() {
         const openFolder = await ask(
           platform === "macos" ? detail : `${headline}\n\n${detail}`,
           {
-            title: platform === "macos" ? headline : "Unexpected Files in Assets Folder",
+            title:
+              platform === "macos"
+                ? headline
+                : "Unexpected Files in Assets Folder",
             okLabel: "Open Assets Folder",
             cancelLabel: "Ignore",
           }
