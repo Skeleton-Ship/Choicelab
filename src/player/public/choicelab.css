@@ -167,6 +167,10 @@ html {
   display: none;
 }
 
+.cl-background .cl-media.fit-contain {
+  object-fit: contain;
+}
+
 .cl-background .cl-media.active {
   display: block;
 }

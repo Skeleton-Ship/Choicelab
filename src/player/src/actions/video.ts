@@ -12,6 +12,9 @@ const action = {
     }
     video.setAttribute("src", src);
     video.setAttribute("playsinline", "");
+    if (action.props.muted) {
+      video.muted = true;
+    }
     let endCell = false;
     if (action.props.hasOwnProperty("endCell")) {
       endCell = action.props.endCell;

@@ -100,6 +100,12 @@ const internalActionDefs: ActionDefs = {
           control: "boolean",
           default: false,
         },
+        {
+          name: "muted",
+          label: "Muted",
+          control: "boolean",
+          default: false,
+        },
       ],
     },
     {
