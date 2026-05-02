@@ -16,7 +16,7 @@ export default function NumberField(props: {
 }) {
   let supplementalClass = props.class || "";
   const elRef = useRef(null);
-  const [value, setValue] = useState(props.value);
+  const [displayValue, setDisplayValue] = useState(String(props.value));
   const className = `ui-number-field ${supplementalClass}`;
   function doSpinner(amount: number) {
     if (elRef.current === null) return;
@@ -32,7 +32,7 @@ export default function NumberField(props: {
     // TODO: Does using both setValue and dispatchEvent create duplicative setting of data?
     //
     el.dispatchEvent(new Event("input", { bubbles: true }));
-    setValue(newValue);
+    setDisplayValue(String(newValue));
     props.onChange(newValue);
   }
   return (
@@ -44,18 +44,24 @@ export default function NumberField(props: {
         min={props.min ? props.min : undefined}
         max={props.max ? props.max : undefined}
         step={props.step ? props.step : 1}
-        value={value}
+        value={displayValue}
         onChange={(e) => {
           const field = e.target as HTMLInputElement;
-          const rawValue = field.value;
+          const raw = field.value;
+          setDisplayValue(raw);
+          if (raw.endsWith(".") || raw === "-" || raw === "") return;
           const limit = props.decimalPlaces ? props.decimalPlaces : 2;
-          let number = parseNumber(rawValue, limit);
-          if (typeof props.min !== "undefined" && number < props.min) {
-            number = props.min;
-          }
-          if (typeof props.max !== "undefined" && number > props.max)
-            number = props.max;
-          setValue(number);
+          let number = parseNumber(raw, limit);
+          if (typeof props.min !== "undefined" && number < props.min) number = props.min;
+          if (typeof props.max !== "undefined" && number > props.max) number = props.max;
+          props.onChange(number);
+        }}
+        onBlur={() => {
+          const limit = props.decimalPlaces ? props.decimalPlaces : 2;
+          let number = parseNumber(displayValue, limit);
+          if (typeof props.min !== "undefined" && number < props.min) number = props.min;
+          if (typeof props.max !== "undefined" && number > props.max) number = props.max;
+          setDisplayValue(String(number));
           props.onChange(number);
         }}
       />
