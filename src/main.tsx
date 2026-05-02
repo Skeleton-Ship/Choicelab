@@ -253,6 +253,8 @@ async function init() {
     }
     // Normalize legacy metadata fields
     projectData = normalizeProjectMetadata(projectData as Project);
+    // Always derive project name from the actual file name so renames are reflected
+    (projectData as Project).name = fileName.replace(/\.clx$/i, "");
     // Create data store
     createDataStore(projectData, projectPath, fileName);
     createViewStore(projectPath, projectData.name);
