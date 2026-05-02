@@ -1,4 +1,4 @@
-import PlayerConfig from "@surfgreen/choicelab-player-html5/app.json";
+import PlayerConfig from "./app.json";
 
 export function getPlayerConfig() {
   return PlayerConfig;
