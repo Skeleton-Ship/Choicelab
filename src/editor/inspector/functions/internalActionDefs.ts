@@ -2,10 +2,10 @@ import { ActionDefs } from "../../../typings";
 import {
   FCText,
   FCButton,
-  FCImage,
+  // FCImage,
   FCAudio,
   FCVideo,
-  FCSilence,
+  // FCSilence,
   FCBackgroundAudio,
   FCBackgroundVideo,
   FCEndBackground,
