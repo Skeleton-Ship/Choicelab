@@ -6,10 +6,11 @@ import loadProject from "./loadProject";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 export default async function newProject(source: string) {
-  let projectPath = await save({
+  const projectPath = await save({
+    defaultPath: "My Project",
     filters: [
       {
-        name: "My Project",
+        name: "Choicelab Project",
         extensions: [""],
       },
     ],
