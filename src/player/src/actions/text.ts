@@ -1,0 +1,26 @@
+import { ActionForPlayback } from "../typings";
+import { render, clear, createActionWrapper } from "../rendering";
+
+const action = {
+  render: (action: ActionForPlayback, done: Function) => {
+    let tag = "p";
+    switch (action.extendedProps.role) {
+      case "heading":
+        tag = "h1";
+        break;
+      case "subheading":
+        tag = "h2";
+        break;
+    }
+    const el = createActionWrapper(tag, action);
+    const parsedInput = JSON.parse(`"${action.props.contents}"`);
+    el.innerText = parsedInput;
+    render(el, action);
+    done();
+  },
+  clear: (action: ActionForPlayback) => {
+    clear(action);
+  },
+};
+
+export { action };

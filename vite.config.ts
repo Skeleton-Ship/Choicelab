@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { fileURLToPath } from "url";
 import svgr from "vite-plugin-svgr";
 
 function svgPrefixIdsPlugin(
@@ -38,6 +39,9 @@ export default defineConfig(async () => ({
   envPrefix: ["VITE_", "TAURI_"],
   resolve: {
     alias: {
+      "@surfgreen/choicelab-player-html5": fileURLToPath(
+        new URL("./src/player", import.meta.url)
+      ),
       react: "preact/compat",
       "react-dom": "preact/compat",
     },

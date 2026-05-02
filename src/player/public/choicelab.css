@@ -1,0 +1,449 @@
+/*******
+ *
+ * Choicelab HTML5 Player
+ * choicelab.xyz
+ *
+ *
+********/
+
+/*
+ * Reset
+ * Adapted from Josh Comeau: https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+
+/* Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+* {
+  margin: 0;
+}
+
+/* More accessible line-height */
+body {
+  line-height: 1.5;
+}
+
+/* Improve media defaults */
+img,
+picture,
+s video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Remove built-in form typography styles */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/*
+ * Base styles
+ */
+
+:root {
+  --cl-controls-height: 44px;
+  --cl-container-width: 1280px;
+  --cl-container-padding: 1.67rem;
+  /* Font fallbacks */
+  --cl-font-family-base: system-ui, sans-serif;
+  /* Base font sizes */
+  --font-size-xxs: 12px;
+  --font-size-xs: clamp(14px, 0.85vw, 15px);
+  --font-size-sm: clamp(16px, 1.1vw, 17px);
+  --font-size-md: clamp(19px, 1.3vw, 21px);
+  --font-size-lg: clamp(24px, 2.3vw, 34px);
+  --font-size-xl: clamp(32px, 2.9vw, 48px);
+  --font-size-xxl: clamp(36px, 3.45vw, 60px);
+  --font-size-xxxl: clamp(42px, 3.7vw, 75px);
+  --font-size-xxxxl: clamp(42px, 4.9vw, 87px);
+  /* Headings */
+  --cl-headings-font-family: var(--cl-font-family-base);
+  --cl-headings-font-weight: 700;
+  --cl-headings-font-size: 2rem;
+  --cl-headings-line-height: 1.2;
+  --cl-headings-color: #000000;
+  /* Subheadings */
+  --cl-subheadings-font-family: var(--cl-font-family-base);
+  --cl-subheadings-font-weight: 600;
+  --cl-subheadings-font-size: 1.5rem;
+  --cl-subheadings-line-height: 1.3;
+  --cl-subheadings-color: #000000;
+  /* Body text */
+  --cl-body-font-family: var(--cl-font-family-base);
+  --cl-body-font-weight: 400;
+  --cl-body-font-size: 1rem;
+  --cl-body-line-height: 1.5;
+  --cl-body-color: #000000;
+  /* Inputs */
+  --cl-inputs-font-family: var(--cl-font-family-base);
+  --cl-inputs-font-weight: 400;
+  --cl-inputs-font-size: 1rem;
+  --cl-inputs-line-height: 1.5;
+  --cl-inputs-color: #000000;
+  --cl-inputs-background-color: #ededed;
+  --cl-inputs-border-width: 0px;
+  --cl-inputs-border-color: #cccccc;
+  --cl-inputs-border-radius: 4px;
+  /* Background */
+  --cl-background-color: #ffffff;
+  --cl-background-image: none;
+  --cl-background-size: cover;
+  --cl-background-position: center;
+}
+
+html {
+  font-size: clamp(16px, 2vw, 22px);
+}
+
+#choicelab {
+  max-width: var(--cl-container-width);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: calc(100vh - 1px);
+  min-height: 300px;
+  background-color: var(--cl-background-color);
+  color: var(--cl-text-color-primary);
+  font-family: var(--cl-font-stack-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Background
+ */
+
+.cl-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: var(--cl-background-color);
+  background-image: var(--cl-background-image);
+  background-size: var(--cl-background-size);
+  background-position: var(--cl-background-position);
+  background-repeat: no-repeat;
+  opacity: 1;
+}
+
+.cl-background.visible {
+  opacity: 0;
+  animation: fade-in 0.3s ease forwards;
+}
+
+.cl-background.clear {
+  animation: fade-out 0.3s ease forwards;
+}
+
+.cl-background .cl-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.cl-background .cl-media.active {
+  display: block;
+}
+
+/*
+ * Stage
+ */
+
+.cl-stage {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: var(--cl-container-padding);
+}
+
+@media (min-width: 591px) {
+  .cl-stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-gap: 1rem;
+  }
+}
+
+.cl-stage .x-1 {
+  grid-column: 1;
+}
+
+.cl-stage .x-2 {
+  grid-column: 2;
+}
+
+.cl-stage .x-3 {
+  grid-column: 3;
+}
+
+.cl-stage .y-1 {
+  grid-row: 1;
+}
+
+.cl-stage .y-2 {
+  grid-row: 2;
+}
+
+.cl-stage .y-3 {
+  grid-row: 3;
+}
+
+/* Automatically expand horizontal cell if adjacent cells are empty */
+
+.cl-stage:has(.x-2.y-1:empty) .x-1.y-1 {
+  grid-column: 1 / span 2;
+}
+
+.cl-stage:has(.x-2.y-1:empty):has(.x-3.y-1:empty) .x-1.y-1 {
+  grid-column: 1 / span 3;
+}
+
+.cl-stage:has(.x-3.y-1:empty) .x-2.y-1 {
+  grid-column: 2 / span 2;
+}
+
+.cl-stage:has(.x-2.y-2:empty) .x-1.y-2 {
+  grid-column: 1 / span 2;
+}
+
+.cl-stage:has(.x-2.y-2:empty):has(.x-3.y-2:empty) .x-1.y-2 {
+  grid-column: 1 / span 3;
+}
+
+.cl-stage:has(.x-3.y-2:empty) .x-2.y-2 {
+  grid-column: 2 / span 2;
+}
+
+.cl-stage:has(.x-2.y-3:empty) .x-1.y-3 {
+  grid-column: 1 / span 2;
+}
+
+.cl-stage:has(.x-2.y-3:empty):has(.x-3.y-3:empty) .x-1.y-3 {
+  grid-column: 1 / span 3;
+}
+
+.cl-stage:has(.x-3.y-3:empty) .x-2.y-3 {
+  grid-column: 2 / span 2;
+}
+
+.cl-action {
+  opacity: 0;
+  animation: fade-in 0.3s ease forwards;
+}
+
+.cl-action.clear {
+  animation: fade-out 0.3s ease forwards;
+}
+
+/*
+ * Text
+ */
+
+h1.cl-action {
+  font-family: var(--cl-headings-font-family);
+  font-weight: var(--cl-headings-font-weight);
+  font-size: var(--cl-headings-font-size);
+  line-height: var(--cl-headings-line-height);
+  color: var(--cl-headings-color);
+  margin-bottom: 0.5rem;
+}
+
+h2.cl-action {
+  font-family: var(--cl-subheadings-font-family);
+  font-weight: var(--cl-subheadings-font-weight);
+  font-size: var(--cl-subheadings-font-size);
+  line-height: var(--cl-subheadings-line-height);
+  color: var(--cl-subheadings-color);
+  margin-bottom: 0.5rem;
+}
+
+p.cl-action {
+  font-family: var(--cl-body-font-family);
+  font-weight: var(--cl-body-font-weight);
+  font-size: var(--cl-body-font-size);
+  line-height: var(--cl-body-line-height);
+  color: var(--cl-body-color);
+}
+
+/*
+ * Inputs
+ */
+
+button.cl-action {
+  font-family: var(--cl-inputs-font-family);
+  font-weight: var(--cl-inputs-font-weight);
+  font-size: var(--cl-inputs-font-size);
+  line-height: var(--cl-inputs-line-height);
+  color: var(--cl-inputs-color);
+  background: var(--cl-inputs-background-color);
+  border: var(--cl-inputs-border-width) solid var(--cl-inputs-border-color);
+  border-radius: var(--cl-inputs-border-radius);
+}
+
+button.cl-action:active {
+  filter: brightness(0.9);
+}
+
+/* Animations */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/*
+ * Controls
+ */
+
+.cl-controls {
+  position: fixed;
+  left: 0;
+  bottom: 1rem;
+  width: 80vw;
+  left: 50%;
+  transform: translateX(-50%) scale(0.99);
+  background-color: rgba(50, 50, 50, 0.9);
+  backdrop-filter: blur(10px);
+  height: var(--cl-controls-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 50;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#app:hover .cl-controls,
+.cl-controls:focus {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.cl-controls .button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.cl-controls .button[disabled] {
+  opacity: 0.5;
+}
+
+.cl-controls .button:not[disabled]:active {
+  filter: brightness(0.8);
+}
+
+.cl-controls .play .icon {
+  display: none;
+}
+
+.cl-controls .icon svg path {
+  fill: white;
+}
+
+.cl-controls .play.playing .icon.pause {
+  display: block;
+}
+
+.cl-controls .play.paused .icon.play,
+.cl-controls .play.idle .icon.play {
+  display: block;
+}
+
+/* Scrubber */
+
+.cl-controls .scrubber {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  width: 100%;
+  height: 36px;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  visibility: hidden;
+}
+
+.cl-controls .scrubber.active {
+  visibility: visible;
+}
+
+.cl-controls .scrubber .base,
+.cl-controls .scrubber .progress {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  border-radius: 30px;
+  height: 5px;
+  transition: height 0.18s ease;
+}
+
+.cl-controls .scrubber:hover .base,
+.cl-controls .scrubber:hover .progress {
+  height: 10.5px;
+}
+
+.cl-controls .scrubber .base {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.cl-controls .scrubber .progress {
+  width: 0%;
+  background-color: rgba(255, 255, 255, 1);
+}

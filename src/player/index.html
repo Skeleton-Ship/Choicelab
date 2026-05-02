@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="./choicelab.css" />
+    <link id="player-fonts" data-href="./fonts.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choicelab</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- IMPORTANT: Do not modify the #choicelab element. -->
+      <div id="choicelab"></div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ensure Choicelab is available globally
+        if (typeof window.Choicelab === "undefined") {
+          console.error(
+            "Choicelab is not defined. Check that choicelab.js is loaded via a <script> tag."
+          );
+          return;
+        }
+        var project = new Choicelab();
+        project.init({
+          path: "./projects/branch-generation-test/project/project.json",
+          root: document.getElementById("choicelab"),
+          logging: true,
+        });
+      });
+    </script>
+  </body>
+</html>

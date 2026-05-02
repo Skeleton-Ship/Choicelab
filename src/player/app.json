@@ -1,0 +1,195 @@
+{
+  "id": "choicelab-player-html5",
+  "version": "1.2.0",
+  "description": "Create a project that's playable in a wide variety of computers, phones, and tablets. Customize appearance using CSS.",
+  "label": "Web – Universal",
+  "nodeSettings": {
+    "cell": {
+      "transitionTime": {
+        "label": "Wait",
+        "labelSuffix": "seconds before starting",
+        "type": "number",
+        "default": 0.3
+      },
+      "navigationPoint": {
+        "label": "On start, clear screen and save progress",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "actions": {
+    "extends": {
+      "__CHOICELAB__STANDARD__": {
+        "text": {
+          "props": [
+            {
+              "name": "role",
+              "label": "Role",
+              "control": "dropdown",
+              "className": "col-2",
+              "default": "body",
+              "options": [
+                {
+                  "value": "body",
+                  "label": "Body Text"
+                },
+                {
+                  "value": "heading",
+                  "label": "Heading"
+                },
+                {
+                  "value": "subheading",
+                  "label": "Subheading"
+                }
+              ]
+            },
+            {
+              "name": "position",
+              "label": "Position",
+              "className": "",
+              "control": "__CUSTOM__Position",
+              "default": {
+                "kind": "grid",
+                "y": 1,
+                "x": 1
+              }
+            }
+          ]
+        },
+        "button": {
+          "props": [
+            {
+              "name": "position",
+              "label": "Position",
+              "className": "",
+              "control": "__CUSTOM__Position",
+              "default": {
+                "kind": "grid",
+                "y": 1,
+                "x": 1
+              }
+            }
+          ]
+        },
+        "inputField": {
+          "props": [
+            {
+              "name": "position",
+              "label": "Position",
+              "className": "",
+              "control": "__CUSTOM__Position",
+              "default": {
+                "kind": "grid",
+                "y": 1,
+                "x": 1
+              }
+            }
+          ]
+        },
+        "video": {
+          "props": [
+            {
+              "name": "fit",
+              "label": "Fit",
+              "className": "col-2",
+              "control": "dropdown",
+              "default": "cover",
+              "options": [
+                {
+                  "value": "cover",
+                  "label": "Cover"
+                },
+                {
+                  "value": "contain",
+                  "label": "Contain"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "projectSettings": {
+    "panes": [
+      {
+        "label": "General",
+        "id": "general",
+        "description": "",
+        "settings": [
+          "rememberHistory"
+        ]
+      },
+      {
+        "label": "Appearance",
+        "id": "appearance",
+        "description": "",
+        "settings": [
+          "appearance"
+        ]
+      }
+    ],
+    "settings": {
+      "rememberHistory": {
+        "label": "Remember history when browser reloads",
+        "description": "Playback will resume from the last cell seen.",
+        "type": "boolean",
+        "default": true
+      },
+      "appearance": {
+        "label": "",
+        "type": "__CUSTOM__ProjectAppearance",
+        "default": {
+          "headings": {
+            "fontFamily": "Inter",
+            "fontStyle": "normal",
+            "fontWeight": "700",
+            "fontSize": "var(--font-size-large)",
+            "color": "white",
+            "transitionStyle": "fade",
+            "transitionDuration": "0.3s",
+            "width": "auto"
+          },
+          "subheadings": {
+            "fontFamily": "Inter",
+            "fontStyle": "normal",
+            "fontWeight": "600",
+            "fontSize": "var(--font-size-medium)",
+            "color": "white",
+            "transitionStyle": "fade",
+            "transitionDuration": "0.3s",
+            "width": "auto"
+          },
+          "bodyText": {
+            "fontFamily": "Inter",
+            "fontStyle": "normal",
+            "fontWeight": "400",
+            "fontSize": "var(--font-size-medium)",
+            "color": "white",
+            "transitionStyle": "fade",
+            "transitionDuration": "0.3s",
+            "width": "auto"
+          },
+          "inputs": {
+            "fontFamily": "Inter",
+            "fontStyle": "normal",
+            "fontWeight": "600",
+            "fontSize": "var(--font-size-medium)",
+            "textColor": "white",
+            "backgroundColor": "#0080DC",
+            "transitionStyle": "fade",
+            "transitionDuration": "0.3s",
+            "width": "auto"
+          },
+          "background": {
+            "kind": "color",
+            "color": "#232328",
+            "file": ""
+          },
+          "customCSS": ""
+        }
+      }
+    }
+  }
+}
