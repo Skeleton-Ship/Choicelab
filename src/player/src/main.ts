@@ -19,7 +19,8 @@ function Choicelab() {
           return response.json();
         })
         .then((json) => {
-          const rememberHistory = json.settings?.player?.["choicelab-player-html5"]?.rememberHistory === true;
+          const isAppPreview = new URLSearchParams(window.location.search).get("startMediaOnLoad") === "false";
+          const rememberHistory = !isAppPreview && json.settings?.player?.["choicelab-player-html5"]?.rememberHistory === true;
           window.__CHOICELAB__ = {
             project: json,
             playback: {

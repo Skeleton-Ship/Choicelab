@@ -10,7 +10,7 @@ export function initHistory(): string | null {
 
   if (!rememberHistory) return null;
 
-  const saved = localStorage.getItem(storageKey());
+  const saved = sessionStorage.getItem(storageKey());
   if (!saved) return null;
 
   try {
@@ -42,7 +42,7 @@ export function initHistory(): string | null {
 }
 
 export function clearHistory() {
-  localStorage.removeItem(storageKey());
+  sessionStorage.removeItem(storageKey());
 }
 
 export function recordHistoryPoint(cellId: string) {
@@ -60,7 +60,7 @@ export function recordHistoryPoint(cellId: string) {
   history.cursor = history.points.length - 1;
 
   if (history.rememberHistory) {
-    localStorage.setItem(
+    sessionStorage.setItem(
       storageKey(),
       JSON.stringify({ points: history.points, cursor: history.cursor })
     );
