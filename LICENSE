@@ -6,7 +6,9 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; specifically, version 3 of this license.
 
-Please note that this license does NOT apply to the Choicelab player code ("the player"), found at this repo's `src/player` directory. The player is licensed under the MIT License; see `src/player` for details.
+Please note that this license does NOT apply to the Choicelab player
+code ("the player"), found at this repo's `src/player` directory. The
+player is licensed under the MIT License; see `src/player` for details.
 
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
