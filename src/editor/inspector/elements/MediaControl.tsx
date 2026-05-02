@@ -114,6 +114,8 @@ export function MediaControl(props: {
     })
     .filter(Boolean) as Array<{ icon: string | undefined; action: Action }>;
 
+  const hasTimeableActions = supportsTimedElements && timeableActions.length > 0;
+
   const timeableEls = timeableActions.map(({ icon, action: ta }) => {
     const disabled = timeableActionInUse(ta, action);
     const activeClass = actionContainsTimedAction(action, ta) ? "active" : "";
@@ -209,7 +211,7 @@ export function MediaControl(props: {
           <div class="progress"></div>
           <div class="base"></div>
         </div>
-        {supportsTimedElements && (
+        {hasTimeableActions && (
           <button
             class={`small ui-button timeable-actions-button ${
               isVideo ? "dark-mode" : ""
@@ -220,7 +222,7 @@ export function MediaControl(props: {
           </button>
         )}
       </div>
-      {supportsTimedElements && (
+      {hasTimeableActions && (
         <MiniPanel
           visible={actionsPaneVisible}
           origin="top-right"
