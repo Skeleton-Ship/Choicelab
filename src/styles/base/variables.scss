@@ -18,3 +18,34 @@
 [data-platform="windows"] {
   --toolbar-height: 68px;
 }
+
+/* Standard window background color — used by launcher, whats-new, acknowledgments */
+:root {
+  --standard-window-bg-color: rgba(255, 255, 255, 0.9);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --standard-window-bg-color: rgba(49, 49, 49, 0.7);
+  }
+}
+
+#App[data-focus="false"] {
+  --standard-window-bg-color: rgba(239, 239, 239, 0.9);
+  @media (prefers-color-scheme: dark) {
+    --standard-window-bg-color: rgba(54, 54, 54, 0.7);
+  }
+}
+
+#App[data-platform="windows"] {
+  --standard-window-bg-color: rgb(250, 250, 250);
+  @media (prefers-color-scheme: dark) {
+    --standard-window-bg-color: rgb(52, 52, 52);
+  }
+}
+
+#App[data-platform="windows"][data-focus="false"] {
+  --standard-window-bg-color: rgb(239, 239, 239);
+  @media (prefers-color-scheme: dark) {
+    --standard-window-bg-color: rgb(57, 57, 57);
+  }
+}
