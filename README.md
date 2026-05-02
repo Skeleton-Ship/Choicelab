@@ -1,6 +1,6 @@
 # Choicelab
 
-Choicelab is a desktop app that lets writers and multimedia designers create rich branching narrative stories, then publish them on the web, where they'll play on any device or screen. This, here, is the source code to the app. You found it!
+Choicelab is a desktop app that lets writers and multimedia designers create rich branching narrative stories on their computer, then publish them on the web, where they'll play on any device or screen. This, here, is the source code to the app. You found it!
 
 Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is typically written in HTML, CSS, and JavaScript — but because Tauri uses the system's native webview for rendering, the generated apps are much faster and _much_ smaller.
 
