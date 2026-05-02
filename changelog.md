@@ -27,6 +27,7 @@
 
 - Certain controls will now blur when a window isn't focused.
 - The timed actions pane will now only appear when there are qualifying actions in the cell.
+- Renaming the project file on disk will now correctly rename the project on save, and not generate a duplicate with the old name.
 - Fixed an issue where a cell's settings wouldn't always show the correct values.
 - Fixed an issue where text fields with quotes would show an escape character on open.
 - Fixed an issue where a missing Assets folder would cause the app to stop working.
