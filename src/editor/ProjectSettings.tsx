@@ -44,7 +44,7 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
 
   const [paneId, setPaneId] = useState<PaneId>(props.startingPane);
   const config = getPlayerConfig();
-  const panes = config.projectSettings.panes;
+  const panes: Array<{ id: string; label: string }> = config.projectSettings.panes;
   const [_refresh, triggerRefresh] = useState(uuidv4());
   const handleUpdate = async () => {
     triggerRefresh(uuidv4());
