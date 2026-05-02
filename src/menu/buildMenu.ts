@@ -277,8 +277,16 @@ export async function buildMenu(windowType: WindowType) {
         item: "Separator",
       }),
       await MenuItem.new({
+        id: "open_choicelab_site",
+        text: "Website",
+      }),
+      await MenuItem.new({
         id: "open_whatsNew",
         text: "Release Notes",
+      }),
+      await MenuItem.new({
+        id: "open_repo",
+        text: "GitHub Repository",
       }),
       await MenuItem.new({
         id: "open_acknowledgments",

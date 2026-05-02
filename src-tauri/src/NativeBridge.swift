@@ -46,6 +46,14 @@ import Cocoa
 
 		helpMenu.addItem(NSMenuItem.separator())
 
+		let websiteItem = NSMenuItem(
+		  title: "Website",
+		  action: #selector(openChoicelabSite(_:)),
+		  keyEquivalent: ""
+		)
+		websiteItem.target = NativeBridge.sharedInstance()
+		helpMenu.addItem(websiteItem)
+
 		let releaseNotesItem = NSMenuItem(
 		  title: "Release Notes",
 		  action: #selector(showReleaseNotes(_:)),
@@ -53,6 +61,14 @@ import Cocoa
 		)
 		releaseNotesItem.target = NativeBridge.sharedInstance()
 		helpMenu.addItem(releaseNotesItem)
+
+		let githubRepoItem = NSMenuItem(
+		  title: "GitHub Repository",
+		  action: #selector(openGitHubRepo(_:)),
+		  keyEquivalent: ""
+		)
+		githubRepoItem.target = NativeBridge.sharedInstance()
+		helpMenu.addItem(githubRepoItem)
 
 		let acknowledgmentsItem = NSMenuItem(
 		  title: "Acknowledgments",
@@ -118,6 +134,18 @@ import Cocoa
 
   @objc func openWebsite(_ sender: NSMenuItem) {
 	if let url = URL(string: "https://github.com/Skeleton-Ship/Choicelab/issues") {
+	  NSWorkspace.shared.open(url)
+	}
+  }
+
+  @objc func openChoicelabSite(_ sender: NSMenuItem) {
+	if let url = URL(string: "https://choicelab.xyz") {
+	  NSWorkspace.shared.open(url)
+	}
+  }
+
+  @objc func openGitHubRepo(_ sender: NSMenuItem) {
+	if let url = URL(string: "https://github.com/Skeleton-Ship/Choicelab") {
 	  NSWorkspace.shared.open(url)
 	}
   }

@@ -682,6 +682,8 @@ let handle_update = app_handle.clone();
             "project_settings" => "menu-open-project-settings",
 			"open_help" => "menu-open-help",
             "report_issue" => "menu-report-issue",
+			"open_choicelab_site" => "menu-open-choicelab-site",
+			"open_repo" => "menu-open-repo",
             "open_whatsNew" => "whatsNew-window",
             "open_acknowledgments" => "acknowledgments-window",
             _ => {
@@ -692,7 +694,7 @@ let handle_update = app_handle.clone();
 
         // Events that should go to all windows (global actions)
         let global_events = ["menu-about", "menu-new-project", "menu-open-project", "menu-open-help",
-                            "menu-report-issue", "whatsNew-window", "acknowledgments-window"];
+                            "menu-report-issue", "menu-open-repo", "whatsNew-window", "acknowledgments-window"];
 
         if global_events.contains(&event_name) {
             // Emit globally for app-wide actions

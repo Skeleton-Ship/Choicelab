@@ -115,10 +115,22 @@ async function init() {
     const url = "https://choicelab.xyz/docs/";
     await open(url);
   });
+  listen("menu-open-choicelab-site", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    const url = "https://choicelab.xyz";
+    await open(url);
+  });
   listen("menu-report-issue", async () => {
     const focused = await appWindow.isFocused();
     if (!focused) return;
     const url = "https://github.com/Skeleton-Ship/Choicelab/issues";
+    await open(url);
+  });
+  listen("menu-open-repo", async () => {
+    const focused = await appWindow.isFocused();
+    if (!focused) return;
+    const url = "https://github.com/Skeleton-Ship/Choicelab";
     await open(url);
   });
   window.__CHOICELAB_FUNCTIONS__ = {
