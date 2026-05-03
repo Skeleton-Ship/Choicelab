@@ -10,7 +10,7 @@ A pre-built _alpha_ version of the app is available for both Mac and Windows.
 
 ## Setup
 
-Development requires macOS 14 and newer, or Windows 10 (version 22H2) and 11:
+Development requires macOS 13.5 and newer, or Windows 10 (version 22H2) and 11:
 
 1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
 2. Install [Bun](https://bun.sh/package-manager); you can run `bun` to see if you already have it installed.
