@@ -4,8 +4,10 @@ import { emit, once } from "@tauri-apps/api/event";
 import createProjectFile from "../data/createProjectFile";
 import loadProject from "./loadProject";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import guardProjectWindow from "./guardProjectWindow";
 
 export default async function newProject(source: string) {
+  if (!(await guardProjectWindow("create"))) return;
   const projectPath = await save({
     defaultPath: "My Project",
     filters: [
@@ -20,6 +22,7 @@ export default async function newProject(source: string) {
       ? source
       : getProjectWindowLabel(source);
   if (projectPath === null) {
+    emit("clear-pending-close", {});
     console.error("Could not get project path from save.");
   } else {
     // Get project name

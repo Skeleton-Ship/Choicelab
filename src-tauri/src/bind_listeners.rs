@@ -40,6 +40,7 @@ fn apply_project_vibrancy(window: WebviewWindow) {
 // Global port tracker for preview servers (4090–4099)
 static PREVIEW_PORTS: OnceLock<Mutex<[bool; 10]>> = OnceLock::new();
 static PORT_LABEL_MAP: OnceLock<Mutex<HashMap<String, u16>>> = OnceLock::new();
+static PENDING_CLOSE_LABEL: OnceLock<Mutex<Option<String>>> = OnceLock::new();
 
 fn get_next_available_port() -> Option<u16> {
     let ports = PREVIEW_PORTS.get_or_init(|| Mutex::new([false; 10]));
@@ -234,6 +235,23 @@ let handle_update = app_handle.clone();
                             "Could not determine preview path for project: {}",
                             window_label
                         );
+                    }
+                    // Close any project window pending replacement by this one
+                    let pending = PENDING_CLOSE_LABEL.get_or_init(|| Mutex::new(None));
+                    if let Some(old_label) = pending.lock().unwrap().take() {
+                        let app_clone = handle_project_open.clone();
+                        let _ = handle_project_open.run_on_main_thread(move || {
+                            let suffix = old_label["project_".len()..].to_string();
+                            let windows = app_clone.webview_windows();
+                            for (win_label, window) in windows.iter() {
+                                if *win_label == old_label
+                                    || *win_label == format!("project_settings_{}", suffix)
+                                    || *win_label == format!("project_assets_{}", suffix)
+                                {
+                                    let _ = window.close();
+                                }
+                            }
+                        });
                     }
                 }
             }
@@ -535,6 +553,43 @@ let handle_update = app_handle.clone();
                 eprintln!("Error parsing JSON: {}", e);
             }
         }
+    });
+
+    // Check whether a project window is currently open
+    let handle_check_project = app_handle.clone();
+    app.listen("check-project-window", move |_event| {
+        let windows = handle_check_project.webview_windows();
+        let project_entry = windows.iter().find(|(label, _)| {
+            label.starts_with("project_")
+                && !label.starts_with("project_settings_")
+                && !label.starts_with("project_assets_")
+        });
+        let (exists, label) = match project_entry {
+            Some((label, _)) => (true, label.clone()),
+            None => (false, String::new()),
+        };
+        let _ = handle_check_project.emit(
+            "project-window-status",
+            serde_json::json!({ "exists": exists, "label": label }),
+        );
+    });
+
+    // Store a project window label to close once the next project window opens
+    app.listen("set-pending-close", move |event| {
+        let json_raw = event.payload();
+        let json_value: Result<Value, _> = from_str(json_raw);
+        if let Ok(json) = json_value {
+            if let Some(label) = json["label"].as_str() {
+                let pending = PENDING_CLOSE_LABEL.get_or_init(|| Mutex::new(None));
+                *pending.lock().unwrap() = Some(label.to_string());
+            }
+        }
+    });
+
+    // Clear the pending close label (e.g., user cancelled the new/open dialog)
+    app.listen("clear-pending-close", move |_event| {
+        let pending = PENDING_CLOSE_LABEL.get_or_init(|| Mutex::new(None));
+        pending.lock().unwrap().take();
     });
 
     // Listen for window close to release preview port
