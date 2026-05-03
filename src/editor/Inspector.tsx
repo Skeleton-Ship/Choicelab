@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "preact/hooks";
-import { listen } from "@tauri-apps/api/event";
 import { getStore, getViewStore } from "../data/dataStore";
 import { getPlayerSettings } from "../data/getData";
 import showPane from "./inspector/functions/showPane";
@@ -8,6 +7,8 @@ import CellPane from "./inspector/CellPane";
 import BranchPane from "./inspector/BranchPane";
 import VariablesPane from "./inspector/VariablesPane";
 import { PreviewPane } from "./inspector/elements/PreviewPane";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+const appWindow = getCurrentWebviewWindow();
 
 export default function Inspector(props: { update: Function }) {
   // Make resizable
@@ -22,10 +23,12 @@ export default function Inspector(props: { update: Function }) {
 
   // Menu listeners
   useEffect(() => {
-    const unlistenNodeEditor = listen("menu-show-node-editor", () => {
+    const unlistenNodeEditor = appWindow.listen<{ label: string }>("menu-show-node-editor", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       showPane("node-editor", props.update);
     });
-    const unlistenVariables = listen("menu-show-variables", () => {
+    const unlistenVariables = appWindow.listen<{ label: string }>("menu-show-variables", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       showPane("variables", props.update);
     });
     return () => {

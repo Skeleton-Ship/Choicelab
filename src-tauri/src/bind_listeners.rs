@@ -3,7 +3,7 @@ use crate::file_operations::{
     load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
-use crate::globals::mark_app_ready;
+use crate::globals::{mark_app_ready, FOCUSED_WINDOW};
 #[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
 use serde::{Serialize};
@@ -692,23 +692,9 @@ let handle_update = app_handle.clone();
             }
         };
 
-        // Events that should go to all windows (global actions)
-        let global_events = ["menu-about", "menu-new-project", "menu-open-project", "menu-open-help",
-                            "menu-report-issue", "menu-open-repo", "whatsNew-window", "acknowledgments-window"];
-
-        if global_events.contains(&event_name) {
-            // Emit globally for app-wide actions
-            let _ = app_handle.emit(event_name, ());
-        } else {
-            // Emit only to the focused window for window-specific actions
-            for window in app_handle.webview_windows().values() {
-                if window.is_focused().unwrap_or(false) {
-                    let _ = window.emit(event_name, ());
-                    return;
-                }
-            }
-            // Fallback: if no focused window found, emit globally
-            let _ = app_handle.emit(event_name, ());
+        let label = FOCUSED_WINDOW.lock().unwrap().clone();
+        if let Some(window) = app_handle.get_webview_window(&label) {
+            let _ = window.emit(event_name, serde_json::json!({ "label": label }));
         }
     });
 

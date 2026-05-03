@@ -12,3 +12,6 @@ pub static APP_READY: AtomicBool = AtomicBool::new(false);
 pub fn mark_app_ready() {
     APP_READY.store(true, Ordering::SeqCst);
 }
+
+// Label of the currently-focused window; blank until the first focus event.
+pub static FOCUSED_WINDOW: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));

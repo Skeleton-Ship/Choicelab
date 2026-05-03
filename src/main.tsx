@@ -55,7 +55,10 @@ async function init() {
   } else {
     setAccentColor();
   }
+  const reportFocusedWindow = () =>
+    invoke("set_focused_window", { label: appWindow.label });
   // Window focus
+  reportFocusedWindow();
   window.addEventListener("focus", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "true");
     // Update view store
@@ -66,6 +69,7 @@ async function init() {
     }
     // Update menu
     setMenu(windowType);
+    reportFocusedWindow();
   });
   window.addEventListener("blur", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "false");
@@ -85,54 +89,44 @@ async function init() {
       setFocusedRegion(document.activeElement);
     }
   });
-  // Global menu listeners
-  // TODO: Narrow scope of all three listeners to just the current appWindow
-  // And for #3 specifically, remove the focus handler
-  listen("menu-new-project", () => {
-    if (windowType !== "project" && windowType !== "launcher") return;
+  // Menu listeners - discard if the payload label doesn't match this window
+  appWindow.listen<{ label: string }>("menu-new-project", (event) => {
+    if (event.payload.label !== appWindow.label) return;
     const source =
       windowType === "project" ? getViewStore().projectPath : windowType;
     newProject(source);
   });
-  listen("menu-open-project", () => {
-    if (windowType !== "project" && windowType !== "launcher") return;
+  appWindow.listen<{ label: string }>("menu-open-project", (event) => {
+    if (event.payload.label !== appWindow.label) return;
     openProject();
   });
-  listen("menu-export-project", async () => {
+  appWindow.listen<{ label: string }>("menu-export-project", async (event) => {
+    if (event.payload.label !== appWindow.label) return;
     const vs = getViewStore();
     const defaultName = getExportDirName(vs.projectName);
     const defaultPath = await resolve(await desktopDir(), defaultName);
-    if (windowType !== "project" && windowType !== "projectSettings") return;
     const exportDir = await save({
-      defaultPath: defaultPath, // e.g. "my-project"
+      defaultPath: defaultPath,
     });
     if (exportDir) {
       exportProject(exportDir);
     }
   });
-  listen("menu-open-help", async () => {
-    const focused = await appWindow.isFocused();
-    if (!focused) return;
-    const url = "https://choicelab.xyz/docs/";
-    await open(url);
+  appWindow.listen<{ label: string }>("menu-open-help", async (event) => {
+    if (event.payload.label !== appWindow.label) return;
+    await open("https://choicelab.xyz/docs/");
   });
-  listen("menu-open-choicelab-site", async () => {
-    const focused = await appWindow.isFocused();
-    if (!focused) return;
-    const url = "https://choicelab.xyz";
-    await open(url);
+  appWindow.listen<{ label: string }>("menu-open-choicelab-site", async (event) => {
+    if (event.payload.label !== appWindow.label) return;
+    await open("https://choicelab.xyz");
   });
-  listen("menu-report-issue", async () => {
-    const focused = await appWindow.isFocused();
-    if (!focused) return;
-    const url = "https://github.com/Skeleton-Ship/Choicelab/issues";
-    await open(url);
+  appWindow.listen<{ label: string }>("menu-report-issue", async (event) => {
+    if (event.payload.label !== appWindow.label) return;
+    await open("https://github.com/Skeleton-Ship/Choicelab/issues");
   });
-  listen("menu-open-repo", async () => {
-    const focused = await appWindow.isFocused();
-    if (!focused) return;
-    const url = "https://github.com/Skeleton-Ship/Choicelab";
-    await open(url);
+  appWindow.listen<{ label: string }>("menu-open-repo", async (event) => {
+    if (event.payload.label !== appWindow.label) return;
+    await open("https://github.com/Skeleton-Ship/Choicelab");
   });
   window.__CHOICELAB_FUNCTIONS__ = {
     updateProject: () => {},

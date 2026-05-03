@@ -116,63 +116,75 @@ export default function MainEditor() {
     );
     // Menu events - Rust now emits only to the focused window,
     // so we use appWindow.listen() to receive window-specific events
-    const unlistenMenuQuit = appWindow.listen("menu-request-quit", async () => {
+    const unlistenMenuQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       handleCloseRequest();
     });
-    const unlistenMenuSave = appWindow.listen("menu-save-project", async () => {
+    const unlistenMenuSave = appWindow.listen<{ label: string }>("menu-save-project", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       console.log("Request to save");
       saveProject();
     });
-    const unlistenMenuTogglePreview = appWindow.listen(
+    const unlistenMenuTogglePreview = appWindow.listen<{ label: string }>(
       "menu-toggle-preview",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         togglePreview(handleUpdate);
       }
     );
-    const unlistenMenuOpenPreview = appWindow.listen(
+    const unlistenMenuOpenPreview = appWindow.listen<{ label: string }>(
       "menu-open-preview",
-      async () => {
+      async (event) => {
+        if (event.payload.label !== appWindow.label) return;
         const port = getViewStore().previewPort;
         await open(`http://localhost:${port}`);
       }
     );
-    const unlistenMenuUndo = appWindow.listen("menu-undo", async () => {
+    const unlistenMenuUndo = appWindow.listen<{ label: string }>("menu-undo", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       handleUndoRedo("undo", handleUpdate);
     });
-    const unlistenMenuRedo = appWindow.listen("menu-redo", async () => {
+    const unlistenMenuRedo = appWindow.listen<{ label: string }>("menu-redo", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       handleUndoRedo("redo", handleUpdate);
     });
-    const unlistenMenuNewCell = appWindow.listen("menu-new-cell", async () => {
+    const unlistenMenuNewCell = appWindow.listen<{ label: string }>("menu-new-cell", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       const newCell = createCell();
       insertNewNode(newCell, handleUpdate);
     });
-    const unlistenMenuNewBranch = appWindow.listen(
+    const unlistenMenuNewBranch = appWindow.listen<{ label: string }>(
       "menu-new-branch",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         const newBranch = createBranch();
         insertNewNode(newBranch, handleUpdate);
       }
     );
-    const unlistenMenuSetLink = appWindow.listen("menu-set-link", async () => {
+    const unlistenMenuSetLink = appWindow.listen<{ label: string }>("menu-set-link", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       enterTargetMode({
         update: handleUpdate,
       });
     });
-    const unlistenMenuDisconnectLink = appWindow.listen(
+    const unlistenMenuDisconnectLink = appWindow.listen<{ label: string }>(
       "menu-disconnect-link",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         handleDisconnectLinks(handleUpdate);
       }
     );
-    const unlistenMenuDeleteNodes = appWindow.listen(
+    const unlistenMenuDeleteNodes = appWindow.listen<{ label: string }>(
       "menu-delete-nodes",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         handleDeleteNodes(handleUpdate);
       }
     );
-    const unlistenMenuDeleteStem = appWindow.listen(
+    const unlistenMenuDeleteStem = appWindow.listen<{ label: string }>(
       "menu-delete-stem",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         const store = getStore();
         const selectedStem = getViewStore().selectedStem;
         if (selectedStem !== false) {
@@ -186,13 +198,15 @@ export default function MainEditor() {
         }
       }
     );
-    const unlistenMenuProjectSettings = appWindow.listen(
+    const unlistenMenuProjectSettings = appWindow.listen<{ label: string }>(
       "menu-open-project-settings",
-      async () => {
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
         openProjectSettings();
       }
     );
-    const unlistenMenuAutofill = appWindow.listen("menu-autofill", async () => {
+    const unlistenMenuAutofill = appWindow.listen<{ label: string }>("menu-autofill", (event) => {
+      if (event.payload.label !== appWindow.label) return;
       triggerApply();
     });
     appWindow.show();

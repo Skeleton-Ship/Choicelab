@@ -1,5 +1,5 @@
 import { useEffect } from "preact/hooks";
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import Markdown from "preact-markdown";
 import whatsNewContent from "./WhatsNew.md?raw";
@@ -10,7 +10,10 @@ export function WhatsNew() {
     emit("window-ready", {
       label: "whatsNew",
     });
-    const unlistenQuit = listen("menu-request-quit", () => appWindow.close());
+    const unlistenQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
+      if (event.payload.label !== appWindow.label) return;
+      appWindow.close();
+    });
     return () => { unlistenQuit.then((fn) => fn()); };
   }, []);
   // @ts-ignore

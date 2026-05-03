@@ -1,6 +1,6 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useState, useEffect } from "preact/hooks";
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit } from "@tauri-apps/api/event";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 import { NewProjectIcon, OpenProjectIcon } from "../editor/shared/ColorIcon";
@@ -21,7 +21,10 @@ function Launcher() {
     emit("window-ready", {
       label: "launcher",
     });
-    const unlistenQuit = listen("menu-request-quit", () => appWindow.close());
+    const unlistenQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
+      if (event.payload.label !== appWindow.label) return;
+      appWindow.close();
+    });
     showReleaseNotes();
     let unlisten: (() => void) | null = null;
     appWindow

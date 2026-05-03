@@ -11,7 +11,7 @@ mod native_bridge_macos;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
-use globals::PENDING_FILES;
+use globals::{FOCUSED_WINDOW, PENDING_FILES};
 #[cfg(target_os = "windows")]
 use std::path::PathBuf;
 use tauri::Manager;
@@ -40,6 +40,17 @@ fn list_assets_dir(path: String) -> Vec<String> {
                 .collect()
         })
         .unwrap_or_default()
+}
+
+#[tauri::command]
+fn set_focused_window(label: String) {
+    *FOCUSED_WINDOW.lock().unwrap() = label;
+        println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
+}
+
+#[tauri::command]
+fn print_focused_window() {
+    println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
 }
 
 fn main() {
@@ -96,7 +107,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files, list_assets_dir, open_folder])
+        .invoke_handler(tauri::generate_handler![get_pending_files, list_assets_dir, open_folder, set_focused_window, print_focused_window])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {
