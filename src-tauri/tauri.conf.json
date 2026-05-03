@@ -30,7 +30,9 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyOTQ0NjcyN0M5QUZBM0YKUldRLytwcDhja2FVTXFSQ2lMaXJwd2djdDRRZ3VMUHJUZ2h1VG1vMjhaZ3ExMUNWcnlPV1IrdWIK",
-      "endpoints": ["https://releases.choicelab.xyz/latest/latest.json"]
+      "endpoints": [
+        "https://github.com/Skeleton-Ship/Choicelab/releases/latest/download/latest.json"
+      ]
     }
   },
   "app": {
