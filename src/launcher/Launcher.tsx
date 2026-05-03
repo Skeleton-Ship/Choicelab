@@ -21,9 +21,7 @@ function Launcher() {
     emit("window-ready", {
       label: "launcher",
     });
-    listen("menu-request-quit", () => {
-      appWindow.close();
-    });
+    const unlistenQuit = listen("menu-request-quit", () => appWindow.close());
     showReleaseNotes();
     let unlisten: (() => void) | null = null;
     appWindow
@@ -34,6 +32,7 @@ function Launcher() {
         unlisten = fn;
       });
     return () => {
+      unlistenQuit.then((fn) => fn());
       if (unlisten) unlisten();
     };
   }, []);

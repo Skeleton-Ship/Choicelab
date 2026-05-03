@@ -10,9 +10,8 @@ export function WhatsNew() {
     emit("window-ready", {
       label: "whatsNew",
     });
-    listen("menu-request-quit", () => {
-      appWindow.close();
-    });
+    const unlistenQuit = listen("menu-request-quit", () => appWindow.close());
+    return () => { unlistenQuit.then((fn) => fn()); };
   }, []);
   // @ts-ignore
   const el = <Markdown markdown={whatsNewContent} />;

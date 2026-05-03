@@ -54,7 +54,8 @@ function PackageSection({
 export function Acknowledgments() {
   useEffect(() => {
     emit("window-ready", { label: "acknowledgments" });
-    listen("menu-request-quit", () => appWindow.close());
+    const unlistenQuit = listen("menu-request-quit", () => appWindow.close());
+    return () => { unlistenQuit.then((fn) => fn()); };
   }, []);
 
   return (
