@@ -1,5 +1,12 @@
 import Cocoa
 
+// External functions implemented in Rust
+@_silgen_name("menu_release_notes_clicked")
+func _rustMenuReleaseNotesClicked()
+
+@_silgen_name("menu_acknowledgments_clicked")
+func _rustMenuAcknowledgmentsClicked()
+
 @objc public class NativeBridge: NSObject {
 	
 @objc public static func setDocumentEdited(_ edited: Bool, windowTitle: String) {
@@ -150,18 +157,11 @@ import Cocoa
 	}
   }
 
-  // Add C function declaration for Rust callback
-  @_silgen_name("menu_release_notes_clicked")
-  func menu_release_notes_clicked()
-
   @objc func showReleaseNotes(_ sender: NSMenuItem) {
-    menu_release_notes_clicked()
+    _rustMenuReleaseNotesClicked()
   }
 
-  @_silgen_name("menu_acknowledgments_clicked")
-  func menu_acknowledgments_clicked()
-
   @objc func showAcknowledgments(_ sender: NSMenuItem) {
-    menu_acknowledgments_clicked()
+    _rustMenuAcknowledgmentsClicked()
   }
 }
