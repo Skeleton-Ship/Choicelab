@@ -4,15 +4,17 @@ import { emit, once } from "@tauri-apps/api/event";
 export default async function guardProjectWindow(
   action: "create" | "open"
 ): Promise<boolean> {
-  emit("check-project-window", {});
-
-  const status = await new Promise<{ exists: boolean; label: string }>(
+  const statusPromise = new Promise<{ exists: boolean; label: string }>(
     (resolve) => {
       once("project-window-status", (event) => {
         resolve(event.payload as { exists: boolean; label: string });
       });
     }
   );
+
+  emit("check-project-window", {});
+
+  const status = await statusPromise;
 
   if (!status.exists) return true;
 

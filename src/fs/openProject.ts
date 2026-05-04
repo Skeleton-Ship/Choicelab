@@ -4,7 +4,9 @@ import loadProject from "./loadProject";
 import guardProjectWindow from "./guardProjectWindow";
 
 export default async function openProject() {
+  console.log("Requested open");
   if (!(await guardProjectWindow("open"))) return;
+  console.log("Passed guard");
   const selected = await open({
     directory: false,
     multiple: false,
