@@ -6,7 +6,7 @@ use crate::bind_listeners::{open_whats_new_window, open_acknowledgments_window};
 
 pub fn add_native_menus() {
     unsafe {
-        let cls = Class::get("_TtC12NativeBridge12NativeBridge").expect("NativeBridge not found");
+        let cls = Class::get("NativeBridge").expect("NativeBridge not found");
 
         let _: () = msg_send![cls, addNativeMenus];
     }
@@ -16,7 +16,7 @@ pub fn set_document_edited_with_title(edited: bool, window_title: &str) {
     use objc::runtime::Object;
     use std::ffi::CString;
     unsafe {
-        let cls = Class::get("_TtC12NativeBridge12NativeBridge").expect("NativeBridge not found");
+        let cls = Class::get("NativeBridge").expect("NativeBridge not found");
         let flag: BOOL = if edited { YES } else { NO };
         let nsstring = {
             let cstr = CString::new(window_title).unwrap();

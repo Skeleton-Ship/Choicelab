@@ -1,30 +1,44 @@
+use std::fs;
+use std::path::Path;
 use std::process::Command;
 
 fn main() {
-    // Tell Cargo to rerun build.rs if the Swift source changes:
-    println!("cargo:rerun-if-changed=src/NativeBridge.swift");
+    println!("cargo:rerun-if-changed=src/NativeBridge.m");
 
-    // Only run Swift compilation and link steps on macOS
     if std::env::var("CARGO_CFG_TARGET_OS").unwrap() == "macos" {
-        let status = Command::new("swiftc")
+        let obj = "macos/NativeBridge.o";
+        let lib = "macos/libNativeBridge.a";
+
+        fs::create_dir_all(Path::new("macos")).expect("Failed to create macos dir");
+
+        let status = Command::new("clang")
             .args(&[
-                "-emit-library",
-                "-o",
-                "macos/libNativeBridge.a",
-                "-emit-object",
-                "src/NativeBridge.swift",
-                "-module-name",
-                "NativeBridge",
+                "-x", "objective-c",
+                "-mmacosx-version-min=13.0",
+                "-c", "src/NativeBridge.m",
+                "-o", obj,
             ])
             .status()
-            .expect("Failed to compile Swift library");
+            .expect("Failed to compile NativeBridge.m");
 
         if !status.success() {
-            panic!("Swift compilation failed");
+            panic!("Objective-C compilation failed");
+        }
+
+        fs::remove_file(lib).ok(); // remove stale archive to avoid format mismatch
+
+        let status = Command::new("ar")
+            .args(&["rcs", lib, obj])
+            .status()
+            .expect("Failed to create static library");
+
+        if !status.success() {
+            panic!("ar failed");
         }
 
         println!("cargo:rustc-link-search=macos");
         println!("cargo:rustc-link-lib=static=NativeBridge");
+        println!("cargo:rustc-link-arg=-ObjC"); // retain ObjC classes from static libs
         println!("cargo:rustc-link-lib=framework=AppKit");
         println!("cargo:rustc-link-lib=framework=Cocoa");
     }
