@@ -105,7 +105,7 @@ function ActionsEditor(props: { update: Function }) {
           <aside class="cell-plays-quickly">
             <p>
               <strong>This cell may play quickly.</strong> If that's not
-              intentional, you can add media or an input control to make the
+              intentional, you can add media or a Show Button action to make the
               cell play for longer.
             </p>
           </aside>
@@ -152,7 +152,11 @@ function NodeSettings(props: {
       <div class="inner">
         <div class="col-1">{settingEls}</div>
         <div class="col-2">
-          <AutoGenerateButton plan={props.plan} context="cell" onApply={props.onApply} />
+          <AutoGenerateButton
+            plan={props.plan}
+            context="cell"
+            onApply={props.onApply}
+          />
         </div>
       </div>
     </ul>
