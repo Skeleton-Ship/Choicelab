@@ -51,7 +51,9 @@ export default function MainEditor() {
   useEffect(() => {
     const label = getProjectWindowLabel(store.projectPath);
     updatePreview(true);
-    // Get preview server
+    // Get preview server — await registration before emitting window-ready to
+    // avoid a race where the backend responds with preview-port before the
+    // listener is active.
     const unlistenPreviewPort = listen("preview-port", (event: any) => {
       if (event && event.payload && event.payload.port) {
         const viewStore = getViewStore();
@@ -59,12 +61,10 @@ export default function MainEditor() {
         viewStore.previewPort = event.payload.port;
         setViewStore(viewStore);
       }
-    });
-    // Set the title based on the project name
-    appWindow.setTitle(store.project.name);
-    // Let Tauri know the window is ready
-    emit("window-ready", {
-      label: label,
+    }).then((unlisten) => {
+      appWindow.setTitle(store.project.name);
+      emit("window-ready", { label });
+      return unlisten;
     });
     // Set up cut/copy/paste listeners
     const cutHandler = (e: Event) => {
