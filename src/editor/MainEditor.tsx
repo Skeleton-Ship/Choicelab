@@ -14,7 +14,7 @@ import {
 } from "../data/dataStore";
 import { getCurrentSequence, getStemParent } from "../data/getData";
 import { handleUndoRedo, saveHistoryVersion } from "../data/history";
-import { handleCloseRequest } from "../fs/handleCloseRequest";
+import { handleCloseRequest, handleQuit } from "../fs/handleCloseRequest";
 import {
   handleCutCopy,
   handlePaste,
@@ -118,7 +118,7 @@ export default function MainEditor() {
     // so we use appWindow.listen() to receive window-specific events
     const unlistenMenuQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
       if (event.payload.label !== appWindow.label) return;
-      handleCloseRequest();
+      handleQuit();
     });
     const unlistenMenuSave = appWindow.listen<{ label: string }>("menu-save-project", (event) => {
       if (event.payload.label !== appWindow.label) return;

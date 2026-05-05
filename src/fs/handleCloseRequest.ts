@@ -1,6 +1,7 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
+import { exit } from "@tauri-apps/plugin-process";
 import { getProjectSettingsWindow } from "../editor/settings/getProjectSettingsWindow";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getViewStore } from "../data/dataStore";
@@ -51,4 +52,23 @@ export async function handleCloseRequest(closeFn?: Function) {
       handleClose();
     }
   }
+}
+
+// Used for Cmd-Q: exits the entire process rather than just destroying this
+// window (which would leave the launcher alive and require a second Cmd-Q).
+export async function handleQuit() {
+  const store = getViewStore();
+  if (store.saved !== true) {
+    const confirm = await ask(
+      "Do you want to save your changes before quitting?",
+      {
+        title: "Quit before saving?",
+        kind: "warning",
+        okLabel: "Go Back",
+        cancelLabel: "Quit Without Saving",
+      }
+    );
+    if (confirm !== false) return;
+  }
+  await exit(0);
 }
