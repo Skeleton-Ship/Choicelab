@@ -13,8 +13,7 @@ const action = {
         break;
     }
     const el = createActionWrapper(tag, action);
-    const parsedInput = JSON.parse(`"${action.props.contents}"`);
-    el.innerText = parsedInput;
+    el.innerText = action.props.contents;
     render(el, action);
     done();
   },
