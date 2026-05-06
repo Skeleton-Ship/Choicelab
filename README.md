@@ -44,16 +44,13 @@ If you need fresh Apple Developer credentials, you'll add them as secret keys to
 
 ## Deploying
 
+Before publishing a new version, make sure you update the release notes in changelog.md. Then, add them to the app by running `bun run changelog`.
+
+Run `bun run version-[version_type]` — substituting the type for _major_, _minor_, or _patch_ updates — to increment the app version across TypeScript and Rust.
+
 Deploying automatic app updates requires creating a Tauri private key, then associating it with the [choicelab-app repo on GitHub](https://github.com/Skeleton-Ship/Choicelab). See [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info.
 
-Once you successfully build the app (using the process above):
-
-1. From GitHub, go to the [Releases page in the choicelab-releases repo](https://github.com/austinheller/choicelab-releases/releases).
-2. Verify the release assets are correct, then publish it.
-3. Take the `latest.json` file, and upload it to the `releases.choicelab.xyz` S3 bucket, in the `/latest` subdirectory.
-   - This bucket is owned by Austin's AWS account. Talk to them for the access key.
-
-**Important**: Amazon S3 caches its resources, so the S3-mirroring CloudFront URL that the app checks for updates — releases.choicelab.xyz/latest/latest.json — doesn't always immediately show the latest JSON. You can force S3 to clear its cache by going to CloudFront in AWS, and [creating an invalidation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation_Requests.html).
+Once you successfully build the app (using the process above), merge into the **release** branch (per above), review the build, then publish.
 
 ## License
 
