@@ -1,5 +1,4 @@
-import { createRef } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState, useRef, useMemo } from "preact/hooks";
 import { MediaControl } from "../inspector/elements/MediaControl";
 import { Action } from "../../typings";
 import { v4 as uuid } from "uuid";
@@ -39,8 +38,16 @@ export default function AssetPreview(props: {
     HTMLVideoElement | HTMLAudioElement | false,
     Function
   ] = useState(false);
-  let previewEl = <></>;
-  let mediaRef = createRef();
+  // Typed as Element so it can serve as a ref for video, audio, or img without three separate refs.
+  const mediaRef = useRef<Element | null>(null);
+  // Stable ID for the lifetime of this component instance.
+  const mediaId = useMemo(
+    () =>
+      props.assetParent === "action" && props.action
+        ? props.action.id
+        : uuid(),
+    []
+  );
   let mediaControl = null;
   if (props.assetParent === "action" && props.action) {
     if (props.update) {
@@ -57,8 +64,7 @@ export default function AssetPreview(props: {
       );
     }
   }
-  const mediaId =
-    props.assetParent === "action" && props.action ? props.action.id : uuid();
+  let previewEl = <></>;
   switch (props.media) {
     case "image":
       previewEl = (
@@ -67,7 +73,7 @@ export default function AssetPreview(props: {
             class="media-preview"
             src={mediaSrc}
             data-id={`media_preview_${mediaId}`}
-            ref={mediaRef}
+            ref={mediaRef as preact.RefObject<HTMLImageElement>}
           />
           {loadingEl}
         </>
@@ -80,7 +86,7 @@ export default function AssetPreview(props: {
             class="media-preview"
             src={mediaSrc}
             data-id={`media_preview_${mediaId}`}
-            ref={mediaRef}
+            ref={mediaRef as preact.RefObject<HTMLVideoElement>}
           ></video>
           {mediaEl !== false ? mediaControl : <></>}
         </>
@@ -93,7 +99,7 @@ export default function AssetPreview(props: {
             class="media-preview"
             src={mediaSrc}
             data-id={`media_preview_${mediaId}`}
-            ref={mediaRef}
+            ref={mediaRef as preact.RefObject<HTMLAudioElement>}
           ></audio>
           {mediaEl !== false ? mediaControl : <></>}
         </>
@@ -110,14 +116,9 @@ export default function AssetPreview(props: {
     setTimeout(() => {
       if (mediaRef.current !== null) {
         handleMediaSrc(setMediaSrc, props.fileSrc, 0);
-        const testEl = document.querySelector(
-          `[data-id="media_preview_${mediaId}"]`
-        );
-        if (testEl) {
-          setMediaEl(testEl);
-        }
+        setMediaEl(mediaRef.current);
       }
     }, 150);
-  });
+  }, [props.fileSrc]);
   return previewEl;
 }

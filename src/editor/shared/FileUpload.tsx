@@ -1,5 +1,4 @@
-import { createRef } from "preact";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { emit, once } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
@@ -27,8 +26,19 @@ export default function FileUpload(props: {
   onCreated: Function;
   onClear: Function;
 }) {
+  const filePickerEl = useRef<HTMLInputElement | null>(null);
+  // Keeps changeHandler current without re-attaching the event listener on every render.
+  const propsRef = useRef(props);
+  const [fileSrc, setFileSrc] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    propsRef.current = props;
+  });
+
   // Method: Clear file
   function handleClear() {
+    setFileSrc("");
     props.onClear();
   }
   // Method: Replace file
@@ -37,58 +47,62 @@ export default function FileUpload(props: {
       filePickerEl.current.click();
     }
   }
+
   // Listen to file picker
-  const filePickerEl = createRef();
   useEffect(() => {
-    // Listen to file when uploaded
     if (!filePickerEl.current) return;
     const filePicker = filePickerEl.current;
     const changeHandler = () => {
       if (!filePicker.files) return;
       const file = filePicker.files[0];
       if (filePicker.files.length == 1) {
-        setLoading(true);
-        // First, make sure the file type is valid
+        // Validate file type before doing anything visible
         let isValidType = false;
         const fileExt = "." + file.name.split(".").pop()?.toLowerCase();
-        const acceptedTypes = props.accept.split(",");
+        const acceptedTypes = propsRef.current.accept.split(",");
         acceptedTypes.forEach((fileType: string) => {
           fileType = fileType.trim();
           if (fileType === file.type || fileType === fileExt) {
             isValidType = true;
           }
         });
-        if (isValidType === false) {
+        if (!isValidType) {
           message(
-            `You can only upload the following file types: ${props.accept}`,
+            `You can only upload the following file types: ${propsRef.current.accept}`,
             `The file "${file.name}" can't be used.`
           );
           return;
         }
-        // If it is, upload the file
-        readFileUpload(file, props.type)
+        setLoading(true);
+        readFileUpload(file, propsRef.current.type)
           .then(async (contents: any) => {
             const viewStore = getViewStore();
             const assetsPath = await resolve(viewStore.projectPath, "./Assets");
             const jsonData = {
               fileName: file.name,
               contents: contents,
-              fileType: props.type,
+              fileType: propsRef.current.type,
               assetsPath: assetsPath,
               label: getProjectWindowLabel(viewStore.projectPath),
             };
             emit("create-asset", jsonData);
             once("asset-created", async () => {
               const store = getStore();
-              const asset = createAsset(file.name, props.fileKind as Asset["type"]);
+              const asset = createAsset(
+                file.name,
+                propsRef.current.fileKind as Asset["type"]
+              );
               store.project.assets.push(asset);
               setStore(store);
-              props.onCreated(asset);
+              propsRef.current.onCreated(asset);
+              // Reset the input so re-selecting the same file fires change again.
+              filePicker.value = "";
               setLoading(false);
             });
           })
           .catch((error) => {
             console.error("Error reading file:", error);
+            setLoading(false);
           });
       }
     };
@@ -97,17 +111,20 @@ export default function FileUpload(props: {
       filePicker.removeEventListener("change", changeHandler);
     };
   }, []);
-  // Show file if it's set
-  const [fileSrc, setFileSrc] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const fileIsSet = props.existingFile && props.existingFile !== "";
-  if (fileIsSet) {
+
+  // Load preview URL whenever the stored file changes.
+  useEffect(() => {
+    if (!props.existingFile || props.existingFile === "") {
+      setFileSrc("");
+      return;
+    }
     getAssetPreviewURL(props.existingFile, props.type).then((contents: any) => {
-      if (typeof contents === "string" && fileSrc === "") {
+      if (typeof contents === "string") {
         setFileSrc(contents);
       }
     });
-  }
+  }, [props.existingFile]);
+
   // Resolve display filename from asset registry
   const displayFileName = (() => {
     if (!props.existingFile) return props.existingFile;
@@ -121,6 +138,7 @@ export default function FileUpload(props: {
     id = props.action.id;
   }
   // Create elements + display classes
+  const fileIsSet = props.existingFile && props.existingFile !== "";
   const inputId = `file_${id}_${props.propName}`;
   const setClass = fileIsSet === true ? "file-set" : "file-not-set";
   const loadingClass = isLoading === true ? "is-loading" : "loaded";
