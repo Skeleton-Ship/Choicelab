@@ -5,7 +5,7 @@ use crate::file_operations::{
 use crate::check_for_updates::update;
 use crate::globals::{mark_app_ready, FOCUSED_WINDOW};
 #[cfg(target_os = "macos")]
-use crate::native_bridge_macos::{add_native_menus, set_document_edited_with_title};
+use crate::native_bridge_macos::{add_native_menus, set_document_edited_for_window};
 use serde::{Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
@@ -148,16 +148,21 @@ pub fn open_acknowledgments_window(app: tauri::AppHandle) {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
-    // Add native menus
+    let handle_doc_edited = app_handle.clone();
     app.listen("set-document-edited", move |event| {
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
         match json_value {
             Ok(json) => {
                 let state = json["state"].as_bool().unwrap_or(false);
-                let window_title = json["windowTitle"].as_str().unwrap_or("");
+                let window_label = json["windowLabel"].as_str().unwrap_or("").to_string();
+                if window_label.is_empty() { return; }
                 #[cfg(target_os = "macos")]
-                set_document_edited_with_title(state, window_title);
+                if let Some(window) = handle_doc_edited.get_webview_window(&window_label) {
+                    let _ = handle_doc_edited.run_on_main_thread(move || {
+                        set_document_edited_for_window(&window, state);
+                    });
+                }
             }
             Err(e) => {
                 eprintln!("Error parsing JSON: {}", e);

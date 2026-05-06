@@ -2,6 +2,7 @@
 use objc::runtime::{Class, BOOL, NO, YES};
 use objc::{msg_send, sel, sel_impl};
 use std::sync::OnceLock;
+use tauri::WebviewWindow;
 use crate::bind_listeners::{open_whats_new_window, open_acknowledgments_window};
 
 pub fn add_native_menus() {
@@ -12,19 +13,14 @@ pub fn add_native_menus() {
     }
 }
 
-pub fn set_document_edited_with_title(edited: bool, window_title: &str) {
+pub fn set_document_edited_for_window(window: &WebviewWindow, edited: bool) {
     use objc::runtime::Object;
-    use std::ffi::CString;
-    unsafe {
-        let cls = Class::get("NativeBridge").expect("NativeBridge not found");
+    if let Ok(ns_window_ptr) = window.ns_window() {
         let flag: BOOL = if edited { YES } else { NO };
-        let nsstring = {
-            let cstr = CString::new(window_title).unwrap();
-            let nsstring: *mut Object = msg_send![Class::get("NSString").unwrap(), alloc];
-            let nsstring: *mut Object = msg_send![nsstring, initWithUTF8String:cstr.as_ptr()];
-            nsstring
-        };
-        let _: () = msg_send![cls, setDocumentEdited:flag windowTitle:nsstring];
+        unsafe {
+            let ns_window = ns_window_ptr as *mut Object;
+            let _: () = msg_send![ns_window, setDocumentEdited: flag];
+        }
     }
 }
 
