@@ -1,4 +1,4 @@
-import { getVariable } from "../../../data/getData";
+import { getVariable, getAsset } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 
 /*
@@ -64,10 +64,12 @@ export function FCInputField(props: {
 export function FCImage(props: { source: string; alt: string }) {
   let imageLabel = <span class="no-src">Image</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
+    const asset = getAsset(props.source, getStore());
+    const displayName = asset ? asset.fileName : props.source;
     imageLabel = (
       <div>
         <i class="bi bi-image"></i>
-        {props.alt !== "" ? props.alt : props.source}
+        {props.alt !== "" ? props.alt : displayName}
       </div>
     );
   }
@@ -80,10 +82,11 @@ export function FCImage(props: { source: string; alt: string }) {
 export function FCAudio(props: { source: string; captions: string }) {
   let audioLabel = <span class="no-src">Audio</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
+    const asset = getAsset(props.source, getStore());
     audioLabel = (
       <div>
         <i class="bi bi-volume-up-fill"></i>
-        {props.source}
+        {asset ? asset.fileName : props.source}
       </div>
     );
   }
@@ -96,10 +99,11 @@ export function FCAudio(props: { source: string; captions: string }) {
 export function FCVideo(props: { source: string; captions: string }) {
   let videoLabel = <span class="no-src">Video</span>;
   if (props.source && props.source !== "") {
+    const asset = getAsset(props.source, getStore());
     videoLabel = (
       <div>
         <i class="bi bi-film"></i>
-        {props.source}
+        {asset ? asset.fileName : props.source}
       </div>
     );
   }
@@ -123,10 +127,11 @@ export function FCSilence(props: { duration: number }) {
 export function FCBackgroundAudio(props: { source: string }) {
   let label = <span class="no-src">Audio</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
+    const asset = getAsset(props.source, getStore());
     label = (
       <div>
         <i class="bi bi-music-note-beamed"></i>
-        {props.source}
+        {asset ? asset.fileName : props.source}
       </div>
     );
   }
@@ -139,10 +144,11 @@ export function FCBackgroundAudio(props: { source: string }) {
 export function FCBackgroundVideo(props: { source: string }) {
   let label = <span class="no-src">Video</span>;
   if (props.source && props.source !== "") {
+    const asset = getAsset(props.source, getStore());
     label = (
       <div>
         <i class="bi bi-camera-video-fill"></i>
-        {props.source}
+        {asset ? asset.fileName : props.source}
       </div>
     );
   }
