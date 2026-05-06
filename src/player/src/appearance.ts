@@ -87,11 +87,8 @@ export function generateAppearanceCSS(appearance: AppearanceSettings, projectPat
   // Background
   if (appearance.background) {
     const bg = appearance.background;
-    if (bg.kind === "color" && bg.color) {
-      css += `  --cl-background-color: ${bg.color};\n`;
-    } else if (bg.kind === "image" && bg.file) {
-      css += `  --cl-background-image: url('${projectPath}/Assets/${bg.file}');\n`;
-    }
+    if (bg.color) css += `  --cl-background-color: ${bg.color};\n`;
+    if (bg.file) css += `  --cl-background-image: url('${projectPath}/Assets/${bg.file}');\n`;
     if (bg.size) css += `  --cl-background-size: ${bg.size};\n`;
   }
 
