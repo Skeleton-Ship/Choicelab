@@ -2,6 +2,7 @@ import { render } from "preact";
 import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { Acknowledgments } from "./acknowledgments/Acknowledgments";
+import { License } from "./license/License";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { message, confirm, save, ask } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
@@ -172,6 +173,9 @@ async function init() {
   }
   if (windowType === "acknowledgments") {
     elements = <Acknowledgments />;
+  }
+  if (windowType === "license") {
+    elements = <License />;
   }
   if (windowType === "project" || windowType === "projectSettings") {
     // Get project path

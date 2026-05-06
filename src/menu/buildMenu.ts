@@ -281,6 +281,10 @@ export async function buildMenu(windowType: WindowType) {
         text: "Website",
       }),
       await MenuItem.new({
+        id: "open_license",
+        text: "License",
+      }),
+      await MenuItem.new({
         id: "open_whatsNew",
         text: "Release Notes",
       }),

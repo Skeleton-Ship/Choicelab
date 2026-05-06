@@ -3,6 +3,7 @@
 // Rust callbacks
 void menu_release_notes_clicked(void);
 void menu_acknowledgments_clicked(void);
+void menu_license_clicked(void);
 
 @interface NativeBridge : NSObject
 + (instancetype)sharedInstance;
@@ -64,6 +65,10 @@ void menu_acknowledgments_clicked(void);
             [helpMenu addItem:[NSMenuItem separatorItem]];
 
             item = [[NSMenuItem alloc] initWithTitle:@"Website" action:@selector(openChoicelabSite:) keyEquivalent:@""];
+            item.target = bridge;
+            [helpMenu addItem:item];
+
+            item = [[NSMenuItem alloc] initWithTitle:@"License" action:@selector(showLicense:) keyEquivalent:@""];
             item.target = bridge;
             [helpMenu addItem:item];
 
@@ -132,6 +137,10 @@ void menu_acknowledgments_clicked(void);
 
 - (void)openGitHubRepo:(NSMenuItem *)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/Skeleton-Ship/Choicelab"]];
+}
+
+- (void)showLicense:(NSMenuItem *)sender {
+    menu_license_clicked();
 }
 
 - (void)showReleaseNotes:(NSMenuItem *)sender {

@@ -134,7 +134,8 @@ export type WindowType =
   | "projectSettings"
   | "launcher"
   | "whatsNew"
-  | "acknowledgments";
+  | "acknowledgments"
+  | "license";
 export interface Store {
   project: Project;
   projectPath: string;

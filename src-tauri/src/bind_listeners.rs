@@ -123,6 +123,29 @@ pub fn open_whats_new_window(app: tauri::AppHandle) {
 	}
 }
 
+pub fn open_license_window(app: tauri::AppHandle) {
+	if let Some(window) = app.get_webview_window("license") {
+		let _ = window.show();
+		let _ = window.set_focus();
+	} else {
+		let builder = tauri::WebviewWindowBuilder::new(
+			&app,
+			"license",
+			tauri::WebviewUrl::App("index.html?window_type=license".into()),
+		)
+		.title("Choicelab License")
+		.inner_size(620.0, 560.0)
+		.resizable(true)
+		.transparent(true);
+		#[cfg(target_os = "macos")]
+		let builder = builder
+			.title_bar_style(tauri::TitleBarStyle::Overlay);
+		let window = builder.build().unwrap();
+		let _ = window.show();
+		let _ = window.set_focus();
+	}
+}
+
 pub fn open_acknowledgments_window(app: tauri::AppHandle) {
 	if let Some(window) = app.get_webview_window("acknowledgments") {
 		let _ = window.show();
@@ -615,6 +638,12 @@ let handle_update = app_handle.clone();
 		open_whats_new_window(handle_whats_new.clone());
 	});
 
+	// listen for license window to open
+	let handle_license = app_handle.clone();
+	app.listen("license-window", move |_event| {
+		open_license_window(handle_license.clone());
+	});
+
 	// listen for acknowledgments window to open
 	let handle_acknowledgments = app_handle.clone();
 	app.listen("acknowledgments-window", move |_event| {
@@ -745,6 +774,7 @@ let handle_update = app_handle.clone();
 			"open_choicelab_site" => "menu-open-choicelab-site",
 			"open_repo" => "menu-open-repo",
             "open_whatsNew" => "whatsNew-window",
+            "open_license" => "license-window",
             "open_acknowledgments" => "acknowledgments-window",
             _ => {
                 eprintln!("Unknown menu item: {}", menu_id);
