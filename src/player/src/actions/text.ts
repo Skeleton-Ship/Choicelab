@@ -4,7 +4,7 @@ import { render, clear, createActionWrapper } from "../rendering";
 const action = {
   render: (action: ActionForPlayback, done: Function) => {
     let tag = "p";
-    switch (action.extendedProps.role) {
+    switch (action.extendedProps["choicelab-player-html5"]?.role) {
       case "heading":
         tag = "h1";
         break;

@@ -22,7 +22,7 @@ const action = {
       video.setAttribute("playsinline", "");
     }
 
-    if (action.extendedProps.fit) video.classList.add(`fit-${action.extendedProps.fit}`);
+    if (action.extendedProps["choicelab-player-html5"]?.fit) video.classList.add(`fit-${action.extendedProps["choicelab-player-html5"].fit}`);
     if (action.props.muted) video.muted = true;
 
     let endCell = false;

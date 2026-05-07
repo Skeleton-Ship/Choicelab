@@ -24,7 +24,7 @@ const action = {
 
     if (action.props.loop) video.loop = true;
     if (action.props.muted) video.muted = true;
-    if (action.extendedProps.fit) video.classList.add(`fit-${action.extendedProps.fit}`);
+    if (action.extendedProps["choicelab-player-html5"]?.fit) video.classList.add(`fit-${action.extendedProps["choicelab-player-html5"].fit}`);
     video.classList.add("cl-background-media");
     if (action.props.buildIn === "none") video.classList.add("no-fade-in");
     if (action.props.buildOut === "none") video.dataset.buildOut = "none";
