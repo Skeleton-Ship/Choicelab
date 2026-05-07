@@ -4,7 +4,7 @@ import { WhatsNew } from "./whats-new/WhatsNew";
 import { Acknowledgments } from "./acknowledgments/Acknowledgments";
 import { License } from "./license/License";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { message, confirm, save, ask } from "@tauri-apps/plugin-dialog";
+import { message, confirm, save } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import { ProjectSettings } from "./editor/ProjectSettings";
 import newProject from "./fs/newProject";
@@ -42,7 +42,6 @@ import { exportProject, getExportDirName } from "./fs/exportProject";
 import { desktopDir, resolve } from "@tauri-apps/api/path";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
-let assetsScanShown = false;
 
 async function init() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -243,40 +242,6 @@ async function init() {
           label: getProjectWindowLabel(projectPath),
         });
       });
-    }
-    // Warn about files in Assets that aren't registered in the project
-    if (
-      windowType === "project" &&
-      Array.isArray(projectData.assets) &&
-      !assetsScanShown
-    ) {
-      assetsScanShown = true;
-      const assetsPath = await resolve(projectPath, "Assets");
-      const diskEntries = await invoke<string[]>("list_assets_dir", {
-        path: assetsPath,
-      });
-      const knownFileNames = new Set(projectData.assets.map((a) => a.fileName));
-      const outliers = diskEntries.filter((name) => !knownFileNames.has(name));
-      if (outliers.length > 0) {
-        const bulletList = outliers.map((name) => `• ${name}`).join("\n");
-        const headline =
-          "Some files in the Assets folder aren't part of this project.";
-        const detail = `To avoid issues, move these files out of the Assets folder:\n\n${bulletList}`;
-        const openFolder = await ask(
-          platform === "macos" ? detail : `${headline}\n\n${detail}`,
-          {
-            title:
-              platform === "macos"
-                ? headline
-                : "Unexpected Files in Assets Folder",
-            okLabel: "Open Assets Folder",
-            cancelLabel: "Ignore",
-          }
-        );
-        if (openFolder) {
-          invoke("open_folder", { path: assetsPath });
-        }
-      }
     }
     // Normalize legacy metadata fields
     projectData = normalizeProjectMetadata(projectData as Project);

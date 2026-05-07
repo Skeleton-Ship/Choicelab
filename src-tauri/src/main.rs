@@ -30,19 +30,6 @@ fn open_folder(path: String) {
 }
 
 #[tauri::command]
-fn list_assets_dir(path: String) -> Vec<String> {
-    std::fs::read_dir(&path)
-        .map(|entries| {
-            entries
-                .filter_map(|e| e.ok())
-                .filter_map(|e| e.file_name().into_string().ok())
-                .filter(|name| !name.starts_with('.'))
-                .collect()
-        })
-        .unwrap_or_default()
-}
-
-#[tauri::command]
 fn set_focused_window(label: String) {
     *FOCUSED_WINDOW.lock().unwrap() = label;
         println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
@@ -107,7 +94,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files, list_assets_dir, open_folder, set_focused_window, print_focused_window])
+        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {
