@@ -12,14 +12,14 @@ A pre-built _alpha_ version of the app is available for both Mac and Windows.
 
 Development requires macOS 13.5 and newer, or Windows 10 (version 22H2) and 11:
 
-1. Follow Tauri's guide for [setup on macOS](https://v2.tauri.app/start/prerequisites/#macos) — you can use their "Only developing for desktop targets" aside to speed things up — or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
+1. Follow Tauri's guide for [setup on macOS\*](https://v2.tauri.app/start/prerequisites/#macos) or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
+   - \* **Mac developers**: [Install the Xcode app](https://developer.apple.com/xcode/), _not_ just the command line tools. Tauri's docs state otherwise, but you'll need the full app because Choicelab uses some Objective-C.
 2. Install [Bun](https://bun.sh/package-manager); you can run `bun` to see if you already have it installed.
 3. Install [Git](https://git-scm.com/install), if you don't have it already. Any installation method should work.
 4. **If you're using Windows on ARM**, two extra tools are required:
    - In the Visual Studio installer, go to Modify -> Individual Components, and select **"MSVC v143 - VS 2022 C++ ARM64/ARM64EC build tools (Latest)"**.
    - [Install LLVM for Windows on ARM](https://github.com/llvm/llvm-project/releases) — download the `woa64` installer and select "Add LLVM to the system PATH" during setup. This is required by the `ring` cryptography crate, which MSVC alone can't compile on ARM64.
-
-From this repo, install dependencies with `bun install-all`. Then, run `bun keygen` to generate a key for deploying automatic updates. (It's recommended that you leave the password field blank.)
+5. Navigate to this repo in your terminal, then install dependencies with `bun install-all`.
 
 ## Development
 
@@ -48,7 +48,7 @@ Before publishing a new version, make sure you update the release notes in chang
 
 Run `bun run version-[version_type]` — substituting the type for _major_, _minor_, or _patch_ updates — to increment the app version across TypeScript and Rust.
 
-Deploying automatic app updates requires creating a Tauri private key, then associating it with the [choicelab-app repo on GitHub](https://github.com/Skeleton-Ship/Choicelab). See [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info.
+Deploying automatic app updates requires creating a Tauri private and public key pair, then associating it with the [GitHub repo](https://github.com/Skeleton-Ship/Choicelab). You can generate a key pair by running `bun run keygen`; see [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info on the full setup.
 
 Once you successfully build the app (using the process above), merge into the **release** branch (per above), review the build, then publish.
 
