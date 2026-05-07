@@ -211,8 +211,9 @@ let handle_update = app_handle.clone();
 	app.listen("handle-update", move |_event| {
 		let handle_update = handle_update.clone();
 		tauri::async_runtime::spawn(async move {
-			if let Err(e) = update(handle_update).await {
+			if let Err(e) = update(handle_update.clone()).await {
 				eprintln!("Update failed: {:?}", e);
+				let _ = handle_update.emit("update-failed", Payload { message: e.to_string() });
 			}
 		});
 	});
