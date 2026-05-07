@@ -86,10 +86,11 @@ export default function FileUpload(props: {
               label: getProjectWindowLabel(viewStore.projectPath),
             };
             emit("create-asset", jsonData);
-            once("asset-created", async () => {
+            once("asset-created", async (event) => {
               const store = getStore();
+              const resolvedFileName = (event.payload as { fileName: string }).fileName;
               const asset = createAsset(
-                file.name,
+                resolvedFileName,
                 propsRef.current.fileKind as Asset["type"]
               );
               store.project.assets.push(asset);

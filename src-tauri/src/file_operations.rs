@@ -1,6 +1,8 @@
 use crate::globals::{APP_READY, PENDING_FILES};
 use std::sync::atomic::Ordering;
 use dirs::cache_dir;
+use std::collections::HashSet;
+use serde_json;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -142,6 +144,29 @@ pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> i
     Ok(())
 }
 
+// Recursively searches `root` for a file named `file_name`.
+// Returns the path relative to `root` (e.g. "subdir/logo.png") if found.
+pub fn find_file_in_dir(root: &Path, file_name: &str) -> Option<String> {
+    find_file_recursive(root, root, file_name)
+}
+
+fn find_file_recursive(root: &Path, dir: &Path, file_name: &str) -> Option<String> {
+    let entries = fs::read_dir(dir).ok()?;
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            if let Some(found) = find_file_recursive(root, &path, file_name) {
+                return Some(found);
+            }
+        } else if path.file_name().and_then(|n| n.to_str()) == Some(file_name) {
+            if let Ok(rel) = path.strip_prefix(root) {
+                return rel.to_str().map(|s| s.replace('\\', "/"));
+            }
+        }
+    }
+    None
+}
+
 pub fn get_preview_path(id: &str) -> Option<PathBuf> {
     cache_dir().map(|cache| {
         cache
@@ -169,15 +194,21 @@ fn write_project_files(
             return Ok(());
         }
         let assets_dest = project_subfolder.join("Assets");
-        fs::create_dir_all(&assets_dest)?;
-        for entry in fs::read_dir(assets_src)? {
-            let entry = entry?;
-            let dest_path = assets_dest.join(entry.file_name());
-            if entry.path().is_dir() {
-                fs::create_dir_all(&dest_path)?;
-                fs::copy(entry.path(), dest_path)?;
-            } else {
-                fs::copy(entry.path(), dest_path)?;
+        let referenced: HashSet<String> = serde_json::from_str::<serde_json::Value>(project_data)
+            .ok()
+            .and_then(|v| v["assets"].as_array().cloned())
+            .unwrap_or_default()
+            .iter()
+            .filter_map(|a| a["fileName"].as_str().map(|s| s.to_string()))
+            .collect();
+        for file_name in &referenced {
+            let src = assets_src.join(file_name);
+            if src.exists() {
+                let dest = assets_dest.join(file_name);
+                if let Some(parent) = dest.parent() {
+                    fs::create_dir_all(parent)?;
+                }
+                fs::copy(&src, &dest)?;
             }
         }
     }

@@ -24,12 +24,16 @@ export default async function getAssetPreviewURL(
         async (filePath) => {
           const fileId = uuidv4();
           const cacheBase = await appCacheDir();
-          const cachePath = await path_resolve(
+          const cacheAssetsBase = await path_resolve(
             cacheBase,
             "Projects",
             store.project.id,
             "Assets"
           );
+          const slashIdx = fileName.lastIndexOf("/");
+          const cachePath = slashIdx !== -1
+            ? await path_resolve(cacheAssetsBase, fileName.substring(0, slashIdx))
+            : cacheAssetsBase;
           emit("read-asset", {
             assetPath: filePath,
             cachePath: cachePath,

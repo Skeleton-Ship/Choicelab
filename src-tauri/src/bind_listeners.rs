@@ -1,6 +1,6 @@
 use crate::file_operations::{
     copy_file, create_binary_file, create_directory, create_text_file, export_project_files,
-    load_preview_files, read_text_file,
+    find_file_in_dir, load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
 use crate::globals::{mark_app_ready, FOCUSED_WINDOW};
@@ -10,6 +10,7 @@ use serde::{Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
 use std::fs;
+use std::path::Path;
 use std::sync::{Mutex, OnceLock};
 use tauri::Emitter;
 use tauri::Listener;
@@ -23,6 +24,12 @@ use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct AssetCreatedPayload {
+    file_name: String,
 }
 
 #[derive(Clone, Serialize)]
@@ -415,40 +422,34 @@ let handle_update = app_handle.clone();
                 let contents = json["contents"].as_str().unwrap_or("N/A");
                 let window_label = json["label"].as_str().unwrap_or("N/A");
                 let assets_dir = json["assetsPath"].as_str().unwrap_or("N/A");
-                if file_type == "binary" {
-                    match create_binary_file(file_name, contents, assets_dir) {
-                        Ok(_success) => {
-                            let project_window = handle_create_asset
-                                .get_webview_window(window_label)
-                                .unwrap();
-                            let _ = project_window.emit(
-                                "asset-created",
-                                Payload {
-                                    message: "Asset created successfully".to_string(),
-                                },
-                            );
-                        }
-                        Err(_e) => {
-                            eprintln!("Error creating asset");
-                        }
-                    }
-                } else if file_type == "text" {
-                    match create_text_file(file_name, contents, assets_dir) {
-                        Ok(_success) => {
-                            let project_window = handle_create_asset
-                                .get_webview_window(window_label)
-                                .unwrap();
-                            let _ = project_window.emit(
-                                "asset-created",
-                                Payload {
-                                    message: "Asset created successfully".to_string(),
-                                },
-                            );
-                        }
-                        Err(_e) => {
-                            eprintln!("Error creating asset");
+                // If the file already exists anywhere in Assets, use that path instead of copying.
+                let resolved_name = match find_file_in_dir(Path::new(assets_dir), file_name) {
+                    Some(existing) => Some(existing),
+                    None => {
+                        let result = if file_type == "binary" {
+                            create_binary_file(file_name, contents, assets_dir)
+                        } else if file_type == "text" {
+                            create_text_file(file_name, contents, assets_dir)
+                        } else {
+                            Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown file type"))
+                        };
+                        match result {
+                            Ok(_) => Some(file_name.to_string()),
+                            Err(_) => {
+                                eprintln!("Error creating asset");
+                                None
+                            }
                         }
                     }
+                };
+                if let Some(name) = resolved_name {
+                    let project_window = handle_create_asset
+                        .get_webview_window(window_label)
+                        .unwrap();
+                    let _ = project_window.emit(
+                        "asset-created",
+                        AssetCreatedPayload { file_name: name },
+                    );
                 }
             }
             Err(e) => {
