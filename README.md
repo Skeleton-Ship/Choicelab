@@ -4,7 +4,7 @@ Choicelab is a desktop app that lets writers and multimedia designers create ric
 
 Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is typically written in HTML, CSS, and JavaScript — but because Tauri uses the system's native webview for rendering, the generated apps are much faster and _much_ smaller.
 
-The frontend is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool. The backend handles basic setup, file management, and windowing, and is written in Rust like Tauri itself (with a sprinkle of [Swift](https://developer.apple.com/swift/) to polyfill functionality Tauri doesn't have yet).
+The frontend is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool. The backend handles basic setup, file management, and windowing, and is written in Rust like Tauri itself (with a sprinkle of Objective-C to provide Mac functionality that Tauri doesn't have yet).
 
 A pre-built _alpha_ version of the app is available for both Mac and Windows.
 
