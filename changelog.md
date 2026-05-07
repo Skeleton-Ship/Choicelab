@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2
+
+### 2026-05-07
+
+#### Fixes
+
+- Fixed an issue that caused the app to instantly crash on Macs with Intel processors.
+
 ## 1.0.1
 
 ### 2026-05-07
