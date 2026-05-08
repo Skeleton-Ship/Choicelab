@@ -10,6 +10,7 @@
 - Improved label text for cell settings.
 - Improved label text for video and audio actions force-ending cells.
 - The text in selected toolbar buttons is now easier to read in dark mode.
+- Autofill will no longer generate duplicate values for button labels.
 
 ## 1.0.1
 
