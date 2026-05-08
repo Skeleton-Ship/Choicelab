@@ -55,6 +55,20 @@ export function normalizeButtonValue(label: string): string {
 }
 
 /**
+ * Ensures all values in the array are unique. The first occurrence of a
+ * duplicate keeps its original form; subsequent occurrences get a numeric
+ * suffix (e.g. ["Yes", "Yes", "Yes"] → ["Yes", "Yes2", "Yes3"]).
+ */
+export function deduplicateValues(values: string[]): string[] {
+  const counts = new Map<string, number>();
+  return values.map((v) => {
+    const n = (counts.get(v) ?? 0) + 1;
+    counts.set(v, n);
+    return n === 1 ? v : `${v}${n}`;
+  });
+}
+
+/**
  * Resolves a unique variable name against the existing project variables.
  * If the base name already exists, appends a numeric suffix (e.g. "choice2").
  */
@@ -250,16 +264,20 @@ export async function buildAutoGenerationPlan(
     description: "",
   };
 
+  // Compute deduplicated button values once — shared by actionUpdates and stemWork.
+  const buttonValues = deduplicateValues(
+    buttonActions.map((a) => normalizeButtonValue((a.props.label as string | undefined) ?? ""))
+  );
+
   // Build action updates.
   const actionUpdates: PlannedActionUpdate[] = [];
-  for (const action of buttonActions) {
-    const rawLabel = (action.props.label as string | undefined) ?? "";
+  buttonActions.forEach((action, i) => {
     actionUpdates.push({
       actionId: action.id,
       varToSet: variable.id,
-      value: normalizeButtonValue(rawLabel),
+      value: buttonValues[i],
     });
-  }
+  });
   for (const action of inputFieldActions) {
     actionUpdates.push({
       actionId: action.id,
@@ -291,7 +309,7 @@ export async function buildAutoGenerationPlan(
         linkedBranchId,
         linkedNode as Branch,
         variable.id,
-        buttonActions
+        buttonValues
       );
     }
   }
@@ -310,12 +328,8 @@ function buildStemWork(
   branchId: string,
   branch: Branch,
   variableId: string,
-  buttonActions: Action[]
+  values: string[]
 ): NonNullable<AutoGenerationPlan["stemWork"]> {
-  const values = buttonActions.map((a) =>
-    normalizeButtonValue((a.props.label as string | undefined) ?? "")
-  );
-
   const reusableStems = branch.stems.filter(
     (s): s is Stem => s.type === "rules" && stemHasNoRules(s)
   );
