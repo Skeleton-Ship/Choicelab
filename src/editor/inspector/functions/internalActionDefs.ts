@@ -19,9 +19,10 @@ const internalActionDefs: ActionDefs = {
       name: "text",
       label: "Show Text",
       description:
-        "A block of text that can appear instantly or be associated with a media action.",
+        "A block of text that can appear instantly or be associated with a timeline action.",
       extendable: true,
       timedElement: true,
+      category: "event",
       editor: {
         iconName: "text-left",
         iconColor: "#2f2f52",
@@ -45,6 +46,7 @@ const internalActionDefs: ActionDefs = {
       description: "Play an audio file.",
       extendable: false,
       mediaElement: true,
+      category: "timeline",
       flowchart: FCAudio,
       editor: {
         iconName: "volume-up-fill",
@@ -78,6 +80,7 @@ const internalActionDefs: ActionDefs = {
       description: "Play a video file.",
       extendable: false,
       mediaElement: true,
+      category: "timeline",
       flowchart: FCVideo,
       editor: {
         iconName: "film",
@@ -172,6 +175,7 @@ const internalActionDefs: ActionDefs = {
       timedElement: true,
       mediaElement: false,
       inputElement: true,
+      category: "interact",
       flowchart: FCButton,
       editor: {
         iconName: "three-dots",
@@ -269,6 +273,7 @@ const internalActionDefs: ActionDefs = {
         "Play an audio file in the background without blocking cell progression.",
       extendable: false,
       mediaElement: false,
+      category: "event",
       flowchart: FCBackgroundAudio,
       editor: {
         iconName: "volume-up-fill",
@@ -310,6 +315,7 @@ const internalActionDefs: ActionDefs = {
         "Play a video file in the background without blocking cell progression.",
       extendable: false,
       mediaElement: false,
+      category: "event",
       flowchart: FCBackgroundVideo,
       editor: {
         iconName: "film",
@@ -373,9 +379,10 @@ const internalActionDefs: ActionDefs = {
     {
       name: "endBackgroundAudio",
       label: "End Background Audio",
-      description: "Stop a named background audio.",
+      description: "Stop background audio that persists across cells.",
       extendable: false,
       mediaElement: false,
+      category: "event",
       flowchart: FCEndBackground,
       editor: {
         iconName: "stop-fill",
@@ -395,9 +402,10 @@ const internalActionDefs: ActionDefs = {
     {
       name: "endBackgroundVideo",
       label: "End Background Video",
-      description: "Stop a named background video.",
+      description: "Stop background video that persists across cells.",
       extendable: false,
       mediaElement: false,
+      category: "event",
       flowchart: FCEndBackground,
       editor: {
         iconName: "stop-fill",

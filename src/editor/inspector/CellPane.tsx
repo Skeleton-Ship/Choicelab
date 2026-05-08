@@ -25,6 +25,9 @@ import { setStore } from "../../data/dataStore";
 
 function AvailableActions(props: { update: Function }) {
   const [selectedDef, selectDef] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "timeline" | "interact" | "event"
+  >("timeline");
   useEffect(() => {
     const pointerUpHandler = () => {
       if (getFocusedRegion() !== "available-actions") {
@@ -39,34 +42,42 @@ function AvailableActions(props: { update: Function }) {
   function handleAddAction(actionDef: ActionDef) {
     addAction(actionDef, props.update);
   }
-  // Get names of action defs
-  const actions = internalActionDefs.actions.map((def: ActionDef) => {
-    const selectedClass = selectedDef === def.name ? "selected" : "";
-    return (
+  const categories: Record<string, string> = {
+    timeline: "Timeline",
+    interact: "Interact",
+    event: "Event",
+  };
+  const filteredActions = internalActionDefs.actions
+    .filter((def: ActionDef) => def.category === selectedCategory)
+    .map((def: ActionDef) => (
       <li>
         <button
-          class={selectedClass}
+          class={selectedDef === def.name ? "selected" : ""}
           title={def.description}
-          onClick={() => {
-            selectDef(def.name);
-          }}
-          onDblClick={() => {
-            handleAddAction(def);
-          }}
+          onClick={() => selectDef(def.name)}
+          onDblClick={() => handleAddAction(def)}
         >
           <ActionIcon def={def} />
           <span class="action-label">{def.label}</span>
         </button>
       </li>
-    );
-  });
+    ));
   return (
-    <ul id="available-actions">
-      <div class="inner">
-        <h4>Add an Action:</h4>
-        {actions}
+    <div id="available-actions">
+      <div class="categories">
+        {Object.entries(categories).map(([key, label]) => (
+          <button
+            class={selectedCategory === key ? "selected" : ""}
+            onClick={() =>
+              setSelectedCategory(key as "timeline" | "interact" | "event")
+            }
+          >
+            {label}
+          </button>
+        ))}
       </div>
-    </ul>
+      <ul class="action-list">{filteredActions}</ul>
+    </div>
   );
 }
 
@@ -105,8 +116,8 @@ function ActionsEditor(props: { update: Function }) {
           <aside class="cell-plays-quickly">
             <p>
               <strong>This cell may play quickly.</strong> If that's not
-              intentional, you can add media or a Show Button action to make the
-              cell play for longer.
+              intentional, you can add a timeline action to make the cell play
+              for longer.
             </p>
           </aside>
         ) : (
