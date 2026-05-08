@@ -1,4 +1,4 @@
-import { useState, useRef } from "preact/hooks";
+import { useState, useRef, useEffect } from "preact/hooks";
 import { parseNumber } from "../../../utils/parseNumber";
 
 /*
@@ -16,7 +16,11 @@ export default function NumberField(props: {
 }) {
   let supplementalClass = props.class || "";
   const elRef = useRef(null);
+  const isFocused = useRef(false);
   const [displayValue, setDisplayValue] = useState(String(props.value));
+  useEffect(() => {
+    if (!isFocused.current) setDisplayValue(String(props.value));
+  }, [props.value]);
   const className = `ui-number-field ${supplementalClass}`;
   function doSpinner(amount: number) {
     if (elRef.current === null) return;
@@ -56,7 +60,11 @@ export default function NumberField(props: {
           if (typeof props.max !== "undefined" && number > props.max) number = props.max;
           props.onChange(number);
         }}
+        onFocus={() => {
+          isFocused.current = true;
+        }}
         onBlur={() => {
+          isFocused.current = false;
           const limit = props.decimalPlaces ? props.decimalPlaces : 2;
           let number = parseNumber(displayValue, limit);
           if (typeof props.min !== "undefined" && number < props.min) number = props.min;

@@ -4,6 +4,14 @@
 
 ### 2026-05-07
 
+#### New features
+
+- Choicelab now features a **consistent aspect ratio** and **more flexible element positioning**. Your project will look the same on any device, at any size.
+
+#### Enhancements
+
+- Due to the new element positioning, the grid has been removed. Existing grid elements will be back-ported into approximate positions.
+
 #### Fixes
 
 - Fixed an issue that caused opening the app to crash on Macs with Intel processors.

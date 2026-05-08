@@ -1,6 +1,7 @@
 import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import NumberField from "../NumberField";
 
 const GRID_TO_PERCENT: Record<number, number> = { 1: 16, 2: 50, 3: 83 };
 
@@ -29,10 +30,8 @@ export function Position(props: {
   const propDef = props.propDef;
   const { x, y } = resolvePosition(props.initialValue);
 
-  function handleChange(axis: "x" | "y", rawValue: string) {
+  function handleChange(axis: "x" | "y", value: number) {
     if (!action) return;
-    const parsed = parseFloat(rawValue);
-    const clamped = isNaN(parsed) ? 50 : Math.min(100, Math.max(0, parsed));
     const current = resolvePosition(props.initialValue);
     const propsObj =
       props.extended === false
@@ -40,8 +39,8 @@ export function Position(props: {
         : action.extendedProps[getPlayerConfig().id];
     propsObj[propDef.name] = {
       kind: "absolute",
-      x: axis === "x" ? clamped : current.x,
-      y: axis === "y" ? clamped : current.y,
+      x: axis === "x" ? value : current.x,
+      y: axis === "y" ? value : current.y,
     };
     setStore(props.store);
     props.update();
@@ -53,23 +52,25 @@ export function Position(props: {
       <div class="position-inputs">
         <div class="position-input">
           <label>X</label>
-          <input
-            type="number"
-            min="0"
-            max="100"
+          <NumberField
+            name={`position_x_${action.id}`}
             value={x}
-            onChange={(e) => handleChange("x", (e.target as HTMLInputElement).value)}
+            min={0}
+            max={100}
+            decimalPlaces={1}
+            onChange={(value: number) => handleChange("x", value)}
           />
           <span class="suffix">%</span>
         </div>
         <div class="position-input">
           <label>Y</label>
-          <input
-            type="number"
-            min="0"
-            max="100"
+          <NumberField
+            name={`position_y_${action.id}`}
             value={y}
-            onChange={(e) => handleChange("y", (e.target as HTMLInputElement).value)}
+            min={0}
+            max={100}
+            decimalPlaces={1}
+            onChange={(value: number) => handleChange("y", value)}
           />
           <span class="suffix">%</span>
         </div>
