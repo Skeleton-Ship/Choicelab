@@ -1,12 +1,14 @@
 # Choicelab
 
-Choicelab is a desktop app that lets writers and multimedia designers create rich branching narrative stories on their computer, then publish them on the web, where they'll play on any device or screen. This, here, is the source code to the app. You found it!
+Choicelab is a desktop app that lets writers and multimedia designers create rich branching narrative stories on their computer, then publish them on the web, where they'll play on any device or screen.
+
+This, here, is the source code to the app. **You only need the below instructions if you want to develop Choicelab.** If you just want to use it like a normal app, head to [Choicelab.xyz](https://choicelab.xyz) to download!
 
 Under the hood, Choicelab uses [Tauri](https://tauri.app), a framework for building cross-platform apps. It's sort of like Electron, in that the UI is typically written in HTML, CSS, and JavaScript — but because Tauri uses the system's native webview for rendering, the generated apps are much faster and _much_ smaller.
 
 The frontend is written in [TypeScript](https://www.typescriptlang.org), with [Preact](https://preactjs.com) as a UI framework and [Vite](https://vite.dev) as a build tool. The backend handles basic setup, file management, and windowing, and is written in Rust like Tauri itself (with a sprinkle of Objective-C to provide Mac functionality that Tauri doesn't have yet).
 
-A pre-built _alpha_ version of the app is available for both Mac and Windows.
+A pre-built version of the app is available for both Mac and Windows.
 
 ## Setup
 
