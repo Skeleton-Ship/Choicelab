@@ -216,7 +216,10 @@ export function mediaEnded(id: string) {
 
 export function endBackgroundItem(type: "audio" | "video", name: string) {
   const store = getStore();
-  const registry = type === "audio" ? store.playback.backgroundAudio : store.playback.backgroundVideo;
+  const registry =
+    type === "audio"
+      ? store.playback.backgroundAudio
+      : store.playback.backgroundVideo;
   const el = registry[name];
   if (!el) return;
   delete registry[name];
@@ -252,7 +255,8 @@ export function endBackgroundItem(type: "audio" | "video", name: string) {
 export function clearMediaItems(delay: number) {
   const store = getStore();
   const media = store.playback.media;
-  const fadeOut = media.currentItem === false || media.currentItem.buildOut !== "none";
+  const fadeOut =
+    media.currentItem === false || media.currentItem.buildOut !== "none";
   clearScrubber();
   media.items = [];
   media.currentItem = false;

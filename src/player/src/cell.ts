@@ -77,6 +77,7 @@ export async function runCell(cell: Cell) {
   const queuedActions: Array<Action> = []; // timed actions that haven't rendered yet
   const renderedActions: { [key: string]: boolean } = {}; // actions that have rendered but aren't complete
   const completedActions: { [key: string]: boolean } = {}; // actions that are fully complete
+  let cellEnded = false;
 
   function runAction(action: Action) {
     // @ts-ignore
@@ -92,9 +93,13 @@ export async function runCell(cell: Cell) {
     }
     actionFn(action, (props?: { forceEnd: boolean }) => {
       if (props && props.forceEnd === true) {
+        if (cellEnded) return;
+        cellEnded = true;
         clearInterval(checkCellDone);
+        clearInterval(mediaInterval);
         forceEndMedia();
         endCell(cell);
+        return;
       }
       completedActions[action.id] = true;
     });
