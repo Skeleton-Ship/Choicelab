@@ -87,13 +87,17 @@ export function MediaControl(props: {
 
     scrubber.addEventListener("pointerdown", handlePointerDown);
     media.addEventListener("timeupdate", handleTimeUpdate);
-    media.addEventListener(
-      "loadeddata",
-      () => {
-        setMediaLoaded(true);
-      },
-      { once: true }
-    );
+    if (media.readyState >= 2) {
+      setMediaLoaded(true);
+    } else {
+      media.addEventListener(
+        "loadeddata",
+        () => {
+          setMediaLoaded(true);
+        },
+        { once: true }
+      );
+    }
 
     return () => {
       clearInterval(interval);
@@ -186,7 +190,7 @@ export function MediaControl(props: {
   return (
     <>
       {isAudio && (
-        <Waveform el={media} actionId={props.actionId} flags={timingFlagEls} />
+        <Waveform el={media as HTMLAudioElement} src={(media as HTMLAudioElement).src} actionId={props.actionId} flags={timingFlagEls} />
       )}
       <div
         class={`media-controls ${action.name} ${isVideo ? "overlay" : ""}`}
