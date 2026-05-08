@@ -11,6 +11,7 @@
 - Improved label text for video and audio actions force-ending cells.
 - The text in selected toolbar buttons is now easier to read in dark mode.
 - Autofill will no longer generate duplicate values for button labels.
+- Font picker labels will no longer overflow the dropdown.
 
 ## 1.0.1
 

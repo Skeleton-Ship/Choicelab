@@ -185,6 +185,11 @@ $field-padding: 4px 6px;
       background: none;
       min-height: 100%;
       padding: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: calc(100% - 12px);
+      display: block;
       @media (prefers-color-scheme: dark) {
         color: #dddddd;
       }
