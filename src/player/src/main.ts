@@ -19,8 +19,14 @@ function Choicelab() {
           return response.json();
         })
         .then((json) => {
-          const isAppPreview = new URLSearchParams(window.location.search).get("startMediaOnLoad") === "false";
-          const rememberHistory = !isAppPreview && json.settings?.player?.["choicelab-player-html5"]?.rememberHistory === true;
+          const isAppPreview =
+            new URLSearchParams(window.location.search).get(
+              "startMediaOnLoad"
+            ) === "false";
+          const rememberHistory =
+            !isAppPreview &&
+            json.settings?.player?.["choicelab-player-html5"]
+              ?.rememberHistory === true;
           window.__CHOICELAB__ = {
             project: json,
             playback: {
@@ -54,14 +60,19 @@ function Choicelab() {
           };
           // Enable autoplay immediately if the browser permits it, unless the
           // host has requested deferred autoplay (e.g. editor preview context)
-          const startMediaOnLoad = new URLSearchParams(window.location.search).get("startMediaOnLoad") !== "false";
+          const startMediaOnLoad =
+            new URLSearchParams(window.location.search).get(
+              "startMediaOnLoad"
+            ) !== "false";
           if (startMediaOnLoad) {
             canAutoplay.audio().then(({ result }) => {
               if (result) enableAutoplay();
             });
           }
           // Unlock autoplay on first user interaction regardless of startMediaOnLoad
-          document.addEventListener("click", () => enableAutoplay(), { once: true });
+          document.addEventListener("click", () => enableAutoplay(), {
+            once: true,
+          });
           // Add starting values to variables
           const playbackVars = window.__CHOICELAB__.playback.variables;
           window.__CHOICELAB__.project.variables.items.forEach((thisVar) => {
@@ -134,14 +145,20 @@ function Choicelab() {
           props.root.appendChild(persistLayer);
           // Create media controls
           const mediaControls = createMediaControls();
-          const playButton = mediaControls.querySelector(".play.button") as HTMLElement;
+          const playButton = mediaControls.querySelector(
+            ".play.button"
+          ) as HTMLElement;
           if (playButton) registerAutoplayQualifier(playButton);
           props.root.appendChild(mediaControls);
           // Set appearance based on project settings
-          const appearance = json.settings?.player?.["choicelab-player-html5"]?.appearance;
+          const appearance =
+            json.settings?.player?.["choicelab-player-html5"]?.appearance;
           if (appearance) {
             const projectPath = window.__CHOICELAB__.project.projectPath;
-            const appearanceCSS = generateAppearanceCSS(appearance, projectPath);
+            const appearanceCSS = generateAppearanceCSS(
+              appearance,
+              projectPath
+            );
             const styleEl = document.createElement("style");
             styleEl.textContent = appearanceCSS;
             document.head.appendChild(styleEl);
@@ -149,10 +166,13 @@ function Choicelab() {
           // Set starting sequence
           const restoredCellId = initHistory();
           const startingSequence = json.sequences[0];
-          const startOverride = new URLSearchParams(window.location.search).get("start");
-          const startingNode = (restoredCellId && !startOverride)
-            ? (getNode(restoredCellId) || getSequenceStart(startingSequence))
-            : getSequenceStart(startingSequence);
+          const startOverride = new URLSearchParams(window.location.search).get(
+            "start"
+          );
+          const startingNode =
+            restoredCellId && !startOverride
+              ? getNode(restoredCellId) || getSequenceStart(startingSequence)
+              : getSequenceStart(startingSequence);
           if (!startingNode) {
             error("No starting node found in this sequence:", startingSequence);
           } else if (startingNode.type !== "start") {
@@ -162,6 +182,22 @@ function Choicelab() {
           }
           // Trigger reflow on resize
           window.addEventListener("resize", forceReflow);
+          // Scale content to the constrained box width
+          const aspectRatio =
+            json.settings?.player?.["choicelab-player-html5"]?.appearance
+              ?.aspectRatio ?? "16/9";
+          const DESIGN_WIDTHS: Record<string, number> = {
+            "16/9": 1280,
+            "1/1": 960,
+            "9/16": 720,
+          };
+          const designWidth = DESIGN_WIDTHS[aspectRatio] ?? 1280;
+          new ResizeObserver(([entry]) => {
+            props.root.style.setProperty(
+              "--cl-scale",
+              (entry.contentRect.width / designWidth).toFixed(4)
+            );
+          }).observe(props.root);
         }); // promise from file path
     }, // init
   }; // return

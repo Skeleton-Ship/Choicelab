@@ -203,6 +203,7 @@
             "color": "#232328",
             "file": ""
           },
+          "aspectRatio": "16/9",
           "customCSS": ""
         }
       }

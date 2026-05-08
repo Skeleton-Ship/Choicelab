@@ -72,6 +72,20 @@ export function AppearanceList(props: { pane: string; setPane: Function }) {
       </li>
       <li>
         <button
+          data-pane="layout"
+          class={props.pane === "layout" ? "selected" : ""}
+          onClick={() => {
+            props.setPane("layout");
+          }}
+        >
+          <span class="icon">
+            <i class="bi-aspect-ratio"></i>
+          </span>
+          <span class="label">Layout</span>
+        </button>
+      </li>
+      <li>
+        <button
           data-pane="background"
           class={props.pane === "background" ? "selected" : ""}
           onClick={() => {

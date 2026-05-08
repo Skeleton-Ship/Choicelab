@@ -8,6 +8,7 @@ import { AppearanceList } from "./List";
 import { AppearanceText } from "./AppearanceText";
 import { AppearanceBackground } from "./AppearanceBackground";
 import { AppearanceInputs } from "./AppearanceInputs";
+import { AppearanceLayout } from "./AppearanceLayout";
 import { AppearanceCustomCSS } from "./AppearanceCustomCSS";
 import { createPlayerSettings } from "../../../player/createPlayerSettings";
 import { getPlayerSettings } from "../../../data/getData";
@@ -38,6 +39,8 @@ export function SettingsAppearance() {
       newStore.project.settings.player["choicelab-player-html5"]["appearance"];
     if (key === "customCSS") {
       settings[key] = newValues.css;
+    } else if (key === "aspectRatio") {
+      settings[key] = newValues.value;
     } else {
       settings[key] = { ...settings[key], ...newValues };
     }
@@ -56,6 +59,8 @@ export function SettingsAppearance() {
           <AppearanceText initial={initial} update={handleChange} />
         ) : pane === "inputs" ? (
           <AppearanceInputs initial={initial} update={handleChange} />
+        ) : pane === "layout" ? (
+          <AppearanceLayout initial={initial} update={handleChange} />
         ) : pane === "background" ? (
           <AppearanceBackground initial={initial} update={handleChange} />
         ) : pane === "custom-css" ? (

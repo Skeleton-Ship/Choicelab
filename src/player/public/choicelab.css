@@ -24,8 +24,22 @@
 }
 
 /* More accessible line-height */
+html,
+body {
+  height: 100dvh;
+}
+
 body {
   line-height: 1.5;
+  background: #000;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Improve media defaults */
@@ -67,16 +81,7 @@ h6 {
   --cl-container-padding: 1.67rem;
   /* Font fallbacks */
   --cl-font-family-base: system-ui, sans-serif;
-  /* Base font sizes */
-  --font-size-xxs: 12px;
-  --font-size-xs: clamp(14px, 0.85vw, 15px);
-  --font-size-sm: clamp(16px, 1.1vw, 17px);
-  --font-size-md: clamp(19px, 1.3vw, 21px);
-  --font-size-lg: clamp(24px, 2.3vw, 34px);
-  --font-size-xl: clamp(32px, 2.9vw, 48px);
-  --font-size-xxl: clamp(36px, 3.45vw, 60px);
-  --font-size-xxxl: clamp(42px, 3.7vw, 75px);
-  --font-size-xxxxl: clamp(42px, 4.9vw, 87px);
+  /* Base font sizes — defined on #choicelab so they scale with --cl-scale */
   /* Headings */
   --cl-headings-font-family: var(--cl-font-family-base);
   --cl-headings-font-weight: 700;
@@ -114,13 +119,20 @@ h6 {
 
 html {
   font-size: clamp(16px, 2vw, 22px);
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
 }
 
 #choicelab {
   position: relative;
-  width: 100%;
-  height: calc(100vh - 1px);
-  min-height: 300px;
+  aspect-ratio: var(--cl-aspect-ratio, 16/9);
+  max-width: 100%;
+  max-height: 100%;
   background-color: var(--cl-background-color);
   background-image: var(--cl-background-image);
   background-size: var(--cl-background-size);
@@ -129,6 +141,16 @@ html {
   color: var(--cl-text-color-primary);
   font-family: var(--cl-font-stack-primary);
   -webkit-font-smoothing: antialiased;
+  /* Font sizes scaled to box width via --cl-scale (set by ResizeObserver in main.ts) */
+  --font-size-xxs: calc(12px * var(--cl-scale, 1));
+  --font-size-xs: calc(15px * var(--cl-scale, 1));
+  --font-size-sm: calc(17px * var(--cl-scale, 1));
+  --font-size-md: calc(21px * var(--cl-scale, 1));
+  --font-size-lg: calc(34px * var(--cl-scale, 1));
+  --font-size-xl: calc(48px * var(--cl-scale, 1));
+  --font-size-xxl: calc(60px * var(--cl-scale, 1));
+  --font-size-xxxl: calc(75px * var(--cl-scale, 1));
+  --font-size-xxxxl: calc(87px * var(--cl-scale, 1));
 }
 
 /*
@@ -233,12 +255,10 @@ html {
   position: relative;
   z-index: 20;
   width: 100%;
-  max-width: var(--cl-container-width);
   margin-left: auto;
   margin-right: auto;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
   padding: var(--cl-container-padding);
 }
 
