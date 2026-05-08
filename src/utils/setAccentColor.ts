@@ -15,6 +15,7 @@ interface AccentColor {
   800: string;
   full: string;
   contrast: string;
+  vivid: string;
 }
 
 const colors: Record<AccentColorspace, AccentColor> = {
@@ -25,6 +26,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#4195FD",
     full: "#027BFF",
     contrast: "#005ABC",
+    vivid: "#0B93FF",
   },
   purple: {
     200: "#F2C6F3",
@@ -33,6 +35,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#B739B9",
     full: "#B000B3",
     contrast: "#900092",
+    vivid: "#D900DD",
   },
   pink: {
     200: "#FFCDE5",
@@ -41,6 +44,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#F261A5",
     full: "#F74F9D",
     contrast: "#D2327C",
+    vivid: "#FF459A",
   },
   red: {
     200: "#F9D5D8",
@@ -49,6 +53,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#E44F55",
     full: "#E0383E",
     contrast: "#BD141A",
+    vivid: "#FF4152",
   },
   orange: {
     200: "#FCD6B1",
@@ -57,6 +62,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#F79640",
     full: "#F7821B",
     contrast: "#D76500",
+    vivid: "#FF7D0A",
   },
   yellow: {
     200: "#FFEFBF",
@@ -65,6 +71,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#F5C229",
     full: "#FFC002",
     contrast: "#DAA300",
+    vivid: "#FFC825",
   },
   green: {
     200: "#D5ECCD",
@@ -73,6 +80,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#7DC564",
     full: "#62BA46",
     contrast: "#419826",
+    vivid: "#50D127",
   },
   graphite: {
     200: "#E7E7E7",
@@ -81,6 +89,7 @@ const colors: Record<AccentColorspace, AccentColor> = {
     800: "#A0A0A0",
     full: "#989898",
     contrast: "#656565",
+    vivid: "#9C9C9C",
   },
 };
 
@@ -130,6 +139,7 @@ export function setAccentColor(input?: string) {
 		--accent-color-600: ${accents["600"]};
 		--accent-color-800: ${accents["800"]};
 		--accent-color-contrast: ${accents["contrast"]};
+		--accent-color-vivid: ${accents["vivid"]};
 	}
 	`;
   document.head.appendChild(accentColorEl);

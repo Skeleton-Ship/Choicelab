@@ -531,6 +531,9 @@ $toggle-height: 20px;
     @media (prefers-color-scheme: dark) {
       &[aria-selected="true"] {
         background-color: rgba(255, 255, 255, 0.06);
+        span {
+          color: var(--accent-color-vivid);
+        }
       }
     }
     svg {
