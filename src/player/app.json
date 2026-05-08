@@ -50,10 +50,18 @@
               "className": "",
               "control": "__CUSTOM__Position",
               "default": {
-                "kind": "grid",
-                "y": 1,
-                "x": 1
+                "kind": "absolute",
+                "x": 50,
+                "y": 50
               }
+            },
+            {
+              "name": "maxWidth",
+              "label": "Max Width",
+              "labelSuffix": "%",
+              "control": "number",
+              "className": "col-2",
+              "default": 45
             }
           ]
         },
@@ -65,10 +73,18 @@
               "className": "",
               "control": "__CUSTOM__Position",
               "default": {
-                "kind": "grid",
-                "y": 1,
-                "x": 1
+                "kind": "absolute",
+                "x": 50,
+                "y": 50
               }
+            },
+            {
+              "name": "maxWidth",
+              "label": "Max Width",
+              "labelSuffix": "%",
+              "control": "number",
+              "className": "col-2",
+              "default": 45
             }
           ]
         },
@@ -80,10 +96,18 @@
               "className": "",
               "control": "__CUSTOM__Position",
               "default": {
-                "kind": "grid",
-                "y": 1,
-                "x": 1
+                "kind": "absolute",
+                "x": 50,
+                "y": 50
               }
+            },
+            {
+              "name": "maxWidth",
+              "label": "Max Width",
+              "labelSuffix": "%",
+              "control": "number",
+              "className": "col-2",
+              "default": 45
             }
           ]
         },

@@ -2,7 +2,19 @@ import { setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
 
-type PositionString = "top" | "middle" | "bottom" | "left" | "center" | "right";
+const GRID_TO_PERCENT: Record<number, number> = { 1: 16, 2: 50, 3: 83 };
+
+function resolvePosition(value: { kind: string; x: number; y: number }): { x: number; y: number } {
+  if (!value) return { x: 50, y: 50 };
+  if (value.kind === "absolute") return { x: value.x, y: value.y };
+  if (value.kind === "grid") {
+    return {
+      x: GRID_TO_PERCENT[value.x] ?? 50,
+      y: GRID_TO_PERCENT[value.y] ?? 50,
+    };
+  }
+  return { x: 50, y: 50 };
+}
 
 export function Position(props: {
   action: Action;
@@ -15,55 +27,52 @@ export function Position(props: {
 }) {
   const action = props.action;
   const propDef = props.propDef;
-  const propElName = `action_${action.id}_${propDef.name}`;
-  function getNumericValue(textValue: PositionString) {
-    if (textValue === "top" || textValue === "left") return 1;
-    if (textValue === "middle" || textValue === "center") return 2;
-    if (textValue === "bottom" || textValue === "right") return 3;
-    return -1;
-  }
-  function handleChange(e: MouseEvent) {
+  const { x, y } = resolvePosition(props.initialValue);
+
+  function handleChange(axis: "x" | "y", rawValue: string) {
     if (!action) return;
-    const el = e.target as HTMLButtonElement;
-    const valueRaw = el.value;
-    const values = valueRaw.split(" ") as Array<PositionString>;
+    const parsed = parseFloat(rawValue);
+    const clamped = isNaN(parsed) ? 50 : Math.min(100, Math.max(0, parsed));
+    const current = resolvePosition(props.initialValue);
     const propsObj =
       props.extended === false
         ? action.props
         : action.extendedProps[getPlayerConfig().id];
-    const newValue = {
-      kind: "grid",
-      y: getNumericValue(values[0]),
-      x: getNumericValue(values[1]),
+    propsObj[propDef.name] = {
+      kind: "absolute",
+      x: axis === "x" ? clamped : current.x,
+      y: axis === "y" ? clamped : current.y,
     };
-    propsObj[propDef.name] = newValue;
     setStore(props.store);
     props.update();
   }
-  const positionsY: Array<PositionString> = ["top", "middle", "bottom"],
-    positionsX: Array<PositionString> = ["left", "center", "right"];
+
   return (
     <div class="inspector-prop position col-2">
-      <label for={propElName}>Position</label>
-      <div class="position-markers">
-        {positionsY.map((y) => {
-          return positionsX.map((x) => {
-            const value = `${y} ${x}`;
-            return (
-              <button
-                class={`position-marker ${
-                  props.initialValue.y === getNumericValue(y) &&
-                  props.initialValue.x === getNumericValue(x)
-                    ? "selected"
-                    : ""
-                }`}
-                title={`Position at ${value}`}
-                value={value}
-                onClick={handleChange}
-              ></button>
-            );
-          });
-        })}
+      <label>Position</label>
+      <div class="position-inputs">
+        <div class="position-input">
+          <label>X</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={x}
+            onChange={(e) => handleChange("x", (e.target as HTMLInputElement).value)}
+          />
+          <span class="suffix">%</span>
+        </div>
+        <div class="position-input">
+          <label>Y</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={y}
+            onChange={(e) => handleChange("y", (e.target as HTMLInputElement).value)}
+          />
+          <span class="suffix">%</span>
+        </div>
       </div>
     </div>
   );

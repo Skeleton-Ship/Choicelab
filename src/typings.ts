@@ -171,6 +171,7 @@ export interface ActionDef {
     iconBackgroundColor: string;
   };
   flowchart?: any;
+  category?: "timeline" | "interact" | "event";
   description: string;
   props: Array<ActionDefProp>;
   extendable?: boolean;

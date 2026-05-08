@@ -70,6 +70,7 @@ export function AppearanceList(props: { pane: string; setPane: Function }) {
           <span class="label">Inputs</span>
         </button>
       </li>
+      {/*
       <li>
         <button
           data-pane="layout"
@@ -84,6 +85,7 @@ export function AppearanceList(props: { pane: string; setPane: Function }) {
           <span class="label">Layout</span>
         </button>
       </li>
+	  */}
       <li>
         <button
           data-pane="background"

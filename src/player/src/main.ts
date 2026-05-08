@@ -124,16 +124,6 @@ function Choicelab() {
           // Create stage
           const appWrapper = document.createElement("div");
           appWrapper.classList.add("cl-stage");
-          // Create grid areas
-          const gridZonesX = 3,
-            gridZonesY = 3;
-          for (let x = 0; x < gridZonesX; x++) {
-            for (let y = 0; y < gridZonesY; y++) {
-              const el = document.createElement("div");
-              el.classList.add("grid", `x-${x + 1}`, `y-${y + 1}`);
-              appWrapper.appendChild(el);
-            }
-          }
           props.root.appendChild(appWrapper);
           // Create media layer
           const bgLayer = document.createElement("div");
@@ -193,7 +183,7 @@ function Choicelab() {
           };
           const designWidth = DESIGN_WIDTHS[aspectRatio] ?? 1280;
           new ResizeObserver(([entry]) => {
-            props.root.style.setProperty(
+            document.documentElement.style.setProperty(
               "--cl-scale",
               (entry.contentRect.width / designWidth).toFixed(4)
             );

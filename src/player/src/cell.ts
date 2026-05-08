@@ -195,7 +195,7 @@ export async function runCell(cell: Cell) {
 
 function clearStage(timeout: number) {
   const store = getStore();
-  const topEls = store.playback.rootEl.querySelectorAll(".cl-stage .grid *");
+  const topEls = store.playback.rootEl.querySelectorAll(".cl-stage > .cl-action");
   topEls.forEach((topEl) => {
     topEl.classList.add("clear");
     setTimeout(() => {
