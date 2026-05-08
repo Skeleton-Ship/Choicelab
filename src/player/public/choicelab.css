@@ -263,13 +263,16 @@ body {
   left: var(--cl-pos-x, 50%);
   top: var(--cl-pos-y, 50%);
   transform: translate(-50%, -50%);
-  max-width: var(--cl-max-width, 45%);
   opacity: 0;
   animation: fade-in 0.3s ease forwards;
 }
 
 .cl-action.clear {
   animation: fade-out 0.3s ease forwards;
+}
+
+:is(h1, h2, h3, p, button).cl-action {
+  max-width: var(--cl-max-width, 45%);
 }
 
 /*
