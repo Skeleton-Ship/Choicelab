@@ -12,7 +12,7 @@
         "default": 0.3
       },
       "navigationPoint": {
-        "label": "On start, clear screen and save progress",
+        "label": "Clear text and buttons before node starts",
         "type": "boolean",
         "default": true
       }

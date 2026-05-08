@@ -66,7 +66,7 @@ const internalActionDefs: ActionDefs = {
         },
         {
           name: "endCell",
-          label: "End cell when played through",
+          label: "Advance to next node when done, regardless of other actions",
           control: "boolean",
           default: false,
         },
@@ -99,7 +99,7 @@ const internalActionDefs: ActionDefs = {
         },
         {
           name: "endCell",
-          label: "End cell when played through",
+          label: "Advance to next node when done, regardless of other actions",
           control: "boolean",
           default: false,
         },

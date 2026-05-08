@@ -6,7 +6,10 @@
 
 #### Fixes
 
-- Fixed an issue that caused the app to instantly crash on Macs with Intel processors.
+- Fixed an issue that caused opening the app to crash on Macs with Intel processors.
+- Improved label text for cell settings.
+- Improved label text for video and audio actions force-ending cells.
+- The text in selected toolbar buttons is now easier to read in dark mode.
 
 ## 1.0.1
 
