@@ -116,15 +116,21 @@ export default function MainEditor() {
     );
     // Menu events - Rust now emits only to the focused window,
     // so we use appWindow.listen() to receive window-specific events
-    const unlistenMenuQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      handleQuit();
-    });
-    const unlistenMenuSave = appWindow.listen<{ label: string }>("menu-save-project", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      console.log("Request to save");
-      saveProject();
-    });
+    const unlistenMenuQuit = appWindow.listen<{ label: string }>(
+      "menu-request-quit",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleQuit();
+      }
+    );
+    const unlistenMenuSave = appWindow.listen<{ label: string }>(
+      "menu-save-project",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        console.log("Request to save");
+        saveProject();
+      }
+    );
     const unlistenMenuTogglePreview = appWindow.listen<{ label: string }>(
       "menu-toggle-preview",
       (event) => {
@@ -140,19 +146,28 @@ export default function MainEditor() {
         await open(`http://localhost:${port}`);
       }
     );
-    const unlistenMenuUndo = appWindow.listen<{ label: string }>("menu-undo", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      handleUndoRedo("undo", handleUpdate);
-    });
-    const unlistenMenuRedo = appWindow.listen<{ label: string }>("menu-redo", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      handleUndoRedo("redo", handleUpdate);
-    });
-    const unlistenMenuNewCell = appWindow.listen<{ label: string }>("menu-new-cell", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      const newCell = createCell();
-      insertNewNode(newCell, handleUpdate);
-    });
+    const unlistenMenuUndo = appWindow.listen<{ label: string }>(
+      "menu-undo",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleUndoRedo("undo", handleUpdate);
+      }
+    );
+    const unlistenMenuRedo = appWindow.listen<{ label: string }>(
+      "menu-redo",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleUndoRedo("redo", handleUpdate);
+      }
+    );
+    const unlistenMenuNewCell = appWindow.listen<{ label: string }>(
+      "menu-new-cell",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        const newCell = createCell();
+        insertNewNode(newCell, handleUpdate);
+      }
+    );
     const unlistenMenuNewBranch = appWindow.listen<{ label: string }>(
       "menu-new-branch",
       (event) => {
@@ -161,12 +176,15 @@ export default function MainEditor() {
         insertNewNode(newBranch, handleUpdate);
       }
     );
-    const unlistenMenuSetLink = appWindow.listen<{ label: string }>("menu-set-link", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      enterTargetMode({
-        update: handleUpdate,
-      });
-    });
+    const unlistenMenuSetLink = appWindow.listen<{ label: string }>(
+      "menu-set-link",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        enterTargetMode({
+          update: handleUpdate,
+        });
+      }
+    );
     const unlistenMenuDisconnectLink = appWindow.listen<{ label: string }>(
       "menu-disconnect-link",
       (event) => {
@@ -205,10 +223,13 @@ export default function MainEditor() {
         openProjectSettings();
       }
     );
-    const unlistenMenuAutofill = appWindow.listen<{ label: string }>("menu-autofill", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      triggerApply();
-    });
+    const unlistenMenuAutofill = appWindow.listen<{ label: string }>(
+      "menu-autofill",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        triggerApply();
+      }
+    );
     appWindow.show();
     // Once ready, check for updates
     checkForUpdates();
