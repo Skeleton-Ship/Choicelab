@@ -32,12 +32,12 @@ fn open_folder(path: String) {
 #[tauri::command]
 fn set_focused_window(label: String) {
     *FOCUSED_WINDOW.lock().unwrap() = label;
-        println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
+        // println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
 }
 
 #[tauri::command]
 fn print_focused_window() {
-    println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
+    // println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
 }
 
 #[tauri::command]
