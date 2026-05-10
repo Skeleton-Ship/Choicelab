@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.3
+
+### 2026-05-xx
+
+#### Fixes
+
+- Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
+- Fixed the keyboard shortcuts for Delete Node and Delete Branch Stem.
+
 ## 1.0.2
 
 ### 2026-05-08

@@ -232,13 +232,13 @@ export async function buildMenu(windowType: WindowType) {
         id: "delete_nodes",
         text: "Delete Node",
         enabled: false,
-        accelerator: "CmdOrCtrl+Delete",
+        accelerator: platform === "macos" ? "CmdOrCtrl+Backspace" : "CmdOrCtrl+Delete",
       }),
       await MenuItem.new({
         id: "delete_stem",
         text: "Delete Branch Stem",
         enabled: false,
-        accelerator: "CmdOrCtrl+Option+Delete",
+        accelerator: platform === "macos" ? "CmdOrCtrl+Option+Backspace" : "CmdOrCtrl+Shift+Delete",
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
