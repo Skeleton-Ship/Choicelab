@@ -1,7 +1,7 @@
 import { getStore } from "./store";
 
 function storageKey(): string {
-  return `choicelab_history_${getStore().project.id}`;
+  return `choicelab_history_${window.location.host}_${getStore().project.id}`;
 }
 
 export function initHistory(): string | null {
