@@ -1,4 +1,8 @@
-import { setStore } from "../../../../data/dataStore";
+import {
+  setStore,
+  getViewStore,
+  setViewStore,
+} from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
 import NumberField from "../NumberField";
 import { getPlayerConfig } from "../../../../player/getPlayerConfig";
@@ -29,6 +33,7 @@ export default function TextField(props: {
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
   const className = `inspector-prop text-field ${props.className}`;
+  const viewStore = getViewStore();
   let fieldEl = (
     <input
       name={propElName}
@@ -36,7 +41,15 @@ export default function TextField(props: {
       class="ui-text-field"
       value={props.initialValue}
       onFocus={() => {
+        viewStore.inTextElement = true;
+        setViewStore(viewStore);
+        props.update(false);
         setMenu();
+      }}
+      onBlur={() => {
+        viewStore.inTextElement = false;
+        setViewStore(viewStore);
+        props.update(false);
       }}
       onChange={(e) => {
         const value = (e.target as HTMLInputElement).value;
@@ -52,7 +65,15 @@ export default function TextField(props: {
         class="ui-text-area"
         value={props.initialValue}
         onFocus={() => {
+          viewStore.inTextElement = true;
+          setViewStore(viewStore);
+          props.update();
           setMenu();
+        }}
+        onBlur={() => {
+          viewStore.inTextElement = false;
+          setViewStore(viewStore);
+          props.update(false);
         }}
         onChange={(e) => {
           const value = (e.target as HTMLInputElement).value;

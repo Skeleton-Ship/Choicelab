@@ -82,12 +82,9 @@ export function canRedo() {
 export async function handleUndoRedo(undoOrRedo: string, update: Function) {
   // First, see if we need to treat this like a regular text edit undo/redo
   if (inTextElement() === true) {
-    // @ts-ignore
-    if (undoOrRedo === "undo") {
-      await emit("menu-undo-text");
-    } else {
-      await emit("menu-redo-text");
-    }
+    // TODO: execCommand is deprecated in the HTML spec but remains supported in WKWebView.
+    // Replace with a custom per-element undo stack if this ever breaks.
+    document.execCommand(undoOrRedo === "undo" ? "undo" : "redo");
     return;
   }
   // Get project history
