@@ -89,6 +89,18 @@ async function init() {
       setFocusedRegion(document.activeElement);
     }
   });
+  // Prevent bare Backspace/Delete from triggering WKWebView's built-in
+  // back-navigation when focus is outside a text field.
+  window.addEventListener("keydown", (e) => {
+    if ((e.key === "Backspace" || e.key === "Delete") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const target = e.target as Element;
+      const isEditable =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        (target as HTMLElement).isContentEditable;
+      if (!isEditable) e.preventDefault();
+    }
+  }, true);
   // Menu listeners - discard if the payload label doesn't match this window
   appWindow.listen<{ label: string }>("menu-new-project", (event) => {
     if (event.payload.label !== appWindow.label) return;

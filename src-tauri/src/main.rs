@@ -40,6 +40,42 @@ fn print_focused_window() {
     println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
 }
 
+#[tauri::command]
+fn create_project_window(
+    app: tauri::AppHandle,
+    label: String,
+    url: String,
+    width: f64,
+    height: f64,
+    transparent: bool,
+) -> Result<(), String> {
+    let builder = tauri::WebviewWindowBuilder::new(
+        &app,
+        label,
+        tauri::WebviewUrl::App(url.into()),
+    )
+    .title("")
+    .inner_size(width, height)
+    .min_inner_size(700.0, 360.0)
+    .transparent(transparent)
+    .visible(true)
+    .on_navigation(|url| {
+        // Allow the app's own origins and the preview server port range.
+        // Everything else (e.g. accidental back-navigation to an arbitrary URL)
+        // is blocked.
+        let port = url.port().unwrap_or(0);
+        url.scheme() == "tauri" || port == 1420 || (port >= 4090 && port <= 4099)
+    });
+
+    #[cfg(target_os = "macos")]
+    let builder = builder
+        .hidden_title(true)
+        .title_bar_style(tauri::TitleBarStyle::Overlay);
+
+    builder.build().map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 fn main() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -94,7 +130,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window])
+        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window, create_project_window])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

@@ -12,6 +12,20 @@ import { enableAutoplay, registerAutoplayQualifier } from "./autoplay";
 function Choicelab() {
   return {
     init: (props: any) => {
+      // When running inside the editor iframe, prevent bare Backspace/Delete
+      // from triggering WKWebView's built-in back-navigation.
+      if (new URLSearchParams(window.location.search).get("startMediaOnLoad") === "false") {
+        document.addEventListener("keydown", (e) => {
+          if ((e.key === "Backspace" || e.key === "Delete") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+            const target = e.target as Element;
+            const isEditable =
+              target instanceof HTMLInputElement ||
+              target instanceof HTMLTextAreaElement ||
+              (target as HTMLElement).isContentEditable;
+            if (!isEditable) e.preventDefault();
+          }
+        }, true);
+      }
       // Fetch files
       const filePath = props.path.trim().replace(/\/+$/g, "");
       fetch(filePath)
