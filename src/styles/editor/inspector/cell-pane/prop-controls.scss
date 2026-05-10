@@ -63,6 +63,11 @@
         height: 0;
       }
     }
+    .loading-text--video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+    }
     &.file-not-set:not(.is-loading) {
       .media {
         display: none;

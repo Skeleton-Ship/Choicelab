@@ -2,12 +2,13 @@
 
 ## 1.0.3
 
-### 2026-05-xx
+### 2026-05-10
 
 #### Enhancements
 
 - When slotting an action into a cell, the cell pane will now scroll to the action, highlight its addition, and focus the first input element.
 - Text fields now support undo/redo while editing, not just after saving.
+- Audio and video actions in the editor will now indicate when they're loading.
 - Improved performance of text editing when dealing with large flowcharts.
 
 #### Fixes
@@ -15,6 +16,7 @@
 - Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
 - Fixed an issue where Choicelab would refuse to quit if only the launcher was open.
 - Fixed the keyboard shortcuts for Delete Node and Delete Branch Stem.
+- Projects played back locally will now automatically reset their playback history when uploaded to a web server.
 
 ## 1.0.2
 

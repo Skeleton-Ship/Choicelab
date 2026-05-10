@@ -88,7 +88,8 @@ export default function FileUpload(props: {
             emit("create-asset", jsonData);
             once("asset-created", async (event) => {
               const store = getStore();
-              const resolvedFileName = (event.payload as { fileName: string }).fileName;
+              const resolvedFileName = (event.payload as { fileName: string })
+                .fileName;
               const asset = createAsset(
                 resolvedFileName,
                 propsRef.current.fileKind as Asset["type"]
@@ -167,6 +168,7 @@ export default function FileUpload(props: {
           media={props.fileKind}
           fileName={displayFileName}
           fileSrc={fileSrc}
+          isLoading={isLoading}
           action={props.action}
           update={props.update ? props.update : undefined}
         />

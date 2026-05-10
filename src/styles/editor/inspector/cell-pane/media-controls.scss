@@ -2,14 +2,16 @@
   position: relative;
   margin-bottom: 10px;
   .loading-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 1;
     font-weight: 300;
     font-size: 16px;
     opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .loading-text--audio {
+    min-height: 128px;
   }
   .media-preview {
     width: 100%;
@@ -19,7 +21,7 @@
     &[src=""] {
       display: none;
     }
-    &[src] + .loading-text {
+    &[src]:not([src=""]) + .loading-text {
       display: none;
     }
   }

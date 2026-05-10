@@ -8,6 +8,7 @@ export default function AssetPreview(props: {
   assetParent: "action" | "none";
   fileName: string;
   fileSrc: string;
+  isLoading?: boolean;
   action?: Action;
   update?: Function;
 }) {
@@ -28,13 +29,15 @@ export default function AssetPreview(props: {
       }
     }
   }
-  const loadingEl = (
+  const loadingEl = props.isLoading ? (
     <span class="loading-text" aria-hidden="true">
       Loading...
     </span>
+  ) : (
+    <></>
   );
-  let [mediaSrc, setMediaSrc] = useState("");
-  let [mediaEl, setMediaEl]: [
+  const [mediaSrc, setMediaSrc] = useState("");
+  const [mediaEl, setMediaEl]: [
     HTMLVideoElement | HTMLAudioElement | false,
     Function
   ] = useState(false);
@@ -43,9 +46,7 @@ export default function AssetPreview(props: {
   // Stable ID for the lifetime of this component instance.
   const mediaId = useMemo(
     () =>
-      props.assetParent === "action" && props.action
-        ? props.action.id
-        : uuid(),
+      props.assetParent === "action" && props.action ? props.action.id : uuid(),
     []
   );
   let mediaControl = null;
@@ -88,7 +89,14 @@ export default function AssetPreview(props: {
             data-id={`media_preview_${mediaId}`}
             ref={mediaRef as preact.RefObject<HTMLVideoElement>}
           ></video>
-          {mediaEl !== false ? mediaControl : <></>}
+          {mediaEl !== false && !props.isLoading ? mediaControl : <></>}
+          {props.isLoading ? (
+            <span class="loading-text loading-text--video" aria-hidden="true">
+              Loading...
+            </span>
+          ) : (
+            <></>
+          )}
         </>
       );
       break;
@@ -101,7 +109,14 @@ export default function AssetPreview(props: {
             data-id={`media_preview_${mediaId}`}
             ref={mediaRef as preact.RefObject<HTMLAudioElement>}
           ></audio>
-          {mediaEl !== false ? mediaControl : <></>}
+          {mediaEl !== false && !props.isLoading ? mediaControl : <></>}
+          {props.isLoading ? (
+            <span class="loading-text loading-text--audio" aria-hidden="true">
+              Loading...
+            </span>
+          ) : (
+            <></>
+          )}
         </>
       );
       break;
