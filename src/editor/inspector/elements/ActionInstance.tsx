@@ -34,6 +34,7 @@ export default function ActionInstance(props: {
   cell: Cell;
   store: Store;
   update: Function;
+  isNew?: boolean;
 }) {
   const action = props.instance;
   const actionDef = getActionDef(action.name, internalActionDefs);
@@ -153,12 +154,12 @@ export default function ActionInstance(props: {
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
   const enableButtonAlt =
     action.enabled === true ? "Disable Action" : "Enable Action";
-  const liClass = `inspector-item action ${actionDef.name} ${enabledClass}`;
+  const liClass = `inspector-item action ${actionDef.name} ${enabledClass}${props.isNew ? " is-new" : ""}`;
   const canMove = canMoveAction(action.id);
   const upDisabled = canMove.up === true ? false : true;
   const downDisabled = canMove.down === true ? false : true;
   return (
-    <li class={liClass} key={action.id}>
+    <li class={liClass} data-action-id={action.id}>
       <div class="item-toolbar">
         <h5 class="item-heading">
           <ActionIcon def={actionDef} />

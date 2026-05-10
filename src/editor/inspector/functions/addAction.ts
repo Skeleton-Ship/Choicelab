@@ -44,4 +44,5 @@ export default function addAction(actionDef: ActionDef, update: Function) {
   setStore(store);
   update();
   handleSelectNode(cell, update);
+  return action.id;
 }

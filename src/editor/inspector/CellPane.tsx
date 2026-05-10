@@ -23,7 +23,7 @@ import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
 
-function AvailableActions(props: { update: Function }) {
+function AvailableActions(props: { update: Function; onActionAdded: (id: string) => void }) {
   const [selectedDef, selectDef] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<
     "timeline" | "interact" | "event"
@@ -40,7 +40,8 @@ function AvailableActions(props: { update: Function }) {
     };
   }, []);
   function handleAddAction(actionDef: ActionDef) {
-    addAction(actionDef, props.update);
+    const newId = addAction(actionDef, props.update);
+    props.onActionAdded(newId);
   }
   const categories: Record<string, string> = {
     timeline: "Timeline",
@@ -81,12 +82,27 @@ function AvailableActions(props: { update: Function }) {
   );
 }
 
-function ActionsEditor(props: { update: Function }) {
+function ActionsEditor(props: {
+  update: Function;
+  lastAddedId: string | null;
+  clearLastAdded: () => void;
+}) {
   const store = getStore(),
     viewStore = getViewStore();
-  // 1 node is selected
   const selectedNodeId = viewStore.selectedNodes[0].id;
   const node: Cell | undefined = getCell(selectedNodeId, store);
+
+  useEffect(() => {
+    if (!props.lastAddedId) return;
+    const el = document.querySelector(`[data-action-id="${props.lastAddedId}"]`);
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const focusTimer = setTimeout(() => {
+      (el?.querySelector(".inspector-prop textarea, .inspector-prop input, .inspector-prop button") as HTMLElement | null)?.focus();
+    }, 300);
+    const timer = setTimeout(props.clearLastAdded, 1000);
+    return () => { clearTimeout(focusTimer); clearTimeout(timer); };
+  }, [props.lastAddedId]);
+
   if (!node) return <></>;
   let editorEls: Array<preact.JSX.Element> = [];
   node.actions.forEach((action: Action) => {
@@ -98,6 +114,7 @@ function ActionsEditor(props: { update: Function }) {
         cell={node}
         store={store}
         update={props.update}
+        isNew={action.id === props.lastAddedId}
       />
     );
   });
@@ -177,6 +194,7 @@ function NodeSettings(props: {
 export default function CellPane(props: { update: Function }) {
   const selectedNodeId = getViewStore().selectedNodes[0]?.id ?? "";
   const [plan, setPlan] = useState<AutoGenerationPlan | null>(null);
+  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
 
   function setAutoGenerateLabel(label: string | null) {
     const viewStore = getViewStore();
@@ -228,8 +246,8 @@ export default function CellPane(props: { update: Function }) {
 
   return (
     <>
-      <AvailableActions update={props.update} />
-      <ActionsEditor update={props.update} />
+      <AvailableActions update={props.update} onActionAdded={setLastAddedId} />
+      <ActionsEditor update={props.update} lastAddedId={lastAddedId} clearLastAdded={() => setLastAddedId(null)} />
       <NodeSettings update={props.update} plan={plan} onApply={handleApply} />
     </>
   );

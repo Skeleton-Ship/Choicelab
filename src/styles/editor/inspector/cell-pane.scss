@@ -186,6 +186,7 @@ $item-border-radius: 10px;
   border-style: solid;
   border-width: 2px;
   border-color: transparent;
+  transition: border-color 0.8s ease;
   @media (prefers-color-scheme: dark) {
     color: rgba(255, 255, 255, 0.8);
     background-color: #181718;
@@ -195,6 +196,12 @@ $item-border-radius: 10px;
   &.selected {
     border-color: #2f8ee5;
     outline: none;
+  }
+  &.is-new {
+    border-color: var(--accent-color-400);
+    @media (prefers-color-scheme: dark) {
+      border-color: var(--accent-color-400);
+    }
   }
   &.disabled {
     background-color: rgba(255, 255, 255, 0.5);

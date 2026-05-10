@@ -4,6 +4,10 @@
 
 ### 2026-05-xx
 
+#### Enhancements
+
+- When slotting an action into a cell, the cell pane will now scroll to the action, highlight its addition, and focus the first input element.
+
 #### Fixes
 
 - Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
