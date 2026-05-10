@@ -749,10 +749,29 @@ let handle_update = app_handle.clone();
     app.on_menu_event(move |app_handle, event| {
         let menu_id = event.id().as_ref();
 
+        // Quit is handled directly in Rust: emit to open project windows so they
+        // can prompt for unsaved changes. If none are open, exit immediately.
+        if menu_id == "request-quit" {
+            let all_windows = app_handle.webview_windows();
+            let project_windows: Vec<_> = all_windows
+                .iter()
+                .filter(|(label, _)| {
+                    label.starts_with("project_") && !label.starts_with("project_settings_")
+                })
+                .collect();
+            if !project_windows.is_empty() {
+                for (win_label, window) in &project_windows {
+                    let _ = window.emit("menu-request-quit", serde_json::json!({ "label": win_label }));
+                }
+            } else {
+                app_handle.exit(0);
+            }
+            return;
+        }
+
         // Map menu item IDs to event names
         let event_name = match menu_id {
             "about" => "menu-about",
-            "request-quit" => "menu-request-quit",
             "new_project" => "menu-new-project",
             "open_project" => "menu-open-project",
             "save" => "menu-save-project",

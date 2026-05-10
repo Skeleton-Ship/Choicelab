@@ -13,6 +13,7 @@
 #### Fixes
 
 - Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
+- Fixed an issue where Choicelab would refuse to quit if only the launcher was open.
 - Fixed the keyboard shortcuts for Delete Node and Delete Branch Stem.
 
 ## 1.0.2

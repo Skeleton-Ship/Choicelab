@@ -1,19 +1,11 @@
 import { useEffect } from "preact/hooks";
 import { emit } from "@tauri-apps/api/event";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import editorLicense from "../../LICENSE?raw";
 import playerLicense from "../../src/player/LICENSE?raw";
-
-const appWindow = getCurrentWebviewWindow();
 
 export function License() {
   useEffect(() => {
     emit("window-ready", { label: "license" });
-    const unlistenQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      appWindow.close();
-    });
-    return () => { unlistenQuit.then((fn) => fn()); };
   }, []);
 
   return (

@@ -1,8 +1,6 @@
 import { useEffect } from "preact/hooks";
 import { emit } from "@tauri-apps/api/event";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import data from "./data.json";
-const appWindow = getCurrentWebviewWindow();
 
 type FontEntry = { name: string; licenseText: string };
 type PackageEntry = {
@@ -54,11 +52,6 @@ function PackageSection({
 export function Acknowledgments() {
   useEffect(() => {
     emit("window-ready", { label: "acknowledgments" });
-    const unlistenQuit = appWindow.listen<{ label: string }>("menu-request-quit", (event) => {
-      if (event.payload.label !== appWindow.label) return;
-      appWindow.close();
-    });
-    return () => { unlistenQuit.then((fn) => fn()); };
   }, []);
 
   return (
