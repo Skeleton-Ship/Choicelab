@@ -50,5 +50,5 @@ export default function enterTargetMode(props: {
   }
   setStore(store);
   setViewStore(viewStore);
-  props.update(false);
+  props.update(false, false);
 }

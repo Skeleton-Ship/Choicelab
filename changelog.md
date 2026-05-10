@@ -7,6 +7,8 @@
 #### Enhancements
 
 - When slotting an action into a cell, the cell pane will now scroll to the action, highlight its addition, and focus the first input element.
+- Text fields now support undo/redo while editing, not just after saving.
+- Improved performance of text editing when dealing with large flowcharts.
 
 #### Fixes
 

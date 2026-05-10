@@ -1,3 +1,4 @@
+import { useState, useEffect } from "preact/hooks";
 import {
   setStore,
   getViewStore,
@@ -19,6 +20,13 @@ export default function TextField(props: {
   store: Store;
   update: Function;
 }) {
+  const [localValue, setLocalValue] = useState(props.initialValue);
+
+  // Sync local value when the store changes externally (e.g. undo/redo)
+  useEffect(() => {
+    setLocalValue(props.initialValue);
+  }, [props.initialValue]);
+
   function handleChange(value: any) {
     if (!action) return;
     const propsObj =
@@ -39,21 +47,20 @@ export default function TextField(props: {
       name={propElName}
       type="text"
       class="ui-text-field"
-      value={props.initialValue}
+      value={localValue}
       onFocus={() => {
         viewStore.inTextElement = true;
         setViewStore(viewStore);
-        props.update(false);
+        props.update(false, false);
         setMenu();
       }}
-      onBlur={() => {
+      onBlur={(e) => {
         viewStore.inTextElement = false;
         setViewStore(viewStore);
-        props.update(false);
+        handleChange((e.target as HTMLInputElement).value);
       }}
       onChange={(e) => {
-        const value = (e.target as HTMLInputElement).value;
-        handleChange(value);
+        setLocalValue((e.target as HTMLInputElement).value);
       }}
     />
   );
@@ -63,24 +70,23 @@ export default function TextField(props: {
         name={propElName}
         id={propElName}
         class="ui-text-area"
-        value={props.initialValue}
+        value={localValue}
         onFocus={() => {
           viewStore.inTextElement = true;
           setViewStore(viewStore);
-          props.update();
+          props.update(false, false);
           setMenu();
         }}
-        onBlur={() => {
+        onBlur={(e) => {
           viewStore.inTextElement = false;
           setViewStore(viewStore);
-          props.update(false);
+          handleChange((e.target as HTMLTextAreaElement).value);
         }}
         onChange={(e) => {
-          const value = (e.target as HTMLInputElement).value;
-          handleChange(value);
+          setLocalValue((e.target as HTMLInputElement).value);
         }}
       >
-        {props.initialValue}
+        {localValue}
       </textarea>
     );
   }
