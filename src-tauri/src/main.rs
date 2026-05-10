@@ -69,7 +69,6 @@ fn create_project_window(
 
     #[cfg(target_os = "macos")]
     let builder = builder
-        .hidden_title(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay);
 
     builder.build().map_err(|e| e.to_string())?;
