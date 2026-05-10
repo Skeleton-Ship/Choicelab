@@ -171,8 +171,8 @@ $node-settings-height: 85px;
   }
 }
 
-$item-padding: 12px 12px 14px;
-$item-margin: 21px;
+$item-padding: 10px 10px 12px;
+$item-margin: clamp(5px, 2.5%, 21px);
 $item-border-radius: 10px;
 
 .inspector-item {
@@ -237,7 +237,7 @@ $item-border-radius: 10px;
     align-items: center;
     justify-content: flex-start;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     .item-heading {
       margin: 0;
       display: inline;
