@@ -23,7 +23,10 @@ import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
 
-function AvailableActions(props: { update: Function; onActionAdded: (id: string) => void }) {
+function AvailableActions(props: {
+  update: Function;
+  onActionAdded: (id: string) => void;
+}) {
   const [selectedDef, selectDef] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<
     "timeline" | "interact" | "event"
@@ -41,7 +44,7 @@ function AvailableActions(props: { update: Function; onActionAdded: (id: string)
   }, []);
   function handleAddAction(actionDef: ActionDef) {
     const newId = addAction(actionDef, props.update);
-    props.onActionAdded(newId);
+    if (newId) props.onActionAdded(newId);
   }
   const categories: Record<string, string> = {
     timeline: "Timeline",
@@ -94,13 +97,22 @@ function ActionsEditor(props: {
 
   useEffect(() => {
     if (!props.lastAddedId) return;
-    const el = document.querySelector(`[data-action-id="${props.lastAddedId}"]`);
+    const el = document.querySelector(
+      `[data-action-id="${props.lastAddedId}"]`
+    );
     el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     const focusTimer = setTimeout(() => {
-      (el?.querySelector(".inspector-prop textarea, .inspector-prop input, .inspector-prop button") as HTMLElement | null)?.focus();
+      (
+        el?.querySelector(
+          ".inspector-prop textarea, .inspector-prop input, .inspector-prop button"
+        ) as HTMLElement | null
+      )?.focus();
     }, 300);
     const timer = setTimeout(props.clearLastAdded, 1000);
-    return () => { clearTimeout(focusTimer); clearTimeout(timer); };
+    return () => {
+      clearTimeout(focusTimer);
+      clearTimeout(timer);
+    };
   }, [props.lastAddedId]);
 
   if (!node) return <></>;
@@ -247,7 +259,11 @@ export default function CellPane(props: { update: Function }) {
   return (
     <>
       <AvailableActions update={props.update} onActionAdded={setLastAddedId} />
-      <ActionsEditor update={props.update} lastAddedId={lastAddedId} clearLastAdded={() => setLastAddedId(null)} />
+      <ActionsEditor
+        update={props.update}
+        lastAddedId={lastAddedId}
+        clearLastAdded={() => setLastAddedId(null)}
+      />
       <NodeSettings update={props.update} plan={plan} onApply={handleApply} />
     </>
   );
