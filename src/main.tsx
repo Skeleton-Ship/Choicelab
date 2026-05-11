@@ -40,6 +40,7 @@ import openProject from "./fs/openProject";
 import { buildMenu } from "./menu/buildMenu";
 import { exportProject, getExportDirName } from "./fs/exportProject";
 import { desktopDir, resolve } from "@tauri-apps/api/path";
+import { getDialogText } from "./utils/dialogText";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -91,16 +92,25 @@ async function init() {
   });
   // Prevent bare Backspace/Delete from triggering WKWebView's built-in
   // back-navigation when focus is outside a text field.
-  window.addEventListener("keydown", (e) => {
-    if ((e.key === "Backspace" || e.key === "Delete") && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      const target = e.target as Element;
-      const isEditable =
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLTextAreaElement ||
-        (target as HTMLElement).isContentEditable;
-      if (!isEditable) e.preventDefault();
-    }
-  }, true);
+  window.addEventListener(
+    "keydown",
+    (e) => {
+      if (
+        (e.key === "Backspace" || e.key === "Delete") &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey
+      ) {
+        const target = e.target as Element;
+        const isEditable =
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          (target as HTMLElement).isContentEditable;
+        if (!isEditable) e.preventDefault();
+      }
+    },
+    true
+  );
   // Menu listeners - discard if the payload label doesn't match this window
   appWindow.listen<{ label: string }>("menu-new-project", (event) => {
     if (event.payload.label !== appWindow.label) return;
@@ -128,10 +138,13 @@ async function init() {
     if (event.payload.label !== appWindow.label) return;
     await open("https://choicelab.xyz/docs/");
   });
-  appWindow.listen<{ label: string }>("menu-open-choicelab-site", async (event) => {
-    if (event.payload.label !== appWindow.label) return;
-    await open("https://choicelab.xyz");
-  });
+  appWindow.listen<{ label: string }>(
+    "menu-open-choicelab-site",
+    async (event) => {
+      if (event.payload.label !== appWindow.label) return;
+      await open("https://choicelab.xyz");
+    }
+  );
   appWindow.listen<{ label: string }>("menu-report-issue", async (event) => {
     if (event.payload.label !== appWindow.label) return;
     await open("https://github.com/Skeleton-Ship/Choicelab/issues");
@@ -226,19 +239,16 @@ async function init() {
     projectData = projectData as Project;
     // Migrate legacy projects that predate the asset registry
     if (windowType === "project" && needsMigration(projectData)) {
-      const titleWindows = "Project Update Required";
-      const messageText1 =
-        "This project needs to be updated for this version of Choicelab.";
-      const messageText2 =
-        "Once updated, this project can't be opened in older versions.";
-      const confirmed = await confirm(
-        platform === "macos" ? messageText2 : messageText1 + " " + messageText2,
-        {
-          title: platform === "macos" ? messageText1 : titleWindows,
-          okLabel: "Update",
-          cancelLabel: "Cancel",
-        }
+      const dialog = getDialogText(
+        "Project update required",
+        "This project needs to be updated for this version of Choicelab.",
+        "Once updated, this project can't be opened in older versions."
       );
+      const confirmed = await confirm(dialog.message, {
+        title: dialog.title,
+        okLabel: "Update",
+        cancelLabel: "Cancel",
+      });
       if (!confirmed) {
         appWindow.close();
         return;

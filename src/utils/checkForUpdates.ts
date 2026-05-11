@@ -2,9 +2,9 @@ import { check } from "@tauri-apps/plugin-updater";
 import { emit, once } from "@tauri-apps/api/event";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { open } from "@tauri-apps/plugin-shell";
-import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { handleCloseRequest } from "../fs/handleCloseRequest";
 import spinner from "../assets/spinner.gif";
+import { getDialogText } from "./dialogText";
 
 const WEBSITE_URL = "https://choicelab.xyz";
 
@@ -20,18 +20,16 @@ function revertButtonToFailed(btn: HTMLButtonElement) {
 }
 
 async function showUpdateFailedDialog() {
-  const platform = getPlatform();
-  const line1 = "There was a problem updating Choicelab.";
-  const line2 =
-    "You can download the latest app version on the Choicelab website.";
-  const visitWebsite = await ask(
-    platform === "macos" ? line2 : `${line1}\n${line2}`,
-    {
-      title: platform === "macos" ? line1 : "Error updating Choicelab",
-      okLabel: "Visit Website",
-      cancelLabel: "Dismiss",
-    }
+  const dialog = getDialogText(
+    "Problem updating Choicelab",
+    "Choicelab couldn't be updated automatically.",
+    "You can download the latest version on the Choicelab website."
   );
+  const visitWebsite = await ask(dialog.message, {
+    title: dialog.title,
+    okLabel: "Visit Website",
+    cancelLabel: "Dismiss",
+  });
   if (visitWebsite) {
     open(WEBSITE_URL);
   }
