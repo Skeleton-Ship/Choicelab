@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { emit, once } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
 import { getStore, getViewStore, setStore } from "../../data/dataStore";
@@ -11,6 +11,21 @@ import getAssetPreviewURL from "./getAssetPreviewURL";
 import AssetPreview from "./AssetPreview";
 import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 import { v4 as uuid } from "uuid";
+import { getDialogText } from "../../utils/dialogText";
+
+let uploadInProgress = false;
+
+const UPLOAD_TIMEOUT_MS = 10000;
+
+async function cloudWarningMessage(fileName: string) {
+  const fileManager = platform() === "macos" ? "Finder" : "Explorer";
+  const dialog = getDialogText(
+    "Unable to add file",
+    `"${fileName}" couldn't be added.`,
+    `If the file is stored in the cloud, download it first in ${fileManager}, then try again.`
+  );
+  message(dialog.message, dialog.title);
+}
 
 export default function FileUpload(props: {
   type: string; // Binary or text file
@@ -31,7 +46,6 @@ export default function FileUpload(props: {
   const propsRef = useRef(props);
   const [fileSrc, setFileSrc] = useState("");
   const [isLoading, setLoading] = useState(false);
-
   useEffect(() => {
     propsRef.current = props;
   });
@@ -67,15 +81,52 @@ export default function FileUpload(props: {
           }
         });
         if (!isValidType) {
-          message(
-            `You can only upload the following file types: ${propsRef.current.accept}`,
-            `The file "${file.name}" can't be used.`
+          const dialog = getDialogText(
+            "Invalid file format",
+            `The file "${file.name}" can't be used.`,
+            `You can only upload the following file types: ${propsRef.current.accept}`
           );
+          message(dialog.message, dialog.title);
           return;
         }
+        if (file.size === 0) {
+          cloudWarningMessage(file.name);
+          filePicker.value = "";
+          return;
+        }
+        if (uploadInProgress) {
+          const dialog = getDialogText(
+            "File operation in progress",
+            "Another file is still loading into the project.",
+            "Wait for the other file to finish, then try this one again."
+          );
+          message(dialog.message, dialog.title);
+          filePicker.value = "";
+          return;
+        }
+        uploadInProgress = true;
         setLoading(true);
+
+        // Start the timeout immediately — readFileUpload itself can hang if the
+        // cloud file hasn't downloaded yet, so the timer must cover the full
+        // operation, not just the Rust backend step.
+        let cancelled = false;
+        let assetCreatedUnlisten: (() => void) | null = null;
+        const resetUploadState = () => {
+          filePicker.value = "";
+          uploadInProgress = false;
+          setLoading(false);
+        };
+        const timeoutId = setTimeout(() => {
+          cancelled = true;
+          assetCreatedUnlisten?.();
+          resetUploadState();
+          cloudWarningMessage(file.name);
+        }, UPLOAD_TIMEOUT_MS);
+
         readFileUpload(file, propsRef.current.type)
           .then(async (contents: any) => {
+            if (cancelled) return;
             const viewStore = getViewStore();
             const assetsPath = await resolve(viewStore.projectPath, "./Assets");
             const jsonData = {
@@ -86,7 +137,13 @@ export default function FileUpload(props: {
               label: getProjectWindowLabel(viewStore.projectPath),
             };
             emit("create-asset", jsonData);
-            once("asset-created", async (event) => {
+            const unlisten = await listen("asset-created", async (event) => {
+              if (cancelled) {
+                unlisten();
+                return;
+              }
+              clearTimeout(timeoutId);
+              unlisten();
               const store = getStore();
               const resolvedFileName = (event.payload as { fileName: string })
                 .fileName;
@@ -97,14 +154,15 @@ export default function FileUpload(props: {
               store.project.assets.push(asset);
               setStore(store);
               propsRef.current.onCreated(asset);
-              // Reset the input so re-selecting the same file fires change again.
-              filePicker.value = "";
-              setLoading(false);
+              resetUploadState();
             });
+            assetCreatedUnlisten = unlisten;
           })
           .catch((error) => {
+            if (cancelled) return;
+            clearTimeout(timeoutId);
             console.error("Error reading file:", error);
-            setLoading(false);
+            resetUploadState();
           });
       }
     };
