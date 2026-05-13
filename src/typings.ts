@@ -32,8 +32,8 @@ export interface AnyNode {
     ySize: number;
     top: number;
     left: number;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     abandoned?: boolean;
   };
 }

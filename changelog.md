@@ -2,7 +2,7 @@
 
 ## 1.0.3
 
-### 2026-05-10
+### 2026-05-15
 
 #### Enhancements
 
@@ -15,6 +15,7 @@
 
 - Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
 - Fixed an issue where Choicelab would refuse to quit if only the launcher was open.
+- Fixed an issue with the positioning and appearance of disconnected branch cells.
 - Fixed the keyboard shortcuts for Delete Node and Delete Branch Stem.
 - If slotting a cloud-based file fails, Choicelab will now show a help message and cancel the upload state.
 - Projects played back locally will now automatically reset their playback history when uploaded to a web server.

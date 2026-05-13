@@ -176,8 +176,8 @@ export default function positionNodes(sequenceId: string) {
         top: 50,
         xSize: -1,
         ySize: 1,
-        width: viewSettings.cellWidth,
-        height: viewSettings.cellHeight,
+        // width: viewSettings.cellWidth,
+        // height: viewSettings.cellHeight,
         abandoned: true,
       };
       // Get x-size of branch stems
@@ -186,6 +186,7 @@ export default function positionNodes(sequenceId: string) {
         xSize = node.stems.length;
       }
       node.position.xSize = xSize;
+      console.log(node);
     }
   });
   return store;

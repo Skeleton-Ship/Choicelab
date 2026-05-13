@@ -17,8 +17,8 @@ export default function BranchEl(props: {
   y: number;
   left: number;
   top: number;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   update: Function;
 }) {
   const store = getStore(),
@@ -91,8 +91,8 @@ export default function BranchEl(props: {
   const style = {
     top: props.top + "px",
     left: props.left + "px",
-    width: props.width + "px",
-    height: props.height + "px",
+    ...(props.width !== undefined && { width: props.width + "px" }),
+    ...(props.height !== undefined && { height: props.height + "px" }),
   };
   return (
     <li
