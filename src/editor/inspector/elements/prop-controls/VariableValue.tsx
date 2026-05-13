@@ -79,7 +79,7 @@ export default function VariableValueControl(props: {
           break;
       }
       setStore(props.store);
-      props.update();
+      props.update(false);
     }
   }, []);
   const action = props.action;
