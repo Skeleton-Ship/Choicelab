@@ -11,6 +11,7 @@ import getAssetPreviewURL from "./getAssetPreviewURL";
 import AssetPreview from "./AssetPreview";
 import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 import { v4 as uuid } from "uuid";
+import { platform } from "@tauri-apps/plugin-os";
 import { getDialogText } from "../../utils/dialogText";
 
 let uploadInProgress = false;
