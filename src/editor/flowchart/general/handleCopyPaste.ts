@@ -125,15 +125,17 @@ function handlePaste(update: Function): void {
       newNode = regenerateIdsAndLinks(newNode);
       processedNodes.push(newNode);
     });
-    // Create new nodes
+    // Create new nodes — use a no-op so each insertion mutates the store
+    // without saving a history entry; one entry is saved at the end.
+    const noop = () => {};
     processedNodes.forEach((node: AnyNode) => {
-      insertNewNode(node, update);
+      insertNewNode(node, noop);
     });
-    // Finally, set selection to processed nodes
+    // Finally, set selection to processed nodes and save one history entry
     const viewStore = getViewStore();
     viewStore.selectedNodes = processedNodes;
     setViewStore(viewStore);
-    update(false);
+    update();
   });
 }
 
