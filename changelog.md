@@ -10,6 +10,7 @@
 - Text fields now support undo/redo while editing, not just after saving.
 - Audio and video actions in the editor will now indicate when they're loading.
 - Improved performance of text editing when dealing with large flowcharts.
+- Improved performance of undo/redo.
 
 #### Fixes
 

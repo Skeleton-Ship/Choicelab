@@ -116,12 +116,7 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
     "History",
     stepVersion
   );
-  emit("request-history-version", {
-    versionPath: versionPath,
-    versionId: stepVersion,
-    label: getProjectWindowLabel(store.projectPath),
-  });
-  // Listen to receive it
+  // Register listener before emitting to avoid dropping a fast response
   once(
     "receive-history-version",
     (event: { payload: { version_id: string; message: string } }) => {
@@ -157,4 +152,9 @@ export async function handleUndoRedo(undoOrRedo: string, update: Function) {
       update(false);
     }
   );
+  emit("request-history-version", {
+    versionPath: versionPath,
+    versionId: stepVersion,
+    label: getProjectWindowLabel(store.projectPath),
+  });
 }
