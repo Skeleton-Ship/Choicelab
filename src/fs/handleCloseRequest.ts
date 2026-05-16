@@ -1,11 +1,12 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { exit } from "@tauri-apps/plugin-process";
 import { getProjectSettingsWindow } from "../editor/settings/getProjectSettingsWindow";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
-import { getViewStore } from "../data/dataStore";
-import { ask } from "@tauri-apps/plugin-dialog";
+import { getStore, getViewStore } from "../data/dataStore";
+import { saveProject } from "./saveProject";
 const appWindow = getCurrentWebviewWindow();
 
 // Returns the cache directory for the currently-open project.
@@ -31,6 +32,19 @@ export async function handleClose() {
   appWindow.destroy();
 }
 
+async function promptUnsavedChanges(
+  verb: string
+): Promise<"save" | "dont_save" | "cancel"> {
+  const projectName = getStore().project.name;
+  return invoke<"save" | "dont_save" | "cancel">(
+    "show_unsaved_changes_dialog",
+    {
+      title: `Do you want to save changes to "${projectName}" before ${verb}?`,
+      body: "Your changes will be lost if you don't save them.",
+    }
+  );
+}
+
 export async function handleCloseRequest(closeFn?: Function) {
   const store = getViewStore();
   if (store.saved === true) {
@@ -41,22 +55,22 @@ export async function handleCloseRequest(closeFn?: Function) {
     }
     return;
   }
-  const confirm = await ask(
-    "Do you want to save your changes before quitting?",
-    {
-      title: "Quit before saving?",
-      kind: "warning",
-      okLabel: "Go Back",
-      cancelLabel: "Quit Without Saving",
+  const result = await promptUnsavedChanges("closing");
+  if (result === "save") {
+    await saveProject();
+    if (typeof closeFn !== "undefined") {
+      closeFn();
+    } else {
+      handleClose();
     }
-  );
-  if (confirm === false) {
+  } else if (result === "dont_save") {
     if (typeof closeFn !== "undefined") {
       closeFn();
     } else {
       handleClose();
     }
   }
+  // "cancel" → do nothing
 }
 
 // Used for Cmd-Q: exits the entire process rather than just destroying this
@@ -64,16 +78,12 @@ export async function handleCloseRequest(closeFn?: Function) {
 export async function handleQuit() {
   const store = getViewStore();
   if (store.saved !== true) {
-    const confirm = await ask(
-      "Do you want to save your changes before quitting?",
-      {
-        title: "Quit before saving?",
-        kind: "warning",
-        okLabel: "Go Back",
-        cancelLabel: "Quit Without Saving",
-      }
-    );
-    if (confirm !== false) return;
+    const result = await promptUnsavedChanges("quitting");
+    if (result === "save") {
+      await saveProject();
+    } else if (result !== "dont_save") {
+      return; // "cancel" → do nothing
+    }
   }
   await exit(0);
 }

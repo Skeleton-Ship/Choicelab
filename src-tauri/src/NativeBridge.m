@@ -178,3 +178,27 @@ BOOL show_app_icon_dialog(
     });
     return result;
 }
+
+// Shows the standard three-button unsaved-changes dialog with the app icon.
+// Must be called from a background thread (uses dispatch_sync to the main queue).
+// Button layout follows macOS HIG: Save (primary/blue), Don't Save, Cancel.
+// Returns: 0 = Save, 1 = Don't Save, 2 = Cancel.
+int8_t show_unsaved_changes_dialog_native(const char *title, const char *body) {
+    __block int8_t result = 2; // default to Cancel
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.icon = [NSApp applicationIconImage];
+        alert.messageText = [NSString stringWithUTF8String:title];
+        if (body && strlen(body) > 0) {
+            alert.informativeText = [NSString stringWithUTF8String:body];
+        }
+        [alert addButtonWithTitle:@"Save"];
+        [alert addButtonWithTitle:@"Don’t Save"];
+        [alert addButtonWithTitle:@"Cancel"];
+        NSModalResponse response = [alert runModal];
+        if (response == NSAlertFirstButtonReturn)       result = 0;
+        else if (response == NSAlertSecondButtonReturn) result = 1;
+        else                                            result = 2;
+    });
+    return result;
+}

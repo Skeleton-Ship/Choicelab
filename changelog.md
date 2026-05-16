@@ -11,6 +11,7 @@
 
 #### Enhancements
 
+- The prompt to save a project now shows the standard Save, Don't Save, and Cancel commands.
 - When slotting an action into a cell, the cell pane will now scroll to the action, highlight its addition, and focus the first input element.
 - Text fields now support undo/redo while editing, not just after saving.
 - Audio and video actions in the editor will now indicate when they're loading.

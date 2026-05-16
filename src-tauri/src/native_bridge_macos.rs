@@ -62,6 +62,11 @@ extern "C" {
         ok_label: *const std::ffi::c_char,
         cancel_label: *const std::ffi::c_char,
     ) -> i8;
+
+    fn show_unsaved_changes_dialog_native(
+        title: *const std::ffi::c_char,
+        body: *const std::ffi::c_char,
+    ) -> i8;
 }
 
 /// Show a native NSAlert with the app icon. Blocks the calling thread until the
@@ -85,6 +90,20 @@ pub fn show_guard_dialog(title: &str, body: &str, ok_label: &str, cancel_label: 
     let ok = CString::new(ok_label).unwrap();
     let cancel = CString::new(cancel_label).unwrap();
     unsafe { show_app_icon_dialog(t.as_ptr(), b.as_ptr(), ok.as_ptr(), cancel.as_ptr()) != 0 }
+}
+
+/// Show the standard three-button unsaved-changes sheet (Save / Don't Save / Cancel).
+/// Returns "save", "dont_save", or "cancel".
+/// Must be called from a background thread.
+pub fn show_unsaved_changes_dialog(title: &str, body: &str) -> &'static str {
+    use std::ffi::CString;
+    let t = CString::new(title.replace('\0', "")).unwrap();
+    let b = CString::new(body.replace('\0', "")).unwrap();
+    match unsafe { show_unsaved_changes_dialog_native(t.as_ptr(), b.as_ptr()) } {
+        0 => "save",
+        1 => "dont_save",
+        _ => "cancel",
+    }
 }
 
 #[no_mangle]

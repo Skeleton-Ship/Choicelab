@@ -10,6 +10,8 @@ mod preview_server;
 mod check_for_updates;
 #[cfg(target_os = "macos")]
 mod native_bridge_macos;
+#[cfg(target_os = "windows")]
+mod native_bridge_windows;
 
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
@@ -170,6 +172,49 @@ fn create_project_window(
     Ok(())
 }
 
+#[tauri::command]
+async fn show_unsaved_changes_dialog(
+    app: tauri::AppHandle,
+    title: String,
+    body: String,
+) -> Result<String, String> {
+    let (tx, rx) = tokio::sync::oneshot::channel::<String>();
+    #[cfg(target_os = "macos")]
+    {
+        let _ = app;
+        std::thread::spawn(move || {
+            let result = native_bridge_macos::show_unsaved_changes_dialog(&title, &body);
+            let _ = tx.send(result.to_string());
+        });
+    }
+    #[cfg(target_os = "windows")]
+    {
+        let _ = app;
+        std::thread::spawn(move || {
+            let result = native_bridge_windows::show_unsaved_changes_dialog(&title, &body);
+            let _ = tx.send(result.to_string());
+        });
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    {
+        use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+        app.dialog()
+            .message(&body)
+            .title(&title)
+            .kind(MessageDialogKind::Warning)
+            .buttons(MessageDialogButtons::OkCancelCustom(
+                "Go Back".into(),
+                "Quit Without Saving".into(),
+            ))
+            .show(move |confirmed| {
+                // confirmed=true → "Go Back" (cancel), confirmed=false → "Quit Without Saving"
+                let result = if confirmed { "cancel" } else { "dont_save" };
+                let _ = tx.send(result.to_string());
+            });
+    }
+    rx.await.map_err(|e| e.to_string())
+}
+
 fn main() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -231,6 +276,7 @@ fn main() {
             print_focused_window,
             create_project_window,
             get_recent_files,
+            show_unsaved_changes_dialog,
             autosave::check_autosave,
             autosave::read_autosave_file,
             autosave::delete_autosave,
