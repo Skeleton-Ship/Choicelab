@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { emit } from "@tauri-apps/api/event";
 import {platform as getPlatform} from "@tauri-apps/plugin-os";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { resolve, basename } from "@tauri-apps/api/path";
@@ -12,6 +13,7 @@ export default async function loadProject(projectFilePath: string) {
   const label = getProjectWindowLabel(projectPath);
   const screenWidth = window.screen.availWidth;
   const screenHeight = window.screen.availHeight;
+  emit("add-recent-file", { path: projectFilePath });
   invoke("create_project_window", {
     label,
     url: `index.html?window_type=project&project_path=${projectPathEncoded}&file_name=${fileNameEncoded}`,

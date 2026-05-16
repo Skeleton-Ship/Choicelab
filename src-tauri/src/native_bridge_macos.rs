@@ -55,6 +55,38 @@ pub extern "C" fn menu_release_notes_clicked() {
     }
 }
 
+extern "C" {
+    fn show_app_icon_dialog(
+        title: *const std::ffi::c_char,
+        body: *const std::ffi::c_char,
+        ok_label: *const std::ffi::c_char,
+        cancel_label: *const std::ffi::c_char,
+    ) -> i8;
+}
+
+/// Show a native NSAlert with the app icon. Blocks the calling thread until the
+/// user responds (internally uses dispatch_sync to the main queue), so this must
+/// be called from a background thread, not the main thread.
+/// Show a native NSAlert with the app icon and no cancel button (informational only).
+/// Must be called from a background thread.
+pub fn show_app_message(title: &str, body: &str) {
+    use std::ffi::CString;
+    let t = CString::new(title.replace('\0', "")).unwrap();
+    let b = CString::new(body.replace('\0', "")).unwrap();
+    let ok = CString::new("OK").unwrap();
+    let empty = CString::new("").unwrap();
+    unsafe { show_app_icon_dialog(t.as_ptr(), b.as_ptr(), ok.as_ptr(), empty.as_ptr()); }
+}
+
+pub fn show_guard_dialog(title: &str, body: &str, ok_label: &str, cancel_label: &str) -> bool {
+    use std::ffi::CString;
+    let t = CString::new(title.replace('\0', "")).unwrap();
+    let b = CString::new(body.replace('\0', "")).unwrap();
+    let ok = CString::new(ok_label).unwrap();
+    let cancel = CString::new(cancel_label).unwrap();
+    unsafe { show_app_icon_dialog(t.as_ptr(), b.as_ptr(), ok.as_ptr(), cancel.as_ptr()) != 0 }
+}
+
 #[no_mangle]
 pub extern "C" fn menu_acknowledgments_clicked() {
     if let Some(app_handle) = APP_HANDLE.get() {

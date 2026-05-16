@@ -297,7 +297,14 @@ async function init() {
     }
   }
 
-  // Build menu
+  // Build menu with current recent files; rebuild whenever the list changes.
+  const recentFiles = await invoke<string[]>("get_recent_files").catch(() => [] as string[]);
+
+  listen("rebuild-open-recent-menu", async () => {
+    const files = await invoke<string[]>("get_recent_files").catch(() => [] as string[]);
+    buildMenu(windowType, files);
+  });
+
   const appDOM = (
     <div id="App" data-platform={platform} data-focused-region="">
       {elements}
@@ -305,7 +312,7 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
-  buildMenu(windowType);
+  buildMenu(windowType, recentFiles);
 }
 
 init();

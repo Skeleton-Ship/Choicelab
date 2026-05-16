@@ -1,5 +1,7 @@
 import { ask } from "@tauri-apps/plugin-dialog";
 import { emit, once } from "@tauri-apps/api/event";
+import { getViewStore } from "../data/dataStore";
+import { getDialogText } from "../utils/dialogText";
 
 export default async function guardProjectWindow(
   action: "create" | "open"
@@ -12,6 +14,8 @@ export default async function guardProjectWindow(
     }
   );
 
+  const projectName = getViewStore().projectName;
+
   emit("check-project-window", {});
 
   const status = await statusPromise;
@@ -21,11 +25,16 @@ export default async function guardProjectWindow(
   const verb = action === "create" ? "create" : "open";
   const okLabel =
     action === "create" ? "Close and Create Another" : "Close and Open Another";
-
-  const confirmed = await ask(
-    `To ${verb} another project, you'll need to save and close this project first. Continue?`,
-    { okLabel, cancelLabel: "Cancel" }
+  const text = getDialogText(
+    "Close project to continue",
+    `To ${verb} another project, you'll need to close "${projectName}" first.`,
+    ""
   );
+  const confirmed = await ask(text.message, {
+    title: text.title,
+    okLabel,
+    cancelLabel: "Cancel",
+  });
 
   if (!confirmed) return false;
 

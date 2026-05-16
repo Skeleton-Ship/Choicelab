@@ -14,7 +14,7 @@ import {
 } from "../data/dataStore";
 import { getCurrentSequence, getStemParent } from "../data/getData";
 import { handleUndoRedo, saveHistoryVersion } from "../data/history";
-import { handleCloseRequest, handleQuit } from "../fs/handleCloseRequest";
+import { handleCloseRequest, handleClose, handleQuit } from "../fs/handleCloseRequest";
 import {
   handleCutCopy,
   handlePaste,
@@ -46,6 +46,7 @@ import {
 } from "./flowchart/general/handleDelete";
 import { triggerApply } from "../data/autoGenerate";
 import { openProjectSettings } from "./settings/openProjectSettings";
+import loadProject from "../fs/loadProject";
 const appWindow = getCurrentWebviewWindow();
 
 export default function MainEditor() {
@@ -238,6 +239,16 @@ export default function MainEditor() {
         triggerApply();
       }
     );
+    const unlistenCloseForProjectOpen = appWindow.listen<{ path: string }>(
+      "close-for-project-open",
+      (event) => {
+        const { path } = event.payload;
+        handleCloseRequest(() => {
+          loadProject(path);
+          handleClose();
+        });
+      }
+    );
     appWindow.show();
     // Once ready, check for updates
     checkForUpdates();
@@ -264,6 +275,7 @@ export default function MainEditor() {
       unlistenMenuDeleteStem.then((fn) => fn());
       unlistenMenuProjectSettings.then((fn) => fn());
       unlistenMenuAutofill.then((fn) => fn());
+      unlistenCloseForProjectOpen.then((fn) => fn());
     };
   }, []);
 

@@ -4,6 +4,7 @@
 mod bind_listeners;
 mod file_operations;
 mod globals;
+mod preferences;
 mod preview_server;
 mod check_for_updates;
 #[cfg(target_os = "macos")]
@@ -38,6 +39,100 @@ fn set_focused_window(label: String) {
 #[tauri::command]
 fn print_focused_window() {
     // println!("focused window: {:?}", *FOCUSED_WINDOW.lock().unwrap());
+}
+
+#[tauri::command]
+fn get_recent_files(app: tauri::AppHandle) -> Vec<String> {
+    preferences::read_recent_files(&app)
+}
+
+/// Encode a string identically to JS's encodeURIComponent.
+pub fn percent_encode(s: &str) -> String {
+    let mut encoded = String::with_capacity(s.len());
+    for byte in s.bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9'
+            | b'-' | b'_' | b'.' | b'!' | b'~' | b'*' | b'\'' | b'(' | b')' => {
+                encoded.push(byte as char);
+            }
+            _ => encoded.push_str(&format!("%{:02X}", byte)),
+        }
+    }
+    encoded
+}
+
+/// Derive a project window label from the project directory path,
+/// replicating JS's getProjectWindowLabel(path) exactly.
+pub fn project_window_label(path: &str) -> String {
+    let path = path.trim();
+    let path_str: String = path
+        .chars()
+        .map(|c| if c.is_alphanumeric() || c == '-' || c == '_' { c } else { '_' })
+        .collect();
+    let path_str = path_str.trim_start_matches('_');
+    format!("project_{}", path_str)
+}
+
+/// Open a project window from a .clx file path, mirroring loadProject.ts behaviour.
+pub fn open_project_from_path(app: &tauri::AppHandle, file_path: &str) -> Result<(), String> {
+    let file_path_obj = std::path::Path::new(file_path);
+    let project_dir = file_path_obj
+        .parent()
+        .ok_or_else(|| "Invalid file path: no parent directory".to_string())?;
+    let project_dir_str = project_dir
+        .to_str()
+        .ok_or_else(|| "Project directory path is not valid UTF-8".to_string())?;
+    let file_name = file_path_obj
+        .file_name()
+        .and_then(|n| n.to_str())
+        .ok_or_else(|| "Invalid file name".to_string())?;
+
+    let label = project_window_label(project_dir_str);
+    let encoded_path = percent_encode(project_dir_str);
+    let encoded_name = percent_encode(file_name);
+    let url = format!(
+        "index.html?window_type=project&project_path={}&file_name={}",
+        encoded_path, encoded_name
+    );
+
+    let (width, height) = app
+        .primary_monitor()
+        .ok()
+        .flatten()
+        .map(|m| {
+            let scale = m.scale_factor();
+            let size = m.size();
+            let lw = size.width as f64 / scale;
+            let lh = size.height as f64 / scale;
+            (lw - lw / 12.0, lh - lw / 12.0)
+        })
+        .unwrap_or((1200.0, 800.0));
+
+    #[cfg(target_os = "macos")]
+    let transparent = true;
+    #[cfg(not(target_os = "macos"))]
+    let transparent = false;
+
+    let builder = tauri::WebviewWindowBuilder::new(
+        app,
+        &label,
+        tauri::WebviewUrl::App(url.into()),
+    )
+    .title("")
+    .inner_size(width, height)
+    .min_inner_size(700.0, 360.0)
+    .transparent(transparent)
+    .visible(true)
+    .on_navigation(|url| {
+        let port = url.port().unwrap_or(0);
+        url.scheme() == "tauri" || port == 1420 || (port >= 4090 && port <= 4099)
+    });
+
+    #[cfg(target_os = "macos")]
+    let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
+
+    builder.build().map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[tauri::command]
@@ -129,7 +224,7 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window, create_project_window])
+        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window, create_project_window, get_recent_files])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

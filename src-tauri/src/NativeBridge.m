@@ -152,3 +152,29 @@ void menu_license_clicked(void);
 }
 
 @end
+
+// Shows a modal alert with the application icon. Must be called from a background
+// thread; blocks until the user responds via dispatch_sync to the main queue.
+// Returns YES if the first (OK) button was clicked, NO otherwise.
+BOOL show_app_icon_dialog(
+    const char *title,
+    const char *body,
+    const char *ok_label,
+    const char *cancel_label
+) {
+    __block BOOL result = NO;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.icon = [NSApp applicationIconImage];
+        alert.messageText = [NSString stringWithUTF8String:title];
+        if (body && strlen(body) > 0) {
+            alert.informativeText = [NSString stringWithUTF8String:body];
+        }
+        [alert addButtonWithTitle:[NSString stringWithUTF8String:ok_label]];
+        if (cancel_label && strlen(cancel_label) > 0) {
+            [alert addButtonWithTitle:[NSString stringWithUTF8String:cancel_label]];
+        }
+        result = ([alert runModal] == NSAlertFirstButtonReturn);
+    });
+    return result;
+}

@@ -17,6 +17,8 @@ use tauri::Listener;
 use tauri::Manager;
 use tauri::WebviewWindow;
 use tauri::menu::{MenuItemKind, IsMenuItem};
+#[cfg(not(target_os = "macos"))]
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 #[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
@@ -174,6 +176,33 @@ pub fn open_acknowledgments_window(app: tauri::AppHandle) {
 		let _ = window.show();
 		let _ = window.set_focus();
 	}
+}
+
+/// Rust equivalent of getDialogText() from src/utils/dialogText.ts.
+/// On macOS the bold header is line1 and the body is line2 (short_title is unused).
+/// On other platforms the title is short_title and the body is line1 + " " + line2.
+fn get_dialog_texts(_short_title: &str, line1: &str, line2: &str) -> (String, String) {
+    #[cfg(target_os = "macos")]
+    {
+        (line1.trim().to_string(), line2.trim().to_string())
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        (
+            short_title.trim().to_string(),
+            format!("{} {}", line1.trim(), line2.trim()),
+        )
+    }
+}
+
+fn find_open_project_label(app: &tauri::AppHandle) -> Option<String> {
+    app.webview_windows()
+        .into_keys()
+        .find(|label| {
+            label.starts_with("project_")
+                && !label.starts_with("project_settings_")
+                && !label.starts_with("project_assets_")
+        })
 }
 
 pub fn bind_listeners(app: &tauri::App) {
@@ -678,6 +707,20 @@ let handle_update = app_handle.clone();
 		open_acknowledgments_window(handle_acknowledgments.clone());
 	});
 
+    // JS signals that a project was successfully opened; update recents and rebuild menus.
+    let handle_add_recent = app_handle.clone();
+    app.listen("add-recent-file", move |event| {
+        let json_raw = event.payload();
+        if let Ok(json) = serde_json::from_str::<serde_json::Value>(json_raw) {
+            if let Some(path) = json["path"].as_str() {
+                crate::preferences::add_recent_file(&handle_add_recent, path);
+                for (_, window) in handle_add_recent.webview_windows() {
+                    let _ = window.emit("rebuild-open-recent-menu", ());
+                }
+            }
+        }
+    });
+
     // listen for menu events
     let handle_menu_item_state = app_handle.clone();
     app.listen("set-menu-item-state", move |event| {
@@ -791,6 +834,122 @@ let handle_update = app_handle.clone();
                 }
             } else {
                 app_handle.exit(0);
+            }
+            return;
+        }
+
+        // Open Recent: Rust resolves the path and opens the window directly.
+        if menu_id.starts_with("open_recent_") {
+            let idx: usize = menu_id["open_recent_".len()..].parse().unwrap_or(usize::MAX);
+            // Use the raw (unpruned) list so the clicked index matches what was in
+            // the menu when it was built, regardless of any files that may have gone
+            // missing since then.
+            let files = crate::preferences::read_recent_files_raw(app_handle);
+            if let Some(file_path) = files.get(idx).cloned() {
+                if !std::path::Path::new(&file_path).exists() {
+                    // Remove the stale entry and trigger a menu rebuild before
+                    // notifying JS to show the not-found dialog.
+                    crate::preferences::remove_recent_file(app_handle, &file_path);
+                    for (_, window) in app_handle.webview_windows() {
+                        let _ = window.emit("rebuild-open-recent-menu", ());
+                    }
+                    let project_name = std::path::Path::new(&file_path)
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("Unknown")
+                        .to_string();
+                    #[cfg(target_os = "macos")]
+                    let file_manager = "Finder";
+                    #[cfg(not(target_os = "macos"))]
+                    let file_manager = "Explorer";
+                    let (dialog_title, dialog_body) = get_dialog_texts(
+                        "Couldn't locate project",
+                        &format!("\"{}\" couldn't be located.", project_name),
+                        &format!("If the file was recently moved, try opening it from {} first.", file_manager),
+                    );
+                    #[cfg(target_os = "macos")]
+                    std::thread::spawn(move || {
+                        crate::native_bridge_macos::show_app_message(&dialog_title, &dialog_body);
+                    });
+                    #[cfg(not(target_os = "macos"))]
+                    app_handle
+                        .dialog()
+                        .message(&dialog_body)
+                        .title(&dialog_title)
+                        .kind(MessageDialogKind::Info)
+                        .show(|_| {});
+                } else if let Some(existing_label) = find_open_project_label(app_handle) {
+                    // A project is already open — ask it to handle close/save then open the new one.
+                    let new_project_name = std::path::Path::new(&file_path)
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("the new project")
+                        .to_string();
+                    let current_project_name = app_handle
+                        .get_webview_window(&existing_label)
+                        .and_then(|w| w.title().ok())
+                        .unwrap_or_else(|| "the current project".to_string());
+                    let (dialog_title, dialog_body) = get_dialog_texts(
+                        "Open Project",
+                        &format!("To open \"{}\", you'll need to close \"{}\" first.", new_project_name, current_project_name),
+                        "",
+                    );
+                    let handle_guard = app_handle.clone();
+                    #[cfg(target_os = "macos")]
+                    {
+                        // Spawn a background thread so we can use dispatch_sync to the
+                        // main queue without deadlocking (on_menu_event runs on main).
+                        std::thread::spawn(move || {
+                            let confirmed = crate::native_bridge_macos::show_guard_dialog(
+                                &dialog_title,
+                                &dialog_body,
+                                "Switch Project",
+                                "Cancel",
+                            );
+                            if confirmed {
+                                if let Some(window) = handle_guard.get_webview_window(&existing_label) {
+                                    let _ = window.emit("close-for-project-open", serde_json::json!({ "path": file_path }));
+                                }
+                            }
+                        });
+                    }
+                    #[cfg(not(target_os = "macos"))]
+                    {
+                        app_handle
+                            .dialog()
+                            .message(&dialog_body)
+                            .title(&dialog_title)
+                            .kind(MessageDialogKind::Info)
+                            .buttons(MessageDialogButtons::OkCancelCustom(
+                                "OK".into(),
+                                "Cancel".into(),
+                            ))
+                            .show(move |confirmed| {
+                                if confirmed {
+                                    if let Some(window) = handle_guard.get_webview_window(&existing_label) {
+                                        let _ = window.emit("close-for-project-open", serde_json::json!({ "path": file_path }));
+                                    }
+                                }
+                            });
+                    }
+                } else {
+                    // No existing project — open directly.
+                    let handle = app_handle.clone();
+                    let _ = app_handle.run_on_main_thread(move || {
+                        if let Err(e) = crate::open_project_from_path(&handle, &file_path) {
+                            eprintln!("Failed to open recent project: {}", e);
+                        }
+                    });
+                }
+            }
+            return;
+        }
+
+        // Clear Menu: wipe the list and ask all windows to rebuild their menus.
+        if menu_id == "clear_recent" {
+            crate::preferences::clear_recent_files(app_handle);
+            for (_, window) in app_handle.webview_windows() {
+                let _ = window.emit("rebuild-open-recent-menu", ());
             }
             return;
         }

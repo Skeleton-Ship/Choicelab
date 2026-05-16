@@ -15,7 +15,10 @@ import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./setMenu";
 import { WindowType } from "../typings";
 
-export async function buildMenu(windowType: WindowType) {
+export async function buildMenu(
+  windowType: WindowType,
+  recentFiles: string[] = []
+) {
   const platform = getPlatform();
 
   /*
@@ -59,6 +62,43 @@ export async function buildMenu(windowType: WindowType) {
   });
 
   /*
+   * File menu — Open Recent submenu
+   */
+
+  const recentItems: any[] = [];
+  if (recentFiles.length === 0) {
+    recentItems.push(
+      await MenuItem.new({
+        id: "open_recent_no_items",
+        text: "No Recent Projects",
+        enabled: false,
+      })
+    );
+  } else {
+    for (let i = 0; i < recentFiles.length; i++) {
+      const filePath = recentFiles[i];
+      const name =
+        filePath
+          .split(/[/\\]/)
+          .pop()
+          ?.replace(/\.clx$/i, "") ?? filePath;
+      recentItems.push(
+        await MenuItem.new({ id: `open_recent_${i}`, text: name })
+      );
+    }
+    recentItems.push(await PredefinedMenuItem.new({ item: "Separator" }));
+    recentItems.push(
+      await MenuItem.new({ id: "clear_recent", text: "Clear Menu" })
+    );
+  }
+
+  const openRecentSubmenu = await Submenu.new({
+    text: "Open Recent",
+    id: "open_recent_submenu",
+    items: recentItems,
+  });
+
+  /*
    * File menu
    */
 
@@ -76,6 +116,7 @@ export async function buildMenu(windowType: WindowType) {
         text: "Open...",
         accelerator: "CmdOrCtrl+O",
       }),
+      openRecentSubmenu,
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -238,13 +279,17 @@ export async function buildMenu(windowType: WindowType) {
         id: "delete_nodes",
         text: "Delete Node",
         enabled: false,
-        accelerator: platform === "macos" ? "CmdOrCtrl+Backspace" : "CmdOrCtrl+Delete",
+        accelerator:
+          platform === "macos" ? "CmdOrCtrl+Backspace" : "CmdOrCtrl+Delete",
       }),
       await MenuItem.new({
         id: "delete_stem",
         text: "Delete Branch Stem",
         enabled: false,
-        accelerator: platform === "macos" ? "CmdOrCtrl+Option+Backspace" : "CmdOrCtrl+Shift+Delete",
+        accelerator:
+          platform === "macos"
+            ? "CmdOrCtrl+Option+Backspace"
+            : "CmdOrCtrl+Shift+Delete",
       }),
       await PredefinedMenuItem.new({
         item: "Separator",

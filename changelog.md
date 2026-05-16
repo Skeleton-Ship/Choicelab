@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.0.3
+## 1.1
 
-### 2026-05-15
+### 2026-05-16
+
+#### New features
+
+- Added **Open Recent** and **Save As** commands to the menu.
 
 #### Enhancements
 
