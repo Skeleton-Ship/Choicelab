@@ -16,6 +16,22 @@ mod native_bridge_windows;
 use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
 use globals::{FOCUSED_WINDOW, PENDING_FILES};
+
+/// Navigation policy shared by all project windows.
+/// Allows Tauri's own protocols, internal browser URLs (about:blank — WebView2
+/// fires NavigationStarting for these during init), the Windows asset-protocol
+/// host, the Vite dev server, and the preview-server port range.
+/// Everything else (arbitrary external URLs) is blocked.
+fn is_allowed_navigation(url: &tauri::Url) -> bool {
+    let scheme = url.scheme();
+    let host = url.host_str().unwrap_or("");
+    let port = url.port().unwrap_or(0);
+    scheme == "tauri"
+        || scheme == "about"
+        || host == "tauri.localhost"
+        || port == 1420
+        || (port >= 4090 && port <= 4099)
+}
 #[cfg(target_os = "windows")]
 use std::path::PathBuf;
 #[cfg(target_os = "windows")]
@@ -127,10 +143,7 @@ pub fn open_project_from_path(app: &tauri::AppHandle, file_path: &str) -> Result
     .min_inner_size(700.0, 360.0)
     .transparent(transparent)
     .visible(true)
-    .on_navigation(|url| {
-        let port = url.port().unwrap_or(0);
-        url.scheme() == "tauri" || port == 1420 || (port >= 4090 && port <= 4099)
-    });
+    .on_navigation(|url| is_allowed_navigation(url));
 
     #[cfg(target_os = "macos")]
     let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
@@ -158,13 +171,7 @@ fn create_project_window(
     .min_inner_size(700.0, 360.0)
     .transparent(transparent)
     .visible(true)
-    .on_navigation(|url| {
-        // Allow the app's own origins and the preview server port range.
-        // Everything else (e.g. accidental back-navigation to an arbitrary URL)
-        // is blocked.
-        let port = url.port().unwrap_or(0);
-        url.scheme() == "tauri" || port == 1420 || (port >= 4090 && port <= 4099)
-    });
+    .on_navigation(|url| is_allowed_navigation(url));
 
     #[cfg(target_os = "macos")]
     let builder = builder
