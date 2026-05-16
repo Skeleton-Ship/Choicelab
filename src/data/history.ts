@@ -10,6 +10,7 @@ import {
   setViewStore,
 } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
+import { triggerAutosave } from "../fs/autosave";
 import { getNode } from "./getData";
 import { AnyNode } from "../typings";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
@@ -29,6 +30,7 @@ export async function saveHistoryVersion(initial: boolean = false) {
   setStore(store);
   if (initial === false) {
     markUnsaved();
+    triggerAutosave();
   }
   // Write to fs
   const cacheBase = await appCacheDir();

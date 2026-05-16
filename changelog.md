@@ -6,6 +6,7 @@
 
 #### New features
 
+- Projects now **autosave**, and will offer to restore the auto-saved version if Choicelab quits unexpectedly.
 - Added **Open Recent** and **Save As** commands to the menu.
 
 #### Enhancements

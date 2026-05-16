@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod autosave;
 mod bind_listeners;
 mod file_operations;
 mod globals;
@@ -223,7 +224,18 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_files, open_folder, set_focused_window, print_focused_window, create_project_window, get_recent_files])
+        .invoke_handler(tauri::generate_handler![
+            get_pending_files,
+            open_folder,
+            set_focused_window,
+            print_focused_window,
+            create_project_window,
+            get_recent_files,
+            autosave::check_autosave,
+            autosave::read_autosave_file,
+            autosave::delete_autosave,
+            autosave::show_autosave_recovery_dialog,
+        ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

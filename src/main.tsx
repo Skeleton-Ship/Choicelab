@@ -28,6 +28,7 @@ import { setAccentColor } from "./utils/setAccentColor";
 import { listen, emit, once } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
+import markUnsaved from "./data/markUnsaved";
 import {
   needsMigration,
   migrateProject,
@@ -43,6 +44,17 @@ import { desktopDir, resolve } from "@tauri-apps/api/path";
 import { getDialogText } from "./utils/dialogText";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
+
+function formatAutosaveTime(ms: number): string {
+  const d = new Date(ms);
+  const isToday = d.toDateString() === new Date().toDateString();
+  const timeStr = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  if (isToday) return `at ${timeStr}`;
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const yr = String(d.getFullYear()).slice(2);
+  return `on ${m}/${day}/${yr} at ${timeStr}`;
+}
 
 async function init() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -237,6 +249,37 @@ async function init() {
       return;
     }
     projectData = projectData as Project;
+    // Autosave recovery — check whether a newer autosaved version exists
+    let loadedFromAutosave = false;
+    if (windowType === "project") {
+      try {
+        const autosaveInfo = await invoke<{ autosaveMtimeMs: number; savedMtimeMs: number } | null>(
+          "check_autosave",
+          { projectPath, fileName }
+        );
+        if (autosaveInfo) {
+          const projName = fileName.replace(/\.clx$/i, "");
+          const autosaveStr = formatAutosaveTime(autosaveInfo.autosaveMtimeMs);
+          const savedStr = formatAutosaveTime(autosaveInfo.savedMtimeMs);
+          const title = `Choicelab auto-saved a version of "${projName}" ${autosaveStr}.`;
+          const body = `Do you want to open the auto-saved version, or the last version you saved ${savedStr}?`;
+          const choseAutosave = await invoke<boolean>("show_autosave_recovery_dialog", { title, body });
+          if (choseAutosave) {
+            try {
+              const autosaveContents = await invoke<string>("read_autosave_file", { projectPath });
+              projectData = JSON.parse(autosaveContents) as Project;
+              loadedFromAutosave = true;
+            } catch {
+              // corrupt autosave — fall through with the saved version
+            }
+          } else {
+            invoke("delete_autosave", { projectPath }).catch(() => {});
+          }
+        }
+      } catch {
+        // autosave check failed — proceed with normal load
+      }
+    }
     // Migrate legacy projects that predate the asset registry
     if (windowType === "project" && needsMigration(projectData)) {
       const dialog = getDialogText(
@@ -287,6 +330,9 @@ async function init() {
       setViewStore(viewStore);
       // Save initial history version
       saveHistoryVersion(true);
+      if (loadedFromAutosave) {
+        markUnsaved();
+      }
       // Create editor
       elements = <MainEditor />;
       // Create web folder

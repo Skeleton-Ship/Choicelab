@@ -1,30 +1,33 @@
 import { ask } from "@tauri-apps/plugin-dialog";
 import { emit, once } from "@tauri-apps/api/event";
-import { getViewStore } from "../data/dataStore";
 import { getDialogText } from "../utils/dialogText";
+
+export type ProjectWindowStatus = {
+  exists: boolean;
+  label: string;
+  title: string;
+};
+
+export async function checkProjectWindow(): Promise<ProjectWindowStatus> {
+  return new Promise<ProjectWindowStatus>((resolve) => {
+    once("project-window-status", (event) => {
+      resolve(event.payload as ProjectWindowStatus);
+    });
+    emit("check-project-window", {});
+  });
+}
 
 export default async function guardProjectWindow(
   action: "create" | "open"
 ): Promise<boolean> {
-  const statusPromise = new Promise<{ exists: boolean; label: string }>(
-    (resolve) => {
-      once("project-window-status", (event) => {
-        resolve(event.payload as { exists: boolean; label: string });
-      });
-    }
-  );
-
-  const projectName = getViewStore().projectName;
-
-  emit("check-project-window", {});
-
-  const status = await statusPromise;
+  const status = await checkProjectWindow();
 
   if (!status.exists) return true;
 
   const verb = action === "create" ? "create" : "open";
   const okLabel =
-    action === "create" ? "Close and Create Another" : "Close and Open Another";
+    action === "create" ? "Close and Create New" : "Close and Open Another";
+  const projectName = status.title || "the current project";
   const text = getDialogText(
     "Close project to continue",
     `To ${verb} another project, you'll need to close "${projectName}" first.`,

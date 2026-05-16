@@ -8,12 +8,17 @@ import { getViewStore } from "../data/dataStore";
 import { ask } from "@tauri-apps/plugin-dialog";
 const appWindow = getCurrentWebviewWindow();
 
-export async function handleClose() {
-  // Clear cache
+// Returns the cache directory for the currently-open project.
+async function projectCachePath(): Promise<string> {
   const cacheBase = await appCacheDir();
-  const cachePath = await resolve(cacheBase, "Projects");
+  const projectLabel = getProjectWindowLabel(getViewStore().projectPath);
+  return resolve(cacheBase, "Projects", projectLabel);
+}
+
+export async function handleClose() {
+  // Clear this project's cache subdirectory only
   emit("clear-cache", {
-    path: cachePath,
+    path: await projectCachePath(),
   });
   // Close settings window if it's open
   const projectSettingsWindow = await getProjectSettingsWindow(

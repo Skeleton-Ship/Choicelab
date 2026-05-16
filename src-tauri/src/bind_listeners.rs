@@ -628,13 +628,16 @@ let handle_update = app_handle.clone();
                 && !label.starts_with("project_settings_")
                 && !label.starts_with("project_assets_")
         });
-        let (exists, label) = match project_entry {
-            Some((label, _)) => (true, label.clone()),
-            None => (false, String::new()),
+        let (exists, label, title) = match project_entry {
+            Some((label, window)) => {
+                let title = window.title().unwrap_or_default();
+                (true, label.clone(), title)
+            }
+            None => (false, String::new(), String::new()),
         };
         let _ = handle_check_project.emit(
             "project-window-status",
-            serde_json::json!({ "exists": exists, "label": label }),
+            serde_json::json!({ "exists": exists, "label": label, "title": title }),
         );
     });
 
