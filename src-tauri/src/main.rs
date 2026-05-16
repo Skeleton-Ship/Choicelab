@@ -18,6 +18,8 @@ use file_operations::handle_file_associations;
 use globals::{FOCUSED_WINDOW, PENDING_FILES};
 #[cfg(target_os = "windows")]
 use std::path::PathBuf;
+#[cfg(target_os = "windows")]
+use tauri::Manager;
 
 #[tauri::command]
 fn get_pending_files() -> Vec<String> {

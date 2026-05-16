@@ -168,7 +168,7 @@ fn get_dialog_texts(_short_title: &str, line1: &str, line2: &str) -> (String, St
     #[cfg(not(target_os = "macos"))]
     {
         (
-            short_title.trim().to_string(),
+            _short_title.trim().to_string(),
             format!("{} {}", line1.trim(), line2.trim()),
         )
     }

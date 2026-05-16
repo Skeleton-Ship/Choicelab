@@ -51,11 +51,10 @@ pub fn show_unsaved_changes_dialog(title: &str, body: &str) -> &'static str {
         ..Default::default()
     };
     // Set the warning icon via the pszMainIcon union field (used when TDF_USE_HICON_MAIN is not set)
-    unsafe {
-        config.Anonymous1.pszMainIcon = TD_WARNING_ICON;
-        // hwndParent left as null (default) — dialog appears centered on screen
-        config.hwndParent = HWND::default();
-    }
+    // Set warning icon via pszMainIcon (used when TDF_USE_HICON_MAIN is not set)
+    config.Anonymous1.pszMainIcon = TD_WARNING_ICON;
+    // hwndParent left as null (default) — dialog appears centered on screen
+    config.hwndParent = HWND::default();
 
     let mut button_id: i32 = BTN_CANCEL;
     unsafe {
