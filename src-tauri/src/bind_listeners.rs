@@ -85,27 +85,6 @@ fn release_port_for_label(label: &str) {
     }
 }
 
-pub fn open_launcher_window(app: tauri::AppHandle) {
-    if let Some(window) = app.get_webview_window("launcher") {
-        let _ = window.show();
-        let _ = window.set_focus();
-    } else {
-        let builder = tauri::WebviewWindowBuilder::new(
-            &app,
-            "launcher",
-            tauri::WebviewUrl::App("index.html?window_type=launcher".into()),
-        )
-        .title("Launcher")
-        .inner_size(650.0, 375.0)
-        .resizable(false)
-        .transparent(true);
-        #[cfg(target_os = "macos")]
-        let builder = builder
-            .hidden_title(true)
-            .title_bar_style(tauri::TitleBarStyle::Overlay);
-        let _ = builder.build();
-    }
-}
 
 pub fn open_whats_new_window(app: tauri::AppHandle) {
 	if let Some(window) = app.get_webview_window("whatsNew") {
