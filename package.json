@@ -6,14 +6,14 @@
   "type": "module",
   "packageManager": "bun@1.3.11",
   "scripts": {
-    "preDev": "bun run player:check && (trap 'kill 0' EXIT; vite & bun run player:watch & wait)",
+    "preDev": "bun run player:check && concurrently 'vite' 'bun run player:watch'",
     "preBuild": "bun run acknowledgments && bun run gen-vocab && NODE_OPTIONS=--max-old-space-size=4096 tsc && bun run player:build && NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "player:check": "bash scripts/check-player-build.sh",
     "player:build": "vite build --config src/player/vite.config.ts",
     "player:watch": "vite build --watch --config src/player/vite.config.ts",
     "gen-vocab": "bun scripts/embeddings/trim-glove.ts",
     "test-classifier": "bun scripts/embeddings/test-classifier.ts",
-    "dev": "tauri dev; echo",
+    "dev": "tauri dev",
     "keygen": "bun run tauri signer generate -w ~/.tauri/myapp.key",
     "build": "export TAURI_SIGNING_PRIVATE_KEY=~/.tauri/myapp.key && tauri build",
     "preview": "vite preview",
@@ -63,6 +63,7 @@
     "sass": "^1.69.5",
     "typescript": "^5.0.2",
     "typescript-eslint": "^8.57.1",
+    "concurrently": "^9.1.2",
     "vite": "^6.3.5",
     "vite-plugin-svgr": "^5.0.0"
   }
