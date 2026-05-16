@@ -85,6 +85,12 @@ export async function buildMenu(windowType: WindowType) {
         accelerator: "CmdOrCtrl+S",
         enabled: false,
       }),
+      await MenuItem.new({
+        text: "Save As...",
+        id: "save_as",
+        accelerator: "Shift+CmdOrCtrl+S",
+        enabled: false,
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),

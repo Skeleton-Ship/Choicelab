@@ -130,6 +130,28 @@ pub fn copy_file(src_path: &str, dest_dir: &str) -> Result<String, io::Error> {
         .to_string())
 }
 
+pub fn copy_directory_contents(src: &str, dst: &str) -> io::Result<()> {
+    let src_path = Path::new(src);
+    let dst_path = Path::new(dst);
+    fs::create_dir_all(dst_path)?;
+    copy_dir_recursive(src_path, dst_path)
+}
+
+fn copy_dir_recursive(src: &Path, dst: &Path) -> io::Result<()> {
+    for entry in fs::read_dir(src)? {
+        let entry = entry?;
+        let src_child = entry.path();
+        let dst_child = dst.join(entry.file_name());
+        if src_child.is_dir() {
+            fs::create_dir_all(&dst_child)?;
+            copy_dir_recursive(&src_child, &dst_child)?;
+        } else if src_child.extension().and_then(|e| e.to_str()) != Some("clx") {
+            fs::copy(&src_child, &dst_child)?;
+        }
+    }
+    Ok(())
+}
+
 pub fn create_directory(directory_name: &str, path: &str, overwrite: &bool) -> io::Result<()> {
     let full_path = format!("{}/{}", path, directory_name);
     let full_path = Path::new(&full_path);

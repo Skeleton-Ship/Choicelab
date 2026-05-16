@@ -35,6 +35,7 @@ import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { stringify } from "../utils/stringify";
 import { saveProject } from "../fs/saveProject";
+import { saveAsProject } from "../fs/saveAsProject";
 import { createBranch, createCell } from "../data/createNode";
 import insertNewNode from "./flowchart/general/insertNewNode";
 import enterTargetMode from "./flowchart/target-mode/enterTargetMode";
@@ -129,6 +130,13 @@ export default function MainEditor() {
         if (event.payload.label !== appWindow.label) return;
         console.log("Request to save");
         saveProject();
+      }
+    );
+    const unlistenMenuSaveAs = appWindow.listen<{ label: string }>(
+      "menu-save-as-project",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        saveAsProject();
       }
     );
     const unlistenMenuTogglePreview = appWindow.listen<{ label: string }>(
@@ -243,6 +251,7 @@ export default function MainEditor() {
       unlistenCloseRequested.then((fn) => fn());
       unlistenMenuQuit.then((fn) => fn());
       unlistenMenuSave.then((fn) => fn());
+      unlistenMenuSaveAs.then((fn) => fn());
       unlistenMenuTogglePreview.then((fn) => fn());
       unlistenMenuOpenPreview.then((fn) => fn());
       unlistenMenuUndo.then((fn) => fn());

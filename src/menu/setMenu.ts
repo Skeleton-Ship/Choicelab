@@ -29,6 +29,9 @@ export async function setMenu(windowType: WindowType = "project") {
       save: {
         enabled: windowType === "project" ? true : false,
       },
+      save_as: {
+        enabled: windowType === "project" ? true : false,
+      },
       export: {
         enabled:
           windowType === "project" || windowType === "projectSettings"
