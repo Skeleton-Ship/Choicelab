@@ -286,14 +286,14 @@ fn main() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|app, event| {
+        .run(|_app, _event| {
             #[cfg(any(target_os = "macos", target_os = "ios"))]
-            if let tauri::RunEvent::Opened { urls } = event {
+            if let tauri::RunEvent::Opened { urls } = _event {
                 let files = urls
                     .into_iter()
                     .filter_map(|url| url.to_file_path().ok())
                     .collect::<Vec<_>>();
-                handle_file_associations(app.clone(), files);
+                handle_file_associations(_app.clone(), files);
             }
         });
 }

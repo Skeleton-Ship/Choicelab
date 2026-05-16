@@ -40,9 +40,9 @@ struct HistoryPayload {
     version_id: String,
 }
 
-fn apply_project_vibrancy(window: WebviewWindow) {
+fn apply_project_vibrancy(_window: WebviewWindow) {
     #[cfg(target_os = "macos")]
-    apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+    apply_vibrancy(&_window, NSVisualEffectMaterial::HudWindow, None, None)
         .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 }
 
@@ -186,19 +186,19 @@ fn find_open_project_label(app: &tauri::AppHandle) -> Option<String> {
 
 pub fn bind_listeners(app: &tauri::App) {
     let app_handle = app.app_handle();
-    let handle_doc_edited = app_handle.clone();
+    let _handle_doc_edited = app_handle.clone();
     app.listen("set-document-edited", move |event| {
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
         match json_value {
             Ok(json) => {
-                let state = json["state"].as_bool().unwrap_or(false);
+                let _state = json["state"].as_bool().unwrap_or(false);
                 let window_label = json["windowLabel"].as_str().unwrap_or("").to_string();
                 if window_label.is_empty() { return; }
                 #[cfg(target_os = "macos")]
-                if let Some(window) = handle_doc_edited.get_webview_window(&window_label) {
-                    let _ = handle_doc_edited.run_on_main_thread(move || {
-                        set_document_edited_for_window(&window, state);
+                if let Some(window) = _handle_doc_edited.get_webview_window(&window_label) {
+                    let _ = _handle_doc_edited.run_on_main_thread(move || {
+                        set_document_edited_for_window(&window, _state);
                     });
                 }
             }
