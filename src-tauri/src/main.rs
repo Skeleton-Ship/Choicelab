@@ -167,27 +167,34 @@ fn create_project_window(
     width: f64,
     height: f64,
     transparent: bool,
-) -> Result<(), String> {
-    let builder = tauri::WebviewWindowBuilder::new(
-        &app,
-        label,
-        tauri::WebviewUrl::App(url.into()),
-    )
-    .title("")
-    .inner_size(width, height)
-    .min_inner_size(700.0, 360.0)
-    .transparent(transparent)
-    .visible(true);
+) {
+    // On Windows, sync Tauri command handlers run on the UI thread. Calling
+    // builder.build() here would block the main thread while WebView2 init
+    // tries to dispatch callbacks back to that same thread → deadlock.
+    // Spawning a separate OS thread keeps the main thread free.
+    std::thread::spawn(move || {
+        let builder = tauri::WebviewWindowBuilder::new(
+            &app,
+            label,
+            tauri::WebviewUrl::App(url.into()),
+        )
+        .title("")
+        .inner_size(width, height)
+        .min_inner_size(700.0, 360.0)
+        .transparent(transparent)
+        .visible(true);
 
-    #[cfg(target_os = "macos")]
-    let builder = builder.on_navigation(|url| is_allowed_navigation(url));
+        #[cfg(target_os = "macos")]
+        let builder = builder.on_navigation(|url| is_allowed_navigation(url));
 
-    #[cfg(target_os = "macos")]
-    let builder = builder
-        .title_bar_style(tauri::TitleBarStyle::Overlay);
+        #[cfg(target_os = "macos")]
+        let builder = builder
+            .title_bar_style(tauri::TitleBarStyle::Overlay);
 
-    builder.build().map_err(|e| e.to_string())?;
-    Ok(())
+        if let Err(e) = builder.build() {
+            eprintln!("Failed to create project window: {}", e);
+        }
+    });
 }
 
 #[tauri::command]
