@@ -18,6 +18,7 @@ export function SettingBoolean(props: {
     const el = e.target as HTMLInputElement;
     const newStore = getStore();
     const settings = newStore.project.settings.player[getPlayerConfig().id];
+    if (settings[props.name] === el.checked) return;
     settings[props.name] = el.checked;
     // Emit update
     emitTo(

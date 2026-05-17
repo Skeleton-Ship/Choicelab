@@ -1,7 +1,9 @@
+import { useState, useEffect } from "preact/hooks";
 import { Variable } from "../../../typings";
 import { getVariable } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
+import { setMenu } from "../../../menu/setMenu";
 import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
 import NumberField from "./NumberField";
 
@@ -67,21 +69,22 @@ export default function VariableEl(props: {
           }
         } else if (varInStore.varType === "boolean") {
           value = rawValue === "true" ? true : false;
+        } else {
+          value = rawValue;
         }
         break;
-      // If changing var type, reset the value too
       case "varType":
         value = rawValue;
-        if (rawValue === "boolean") {
-          varInStore.startingValue = true;
-        } else if (rawValue === "string") {
-          varInStore.startingValue = "";
-        }
         break;
       default:
         value = rawValue;
     }
-    // Update and save
+    if (varInStore[field] === value) return;
+    // If changing var type, reset the starting value to a sensible default
+    if (field === "varType") {
+      if (rawValue === "boolean") varInStore.startingValue = true;
+      else if (rawValue === "string") varInStore.startingValue = "";
+    }
     varInStore[field] = value;
     setStore(store);
     props.update();
@@ -91,6 +94,10 @@ export default function VariableEl(props: {
    * Front-end display
    */
   const variable = props.instance;
+  const [localName, setLocalName] = useState(variable.name);
+  useEffect(() => { setLocalName(variable.name); }, [variable.name]);
+  const [localDescription, setLocalDescription] = useState(variable.description ?? "");
+  useEffect(() => { setLocalDescription(variable.description ?? ""); }, [variable.description]);
   // Get names of fields
   const nameField = `name_${variable.id}`;
   const typeField = `varType_${variable.id}`;
@@ -98,14 +105,30 @@ export default function VariableEl(props: {
   const startingValField = `starting_value_${variable.id}`;
   // Get starting value field based on var type
   const startingValue: any = variable.startingValue; // `any` isn't ideal here, but we're enforcing the type above
+  const [localStartingValue, setLocalStartingValue] = useState(variable.varType === "string" ? (startingValue ?? "") : "");
+  useEffect(() => {
+    setLocalStartingValue(variable.varType === "string" ? (startingValue ?? "") : "");
+  }, [startingValue, variable.varType]);
+  const viewStore = getViewStore();
   let startingValueInput = (
     <input
       type="text"
       class="ui-text-field"
-      value={startingValue}
+      value={localStartingValue}
       autoCorrect="off"
-      onChange={(e) => {
+      onFocus={() => {
+        viewStore.inTextElement = true;
+        setViewStore(viewStore);
+        props.update(false, false);
+        setMenu();
+      }}
+      onBlur={(e) => {
+        viewStore.inTextElement = false;
+        setViewStore(viewStore);
         handleChange("startingValue", e.target);
+      }}
+      onChange={(e) => {
+        setLocalStartingValue((e.target as HTMLInputElement).value);
       }}
     />
   );
@@ -151,9 +174,20 @@ export default function VariableEl(props: {
             id={nameField}
             class="ui-text-field"
             autoCorrect="off"
-            value={variable.name}
-            onChange={(e) => {
+            value={localName}
+            onFocus={() => {
+              viewStore.inTextElement = true;
+              setViewStore(viewStore);
+              props.update(false, false);
+              setMenu();
+            }}
+            onBlur={(e) => {
+              viewStore.inTextElement = false;
+              setViewStore(viewStore);
               handleChange("name", e.target);
+            }}
+            onChange={(e) => {
+              setLocalName((e.target as HTMLInputElement).value);
             }}
           />
         </div>
@@ -196,9 +230,20 @@ export default function VariableEl(props: {
         <textarea
           id={descField}
           class="ui-text-area"
-          value={variable.description}
-          onChange={(e) => {
+          value={localDescription}
+          onFocus={() => {
+            viewStore.inTextElement = true;
+            setViewStore(viewStore);
+            props.update(false, false);
+            setMenu();
+          }}
+          onBlur={(e) => {
+            viewStore.inTextElement = false;
+            setViewStore(viewStore);
             handleChange("description", e.target);
+          }}
+          onChange={(e) => {
+            setLocalDescription((e.target as HTMLInputElement).value);
           }}
         />
       </div>

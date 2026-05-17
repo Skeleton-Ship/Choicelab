@@ -15,6 +15,7 @@ export function NodeSetting(props: {
   update: Function;
 }) {
   function handleChange(newValue: any) {
+    if (props.node.settings.player[props.playerId][props.settingName] === newValue) return;
     props.node.settings.player[props.playerId][props.settingName] = newValue;
     setStore(props.store);
     props.update();

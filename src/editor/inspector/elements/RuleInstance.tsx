@@ -1,7 +1,9 @@
+import { useState, useEffect } from "preact/hooks";
 import { Rule, Stem, Branch, Variable } from "../../../typings";
 import { getVariables, getVariable, getStemRule } from "../../../data/getData";
-import { getStore, setStore } from "../../../data/dataStore";
+import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteStemRuleFromData } from "../../../data/deleteData";
+import { setMenu } from "../../../menu/setMenu";
 import NumberField from "./NumberField";
 
 export default function RuleInstance(props: {
@@ -11,6 +13,11 @@ export default function RuleInstance(props: {
   index: number;
   update: Function;
 }) {
+  const [localValue, setLocalValue] = useState(props.rule.value as string);
+  useEffect(() => {
+    setLocalValue(props.rule.value as string);
+  }, [props.rule.value]);
+
   /*
    * Rule functions
    */
@@ -40,11 +47,24 @@ export default function RuleInstance(props: {
       store
     );
     if (!rule) return;
-    let variable: Variable | undefined;
-    // If changing variable, clear the existing value and operators and try to set defaults
+    // Cast value to its correct type before comparing
+    if (fieldName === "value") {
+      if (!varName) {
+        console.error("No variable name provided; value cannot be re-cast.");
+        return;
+      }
+      const variable = getVariable(varName, store);
+      if (variable?.varType === "boolean") {
+        value = value === "true" ? true : false;
+      }
+    }
+    // @ts-ignore
+    if (rule[fieldName] === value) return;
+    // If changing variable, clear the existing operator/value and set sensible defaults
     if (fieldName === "variableId" && !directValue) {
       rule.operator = "";
       rule.value = "";
+      let variable: Variable | undefined;
       if (typeof value === "string") {
         variable = getVariable(value, store);
       }
@@ -59,21 +79,6 @@ export default function RuleInstance(props: {
             break;
           case "number":
             rule.operator = "equals";
-            break;
-        }
-      }
-    }
-    // Cast value from a string to its correct type
-    if (fieldName === "value") {
-      if (!varName) {
-        console.error("No variable name provided; value cannot be re-cast.");
-        return;
-      }
-      variable = getVariable(varName, store);
-      if (variable) {
-        switch (variable.varType) {
-          case "boolean":
-            value = value === "true" ? true : false;
             break;
         }
       }
@@ -127,6 +132,7 @@ export default function RuleInstance(props: {
   if (!rule) {
     return <p>Rule not found.</p>;
   }
+  const viewStore = getViewStore();
   // Figure out what the input field and operators should be based on the currently selected variable
   let inputField = <></>,
     operatorItems: Array<preact.JSX.Element> = [];
@@ -147,9 +153,20 @@ export default function RuleInstance(props: {
             class="value ui-text-field"
             type="text"
             placeholder="empty"
-            value={displayValue}
-            onChange={(e: Event) => {
+            value={localValue}
+            onFocus={() => {
+              viewStore.inTextElement = true;
+              setViewStore(viewStore);
+              props.update(false, false);
+              setMenu();
+            }}
+            onBlur={(e: Event) => {
+              viewStore.inTextElement = false;
+              setViewStore(viewStore);
               handleChange("value", e, rule.variableId);
+            }}
+            onChange={(e: Event) => {
+              setLocalValue((e.target as HTMLInputElement).value);
             }}
           />
         );

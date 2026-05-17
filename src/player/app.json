@@ -12,7 +12,7 @@
         "default": 0.3
       },
       "navigationPoint": {
-        "label": "Clear text and buttons before node starts",
+        "label": "Clear text and buttons before cell starts",
         "type": "boolean",
         "default": true
       }

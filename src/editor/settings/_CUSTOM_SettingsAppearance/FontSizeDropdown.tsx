@@ -26,6 +26,7 @@ export function FontSizeDropdown(props: {
         value = "12";
       }
     }
+    if (value === props.initial) return;
     props.update(value);
   }
   return (

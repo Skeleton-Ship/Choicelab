@@ -33,6 +33,8 @@ export function Position(props: {
   function handleChange(axis: "x" | "y", value: number) {
     if (!action) return;
     const current = resolvePosition(props.initialValue);
+    if (axis === "x" && current.x === value) return;
+    if (axis === "y" && current.y === value) return;
     const propsObj =
       props.extended === false
         ? action.props

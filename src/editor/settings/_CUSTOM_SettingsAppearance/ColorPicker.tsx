@@ -3,8 +3,8 @@ export function ColorPicker(props: {
   update: (value: string) => void;
 }) {
   function handleChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const value = target.value;
+    const value = (e.target as HTMLInputElement).value;
+    if (value === props.initial) return;
     props.update(value);
   }
   return (

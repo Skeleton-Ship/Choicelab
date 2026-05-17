@@ -25,6 +25,7 @@ export default function Dropdown(props: {
       props.extended === false
         ? action.props
         : action.extendedProps[getPlayerConfig().id];
+    if (propsObj[propDef.name] === value) return;
     propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();

@@ -1,5 +1,6 @@
-import { useEffect } from "preact/hooks";
-import { getStore, setStore } from "../../../../data/dataStore";
+import { useEffect, useState } from "preact/hooks";
+import { getStore, setStore, getViewStore, setViewStore } from "../../../../data/dataStore";
+import { setMenu } from "../../../../menu/setMenu";
 import {
   Action,
   ActionDef,
@@ -56,6 +57,7 @@ export default function VariableValueControl(props: {
       props.extended === false
         ? action.props
         : action.extendedProps[getPlayerConfig().id];
+    if (propsObj[propDef.name] === value) return;
     propsObj[propDef.name] = value;
     setStore(props.store);
     props.update();
@@ -82,6 +84,10 @@ export default function VariableValueControl(props: {
       props.update(false);
     }
   }, []);
+  const [localValue, setLocalValue] = useState(props.initialValue);
+  useEffect(() => {
+    setLocalValue(props.initialValue);
+  }, [props.initialValue]);
   const action = props.action;
   const propDef = props.propDef;
   const propElName = `action_${action.id}_${propDef.name}`;
@@ -96,6 +102,7 @@ export default function VariableValueControl(props: {
   if (!variable) {
     return <></>;
   }
+  const viewStore = getViewStore();
   let fieldEl = <></>;
   switch (variable.varType) {
     case "string":
@@ -104,9 +111,20 @@ export default function VariableValueControl(props: {
           name={propElName}
           type="text"
           class="ui-text-field"
-          value={props.initialValue}
-          onChange={(e) => {
+          value={localValue}
+          onFocus={() => {
+            viewStore.inTextElement = true;
+            setViewStore(viewStore);
+            props.update(false, false);
+            setMenu();
+          }}
+          onBlur={(e) => {
+            viewStore.inTextElement = false;
+            setViewStore(viewStore);
             handleChange(e.target, variable.varType);
+          }}
+          onChange={(e) => {
+            setLocalValue((e.target as HTMLInputElement).value);
           }}
         />
       );

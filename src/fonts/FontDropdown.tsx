@@ -22,6 +22,7 @@ export function FontDropdown(props: {
   function handleChange(family: string, weight?: string, style?: string) {
     if (!weight) weight = "400";
     if (!style) style = "normal";
+    if (family === props.initialFamily && weight === props.initialWeight && style === props.initialStyle) return;
     props.update(family, weight, style);
   }
   // Get font family key
