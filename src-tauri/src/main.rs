@@ -17,11 +17,12 @@ use bind_listeners::bind_listeners;
 use file_operations::handle_file_associations;
 use globals::{FOCUSED_WINDOW, PENDING_FILES};
 
-/// Navigation policy shared by all project windows.
-/// Allows Tauri's own protocols, internal browser URLs (about:blank — WebView2
-/// fires NavigationStarting for these during init), the Windows asset-protocol
-/// host, the Vite dev server, and the preview-server port range.
-/// Everything else (arbitrary external URLs) is blocked.
+/// Navigation policy for macOS project windows (WKWebView only).
+/// Allows Tauri's own protocols, the Vite dev server, and the preview-server
+/// port range. Everything else (arbitrary external URLs) is blocked.
+/// Not used on Windows: registering an on_navigation closure with WebView2
+/// deadlocks the Win32 message loop during controller initialization.
+#[cfg(target_os = "macos")]
 fn is_allowed_navigation(url: &tauri::Url) -> bool {
     let scheme = url.scheme();
     let host = url.host_str().unwrap_or("");
@@ -142,8 +143,14 @@ pub fn open_project_from_path(app: &tauri::AppHandle, file_path: &str) -> Result
     .inner_size(width, height)
     .min_inner_size(700.0, 360.0)
     .transparent(transparent)
-    .visible(true)
-    .on_navigation(|url| is_allowed_navigation(url));
+    .visible(true);
+
+    // on_navigation uses WebView2's NavigationStarting COM event, which fires
+    // synchronously during controller init on the main thread. Registering a
+    // Rust closure there deadlocks the Win32 message loop on Windows.
+    // WKWebView doesn't have this problem, so we only hook it on macOS.
+    #[cfg(target_os = "macos")]
+    let builder = builder.on_navigation(|url| is_allowed_navigation(url));
 
     #[cfg(target_os = "macos")]
     let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
@@ -170,8 +177,10 @@ fn create_project_window(
     .inner_size(width, height)
     .min_inner_size(700.0, 360.0)
     .transparent(transparent)
-    .visible(true)
-    .on_navigation(|url| is_allowed_navigation(url));
+    .visible(true);
+
+    #[cfg(target_os = "macos")]
+    let builder = builder.on_navigation(|url| is_allowed_navigation(url));
 
     #[cfg(target_os = "macos")]
     let builder = builder
