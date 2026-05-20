@@ -1,20 +1,28 @@
-## 1.0.2
+## 1.1
 
-### May 8, 2026
+### May 16, 2026
 
 #### New features
 
-- Choicelab now features a **consistent aspect ratio** and **more flexible element positioning**. Your project will look the same on any device, at any size.
-- **Note**: Due to the new element positioning, the grid has been removed. Existing grid elements will be back-ported into approximate positions.
-- Actions are now sorted into three categories: **Timeline** (actions that affect a cell's duration), **Interact** (actions the viewer/player will interact with), and **Event** (instantaneous events on the timeline).
+- Projects now **auto-save**, and will offer to restore the auto-saved version if Choicelab quits unexpectedly.
+- Added **Open Recent** and **Save As** commands to the menu.
+
+#### Enhancements
+
+- The prompt to save a project now shows the standard Save, Don't Save, and Cancel commands.
+- Captions will now appear for media when a WebVTT (.vtt) file is slotted.
+- When slotting an action into a cell, the cell pane will now scroll to the action, highlight its addition, and focus the first input element.
+- Text fields now support undo/redo while editing, not just after saving.
+- Audio and video actions in the editor will now indicate when they're loading.
+- Improved performance of text editing when dealing with large flowcharts.
+- Improved reliability of undo/redo.
 
 #### Fixes
 
-- Fixed an issue that caused opening the app to crash on Macs with Intel processors.
-- Improved label text for cell settings.
-- Improved label text for video and audio actions force-ending cells.
-- The text in selected toolbar buttons is now easier to read in dark mode.
-- Autofill will no longer generate duplicate values for button labels.
-- Font picker labels will no longer overflow the dropdown.
-
-#
+- Fixed an issue where pressing Delete while the preview window was open would cause the editor to...completely disappear and make the app unusable. (!)
+- Fixed an issue where Choicelab would refuse to quit if only the launcher was open.
+- The launcher no longer enables project-specific menu items that aren't relevant to that window.
+- Fixed an issue with the positioning and appearance of disconnected branch cells.
+- Fixed the keyboard shortcuts for Delete Node and Delete Branch Stem.
+- If slotting a cloud-based file fails, Choicelab will now show a help message and cancel the operation, instead of hanging.
+- Projects played back locally will now automatically reset their playback history when uploaded to a web server.
