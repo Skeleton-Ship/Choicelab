@@ -97,8 +97,11 @@ export async function setMenu(windowType: WindowType = "project") {
       },
       autofill: {
         enabled:
-          windowType === "project" && viewStore.autoGenerateLabel !== null,
-        text: viewStore.autoGenerateLabel ?? "Autofill Variables",
+          windowType === "project" &&
+          viewStore &&
+          viewStore.autoGenerateLabel !== null,
+        text:
+          (viewStore && viewStore.autoGenerateLabel) ?? "Autofill Variables",
       },
       delete_nodes: {
         enabled:
@@ -111,6 +114,7 @@ export async function setMenu(windowType: WindowType = "project") {
       },
       delete_stem: {
         enabled:
+          windowType === "project" &&
           viewStore &&
           viewStore.selectedStem !== false &&
           viewStore.selectedStem.type !== "noMatch"

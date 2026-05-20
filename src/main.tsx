@@ -48,7 +48,10 @@ const appWindow = getCurrentWebviewWindow();
 function formatAutosaveTime(ms: number): string {
   const d = new Date(ms);
   const isToday = d.toDateString() === new Date().toDateString();
-  const timeStr = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const timeStr = d.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
   if (isToday) return `at ${timeStr}`;
   const m = d.getMonth() + 1;
   const day = d.getDate();
@@ -72,7 +75,7 @@ async function init() {
     invoke("set_focused_window", { label: appWindow.label });
   // Window focus
   reportFocusedWindow();
-  window.addEventListener("focus", async () => {
+  appWindow.listen("tauri://focus", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "true");
     // Update view store
     const viewStore = getViewStore();
@@ -84,7 +87,7 @@ async function init() {
     setMenu(windowType);
     reportFocusedWindow();
   });
-  window.addEventListener("blur", async () => {
+  appWindow.listen("tauri://blur", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "false");
     const viewStore = getViewStore();
     if (viewStore) {
@@ -253,20 +256,26 @@ async function init() {
     let loadedFromAutosave = false;
     if (windowType === "project") {
       try {
-        const autosaveInfo = await invoke<{ autosaveMtimeMs: number; savedMtimeMs: number } | null>(
-          "check_autosave",
-          { projectPath, fileName }
-        );
+        const autosaveInfo = await invoke<{
+          autosaveMtimeMs: number;
+          savedMtimeMs: number;
+        } | null>("check_autosave", { projectPath, fileName });
         if (autosaveInfo) {
           const projName = fileName.replace(/\.clx$/i, "");
           const autosaveStr = formatAutosaveTime(autosaveInfo.autosaveMtimeMs);
           const savedStr = formatAutosaveTime(autosaveInfo.savedMtimeMs);
           const title = `Choicelab auto-saved a version of "${projName}" ${autosaveStr}.`;
           const body = `Do you want to open the auto-saved version, or the last version you saved ${savedStr}?`;
-          const choseAutosave = await invoke<boolean>("show_autosave_recovery_dialog", { title, body });
+          const choseAutosave = await invoke<boolean>(
+            "show_autosave_recovery_dialog",
+            { title, body }
+          );
           if (choseAutosave) {
             try {
-              const autosaveContents = await invoke<string>("read_autosave_file", { projectPath });
+              const autosaveContents = await invoke<string>(
+                "read_autosave_file",
+                { projectPath }
+              );
               projectData = JSON.parse(autosaveContents) as Project;
               loadedFromAutosave = true;
             } catch {
@@ -344,10 +353,14 @@ async function init() {
   }
 
   // Build menu with current recent files; rebuild whenever the list changes.
-  const recentFiles = await invoke<string[]>("get_recent_files").catch(() => [] as string[]);
+  const recentFiles = await invoke<string[]>("get_recent_files").catch(
+    () => [] as string[]
+  );
 
   listen("rebuild-open-recent-menu", async () => {
-    const files = await invoke<string[]>("get_recent_files").catch(() => [] as string[]);
+    const files = await invoke<string[]>("get_recent_files").catch(
+      () => [] as string[]
+    );
     buildMenu(windowType, files);
   });
 

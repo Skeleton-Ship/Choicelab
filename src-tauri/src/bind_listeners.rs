@@ -696,8 +696,15 @@ let handle_update = app_handle.clone();
         if let Ok(json) = serde_json::from_str::<serde_json::Value>(json_raw) {
             if let Some(path) = json["path"].as_str() {
                 crate::preferences::add_recent_file(&handle_add_recent, path);
-                for (_, window) in handle_add_recent.webview_windows() {
+                // Only rebuild the menu from the focused window so multiple windows don't race
+                // to call setAsAppMenu() with different windowTypes.
+                let focused_label = FOCUSED_WINDOW.lock().unwrap().clone();
+                if let Some(window) = handle_add_recent.get_webview_window(&focused_label) {
                     let _ = window.emit("rebuild-open-recent-menu", ());
+                } else {
+                    for (_, window) in handle_add_recent.webview_windows() {
+                        let _ = window.emit("rebuild-open-recent-menu", ());
+                    }
                 }
             }
         }
