@@ -22,9 +22,9 @@
     "upgrade-all": "bun update && cd src-tauri && cargo update",
     "acknowledgments": "node scripts/acknowledgments.cjs",
     "changelog": "node scripts/changelog.cjs",
-    "version-major": "git status && git diff-index --quiet HEAD -- && bumpp major --no-push --execute 'node scripts/version.cjs && bun run changelog'",
-    "version-minor": "git status && git diff-index --quiet HEAD -- && bumpp minor --no-push --execute 'node scripts/version.cjs && bun run changelog'",
-    "version-patch": "git status && git diff-index --quiet HEAD -- && bumpp patch --no-push --execute 'node scripts/version.cjs && bun run changelog'",
+    "version-major": "bun run changelog && git add -A && (git diff --cached --quiet || git commit -m 'Update changelog') && git diff-index --quiet HEAD -- && bumpp major --no-push --execute 'node scripts/version.cjs'",
+    "version-minor": "bun run changelog && git add -A && (git diff --cached --quiet || git commit -m 'Update changelog') && git diff-index --quiet HEAD -- && bumpp minor --no-push --execute 'node scripts/version.cjs'",
+    "version-patch": "bun run changelog && git add -A && (git diff --cached --quiet || git commit -m 'Update changelog') && git diff-index --quiet HEAD -- && bumpp patch --no-push --execute 'node scripts/version.cjs'",
     "lint": "eslint src",
     "tauri": "tauri"
   },
