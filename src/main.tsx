@@ -264,11 +264,14 @@ async function init() {
           const projName = fileName.replace(/\.clx$/i, "");
           const autosaveStr = formatAutosaveTime(autosaveInfo.autosaveMtimeMs);
           const savedStr = formatAutosaveTime(autosaveInfo.savedMtimeMs);
-          const title = `Choicelab auto-saved a version of "${projName}" ${autosaveStr}.`;
-          const body = `Do you want to open the auto-saved version, or the last version you saved ${savedStr}?`;
+          const dialogText = getDialogText(
+            "Autosaved project found",
+            `Choicelab auto-saved a version of "${projName}" ${autosaveStr}.`,
+            `Do you want to open the auto-saved version, or the last version you saved ${savedStr}?`
+          );
           const choseAutosave = await invoke<boolean>(
             "show_autosave_recovery_dialog",
-            { title, body }
+            { title: dialogText.title, body: dialogText.message }
           );
           if (choseAutosave) {
             try {
