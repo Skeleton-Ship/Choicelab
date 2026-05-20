@@ -1,6 +1,7 @@
 import { getStore } from "../store";
 import { pauseMedia, playMedia } from "./playPause";
 import { clearHistory } from "../history";
+import { getCaptionsEnabled, setCaptionsEnabled } from "../captions";
 
 export function createMediaControls() {
   // Container
@@ -64,11 +65,38 @@ export function createMediaControls() {
   scrubber.appendChild(scrubberProgress);
   // Reset button (only shown when rememberHistory is enabled)
   const store = getStore();
+  // CC button
+  const ccButton = document.createElement("button");
+  ccButton.setAttribute("class", "cc button");
+  ccButton.setAttribute("disabled", "");
+  ccButton.setAttribute("aria-pressed", "false");
+  ccButton.setAttribute("title", "Toggle captions");
+  const ccOffIcon = document.createElement("span");
+  ccOffIcon.setAttribute("class", "cc-off icon");
+  ccOffIcon.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <path fill="#000000" fill-rule="evenodd" stroke="none" d="M 7 31 C 4.790861 31 3 29.209139 3 27 L 3 13 C 3 10.790861 4.790861 9 7 9 L 33 9 C 35.209141 9 37 10.790861 37 13 L 37 27 C 37 29.209139 35.209141 31 33 31 L 7 31 Z M 5 27 L 5 13 C 5 11.895431 5.895431 11 7 11 L 33 11 C 34.104572 11 35 11.89543 35 13 L 35 27 C 35 28.10457 34.104572 29 33 29 L 7 29 C 5.895431 29 5 28.104568 5 27 Z"/>
+      <path fill="#000000" fill-rule="evenodd" stroke="none" d="M 26.745705 25.825584 C 28.950752 25.825584 30.257444 25.041567 31.433472 23.783875 L 29.832769 22.16684 C 28.934418 22.983522 28.134066 23.506201 26.827374 23.506201 C 24.867331 23.506201 23.511637 21.872833 23.511637 19.912792 L 23.511637 19.880123 C 23.511637 17.920082 24.899998 16.319382 26.827374 16.319382 C 27.97073 16.319382 28.869083 16.809391 29.751101 17.609743 L 31.351801 15.764036 C 30.290113 14.718681 28.999752 14 26.843706 14 C 23.331964 14 20.881912 16.66239 20.881912 19.912792 L 20.881912 19.945459 C 20.881912 23.228529 23.380966 25.825584 26.745705 25.825584 Z M 15.018122 25.825584 C 17.223169 25.825584 18.529863 25.041567 19.705889 23.783875 L 18.105186 22.16684 C 17.206835 22.983524 16.406485 23.506201 15.09979 23.506201 C 13.139749 23.506201 11.784053 21.872833 11.784053 19.912792 L 11.784053 19.880123 C 11.784053 17.920082 13.172416 16.319382 15.09979 16.319382 C 16.243147 16.319382 17.1415 16.809391 18.02352 17.609743 L 19.62422 15.764036 C 18.562531 14.718681 17.272169 14 15.116124 14 C 11.604383 14 9.154331 16.66239 9.154331 19.912792 L 9.154331 19.945459 C 9.154331 23.228529 11.653384 25.825584 15.018122 25.825584 Z"/>
+    </g>
+  </svg>`;
+  const ccOnIcon = document.createElement("span");
+  ccOnIcon.setAttribute("class", "cc-on icon");
+  ccOnIcon.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <path fill="#000000" fill-rule="evenodd" stroke="none" d="M 7 31 C 4.790861 31 3 29.209139 3 27 L 3 13 C 3 10.790861 4.790861 9 7 9 L 33 9 C 35.209141 9 37 10.790861 37 13 L 37 27 C 37 29.209139 35.209141 31 33 31 L 7 31 Z M 19.705889 23.783875 C 18.529863 25.041567 17.223169 25.825584 15.018122 25.825584 C 11.653384 25.825584 9.154331 23.228529 9.154331 19.945459 L 9.154331 19.912792 C 9.154331 16.66239 11.604383 14 15.116124 14 C 17.272169 14 18.562531 14.718681 19.62422 15.764036 L 18.02352 17.609743 C 17.1415 16.809391 16.243147 16.319382 15.09979 16.319382 C 13.172416 16.319382 11.784053 17.920082 11.784053 19.880123 L 11.784053 19.912792 C 11.784053 21.872833 13.139749 23.506201 15.09979 23.506201 C 16.406485 23.506201 17.206835 22.983524 18.105186 22.16684 L 19.705889 23.783875 Z M 31.433472 23.783875 C 30.257444 25.041567 28.950752 25.825584 26.745705 25.825584 C 23.380966 25.825584 20.881912 23.228529 20.881912 19.945459 L 20.881912 19.91279 C 20.881912 16.66239 23.331964 14 26.843706 14 C 28.999752 14 30.290113 14.718681 31.351801 15.764036 L 29.751101 17.609743 C 28.869083 16.809393 27.97073 16.319382 26.827374 16.319382 C 24.899998 16.319382 23.511635 17.920082 23.511635 19.880123 L 23.511635 19.91279 C 23.511635 21.872833 24.867331 23.506201 26.827374 23.506201 C 28.134066 23.506201 28.934418 22.983524 29.832769 22.16684 L 31.433472 23.783875 Z"/>
+    </g>
+  </svg>`;
+  ccButton.appendChild(ccOffIcon);
+  ccButton.appendChild(ccOnIcon);
+  ccButton.addEventListener("click", () => {
+    setCaptionsEnabled(!getCaptionsEnabled());
+  });
   // Append elements and return parent
   // container.appendChild(backButton);
   // container.appendChild(skipButton);
   container.appendChild(playButton);
   container.appendChild(scrubber);
+  container.appendChild(ccButton);
   if (store.playback.history.rememberHistory) {
     const resetButton = document.createElement("button");
     resetButton.setAttribute("class", "reset button");

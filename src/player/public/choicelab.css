@@ -356,8 +356,8 @@ button.cl-action:active {
   bottom: 1rem;
   width: 80vw;
   left: 50%;
-  transform: translateX(-50%) scale(0.99);
-  background-color: rgba(50, 50, 50, 0.9);
+  transform: translateX(-50%) scale(0.994);
+  background: rgba(40, 40, 40, 0.8);
   backdrop-filter: blur(10px);
   height: var(--cl-controls-height);
   display: flex;
@@ -456,4 +456,63 @@ button.cl-action:active {
 .cl-controls .scrubber .progress {
   width: 0%;
   background-color: rgba(255, 255, 255, 1);
+}
+
+/*
+ * Captions
+ */
+
+.cl-captions {
+  position: fixed;
+  bottom: calc(1.5rem + var(--cl-controls-height));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1em;
+  text-align: center;
+  z-index: 45;
+  background: rgba(40, 40, 40, 0.8);
+  backdrop-filter: blur(10px);
+  padding: calc(14px * var(--cl-scale, 2)) calc(20px * var(--cl-scale, 1))
+    calc(16px * var(--cl-scale, 1));
+  border-radius: clamp(3px, calc(17px * var(--cl-scale, 1)), 22px);
+  pointer-events: none;
+}
+
+.cl-captions:empty {
+  visibility: hidden;
+}
+
+.cl-captions p {
+  display: inline-block;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-size: clamp(15px, calc(27px * var(--cl-scale, 1)), 46px);
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* CC button */
+
+.cl-controls .cc {
+  margin-right: 3px;
+}
+
+.cl-controls .cc .cc-off.icon {
+  display: block;
+}
+
+.cl-controls .cc .cc-on.icon {
+  display: none;
+}
+
+.cl-controls .cc[aria-pressed="true"] .cc-off.icon {
+  display: none;
+}
+
+.cl-controls .cc[aria-pressed="true"] .cc-on.icon {
+  display: block;
 }

@@ -1,6 +1,7 @@
 import { ActionForPlayback } from "../typings";
 import { getStore } from "../store";
 import { registerMedia, mediaEnded } from "../media";
+import { setCaptionsSource } from "../captions";
 
 const action = {
   render: (action: ActionForPlayback, done: Function) => {
@@ -27,6 +28,11 @@ const action = {
 
     let endCell = false;
     if (action.props.hasOwnProperty("endCell")) endCell = action.props.endCell;
+
+    const vttUrl = action.props.captions
+      ? store.project.projectPath + "/Assets/" + action.props.captions
+      : null;
+    setCaptionsSource(video, vttUrl);
 
     registerMedia({
       id: action.id,

@@ -8,6 +8,7 @@ import {
   removeScrubberListeners,
 } from "./media/mediaControls";
 import { playMedia } from "./media/playPause";
+import { clearCaptions } from "./captions";
 /*
  Media in Choicelab is synchronous and sequential. That means media plays in order, one after another. This makes for nice, predictable behavior and a good authoring experience, but that means managing playback requires a few steps.
  
@@ -258,6 +259,7 @@ export function clearMediaItems(delay: number) {
   const fadeOut =
     media.currentItem === false || media.currentItem.buildOut !== "none";
   clearScrubber();
+  clearCaptions();
   media.items = [];
   media.currentItem = false;
   media.pendingBackgroundMedia = [];

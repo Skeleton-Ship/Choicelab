@@ -4,6 +4,7 @@ import { error } from "./logging";
 import { getSequenceStart, getNode, navigate } from "./navigation";
 import { initHistory } from "./history";
 import { createMediaControls } from "./media/mediaControls";
+import { initCaptionContainer } from "./captions";
 import { dirname } from "./utils/path";
 import { forceReflow } from "./utils/forceReflow";
 import { generateAppearanceCSS } from "./appearance";
@@ -153,6 +154,7 @@ function Choicelab() {
             ".play.button"
           ) as HTMLElement;
           if (playButton) registerAutoplayQualifier(playButton);
+          initCaptionContainer(props.root);
           props.root.appendChild(mediaControls);
           // Set appearance based on project settings
           const appearance =
