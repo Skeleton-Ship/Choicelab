@@ -6,6 +6,10 @@
 
 - When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and qualified nodes are now easier to see.
 
+#### Fixes
+
+- Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
+
 ## 1.1
 
 ### 2026-05-16
