@@ -18,7 +18,7 @@ $toolbar-offset: 32px;
     height: calc(100% - #{$toolbar-offset});
     margin: 0 5px;
     padding: 24px 48px 32px;
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-app-region: no-drag;
   }
 

@@ -10,6 +10,59 @@
   }
 }
 
+// Slim, borderless scrollbar with a transparent track.
+// Standard properties (CSS Scrollbars module) plus ::-webkit-scrollbar.
+@mixin scrollbar {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(86, 86, 86, 0.6) transparent;
+  @media (prefers-color-scheme: dark) {
+    scrollbar-color: rgba(124, 124, 124, 0.7) transparent;
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    border: none;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+    border: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: none;
+    border-radius: 99px;
+    background-color: rgba(86, 86, 86, 0.6);
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(124, 124, 124, 0.7);
+    }
+  }
+  // Increased contrast: show the track and use a stronger thumb
+  @media (prefers-contrast: more) {
+    scrollbar-color: rgba(86, 86, 86, 0.8) #e9e9e9;
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-corner {
+      background-color: #e9e9e9;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(86, 86, 86, 0.8);
+      border: 2px solid #e9e9e9;
+    }
+    @media (prefers-color-scheme: dark) {
+      scrollbar-color: #7c7c7c #292929;
+      &::-webkit-scrollbar-track,
+      &::-webkit-scrollbar-corner {
+        background-color: #292929;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: #7c7c7c;
+        border-color: #292929;
+      }
+    }
+  }
+}
+
 @mixin node-shadow {
   box-shadow: rgba(0, 0, 0, 0.1) 0 2px 3px;
   @media (prefers-color-scheme: dark) {

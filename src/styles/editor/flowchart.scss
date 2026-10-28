@@ -7,9 +7,11 @@
 #sequence-wrap {
   z-index: 2;
   flex-basis: 100%;
-  height: 100%;
+  // 1px inset from the window edges so scrollbars clear the rounded corner
+  height: calc(100% - 1px);
+  margin: 0 0 1px 1px;
   position: relative;
-  overflow: scroll;
+  overflow: auto;
   background-color: rgba(242, 242, 242, 0.93);
   transition: background-color 0.2s ease;
   &:focus {

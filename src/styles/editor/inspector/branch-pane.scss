@@ -1,7 +1,7 @@
 @use "../../base/mixins";
 
 #node-settings {
-  margin: 0;
+  margin: 0 0 1px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -11,7 +11,7 @@
   padding: 0;
   height: calc(100% - 85px);
   margin: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   @media (prefers-color-scheme: dark) {

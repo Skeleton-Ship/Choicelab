@@ -36,7 +36,7 @@
         border-right-style: solid;
         border-color: rgba(25, 25, 25, 0.14);
         background-color: rgba(226, 226, 226, 0.6);
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
         @media (prefers-color-scheme: dark) {
           border-color: rgba(255, 255, 255, 0.1);
@@ -89,7 +89,7 @@
         padding-right: 20px;
         padding-top: 15px;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
         @media (prefers-color-scheme: dark) {
           background-color: var(--settings-bg-dark);
         }
@@ -129,7 +129,7 @@
           }
           #css-editor {
             height: calc(100% - 40px);
-            overflow: scroll;
+            overflow: auto;
             background-color: #fff;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 12px;

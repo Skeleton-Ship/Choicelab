@@ -4,10 +4,11 @@
 
 $available-actions-height: 120px;
 $node-settings-height: 85px;
+$scrollbar-inset: 1px;
 
 #actions-editor,
 #node-settings {
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 0;
   margin: 0;
@@ -62,7 +63,7 @@ $node-settings-height: 85px;
   }
   .action-list {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     padding: 4px;
     margin: 0;
@@ -103,9 +104,11 @@ $node-settings-height: 85px;
 }
 
 #node-settings {
-  height: $node-settings-height;
+  // Inset from the window's bottom edge so the scrollbar clears the rounded corner
+  height: calc(#{$node-settings-height} - #{$scrollbar-inset});
+  margin-bottom: $scrollbar-inset;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   .inner {
     padding: 15px;
     display: flex;

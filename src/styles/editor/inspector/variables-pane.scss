@@ -20,10 +20,11 @@ $pane-padding: 14px;
 }
 #variables-list {
   max-width: 100%;
-  height: calc(100% - 45px);
-  overflow-y: scroll;
+  // 1px inset from the window's bottom edge so the scrollbar clears the rounded corner
+  height: calc(100% - 45px - 1px);
+  overflow-y: auto;
   overflow-x: hidden;
-  margin: 0;
+  margin: 0 0 1px;
   padding: 0;
   position: relative;
   z-index: 2;
