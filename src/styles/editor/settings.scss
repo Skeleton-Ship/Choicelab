@@ -1,6 +1,12 @@
 #project-settings {
   width: 100%;
   height: 100%;
+  // No reserved scrollbar gutter in this window; it shows as an empty strip
+  // along the edges of the panes
+  &,
+  * {
+    scrollbar-gutter: auto;
+  }
   --settings-toolbar-height: calc(var(--toolbar-height));
   --settings-padding: 30px;
   --settings-bg: #f6f6f6;

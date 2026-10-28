@@ -8,6 +8,7 @@
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
+- Adding media files to a project, previewing them in the editor, and opening projects that contain media are now faster and use much less memory and disk space.
 - Various under-the-hood improvements to app frameworks and dependencies.
 
 #### Fixes
@@ -15,6 +16,9 @@
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - Fixed an issue where the preview would flash when opened or refreshed.
 - Deleting a variable now resets it to **None** in any actions that used it.
+- Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
+- Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
+- Fixed an issue where copies of previewed media files built up in the app's cache and were never removed. Existing copies are cleared automatically.
 
 ## 1.1
 

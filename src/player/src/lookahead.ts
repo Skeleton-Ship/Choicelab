@@ -42,6 +42,9 @@ export function cleanupStaleLookaheads(cell: Cell) {
 // browser loads their data before the transition begins.
 export function preloadLookaheadVideos(cell: Cell) {
   const store = getStore();
+  // The editor preview serves media uncached, so preloading would re-download
+  // every upcoming video on each refresh
+  if (store.playback.isAppPreview) return;
   const bgLayer = store.playback.rootEl.querySelector(".cl-background");
   if (!bgLayer) return;
 

@@ -1,4 +1,5 @@
 import { emit } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { getFonts } from "../fonts/fonts";
 import { getStore } from "../data/dataStore";
@@ -19,13 +20,6 @@ function extractFilename(url: string): string {
   const parts = url.split("/");
   const last = parts[parts.length - 1];
   return last.split("?")[0].split("#")[0];
-}
-
-function arrayBufferToHex(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  return Array.from(bytes, (byte) =>
-    byte.toString(16).padStart(2, "0")
-  ).join("");
 }
 
 function collectFontFamilyNames(appearance: { [key: string]: any } | undefined): Set<string> {
@@ -56,7 +50,8 @@ export async function writeFontsToDir(targetPath: string, label?: string): Promi
     (f: PlayerFont) => fontFamilyNames.has(f.name)
   );
 
-  emit("create-directory", { name: "fonts", path: targetPath, overwrite: true, label });
+  // Awaited so the folder is cleared before any font files are written into it
+  await emit("create-directory", { name: "fonts", path: targetPath, overwrite: true, label });
 
   let cssRules = "";
   for (const family of neededFamilies) {
@@ -68,10 +63,12 @@ export async function writeFontsToDir(targetPath: string, label?: string): Promi
       try {
         const response = await fetch(fontUrl);
         const buffer = await response.arrayBuffer();
-        emit("save-binary-file", {
-          name: filename,
-          contents: arrayBufferToHex(buffer),
-          path: fontsPath,
+        // Sent as the raw request body; header values must be ASCII
+        await invoke("save_binary_file", new Uint8Array(buffer), {
+          headers: {
+            "x-file-name": encodeURIComponent(filename),
+            "x-dir-path": encodeURIComponent(fontsPath),
+          },
         });
         cssRules += `@font-face {
   font-family: "${family.name}";

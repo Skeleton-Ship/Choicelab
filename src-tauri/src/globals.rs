@@ -1,5 +1,7 @@
 use once_cell::sync::Lazy;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::collections::HashMap;
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 // Global list for pending files (not per window)
@@ -15,3 +17,8 @@ pub fn mark_app_ready() {
 
 // Label of the currently-focused window; blank until the first focus event.
 pub static FOCUSED_WINDOW: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
+
+// Each project window's Assets folder, keyed by window label. The preview server
+// serves assets straight from here instead of from copies.
+pub static PREVIEW_ASSET_DIRS: Lazy<Mutex<HashMap<String, PathBuf>>> =
+    Lazy::new(|| Mutex::new(HashMap::new()));

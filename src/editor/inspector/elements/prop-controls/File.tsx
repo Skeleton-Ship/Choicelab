@@ -49,7 +49,7 @@ export default function File(props: {
       setStore(store);
       props.update(true, false);
       setTimeout(() => {
-        updatePreview(true);
+        updatePreview();
       }, 500);
     }
   }

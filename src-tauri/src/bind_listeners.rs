@@ -1,6 +1,6 @@
 use crate::file_operations::{
-    copy_directory_contents, copy_file, create_binary_file, create_directory, create_text_file, export_project_files,
-    find_file_in_dir, load_preview_files, read_text_file,
+    copy_directory_contents, create_directory, create_text_file, export_project_files,
+    load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
 use crate::globals::{mark_app_ready, FOCUSED_WINDOW};
@@ -26,12 +26,6 @@ use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
-}
-
-#[derive(Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct AssetCreatedPayload {
-    file_name: String,
 }
 
 #[derive(Clone, Serialize)]
@@ -75,6 +69,7 @@ fn assign_port_for_label(label: &str, port: u16) {
 }
 
 fn release_port_for_label(label: &str) {
+    crate::globals::PREVIEW_ASSET_DIRS.lock().unwrap().remove(label);
     let map = PORT_LABEL_MAP.get_or_init(|| Mutex::new(HashMap::new()));
     if let Some(port) = map.lock().unwrap().remove(label) {
         let ports = PREVIEW_PORTS.get_or_init(|| Mutex::new([false; 10]));
@@ -270,10 +265,15 @@ let handle_update = app_handle.clone();
                         crate::file_operations::get_preview_path(&window_label)
                     {
                         if let Some(port) = get_next_available_port() {
+                            let label_for_server = window_label.to_string();
                             std::thread::spawn(move || {
                                 let rt = tokio::runtime::Runtime::new()
                                     .expect("Failed to create Tokio runtime");
-                                let fut = crate::preview_server::start_server(preview_path, port);
+                                let fut = crate::preview_server::start_server(
+                                    preview_path,
+                                    label_for_server,
+                                    port,
+                                );
                                 let _ = rt.block_on(async move { fut.await });
                             });
                             let project_window = handle_project_open
@@ -342,23 +342,6 @@ let handle_update = app_handle.clone();
                         )
                         .unwrap();
                 }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
-
-    // listen to binary file saves (e.g. font files for preview)
-    app.listen("save-binary-file", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let name = json["name"].as_str().unwrap_or("N/A");
-                let contents = json["contents"].as_str().unwrap_or("N/A");
-                let path = json["path"].as_str().unwrap_or("N/A");
-                let _ = create_binary_file(name, contents, path);
             }
             Err(e) => {
                 eprintln!("Error parsing JSON: {}", e);
@@ -457,86 +440,6 @@ let handle_update = app_handle.clone();
         }
     });
 
-    // listen for creating new assets
-    let handle_create_asset = app_handle.clone();
-    app.listen("create-asset", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let file_name = json["fileName"].as_str().unwrap_or("N/A");
-                let file_type = json["fileType"].as_str().unwrap_or("N/A");
-                let contents = json["contents"].as_str().unwrap_or("N/A");
-                let window_label = json["label"].as_str().unwrap_or("N/A");
-                let assets_dir = json["assetsPath"].as_str().unwrap_or("N/A");
-                // If the file already exists anywhere in Assets, use that path instead of copying.
-                let resolved_name = match find_file_in_dir(Path::new(assets_dir), file_name) {
-                    Some(existing) => Some(existing),
-                    None => {
-                        let result = if file_type == "binary" {
-                            create_binary_file(file_name, contents, assets_dir)
-                        } else if file_type == "text" {
-                            create_text_file(file_name, contents, assets_dir)
-                        } else {
-                            Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown file type"))
-                        };
-                        match result {
-                            Ok(_) => Some(file_name.to_string()),
-                            Err(_) => {
-                                eprintln!("Error creating asset");
-                                None
-                            }
-                        }
-                    }
-                };
-                if let Some(name) = resolved_name {
-                    let project_window = handle_create_asset
-                        .get_webview_window(window_label)
-                        .unwrap();
-                    let _ = project_window.emit(
-                        "asset-created",
-                        AssetCreatedPayload { file_name: name },
-                    );
-                }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
-
-    // listen for reading assets
-    let handle_read_asset = app_handle.clone();
-    app.listen("read-asset", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let asset_path = json["assetPath"].as_str().unwrap_or("N/A");
-                let dest_path = json["cachePath"].as_str().unwrap_or("N/A");
-                let window_label = json["label"].as_str().unwrap_or("N/A");
-                let id = json["id"].as_str().unwrap_or("N/A");
-                match copy_file(asset_path, dest_path) {
-                    Ok(_success) => {
-                        let project_window =
-                            handle_read_asset.get_webview_window(window_label).unwrap();
-                        let _ = project_window.emit(
-                            &("asset-ready-".to_owned() + id),
-                            Payload {
-                                message: "Asset available in temp".to_string(),
-                            },
-                        );
-                    }
-                    Err(_e) => {
-                        eprintln!("Error reading file");
-                    }
-                }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
 
     // listen for history version
     let handle_history = app_handle.clone();
@@ -600,9 +503,12 @@ let handle_update = app_handle.clone();
                 let project_path = json["projectPath"].as_str().unwrap_or("N/A");
                 let project_data = json["projectData"].as_str().unwrap_or("N/A");
                 let project_label = json["projectLabel"].as_str().unwrap_or("N/A");
-                let include_assets = json["includeAssets"].as_bool().unwrap_or(false);
                 if project_path != "N/A" && project_data != "N/A" {
-                    if let Err(e) = load_preview_files(project_path, project_data, project_label, &include_assets) {
+                    crate::globals::PREVIEW_ASSET_DIRS
+                        .lock()
+                        .unwrap()
+                        .insert(project_label.to_string(), Path::new(project_path).join("Assets"));
+                    if let Err(e) = load_preview_files(project_path, project_data, project_label) {
                         eprintln!("Error loading preview files: {}", e);
                     }
                 }

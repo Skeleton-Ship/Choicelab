@@ -52,7 +52,7 @@ const appWindow = getCurrentWebviewWindow();
 export default function MainEditor() {
   useEffect(() => {
     const label = getProjectWindowLabel(store.projectPath);
-    updatePreview(true);
+    updatePreview();
     // Get preview server — await registration before emitting window-ready to
     // avoid a race where the backend responds with preview-port before the
     // listener is active.
@@ -286,7 +286,7 @@ export default function MainEditor() {
   const handleUpdateView = async () => {
     setMenu();
     // Update preview
-    handleUpdatePreview(false);
+    handleUpdatePreview();
     triggerViewRefresh(uuidv4());
   };
   const handleUpdate = async (
@@ -299,7 +299,7 @@ export default function MainEditor() {
     }
     // Update preview
     if (typeof updatePreview === "undefined" || updatePreview === true) {
-      handleUpdatePreview(false);
+      handleUpdatePreview();
     }
     // Trigger refresh
     triggerRefresh(uuidv4());

@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { emit, listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
 import { getStore, getViewStore, setStore } from "../../data/dataStore";
 import { getAsset } from "../../data/getData";
 import { createAsset } from "../../data/createNode";
 import { Action, Asset } from "../../typings";
-import readFileUpload from "./readFileUpload";
 import getAssetPreviewURL from "./getAssetPreviewURL";
 import AssetPreview from "./AssetPreview";
-import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
 import { v4 as uuid } from "uuid";
 import { platform } from "@tauri-apps/plugin-os";
 import { getDialogText } from "../../utils/dialogText";
@@ -108,11 +106,10 @@ export default function FileUpload(props: {
         uploadInProgress = true;
         setLoading(true);
 
-        // Start the timeout immediately — readFileUpload itself can hang if the
-        // cloud file hasn't downloaded yet, so the timer must cover the full
-        // operation, not just the Rust backend step.
+        // Reading the file can hang if it's in the cloud and hasn't downloaded
+        // yet, so time out the read. Once the bytes are in memory, writing them
+        // can take as long as it needs (large videos shouldn't trip this).
         let cancelled = false;
-        let assetCreatedUnlisten: (() => void) | null = null;
         const resetUploadState = () => {
           filePicker.value = "";
           uploadInProgress = false;
@@ -120,49 +117,49 @@ export default function FileUpload(props: {
         };
         const timeoutId = setTimeout(() => {
           cancelled = true;
-          assetCreatedUnlisten?.();
           resetUploadState();
           cloudWarningMessage(file.name);
         }, UPLOAD_TIMEOUT_MS);
 
-        readFileUpload(file, propsRef.current.type)
-          .then(async (contents: any) => {
+        file
+          .arrayBuffer()
+          .then(async (contents) => {
             if (cancelled) return;
+            clearTimeout(timeoutId);
             const viewStore = getViewStore();
             const assetsPath = await resolve(viewStore.projectPath, "./Assets");
-            const jsonData = {
-              fileName: file.name,
-              contents: contents,
-              fileType: propsRef.current.type,
-              assetsPath: assetsPath,
-              label: getProjectWindowLabel(viewStore.projectPath),
-            };
-            emit("create-asset", jsonData);
-            const unlisten = await listen("asset-created", async (event) => {
-              if (cancelled) {
-                unlisten();
-                return;
+            // The file's bytes are sent as the raw request body; header values
+            // must be ASCII, so the name and path are percent-encoded
+            const resolvedFileName = await invoke<string>(
+              "create_asset",
+              new Uint8Array(contents),
+              {
+                headers: {
+                  "x-file-name": encodeURIComponent(file.name),
+                  "x-assets-path": encodeURIComponent(assetsPath),
+                },
               }
-              clearTimeout(timeoutId);
-              unlisten();
-              const store = getStore();
-              const resolvedFileName = (event.payload as { fileName: string })
-                .fileName;
-              const asset = createAsset(
-                resolvedFileName,
-                propsRef.current.fileKind as Asset["type"]
-              );
-              store.project.assets.push(asset);
-              setStore(store);
-              propsRef.current.onCreated(asset);
-              resetUploadState();
-            });
-            assetCreatedUnlisten = unlisten;
+            );
+            const store = getStore();
+            const asset = createAsset(
+              resolvedFileName,
+              propsRef.current.fileKind as Asset["type"]
+            );
+            store.project.assets.push(asset);
+            setStore(store);
+            propsRef.current.onCreated(asset);
+            resetUploadState();
           })
           .catch((error) => {
             if (cancelled) return;
             clearTimeout(timeoutId);
-            console.error("Error reading file:", error);
+            console.error("Error adding file:", error);
+            const dialog = getDialogText(
+              "Unable to add file",
+              `"${file.name}" couldn't be added to the project.`,
+              String(error)
+            );
+            message(dialog.message, dialog.title);
             resetUploadState();
           });
       }
@@ -179,11 +176,9 @@ export default function FileUpload(props: {
       setFileSrc("");
       return;
     }
-    getAssetPreviewURL(props.existingFile, props.type).then((contents: any) => {
-      if (typeof contents === "string") {
-        setFileSrc(contents);
-      }
-    });
+    getAssetPreviewURL(props.existingFile, props.type)
+      .then((contents) => setFileSrc(contents))
+      .catch((error) => console.error("Error loading asset preview:", error));
   }, [props.existingFile]);
 
   // Resolve display filename from asset registry

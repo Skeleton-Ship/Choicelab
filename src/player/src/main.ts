@@ -45,6 +45,7 @@ function Choicelab() {
           window.__CHOICELAB__ = {
             project: json,
             playback: {
+              isAppPreview,
               variables: {
                 items: [],
               },

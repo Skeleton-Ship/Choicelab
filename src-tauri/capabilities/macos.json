@@ -14,8 +14,7 @@
       "allow": [
         "$APPCONFIG/*",
         "$APPCACHE/Preview/*",
-        "$APPCACHE/Projects/*",
-        "$APPCACHE/Projects/*/assets/*"
+        "$APPCACHE/Projects/*"
       ]
     },
     "core:window:allow-create",

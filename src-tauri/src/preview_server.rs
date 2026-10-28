@@ -1,14 +1,50 @@
 use actix_files::NamedFile;
-use actix_web::{http::header, web, App, HttpRequest, HttpResponse, HttpServer};
-use std::path::PathBuf;
+use actix_web::{error, http::header, web, App, HttpRequest, HttpResponse, HttpServer};
+use std::path::{Path, PathBuf};
+
+use crate::globals::PREVIEW_ASSET_DIRS;
+
+// The player loads media from `./project/Assets/…` relative to the preview
+const ASSETS_PREFIX: &str = "project/Assets/";
+
+struct PreviewServer {
+    // The generated preview files (index.html, player, project.json, fonts)
+    folder: PathBuf,
+    // The project window this server belongs to, for looking up its Assets folder
+    label: String,
+}
+
+// Joins `relative` onto `root`, refusing paths that resolve outside of it
+fn resolve_within(root: &Path, relative: &str) -> actix_web::Result<PathBuf> {
+    let not_found = || error::ErrorNotFound("Not found");
+    let root = root.canonicalize().map_err(|_| not_found())?;
+    let path = root.join(relative).canonicalize().map_err(|_| not_found())?;
+    if !path.starts_with(&root) {
+        return Err(not_found());
+    }
+    Ok(path)
+}
 
 async fn serve_file(
     req: HttpRequest,
     path: Option<String>,
-    folder: web::Data<PathBuf>,
+    server: web::Data<PreviewServer>,
 ) -> actix_web::Result<HttpResponse> {
-    // Determine the file path: "index.html" if None, otherwise the provided path
-    let file_path = folder.join(path.clone().unwrap_or_else(|| "index.html".to_string()));
+    let path = path.unwrap_or_else(|| "index.html".to_string());
+    // Assets are served straight from the project folder, so they never need to
+    // be copied into the preview
+    let file_path = match path.strip_prefix(ASSETS_PREFIX) {
+        Some(asset) => {
+            let assets_dir = PREVIEW_ASSET_DIRS
+                .lock()
+                .unwrap()
+                .get(&server.label)
+                .cloned()
+                .ok_or_else(|| error::ErrorNotFound("Not found"))?;
+            resolve_within(&assets_dir, asset)?
+        }
+        None => resolve_within(&server.folder, &path)?,
+    };
     let file = NamedFile::open(&file_path)?;
 
     let mut response = file.into_response(&req);
@@ -28,21 +64,25 @@ async fn serve_file(
     Ok(response)
 }
 
-pub async fn start_server(folder_path: PathBuf, port: u16) -> std::io::Result<()> {
+pub async fn start_server(folder_path: PathBuf, label: String, port: u16) -> std::io::Result<()> {
+    let server = web::Data::new(PreviewServer {
+        folder: folder_path,
+        label,
+    });
     HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(folder_path.clone()))
+            .app_data(server.clone())
             .route(
                 "/",
-                web::get().to(|req: HttpRequest, folder: web::Data<PathBuf>| {
-                    serve_file(req, None, folder)
+                web::get().to(|req: HttpRequest, server: web::Data<PreviewServer>| {
+                    serve_file(req, None, server)
                 }),
             )
             .route(
                 "/{filename:.*}",
                 web::get().to(
-                    |req: HttpRequest, path: web::Path<String>, folder: web::Data<PathBuf>| {
-                        serve_file(req, Some(path.into_inner()), folder)
+                    |req: HttpRequest, path: web::Path<String>, server: web::Data<PreviewServer>| {
+                        serve_file(req, Some(path.into_inner()), server)
                     },
                 ),
             )

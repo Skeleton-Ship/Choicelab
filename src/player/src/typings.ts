@@ -37,6 +37,8 @@ export interface HistoryPoint {
 export interface Store {
   project: ProjectStore;
   playback: {
+    // Running inside the editor's preview pane
+    isAppPreview: boolean;
     variables: { items: Array<PlaybackVar> };
     history: {
       rememberHistory: boolean;

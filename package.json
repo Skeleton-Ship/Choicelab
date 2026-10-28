@@ -47,7 +47,6 @@
     "preact-markdown": "^2.1.0",
     "prism-code-editor": "^5.4.0",
     "tauri-plugin-accent-color": "git+https://github.com/freethinkel/tauri-plugin-accent-color",
-    "uint8-to-base64": "^0.2.1",
     "uuid": "^14.0.3",
     "wavesurfer.js": "^8.0.3"
   },

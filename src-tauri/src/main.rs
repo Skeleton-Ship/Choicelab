@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod assets;
 mod autosave;
 mod bind_listeners;
 mod file_operations;
@@ -269,6 +270,9 @@ fn main() {
     builder
         .setup(|app| {
             bind_listeners(app);
+            // One-time cleanup of the old asset preview cache, off the main thread
+            let handle = app.handle().clone();
+            std::thread::spawn(move || assets::remove_legacy_asset_cache(&handle));
             #[cfg(target_os = "macos")]
             native_bridge_macos::set_app_handle(app.handle().clone());
             // Windows cold-start: file path arrives as a command-line argument
@@ -297,6 +301,9 @@ fn main() {
             autosave::read_autosave_file,
             autosave::delete_autosave,
             autosave::show_autosave_recovery_dialog,
+            assets::create_asset,
+            assets::allow_asset_preview,
+            assets::save_binary_file,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

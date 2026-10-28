@@ -32,7 +32,7 @@ function getPreviewId(store: Store) {
   return previewId;
 }
 
-export async function updatePreview(includeAssets: boolean) {
+export async function updatePreview() {
   const store = getStore();
   const port = getViewStore().previewPort;
   // Update project files in Tauri
@@ -43,7 +43,6 @@ export async function updatePreview(includeAssets: boolean) {
     projectPath: projectPath,
     projectLabel: getProjectWindowLabel(projectPath),
     projectData: stringify(playerProject),
-    includeAssets: includeAssets,
   });
   // Re-write index.html with the current background color so it's set before JS runs
   const label = getProjectWindowLabel(projectPath);
