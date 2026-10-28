@@ -174,6 +174,19 @@ fn get_dialog_texts(_short_title: &str, line1: &str, line2: &str) -> (String, St
     }
 }
 
+/// Mirrors `getProjectWindowLabel()` in JS: the label is derived from the project's folder.
+fn project_window_label_for_file(file_path: &str) -> Option<String> {
+    let dir = std::path::Path::new(file_path).parent()?.to_str()?.trim().to_string();
+    let mut sanitized: String = dir
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '-' || c == '_' { c } else { '_' })
+        .collect();
+    if sanitized.starts_with('_') {
+        sanitized.remove(0);
+    }
+    Some(format!("project_{}", sanitized))
+}
+
 fn find_open_project_label(app: &tauri::AppHandle) -> Option<String> {
     app.webview_windows()
         .into_keys()
@@ -867,6 +880,10 @@ let handle_update = app_handle.clone();
                         .title(&dialog_title)
                         .kind(MessageDialogKind::Info)
                         .show(|_| {});
+                } else if find_open_project_label(app_handle).is_some()
+                    && find_open_project_label(app_handle) == project_window_label_for_file(&file_path)
+                {
+                    // The chosen project is already the open one — nothing to do.
                 } else if let Some(existing_label) = find_open_project_label(app_handle) {
                     // A project is already open — ask it to handle close/save then open the new one.
                     let new_project_name = std::path::Path::new(&file_path)
