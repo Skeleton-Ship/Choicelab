@@ -4,6 +4,7 @@ import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import addRule from "../functions/addRule";
 import showPane from "../functions/showPane";
 import RuleInstance from "./RuleInstance";
+import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 
 export default function StemInstance(props: {
   stem: Stem;
@@ -17,6 +18,12 @@ export default function StemInstance(props: {
    */
   function handleAddRule() {
     addRule(props.stem.id, props.branch.id, props.update);
+  }
+  // Clicking anywhere in a stem's rules selects that stem in the flowchart
+  function handleSelectStem() {
+    const selectedStem = getViewStore().selectedStem;
+    if (selectedStem !== false && selectedStem.id === props.stem.id) return;
+    handleSelectNode(props.branch, props.update, props.stem);
   }
   function handleMatchChange(e: Event) {
     let target;
@@ -134,7 +141,7 @@ export default function StemInstance(props: {
   );
   // Return
   return (
-    <div class={itemClass}>
+    <div class={itemClass} onClick={handleSelectStem}>
       {toolbarContents}
       {mainContents}
     </div>

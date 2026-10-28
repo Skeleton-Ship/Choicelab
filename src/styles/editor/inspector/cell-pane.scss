@@ -200,6 +200,10 @@ $item-border-radius: 10px;
     border-color: #2f8ee5;
     outline: none;
   }
+  // Stem selection should appear instantly
+  &.branch-stem {
+    transition: none;
+  }
   &.is-new {
     border-color: var(--accent-color-400);
     @media (prefers-color-scheme: dark) {
