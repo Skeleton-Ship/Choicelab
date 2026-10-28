@@ -12,6 +12,7 @@
 
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - Fixed an issue where the preview would flash when opened or refreshed.
+- Deleting a variable now resets it to **None** in any actions that used it.
 
 ## 1.1
 

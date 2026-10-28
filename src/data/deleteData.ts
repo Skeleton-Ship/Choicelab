@@ -1,4 +1,5 @@
-import { getBranch, getBranchStem } from "./getData";
+import { getActionDef, getBranch, getBranchStem } from "./getData";
+import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 import {
   Store,
   Sequence,
@@ -8,6 +9,7 @@ import {
   Action,
   Rule,
   Variable,
+  Cell,
 } from "../typings";
 
 function deleteSequenceFromData(sequenceId: string, store: Store) {
@@ -43,6 +45,25 @@ function deleteVariableFromData(variableId: string, store: Store) {
   if (correctVariableIndex !== false) {
     variables.items.splice(correctVariableIndex, 1);
   }
+  // Clear references from actions, so they read as "None" again (and can be
+  // auto-filled) instead of pointing at a variable that no longer exists
+  store.project.sequences.forEach((sequence: Sequence) => {
+    sequence.nodes.forEach((node: AnyNode) => {
+      if (node.type !== "cell") return;
+      (node as Cell).actions.forEach((action: Action) => {
+        const actionDef = getActionDef(action.name, internalActionDefs);
+        if (!actionDef) return;
+        actionDef.props.forEach((propDef) => {
+          if (
+            propDef.control === "variable" &&
+            action.props[propDef.name] === variableId
+          ) {
+            action.props[propDef.name] = "";
+          }
+        });
+      });
+    });
+  });
   return store;
 }
 
