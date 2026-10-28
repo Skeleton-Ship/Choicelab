@@ -30,6 +30,8 @@ Once you're in the repo, run:
 - `bun install-all` to install all dependencies for Rust + Node
 - `bun dev` to run the app locally
 
+When working on new features, make notes in `changelog.md`, with a `[draft]` prefix on the in-progress new version.
+
 ### Updating the branching logic vocabulary
 
 Choicelab embeds a small word vector (based on [GloVe](https://nlp.stanford.edu/projects/glove/)) of common English words found in story questions and input choices (`vocab.json`). This enables the ability for Choicelab to automatically generate variables and branch stems for authors.
