@@ -4,6 +4,7 @@ import { Store } from "../typings";
 import { getCell } from "../data/getData";
 import { stringify } from "../utils/stringify";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
+import { loadPreviewFrame } from "./previewFrames";
 import { updatePreviewFonts } from "./updatePreviewFonts";
 import { resolveAssetsForPlayer } from "./resolveAssetsForPlayer";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
@@ -61,13 +62,5 @@ export async function updatePreview(includeAssets: boolean) {
     previewUrl.searchParams.set("start", previewId);
   }
   // Update app frame
-  setTimeout(() => {
-    const iframe = document.querySelector(
-      "#preview-frame"
-    ) as HTMLIFrameElement | null;
-    if (!iframe) {
-      return;
-    }
-    iframe.src = previewUrl.toString();
-  }, 50);
+  loadPreviewFrame(previewUrl.toString());
 }

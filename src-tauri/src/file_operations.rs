@@ -51,11 +51,22 @@ pub fn create_text_file(file_name: &str, contents: &str, path: &str) -> io::Resu
     // Create the destination directory if it doesn't exist
     fs::create_dir_all(path)?;
 
-    // Create a new file at the specified path
-    let mut file = File::create(&full_path)?;
+    // Skip the write when nothing changed, so files served to the preview
+    // (index.html, choicelab.js, choicelab.css) aren't touched on every refresh
+    if let Ok(existing) = fs::read(&full_path) {
+        if existing == contents.as_bytes() {
+            return Ok(());
+        }
+    }
 
-    // Write the contents to the file
-    file.write_all(contents.as_bytes())?;
+    // Write to a temporary file and rename it into place. Truncating the real
+    // file first would let the preview server serve an empty or partial file.
+    let temp_path = format!("{}/.{}.tmp", path, file_name);
+    {
+        let mut file = File::create(&temp_path)?;
+        file.write_all(contents.as_bytes())?;
+    }
+    fs::rename(&temp_path, &full_path)?;
 
     // println!("File '{}' successfully written to '{}'", file_name, full_path);
 
@@ -207,8 +218,14 @@ fn write_project_files(
     let project_subfolder = output_dir.join("project");
     fs::create_dir_all(&project_subfolder)?;
 
-    let mut file = File::create(project_subfolder.join("project.json"))?;
-    file.write_all(project_data.as_bytes())?;
+    // Write atomically so the preview never fetches a truncated project.json
+    let project_json_path = project_subfolder.join("project.json");
+    let project_json_temp = project_subfolder.join(".project.json.tmp");
+    {
+        let mut file = File::create(&project_json_temp)?;
+        file.write_all(project_data.as_bytes())?;
+    }
+    fs::rename(&project_json_temp, &project_json_path)?;
 
     if include_assets {
         let assets_src = input_folder.join("Assets");

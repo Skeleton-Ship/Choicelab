@@ -204,6 +204,17 @@ function Choicelab() {
               (entry.contentRect.width / designWidth).toFixed(4)
             );
           }).observe(props.root);
+          // Tell the editor's preview frame that the first render is done
+          if (isAppPreview) {
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() =>
+                window.parent.postMessage(
+                  { type: "choicelab-preview-ready" },
+                  "*"
+                )
+              )
+            );
+          }
         }); // promise from file path
     }, // init
   }; // return
