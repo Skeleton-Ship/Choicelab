@@ -8,6 +8,7 @@
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
+- Various under-the-hood improvements to app frameworks and dependencies.
 
 #### Fixes
 

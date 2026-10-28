@@ -39,7 +39,7 @@ tauri-plugin-os = "2"
 [target.'cfg(target_os = "macos")'.dependencies]
 window-vibrancy = "0.6"
 objc = "0.2.7"
-tauri = { version = "2.6.2", features = [  ] }
+tauri = { version = "2.6.2", features = ["protocol-asset", "macos-private-api"  ] }
 tauri-plugin-accent-color = { git = "https://github.com/freethinkel/tauri-plugin-accent-color" }
 
 [target.'cfg(target_os = "windows")'.dependencies]

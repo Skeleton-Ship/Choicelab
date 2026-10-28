@@ -73,6 +73,12 @@ jobs:
         if: contains(matrix.args, 'aarch64-pc-windows-msvc')
         run: rustup target add aarch64-pc-windows-msvc
 
+      # Vite 8 and the build tooling need Node 20.19+ / 22.12+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 

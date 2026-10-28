@@ -1,5 +1,4 @@
-import { useEffect } from "preact/hooks";
-import { createRef } from "preact";
+import { useEffect, useRef } from "preact/hooks";
 import PanelDarkCornerTopLeft from "../../../assets/panel-images/dark/corner-top-left.png";
 import PanelDarkCornerTopRight from "../../../assets/panel-images/dark/corner-top-right.png";
 import PanelDarkCornerBottomLeft from "../../../assets/panel-images/dark/corner-bottom-left.png";
@@ -16,7 +15,7 @@ export function MiniPanel(props: {
   className: string;
   children: preact.JSX.Element | Array<preact.JSX.Element>;
 }) {
-  const panelRef = createRef();
+  const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!panelRef.current) return;
     const panel = panelRef.current;

@@ -22,7 +22,10 @@
         "mimeType": "application/x-choice-project",
         "rank": "Default"
       }
-    ]
+    ],
+    "macOS": {
+      "minimumSystemVersion": "13.5"
+    }
   },
   "productName": "Choicelab",
   "mainBinaryName": "Choicelab",

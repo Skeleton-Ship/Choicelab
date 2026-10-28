@@ -496,9 +496,11 @@ let vocabPromise: Promise<VocabMap> | null = null;
 
 async function loadVocab(): Promise<VocabMap> {
   if (vocabPromise) return vocabPromise;
-  vocabPromise = import("../assets/embeddings/vocab.json")
+  // Imported as raw text: parsing one JSON string is much faster (for both the
+  // bundler and the webview) than evaluating a ~20 MB object literal
+  vocabPromise = import("../assets/embeddings/vocab.json?raw")
     .then((mod) => {
-      const data = mod.default as Record<string, number[]>;
+      const data = JSON.parse(mod.default) as Record<string, number[]>;
       const map = new Map<string, Float32Array>();
       for (const [word, vec] of Object.entries(data)) {
         map.set(word, new Float32Array(vec));
