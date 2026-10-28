@@ -35,7 +35,8 @@ export default function VariableValueControl(props: {
     // Cast numbers and bools to be actual values
     switch (varType) {
       case "string":
-        value = rawValue;
+        // Leading/trailing whitespace would make a condition look right but never match
+        value = rawValue?.trim();
         break;
       case "number":
         if (typeof directValue !== "undefined") {
@@ -121,6 +122,7 @@ export default function VariableValueControl(props: {
           onBlur={(e) => {
             viewStore.inTextElement = false;
             setViewStore(viewStore);
+            setLocalValue((e.target as HTMLInputElement).value.trim());
             handleChange(e.target, variable.varType);
           }}
           onChange={(e) => {

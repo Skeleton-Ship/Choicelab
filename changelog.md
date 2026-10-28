@@ -6,6 +6,7 @@
 
 - When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and qualified nodes are now easier to see.
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
+- Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 
 #### Fixes
 

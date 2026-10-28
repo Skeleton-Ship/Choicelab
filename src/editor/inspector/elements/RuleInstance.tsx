@@ -57,6 +57,10 @@ export default function RuleInstance(props: {
       if (variable?.varType === "boolean") {
         value = value === "true" ? true : false;
       }
+      // Leading/trailing whitespace would make a rule look right but never match
+      if (typeof value === "string") {
+        value = value.trim();
+      }
     }
     // @ts-ignore
     if (rule[fieldName] === value) return;
@@ -163,6 +167,7 @@ export default function RuleInstance(props: {
             onBlur={(e: Event) => {
               viewStore.inTextElement = false;
               setViewStore(viewStore);
+              setLocalValue((e.target as HTMLInputElement).value.trim());
               handleChange("value", e, rule.variableId);
             }}
             onChange={(e: Event) => {
