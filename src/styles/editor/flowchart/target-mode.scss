@@ -1,11 +1,14 @@
 #target-mode {
-  position: fixed;
-  top: calc(var(--toolbar-height) + 15px);
+  position: absolute;
+  top: 15px;
   left: 15px;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(99px);
   -webkit-backdrop-filter: blur(99px);
   width: 350px;
+  box-sizing: border-box;
+  gap: 16px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
@@ -13,6 +16,7 @@
   padding: 11px;
   height: 51px;
   z-index: 9;
+  pointer-events: auto;
   @media (prefers-color-scheme: dark) {
     color: rgba(255, 255, 255, 0.828);
     background-color: var(--node-bg-dark);
@@ -20,10 +24,16 @@
   }
   p {
     margin: 0;
+    white-space: nowrap;
     font-size: 13px;
     font-weight: 500;
   }
-  button:not(:last-of-type) {
-    margin-right: 8px;
+  .buttons {
+    display: flex;
+    gap: 8px;
+  }
+  button {
+    margin: 0;
+    white-space: nowrap;
   }
 }

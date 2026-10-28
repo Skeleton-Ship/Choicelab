@@ -80,6 +80,19 @@ export default function TargetMode(props: { update: Function }) {
       sequenceEl.removeEventListener("click", clickHandler);
     };
   }, []);
+  useEffect(() => {
+    // Escape exits target mode
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (getViewStore().targetMode.active !== true) return;
+      e.preventDefault();
+      exitTargetMode(false);
+    };
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("keydown", keyHandler);
+    };
+  }, []);
   // Elements
   const initialStore = getViewStore();
   let targetModeEl = <></>;

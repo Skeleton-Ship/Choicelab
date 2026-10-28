@@ -16,12 +16,16 @@
     outline: none;
   }
   &.target-mode {
-    background-color: rgba(239, 239, 239, 0.8);
+    background-color: rgba(225, 225, 228, 0.95);
+    #arrows {
+      filter: blur(3px);
+      opacity: 0.35;
+    }
   }
   @media (prefers-color-scheme: dark) {
     background-color: #18181a;
     &.target-mode {
-      background-color: rgba(23, 23, 24, 0.8);
+      background-color: rgba(10, 10, 11, 0.95);
     }
   }
 }
