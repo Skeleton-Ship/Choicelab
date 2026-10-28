@@ -2,6 +2,8 @@
 
 ## [draft] 1.2
 
+### 2026-11-xx
+
 #### Enhancements
 
 - When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and qualified nodes are now easier to see.
