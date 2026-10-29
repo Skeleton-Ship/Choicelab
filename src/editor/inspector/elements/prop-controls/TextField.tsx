@@ -14,7 +14,7 @@ export default function TextField(props: {
   actionDef: ActionDef;
   propDef: ActionDefProp;
   fieldType: string;
-  initialValue: string;
+  initialValue: string | number;
   className: string;
   store: Store;
   update: Function;
@@ -26,7 +26,7 @@ export default function TextField(props: {
     setLocalValue(props.initialValue);
   }, [props.initialValue]);
 
-  function handleChange(value: any) {
+  function handleChange(value: string | number) {
     if (!action) return;
     if (getActionProp(action, propDef.name) === value) return;
     setActionProp(action, propDef.name, value);

@@ -9,10 +9,18 @@ import { dirname } from "./utils/path";
 import { forceReflow } from "./utils/forceReflow";
 import { generateAppearanceCSS } from "./appearance";
 import { enableAutoplay, registerAutoplayQualifier } from "./autoplay";
+import { ActionForPlayback } from "./typings";
+import { VariableValue } from "../../schema/project";
+
+interface InitProps {
+  path: string; // URL of the project's JSON file
+  root: HTMLElement;
+  logging: boolean;
+}
 
 function Choicelab() {
   return {
-    init: (props: any) => {
+    init: (props: InitProps) => {
       // When running inside the editor iframe, prevent bare Backspace/Delete
       // from triggering WKWebView's built-in back-navigation.
       if (new URLSearchParams(window.location.search).get("startMediaOnLoad") === "false") {
@@ -90,7 +98,7 @@ function Choicelab() {
           // Add starting values to variables
           const playbackVars = window.__CHOICELAB__.playback.variables;
           window.__CHOICELAB__.project.variables.items.forEach((thisVar) => {
-            let startingValue: any;
+            let startingValue: VariableValue | undefined;
             switch (thisVar.varType) {
               case "string":
                 if (typeof thisVar.startingValue === "undefined") {
@@ -128,8 +136,7 @@ function Choicelab() {
               const id = node.id;
               if (!node.actions) return;
               node.actions.forEach((action) => {
-                // @ts-ignore
-                action.cellId = id;
+                (action as ActionForPlayback).cellId = id;
               });
             });
           });
@@ -219,5 +226,9 @@ function Choicelab() {
 export default Choicelab;
 
 // Make Choicelab available globally for non-module usage
-// @ts-ignore
+declare global {
+  interface Window {
+    Choicelab: typeof Choicelab;
+  }
+}
 window.Choicelab = Choicelab;

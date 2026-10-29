@@ -1,9 +1,9 @@
-import { Stem, Rule } from "../../../typings";
+import { Stem, Rule, RuleOperator, VariableType } from "../../../typings";
 import { getStore } from "../../../data/dataStore";
 import { getVariable } from "../../../data/getData";
 import ruleIsValid from "../../inspector/functions/ruleIsValid";
 
-const operatorSigns = {
+const operatorSigns: Record<VariableType, Partial<Record<RuleOperator, string>>> = {
   string: {
     equals: "is",
     notEquals: "is not",
@@ -41,7 +41,7 @@ export default function getStemRulesLabel(stem: Stem): string {
     label = "";
     const varName = variable.name;
     label += varName;
-    // @ts-ignore
+    if (rule.operator === "") return;
     const operator = operatorSigns[variable.varType][rule.operator];
     label += ` ${operator} `;
     let value = rule.value;

@@ -6,12 +6,16 @@ import {
   exists,
 } from "@tauri-apps/plugin-fs";
 
+interface AppPreferences {
+  versionNotesSeen: string;
+}
+
 async function createAppPreferences() {
   const appConfigDirPath = await appConfigDir();
   const configPathExists = await exists(appConfigDirPath);
   if (!configPathExists) await mkdir(appConfigDirPath);
   const preferencesPath = await resolve(appConfigDirPath, "Preferences.json");
-  const preferencesObj = { versionNotesSeen: "0.0.0" };
+  const preferencesObj: AppPreferences = { versionNotesSeen: "0.0.0" };
   await writeTextFile(
     preferencesPath,
     JSON.stringify(preferencesObj, null, 2),
@@ -19,9 +23,7 @@ async function createAppPreferences() {
   );
 }
 
-export async function getAppPreferences(): Promise<{
-  versionNotesSeen: string;
-}> {
+export async function getAppPreferences(): Promise<AppPreferences> {
   const appConfigDirPath = await appConfigDir();
   const preferencesPath = await resolve(appConfigDirPath, "Preferences.json");
   const fileExists = await exists(preferencesPath);
@@ -35,7 +37,7 @@ export async function getAppPreferences(): Promise<{
   }
 }
 
-export async function setAppPreferences(newProps: Record<string, any>) {
+export async function setAppPreferences(newProps: Partial<AppPreferences>) {
   const appConfigDirPath = await appConfigDir();
   const preferencesPath = await resolve(appConfigDirPath, "Preferences.json");
   let preferencesObj = await getAppPreferences();

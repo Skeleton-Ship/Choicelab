@@ -49,6 +49,8 @@ import { openProjectSettings } from "./settings/openProjectSettings";
 import loadProject from "../fs/loadProject";
 const appWindow = getCurrentWebviewWindow();
 
+type PreviewPortPayload = { port: number; label: string };
+
 export default function MainEditor() {
   useEffect(() => {
     const label = getProjectWindowLabel(store.projectPath);
@@ -56,7 +58,7 @@ export default function MainEditor() {
     // Get preview server — await registration before emitting window-ready to
     // avoid a race where the backend responds with preview-port before the
     // listener is active.
-    const unlistenPreviewPort = listen("preview-port", (event: any) => {
+    const unlistenPreviewPort = listen<PreviewPortPayload>("preview-port", (event) => {
       if (event && event.payload && event.payload.port) {
         const viewStore = getViewStore();
         if (event.payload.label !== label) return;

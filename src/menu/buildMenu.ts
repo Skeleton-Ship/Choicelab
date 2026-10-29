@@ -65,7 +65,7 @@ export async function buildMenu(
    * File menu — Open Recent submenu
    */
 
-  const recentItems: any[] = [];
+  const recentItems: Array<MenuItem | PredefinedMenuItem> = [];
   if (recentFiles.length === 0) {
     recentItems.push(
       await MenuItem.new({

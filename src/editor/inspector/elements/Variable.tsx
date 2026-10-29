@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import { Variable } from "../../../typings";
+import { Variable, VariableType, VariableValue } from "../../../typings";
 import { getVariable } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
@@ -39,7 +39,7 @@ export default function VariableEl(props: {
   function handleChange(
     field: "name" | "varType" | "description" | "startingValue",
     target: EventTarget | null,
-    directValue?: any
+    directValue?: number
   ) {
     // Get var in store
     const store = getStore();
@@ -52,40 +52,46 @@ export default function VariableEl(props: {
       return;
     }
     // Figure out what kind of change we're making, and cast values as needed
-    let value: any;
-    let rawValue = target ? (target as HTMLInputElement).value : null;
+    const rawValue = target ? (target as HTMLInputElement).value : "";
     switch (field) {
-      case "name":
-        if (rawValue) {
-          value = setVariableName(rawValue);
-        }
+      case "name": {
+        const name = setVariableName(rawValue);
+        if (varInStore.name === name) return;
+        varInStore.name = name;
         break;
-      case "startingValue":
+      }
+      case "description":
+        if (varInStore.description === rawValue) return;
+        varInStore.description = rawValue;
+        break;
+      case "varType": {
+        const varType = rawValue as VariableType;
+        if (varInStore.varType === varType) return;
+        // Reset the starting value to a sensible default
+        if (varType === "boolean") varInStore.startingValue = true;
+        else if (varType === "string") varInStore.startingValue = "";
+        varInStore.varType = varType;
+        break;
+      }
+      case "startingValue": {
+        let startingValue: VariableValue | undefined;
         if (varInStore.varType === "number") {
           if (typeof directValue !== "undefined") {
-            value = directValue;
+            startingValue = directValue;
           } else if (rawValue) {
-            value = parseFloat(rawValue);
+            startingValue = parseFloat(rawValue);
           }
         } else if (varInStore.varType === "boolean") {
-          value = rawValue === "true" ? true : false;
+          startingValue = rawValue === "true";
         } else {
-          value = rawValue;
+          startingValue = rawValue;
         }
+        if (typeof startingValue === "undefined") return;
+        if (varInStore.startingValue === startingValue) return;
+        varInStore.startingValue = startingValue;
         break;
-      case "varType":
-        value = rawValue;
-        break;
-      default:
-        value = rawValue;
+      }
     }
-    if (varInStore[field] === value) return;
-    // If changing var type, reset the starting value to a sensible default
-    if (field === "varType") {
-      if (rawValue === "boolean") varInStore.startingValue = true;
-      else if (rawValue === "string") varInStore.startingValue = "";
-    }
-    varInStore[field] = value;
     setStore(store);
     props.update();
   }
@@ -104,11 +110,12 @@ export default function VariableEl(props: {
   const descField = `description_${variable.id}`;
   const startingValField = `starting_value_${variable.id}`;
   // Get starting value field based on var type
-  const startingValue: any = variable.startingValue; // `any` isn't ideal here, but we're enforcing the type above
-  const [localStartingValue, setLocalStartingValue] = useState(variable.varType === "string" ? (startingValue ?? "") : "");
+  const startingValue = variable.startingValue;
+  const stringStartingValue = variable.varType === "string" ? String(startingValue ?? "") : "";
+  const [localStartingValue, setLocalStartingValue] = useState(stringStartingValue);
   useEffect(() => {
-    setLocalStartingValue(variable.varType === "string" ? (startingValue ?? "") : "");
-  }, [startingValue, variable.varType]);
+    setLocalStartingValue(stringStartingValue);
+  }, [stringStartingValue]);
   const viewStore = getViewStore();
   let startingValueInput = (
     <input
@@ -148,7 +155,7 @@ export default function VariableEl(props: {
       <div class="ui-dropdown">
         <select
           id={startingValField}
-          value={startingValue}
+          value={String(startingValue)}
           onChange={(e) => {
             handleChange("startingValue", e.target);
           }}

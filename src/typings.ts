@@ -1,5 +1,13 @@
 import { Menu } from "@tauri-apps/api/menu";
-import type { ActionPropValue, AnyNode, Project, Stem } from "./schema/project";
+import type { FunctionComponent } from "preact";
+import type {
+  ActionName,
+  ActionPropsMap,
+  ActionPropValue,
+  AnyNode,
+  Project,
+  Stem,
+} from "./schema/project";
 
 export type * from "./schema/project";
 
@@ -54,15 +62,15 @@ export interface Store {
     versions: Array<string>;
   };
 }
-export interface ActionDef {
-  name: string;
+export interface ActionDefOf<N extends ActionName> {
+  name: N;
   label: string;
   editor?: {
     iconName: string;
     iconColor: string;
     iconBackgroundColor: string;
   };
-  flowchart?: any;
+  flowchart?: FunctionComponent<ActionPropsMap[N]>;
   category?: "timeline" | "interact" | "event";
   description: string;
   props: Array<ActionDefProp>;
@@ -70,6 +78,7 @@ export interface ActionDef {
   inputElement?: boolean;
   mediaElement?: boolean;
 }
+export type ActionDef = { [N in ActionName]: ActionDefOf<N> }[ActionName];
 export interface ActionDefProp {
   name: string;
   label: string;
@@ -97,7 +106,7 @@ export interface PlayerFontStyle {
   name: string;
   style: string;
   weight: string;
-  url: any;
+  url: { default: string }; // a dynamically imported font file
 }
 
 export interface PlayerFont {

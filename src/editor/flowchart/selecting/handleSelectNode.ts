@@ -25,8 +25,7 @@ export default function handleSelectNode(
   // For branches, select a stem
   if (node.type === "branch") {
     if (!stem) {
-      // @ts-ignore
-      const firstStem = node.stems[0];
+      const firstStem = "stems" in node ? node.stems?.[0] : undefined;
       if (!firstStem) return;
       viewStore.selectedStem = firstStem;
     } else {

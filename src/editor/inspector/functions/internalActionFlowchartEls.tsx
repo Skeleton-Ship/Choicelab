@@ -1,10 +1,11 @@
 import { getVariable, getAsset } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
+import { ActionPropsMap } from "../../../typings";
 
 /*
  * Text
  */
-export function FCText(props: { contents: string; tag: string }) {
+export function FCText(props: ActionPropsMap["text"] & { tag?: string }) {
   let contents = <>{props.contents}</>;
   if (props.tag !== "p") {
     contents = <strong>{props.contents}</strong>;
@@ -15,15 +16,9 @@ export function FCText(props: { contents: string; tag: string }) {
 /*
  * Button
  */
-export function FCButton(props: {
-  label: string;
-  varToSet: string;
-  value: string;
-  response: string;
-  saveInputs: boolean;
-}) {
+export function FCButton(props: ActionPropsMap["button"]) {
   const store = getStore();
-  const variable = getVariable(props.varToSet, store);
+  const variable = getVariable(props.varToSet ?? "", store);
   let varEl = <></>;
   if (variable) {
     varEl = <span class="button-var">{variable.name}</span>;
@@ -39,13 +34,9 @@ export function FCButton(props: {
 /*
  * Input field
  */
-export function FCInputField(props: {
-  label: string;
-  type: string;
-  varToSet: string;
-}) {
+export function FCInputField(props: ActionPropsMap["inputField"]) {
   const store = getStore();
-  const variable = getVariable(props.varToSet, store);
+  const variable = getVariable(props.varToSet ?? "", store);
   let varEl = <></>;
   if (variable) {
     varEl = <span class="button-var">{variable.name}</span>;
@@ -61,7 +52,7 @@ export function FCInputField(props: {
 /*
  * Image
  */
-export function FCImage(props: { source: string; alt: string }) {
+export function FCImage(props: ActionPropsMap["image"]) {
   let imageLabel = <span class="no-src">Image</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
     const asset = getAsset(props.source, getStore());
@@ -79,7 +70,7 @@ export function FCImage(props: { source: string; alt: string }) {
 /*
  * Audio
  */
-export function FCAudio(props: { source: string; captions: string }) {
+export function FCAudio(props: ActionPropsMap["audio"]) {
   let audioLabel = <span class="no-src">Audio</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
     const asset = getAsset(props.source, getStore());
@@ -96,7 +87,7 @@ export function FCAudio(props: { source: string; captions: string }) {
 /*
  * Video
  */
-export function FCVideo(props: { source: string; captions: string }) {
+export function FCVideo(props: ActionPropsMap["video"]) {
   let videoLabel = <span class="no-src">Video</span>;
   if (props.source && props.source !== "") {
     const asset = getAsset(props.source, getStore());
@@ -113,7 +104,7 @@ export function FCVideo(props: { source: string; captions: string }) {
 /*
  * Silence
  */
-export function FCSilence(props: { duration: number }) {
+export function FCSilence(props: ActionPropsMap["silence"]) {
   return (
     <div>
       <em>({props.duration}s of silence)</em>
@@ -124,7 +115,7 @@ export function FCSilence(props: { duration: number }) {
 /*
  * Background Audio
  */
-export function FCBackgroundAudio(props: { source: string }) {
+export function FCBackgroundAudio(props: ActionPropsMap["backgroundAudio"]) {
   let label = <span class="no-src">Audio</span>;
   if (typeof props.source !== "undefined" && props.source !== "") {
     const asset = getAsset(props.source, getStore());
@@ -141,7 +132,7 @@ export function FCBackgroundAudio(props: { source: string }) {
 /*
  * Background Video
  */
-export function FCBackgroundVideo(props: { source: string }) {
+export function FCBackgroundVideo(props: ActionPropsMap["backgroundVideo"]) {
   let label = <span class="no-src">Video</span>;
   if (props.source && props.source !== "") {
     const asset = getAsset(props.source, getStore());
@@ -158,7 +149,8 @@ export function FCBackgroundVideo(props: { source: string }) {
 /*
  * End Background Audio / Video
  */
-export function FCEndBackground(props: { name: string }) {
+// Shared by endBackgroundAudio and endBackgroundVideo, which have the same props
+export function FCEndBackground(props: ActionPropsMap["endBackgroundAudio"]) {
   return (
     <div>
       <em>Stop: {props.name || "..."}</em>

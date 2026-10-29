@@ -123,7 +123,7 @@ export function MediaControl(props: {
   const timeableEls = timeableActions.map(({ icon, action: ta }) => {
     const disabled = timeableActionInUse(ta, action);
     const activeClass = actionContainsTimedAction(action, ta) ? "active" : "";
-    const previewText = getActionTextLabel(ta.name, ta.props);
+    const previewText = getActionTextLabel(ta);
 
     return (
       <div
@@ -158,7 +158,7 @@ export function MediaControl(props: {
   const timingFlagEls = timeableActions
     .filter(({ action: ta }) => actionContainsTimedAction(action, ta))
     .map(({ action: ta }) => {
-      const label = getActionTextLabel(ta.name, ta.props);
+      const label = getActionTextLabel(ta);
       const timingProps = action.timedActions?.[ta.id];
       if (!timingProps) return null;
       if (!mediaLoaded) return null;

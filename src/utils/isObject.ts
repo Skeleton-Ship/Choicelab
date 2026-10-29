@@ -1,4 +1,6 @@
-export default function isObject(thisVar: any): boolean {
+export default function isObject(
+  thisVar: unknown
+): thisVar is Record<string, unknown> {
   if (
     typeof thisVar === "object" &&
     !Array.isArray(thisVar) &&

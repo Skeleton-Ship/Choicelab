@@ -57,7 +57,7 @@ function formatAutosaveTime(ms: number): string {
 
 async function init() {
   const urlParams = new URLSearchParams(window.location.search);
-  const windowType: WindowType = urlParams.get("window_type") as any;
+  const windowType: WindowType = urlParams.get("window_type") as WindowType;
   // Set accent color
   if (platform === "macos") {
     const { accentColor } = await import("tauri-plugin-accent-color");

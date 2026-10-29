@@ -1,3 +1,4 @@
+import type { FunctionComponent } from "preact";
 import { getCell } from "../../../data/getData";
 import { getStore, getViewStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
@@ -52,7 +53,8 @@ export default function CellEl(props: {
       actionClass = actionClass + " no-props";
       actionContents = <span class="action-name">{actionDef.label}</span>;
     } else {
-      const FCElement = actionDef.flowchart;
+      // The def was looked up by this action's name, so its component takes this action's props
+      const FCElement = actionDef.flowchart as FunctionComponent<Action["props"]>;
       actionContents = <FCElement {...action.props} />;
     }
     const elKey = `action_${action.id}`;

@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from "preact/hooks";
 import { parseNumber } from "../../../utils/parseNumber";
+import { VariableValue } from "../../../typings";
 
 /*
  * Generic number field, used across the editor
  */
 export default function NumberField(props: {
   name: string;
-  value: any;
+  value: VariableValue | undefined;
   class?: string;
   min?: number;
   max?: number;
   step?: number;
   decimalPlaces?: number;
-  onChange: Function;
+  onChange: (value: number) => void;
 }) {
   let supplementalClass = props.class || "";
   const elRef = useRef(null);

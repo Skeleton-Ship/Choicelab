@@ -1,4 +1,5 @@
 import { getStore } from "./store";
+import { HistoryPoint } from "./typings";
 
 function storageKey(): string {
   return `choicelab_history_${window.location.host}_${getStore().project.id}`;
@@ -15,10 +16,7 @@ export function initHistory(): string | null {
 
   try {
     const data = JSON.parse(saved) as {
-      points: Array<{
-        cellId: string;
-        vars: Array<{ id: string; value: any }>;
-      }>;
+      points: Array<HistoryPoint>;
       cursor: number;
     };
     if (!data.points || data.points.length === 0) return null;

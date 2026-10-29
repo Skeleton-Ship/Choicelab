@@ -1,3 +1,3 @@
-export function stringify(obj: any): string {
+export function stringify(obj: unknown): string {
   return JSON.stringify(obj, null, 2);
 }

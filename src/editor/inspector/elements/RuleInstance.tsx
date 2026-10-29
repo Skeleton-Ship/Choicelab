@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import { Rule, Stem, Branch, Variable } from "../../../typings";
+import { Rule, RuleOperator, Stem, Branch, Variable, VariableValue } from "../../../typings";
 import { getVariables, getVariable, getStemRule } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteStemRuleFromData } from "../../../data/deleteData";
@@ -27,9 +27,9 @@ export default function RuleInstance(props: {
     fieldName: "variableId" | "operator" | "value",
     e: Event | null,
     varName?: string,
-    directValue?: any
+    directValue?: number
   ) {
-    let value: string | number | boolean;
+    let value: VariableValue;
     if (e !== null && e.target !== null) {
       value = (e.target as HTMLInputElement).value;
     } else {
@@ -62,33 +62,42 @@ export default function RuleInstance(props: {
         value = value.trim();
       }
     }
-    // @ts-ignore
-    if (rule[fieldName] === value) return;
-    // If changing variable, clear the existing operator/value and set sensible defaults
-    if (fieldName === "variableId" && !directValue) {
-      rule.operator = "";
-      rule.value = "";
-      let variable: Variable | undefined;
-      if (typeof value === "string") {
-        variable = getVariable(value, store);
-      }
-      if (variable) {
-        switch (variable.varType) {
-          case "string":
-            rule.operator = "equals";
-            break;
-          case "boolean":
-            rule.operator = "equals";
-            rule.value = true;
-            break;
-          case "number":
-            rule.operator = "equals";
-            break;
+    switch (fieldName) {
+      case "variableId": {
+        const variableId = String(value);
+        if (rule.variableId === variableId) return;
+        // Clear the existing operator/value and set sensible defaults
+        rule.operator = "";
+        rule.value = "";
+        const variable = getVariable(variableId, store);
+        if (variable) {
+          switch (variable.varType) {
+            case "string":
+              rule.operator = "equals";
+              break;
+            case "boolean":
+              rule.operator = "equals";
+              rule.value = true;
+              break;
+            case "number":
+              rule.operator = "equals";
+              break;
+          }
         }
+        rule.variableId = variableId;
+        break;
       }
+      case "operator": {
+        const operator = value as RuleOperator;
+        if (rule.operator === operator) return;
+        rule.operator = operator;
+        break;
+      }
+      case "value":
+        if (rule.value === value) return;
+        rule.value = value;
+        break;
     }
-    // @ts-ignore
-    rule[fieldName] = value;
     setStore(store);
     props.update();
   }
@@ -144,7 +153,7 @@ export default function RuleInstance(props: {
   let thisVar = getVariable(rule.variableId, store);
   const fieldName = `input_${rule.id}`;
   if (thisVar) {
-    const displayValue: any = rule.value;
+    const displayValue = rule.value;
     switch (thisVar.varType) {
       case "string":
         operatorItems = [
@@ -203,7 +212,7 @@ export default function RuleInstance(props: {
           <div class="value ui-dropdown">
             <select
               name={fieldName}
-              value={displayValue}
+              value={String(displayValue)}
               onChange={(e: Event) => {
                 handleChange("value", e, rule.variableId);
               }}

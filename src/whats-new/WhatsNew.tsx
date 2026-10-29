@@ -9,8 +9,7 @@ export function WhatsNew() {
       label: "whatsNew",
     });
   }, []);
-  // @ts-ignore
-  const el = <Markdown markdown={whatsNewContent} />;
+  const el = Markdown(whatsNewContent);
   return (
     <div id="whats-new" className="whats-new" data-tauri-drag-region>
       <div class="inner">

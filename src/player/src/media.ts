@@ -24,14 +24,7 @@ import { clearCaptions } from "./captions";
 /*
  * Load media into the playback queue
  */
-export function registerMedia(props: {
-  id: string;
-  type: string;
-  el?: any;
-  fn?: { play: Function; pause: Function };
-  buildIn?: string;
-  buildOut?: string;
-}) {
+export function registerMedia(props: MediaItem) {
   const store = getStore();
   const thisMedia = getMediaById(props.id);
   if (thisMedia) {
@@ -45,7 +38,7 @@ export function registerMedia(props: {
     id: props.id,
     type: props.type,
     fn: props.fn ? props.fn : undefined,
-    el: props.el ? props.el : undefined,
+    el: props.el,
     buildIn: props.buildIn,
     buildOut: props.buildOut,
   };

@@ -1,25 +1,24 @@
-export function getActionTextLabel(name: string, props: any) {
+import { Action } from "../../../typings";
+
+export function getActionTextLabel(action: Action): string {
   let label = "";
-  switch (name) {
+  switch (action.name) {
     case "text":
-      label = props.contents !== "" ? props.contents : "Text Block";
+      label = action.props.contents !== "" ? action.props.contents : "Text Block";
       break;
     case "button":
-      label = props.label !== "" ? props.label : "Button";
+      label = action.props.label !== "" ? action.props.label : "Button";
       break;
     case "image":
       label =
-        props.alt !== ""
-          ? props.alt
-          : props.source !== ""
-          ? props.source
+        action.props.alt !== ""
+          ? action.props.alt
+          : action.props.source !== ""
+          ? action.props.source
           : "Image";
       break;
     case "inputField":
-      label = props.label !== "" ? props.label : "Input Field";
-      break;
-    case "appearance":
-      label = "Change Appearance";
+      label = action.props.label !== "" ? action.props.label : "Input Field";
       break;
   }
   return label;

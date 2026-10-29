@@ -1,4 +1,10 @@
-import type { Project, ActionName, ActionOf } from "../../schema/project";
+import type {
+  Project,
+  ActionName,
+  ActionOf,
+  VariableType,
+  VariableValue,
+} from "../../schema/project";
 
 export interface ProjectStore extends Project {
   projectPath: string;
@@ -13,14 +19,14 @@ export interface Event {
 export interface PlaybackVar {
   name: string;
   id: string;
-  type: string;
-  value: any;
+  type: VariableType;
+  value: VariableValue | undefined; // undefined when set by a button with no value chosen
 }
 
 export interface MediaItem {
   id: string;
   type: string;
-  el?: any;
+  el: HTMLMediaElement;
   fn?: {
     play: Function;
     pause: Function;
@@ -31,7 +37,7 @@ export interface MediaItem {
 
 export interface HistoryPoint {
   cellId: string;
-  vars: Array<{ id: string; value: any }>;
+  vars: Array<{ id: string; value: PlaybackVar["value"] }>;
 }
 
 export interface Store {
@@ -56,15 +62,7 @@ export interface Store {
         interval: number | undefined;
         tapEvent: void | undefined;
       };
-      items: Array<{
-        id: string;
-        type: string;
-        el?: any;
-        fn?: {
-          play: Function;
-          pause: Function;
-        };
-      }>;
+      items: Array<MediaItem>;
       pendingBackgroundMedia: HTMLMediaElement[];
     };
     backgroundAudio: Record<string, HTMLAudioElement>;
@@ -83,7 +81,7 @@ export type ActionForPlayback<N extends ActionName = ActionName> =
 declare global {
   interface Window {
     __CHOICELAB__: Store;
-    webkitAudioContext: any;
+    webkitAudioContext?: typeof AudioContext; // Safari before 14.1
   }
 }
 

@@ -50,6 +50,8 @@ function checkBoolean(stemRule: Rule, storedVar: PlaybackVar): boolean {
 
 function checkNumber(stemRule: Rule, storedVar: PlaybackVar): boolean {
   let valid = false;
+  // A variable that was never given a value fails every comparison, as in plain JavaScript
+  const value = storedVar.value;
   switch (stemRule.operator) {
     case "equals":
       if (storedVar.value === stemRule.value) {
@@ -62,22 +64,22 @@ function checkNumber(stemRule: Rule, storedVar: PlaybackVar): boolean {
       }
       break;
     case "greaterThan":
-      if (storedVar.value > stemRule.value) {
+      if (value !== undefined && value > stemRule.value) {
         valid = true;
       }
       break;
     case "lessThan":
-      if (storedVar.value < stemRule.value) {
+      if (value !== undefined && value < stemRule.value) {
         valid = true;
       }
       break;
     case "greaterThanOrEqualTo":
-      if (storedVar.value >= stemRule.value) {
+      if (value !== undefined && value >= stemRule.value) {
         valid = true;
       }
       break;
     case "lessThanOrEqualTo":
-      if (storedVar.value <= stemRule.value) {
+      if (value !== undefined && value <= stemRule.value) {
         valid = true;
       }
       break;

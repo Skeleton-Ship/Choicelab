@@ -7,7 +7,6 @@ function createSilentAudioElement(
 ): Promise<HTMLAudioElement> {
   return new Promise((resolve) => {
     // Create an AudioContext
-    // @ts-ignore
     const audioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
 

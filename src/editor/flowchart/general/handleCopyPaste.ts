@@ -12,7 +12,8 @@ import { AnyNode, Action } from "../../../typings";
  *
  * @param {object} obj - The object to check.
  */
-function regenerateIdsAndLinks(obj: AnyNode) {
+function regenerateIdsAndLinks<T extends object>(node: T): T {
+  const obj = node as Record<string, unknown> & Partial<Pick<AnyNode, "link">>;
   const keys = Object.keys(obj);
   keys.forEach((key: string) => {
     // Change ID
@@ -35,10 +36,8 @@ function regenerateIdsAndLinks(obj: AnyNode) {
       });
     }
     // Check nested props
-    // @ts-ignore
     const value = obj[key];
     if (isObject(value)) {
-      // @ts-ignore
       obj[key] = regenerateIdsAndLinks(value);
     }
     if (Array.isArray(value)) {
@@ -50,7 +49,7 @@ function regenerateIdsAndLinks(obj: AnyNode) {
       }
     }
   });
-  return obj;
+  return node;
 }
 
 /**
@@ -59,19 +58,23 @@ function regenerateIdsAndLinks(obj: AnyNode) {
  * @param {object} obj - The object to clone.
  * @param {string} excludedProperty - The property to exclude (optional).
  */
-function cloneObjectWithExclusion(obj: any, excludedProperty: string = "") {
-  const clonedObj: any = {};
-  const keys = Object.keys(obj);
+function cloneObjectWithExclusion<T extends object>(
+  obj: T,
+  excludedProperty: string = ""
+): T {
+  const source = obj as Record<string, unknown>;
+  const clonedObj: Record<string, unknown> = {};
+  const keys = Object.keys(source);
   keys.forEach((key: string) => {
     if (key === excludedProperty) return;
-    const value: any = obj[key];
+    const value = source[key];
     if (isObject(value)) {
       clonedObj[key] = cloneObjectWithExclusion(value, excludedProperty);
     } else {
       clonedObj[key] = value;
     }
   });
-  return clonedObj;
+  return clonedObj as T;
 }
 
 /**

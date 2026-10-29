@@ -9,7 +9,11 @@ import IconActionEnabled from "../../../assets/icons/mono/icon-action-enabled.sv
 import IconActionDisabled from "../../../assets/icons/mono/icon-action-disabled.svg";
 import ActionIcon from "./ActionIcon";
 
-function moveAction(arr: Array<any>, old_index: number, new_index: number) {
+function moveAction<T>(
+  arr: Array<T | undefined>,
+  old_index: number,
+  new_index: number
+): Array<T> {
   if (new_index >= arr.length) {
     var k = new_index - arr.length + 1;
     while (k--) {
@@ -17,8 +21,8 @@ function moveAction(arr: Array<any>, old_index: number, new_index: number) {
     }
   }
   arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-  const newActions: Array<any> = [];
-  arr.forEach((item: any) => {
+  const newActions: Array<T> = [];
+  arr.forEach((item) => {
     if (typeof item === "undefined") {
       return;
     }

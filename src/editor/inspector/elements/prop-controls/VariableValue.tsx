@@ -6,6 +6,8 @@ import {
   ActionDef,
   ActionDefProp,
   Variable,
+  VariableType,
+  VariableValue,
   Store,
 } from "../../../../typings";
 import { getVariable } from "../../../../data/getData";
@@ -17,15 +19,15 @@ export default function VariableValueControl(props: {
   actionDef: ActionDef;
   propDef: ActionDefProp;
   varFieldName: string;
-  initialValue: any;
+  initialValue: VariableValue | undefined;
   className: string;
   store: Store;
   update: Function;
 }) {
   function handleChange(
     target: EventTarget | null,
-    varType: string,
-    directValue?: any
+    varType: VariableType,
+    directValue?: number
   ) {
     if (!action) return;
     const rawValue =
@@ -108,7 +110,7 @@ export default function VariableValueControl(props: {
           name={propElName}
           type="text"
           class="ui-text-field"
-          value={localValue}
+          value={String(localValue ?? "")}
           onFocus={() => {
             viewStore.inTextElement = true;
             setViewStore(viewStore);
@@ -144,7 +146,7 @@ export default function VariableValueControl(props: {
         <div class="ui-dropdown">
           <select
             name={propElName}
-            value={props.initialValue}
+            value={String(props.initialValue)}
             onChange={(e) => {
               handleChange(e.target, variable.varType);
             }}

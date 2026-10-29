@@ -15,12 +15,19 @@ export interface Stem {
   rules: Array<Rule>;
   link: Link;
 }
+export type RuleOperator =
+  | "equals"
+  | "notEquals"
+  | "greaterThan"
+  | "lessThan"
+  | "greaterThanOrEqualTo"
+  | "lessThanOrEqualTo";
 export interface Rule {
   id: string;
   type: string;
   variableId: string;
-  operator: string;
-  value: string | number | boolean;
+  operator: RuleOperator | ""; // "" until the author picks a variable
+  value: VariableValue;
 }
 export interface NodePosition {
   x: number;
@@ -70,12 +77,14 @@ export interface Sequence {
   label: string;
   nodes: Array<AnyNode>;
 }
+export type VariableType = "string" | "number" | "boolean";
+export type VariableValue = string | number | boolean;
 export interface Variable {
   name: string;
   id: string;
   description: string;
-  varType: string;
-  startingValue: string | number | boolean;
+  varType: VariableType;
+  startingValue: VariableValue;
 }
 export interface Asset {
   id: string;
@@ -164,7 +173,7 @@ export interface ActionPropsMap {
   button: {
     label: string;
     varToSet?: string;
-    value?: string | number | boolean;
+    value?: VariableValue;
     position: ActionPosition;
     maxWidth: number;
   };

@@ -42,7 +42,7 @@ function createBranchStem(
 }
 
 function createRule(): Rule {
-  const rule = {
+  const rule: Rule = {
     id: uuidv4(),
     type: "variable",
     variableId: "",
