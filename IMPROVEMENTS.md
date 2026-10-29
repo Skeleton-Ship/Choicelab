@@ -45,7 +45,15 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 
 **Problem**: The window global pattern with manual `update()` callbacks threaded through every component prop is the biggest source of complexity. It requires every caller to manually trigger re-renders, makes components tightly coupled to global state, and makes cross-window communication fragile.
 **Fix**: Preact has a first-party reactive primitive — `@preact/signals` — that is a natural fit. Signals are reactive values that automatically re-render components that read them, eliminating the `update()` callback pattern. Because signals are module-level (not React Context), they work naturally in Tauri's multi-window architecture. The migration can be incremental: start with `ViewStore` (UI-only state), then migrate `Store` (project data). The window global pattern for cross-window data passing can stay for inter-window IPC specifically.
+**Depends on**: 2b, at least for project data. Signals only pay off when writes are granular; with today's whole-store replacement, every edit would still re-render everything. And `update()` also triggers history snapshots and preview refreshes, which need a home before it can be removed; 2b's dispatcher provides one. `ViewStore` doesn't have undo history, so it can move to signals independently.
 **Files**: `src/data/dataStore.ts`, `src/editor/MainEditor.tsx`, all component files that receive `update: UpdateFunction` props. New `src/data/signals.ts`.
+
+### 2b. Route Project Edits Through Commands (High Impact, High Effort)
+
+**Problem**: Every edit works on the whole project at once. `getStore()` and `setStore()` deep-clone the entire store on each read and write, and ~30 files modify their copy directly before writing all of it back. Each history entry is a full snapshot of the project written to disk, the settings window is sent the full store as JSON, and nothing records _what_ changed, so undo can only restore a whole earlier version.
+**Fix**: Express each kind of edit as a named command (e.g. `addAction`, `setActionProp`, `linkNode`, `deleteNodes`), applied through a single `dispatch()` function. The dispatcher becomes the one place that applies the change, records history, marks the project unsaved, refreshes the preview, and notifies other windows. Commands can also carry their own behavior, like coalescing consecutive keystrokes into a single undo step, which replaces the `updateHistory` / `updatePreview` flags passed to `update()` today. Undo can store each command's inverse instead of a full snapshot; [Immer](https://immerjs.github.io/immer/)'s `produceWithPatches` generates both the change and its inverse as patches, which avoids hand-writing an inverse for every command. Migrate incrementally: the dispatcher and today's direct writes can coexist while call sites move over one area at a time.
+**Order**: Do this before (or alongside) 2a; see the note there.
+**Files**: `src/data/dataStore.ts`, `src/data/history.ts`, `src/editor/MainEditor.tsx`, every file that calls `setStore()`. New `src/data/commands/`.
 
 ### 2c. Add a Code Formatter (High Impact, Low Effort)
 
@@ -111,8 +119,9 @@ bun add -D husky lint-staged
 | 8   | Replace polling in loadProjectData               | Medium | Medium reliability         |
 | 9   | Add pre-commit hooks                             | Low    | Medium DX                  |
 | 10  | Fix recursive position calculation               | Low    | Low reliability            |
+| 11  | Route project edits through commands             | High   | High (long-term)           |
 | 12  | Migrate state to Preact Signals                  | High   | High (long-term)           |
 | 13  | Consolidate getData patterns                     | Low    | Low DX                     |
 | 14  | Break up `fonts.ts`                              | Low    | Low DX                     |
 
-Items 1–9 can all be done independently and incrementally. Item 12 (Signals migration) is the highest-leverage long-term change but the most involved — best tackled after the others are in place.
+Items 1–9 can all be done independently and incrementally. Items 11 (commands) and 12 (Signals migration) are the highest-leverage long-term changes but the most involved — best tackled after the others are in place, with 11 first, since 12 depends on it for project data.
