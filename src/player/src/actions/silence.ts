@@ -89,7 +89,7 @@ function createSilentAudioElement(
 }
 
 const action = {
-  render: async (action: ActionForPlayback, done: Function) => {
+  render: async (action: ActionForPlayback<"silence">, done: Function) => {
     const audioEl = await createSilentAudioElement(action.props.duration);
     const audioWrapper = createActionWrapper("div", action);
     audioWrapper.appendChild(audioEl);

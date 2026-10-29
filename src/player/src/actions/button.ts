@@ -4,7 +4,7 @@ import { onEvent, runEvents } from "../events";
 import { setVariable } from "../variables";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"button">, done: Function) => {
     let el = createActionWrapper("button", action);
     el.innerText = action.props.label;
     render(el, action);
@@ -31,7 +31,7 @@ const action = {
       });
     });
   },
-  clear: (action: ActionForPlayback) => {
+  clear: (action: ActionForPlayback<"button">) => {
     clear(action);
   },
 };

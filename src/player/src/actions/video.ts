@@ -4,7 +4,7 @@ import { registerMedia, mediaEnded } from "../media";
 import { setCaptionsSource } from "../captions";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"video">, done: Function) => {
     const store = getStore();
 
     // Promote lookahead element if one was pre-inserted for this action
@@ -23,7 +23,7 @@ const action = {
       video.setAttribute("playsinline", "");
     }
 
-    if (action.extendedProps["choicelab-player-html5"]?.fit) video.classList.add(`fit-${action.extendedProps["choicelab-player-html5"].fit}`);
+    if (action.props.fit) video.classList.add(`fit-${action.props.fit}`);
     if (action.props.muted) video.muted = true;
 
     let endCell = false;

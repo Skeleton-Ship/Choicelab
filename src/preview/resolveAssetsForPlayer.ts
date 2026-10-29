@@ -1,6 +1,7 @@
 import { Project, Asset, AnyNode, Action, Sequence } from "../typings";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 import structuredClone from "@ungap/structured-clone";
+import { getActionProp, setActionProp } from "../data/actionProps";
 
 const ASSET_CONTROLS = new Set(["image", "audio", "video", "captions"]);
 
@@ -26,22 +27,20 @@ export function resolveAssetsForPlayer(project: Project): Project {
         if (!actionDef) return;
         actionDef.props.forEach((propDef) => {
           if (!ASSET_CONTROLS.has(propDef.control)) return;
-          const value = action.props[propDef.name];
+          const value = getActionProp(action, propDef.name);
           if (typeof value === "string" && assetMap.has(value)) {
-            action.props[propDef.name] = assetMap.get(value)!;
+            setActionProp(action, propDef.name, assetMap.get(value)!);
           }
         });
       });
     });
   });
 
-  // Resolve background image in player settings
-  Object.values(resolved.settings.player).forEach((playerSettings: any) => {
-    const file = playerSettings?.appearance?.background?.file;
-    if (typeof file === "string" && assetMap.has(file)) {
-      playerSettings.appearance.background.file = assetMap.get(file)!;
-    }
-  });
+  // Resolve background image in project settings
+  const background = resolved.settings.appearance.background;
+  if (assetMap.has(background.file)) {
+    background.file = assetMap.get(background.file)!;
+  }
 
   return resolved;
 }

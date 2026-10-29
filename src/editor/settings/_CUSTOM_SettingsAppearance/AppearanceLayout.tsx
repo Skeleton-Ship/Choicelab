@@ -1,7 +1,6 @@
-export function AppearanceLayout(props: {
-  initial: any;
-  update: (key: string, newValues: { [key: string]: any }) => void;
-}) {
+import { AspectRatio } from "../../../typings";
+import type { AppearancePaneProps } from "./SettingsAppearance";
+export function AppearanceLayout(props: AppearancePaneProps) {
   return (
     <>
       <div class="section">
@@ -10,9 +9,10 @@ export function AppearanceLayout(props: {
           <select
             value={props.initial.aspectRatio ?? "16/9"}
             onChange={(e) => {
-              props.update("aspectRatio", {
-                value: (e.target as HTMLSelectElement).value,
-              });
+              props.update(
+                "aspectRatio",
+                (e.target as HTMLSelectElement).value as AspectRatio
+              );
             }}
           >
             <option value="16/9">Landscape (16:9)</option>

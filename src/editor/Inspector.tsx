@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "preact/hooks";
 import { getStore, getViewStore } from "../data/dataStore";
-import { getPlayerSettings } from "../data/getData";
 import showPane from "./inspector/functions/showPane";
 import { makeResizable } from "./inspector/functions/makeResizable";
 import CellPane from "./inspector/CellPane";
@@ -40,11 +39,8 @@ export default function Inspector(props: { update: Function }) {
   // Contents
   let contents = <></>;
   const viewStore = getViewStore();
-  const appearance = getPlayerSettings(getStore(), "appearance");
   const previewBackgroundColor =
-    appearance?.background?.kind === "color"
-      ? appearance.background.color
-      : undefined;
+    getStore().project.settings.appearance.background.color;
   // First, see what view we're in
   const paneInView = viewStore.viewSettings.paneInView;
   const previewPane =

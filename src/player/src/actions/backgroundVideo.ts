@@ -3,7 +3,7 @@ import { getStore } from "../store";
 import { ensureControlsEnabled, setControlState } from "../media/mediaControls";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"backgroundVideo">, done: Function) => {
     const store = getStore();
 
     // Promote lookahead element if one was pre-inserted for this action
@@ -24,7 +24,7 @@ const action = {
 
     if (action.props.loop) video.loop = true;
     if (action.props.muted) video.muted = true;
-    if (action.extendedProps["choicelab-player-html5"]?.fit) video.classList.add(`fit-${action.extendedProps["choicelab-player-html5"].fit}`);
+    if (action.props.fit) video.classList.add(`fit-${action.props.fit}`);
     video.classList.add("cl-background-media");
     if (action.props.buildIn === "none") video.classList.add("no-fade-in");
     if (action.props.buildOut === "none") video.dataset.buildOut = "none";

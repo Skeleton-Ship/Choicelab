@@ -1,4 +1,4 @@
-import { Branch, Rule } from "./typings-project";
+import { Branch, Rule } from "../../schema/project";
 import { PlaybackVar } from "./typings";
 import { getStore } from "./store";
 import { warn } from "./logging";

@@ -39,9 +39,7 @@ function Choicelab() {
               "startMediaOnLoad"
             ) === "false";
           const rememberHistory =
-            !isAppPreview &&
-            json.settings?.player?.["choicelab-player-html5"]
-              ?.rememberHistory === true;
+            !isAppPreview && json.settings?.rememberHistory === true;
           window.__CHOICELAB__ = {
             project: json,
             playback: {
@@ -158,8 +156,7 @@ function Choicelab() {
           initCaptionContainer(props.root);
           props.root.appendChild(mediaControls);
           // Set appearance based on project settings
-          const appearance =
-            json.settings?.player?.["choicelab-player-html5"]?.appearance;
+          const appearance = json.settings?.appearance;
           if (appearance) {
             const projectPath = window.__CHOICELAB__.project.projectPath;
             const appearanceCSS = generateAppearanceCSS(
@@ -190,9 +187,7 @@ function Choicelab() {
           // Trigger reflow on resize
           window.addEventListener("resize", forceReflow);
           // Scale content to the constrained box width
-          const aspectRatio =
-            json.settings?.player?.["choicelab-player-html5"]?.appearance
-              ?.aspectRatio ?? "16/9";
+          const aspectRatio = json.settings?.appearance?.aspectRatio ?? "16/9";
           const DESIGN_WIDTHS: Record<string, number> = {
             "16/9": 1280,
             "1/1": 960,

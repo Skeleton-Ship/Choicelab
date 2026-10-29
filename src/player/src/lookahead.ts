@@ -1,8 +1,12 @@
 import { getStore } from "./store";
 import { getNode } from "./navigation";
-import { Cell } from "./typings-project";
+import { Action, ActionOf, Cell } from "../../schema/project";
 
-const VIDEO_ACTIONS = new Set(["video", "backgroundVideo"]);
+function isVideoAction(
+  action: Action
+): action is ActionOf<"video"> | ActionOf<"backgroundVideo"> {
+  return action.name === "video" || action.name === "backgroundVideo";
+}
 
 function getNextCells(cell: Cell): Cell[] {
   const nextId = cell.link?.to;
@@ -27,7 +31,7 @@ export function cleanupStaleLookaheads(cell: Cell) {
   const store = getStore();
   const validIds = new Set(
     cell.actions
-      .filter((a) => a.enabled && VIDEO_ACTIONS.has(a.name))
+      .filter((a) => a.enabled && isVideoAction(a))
       .map((a) => a.id)
   );
   store.playback.rootEl
@@ -56,7 +60,7 @@ export function preloadLookaheadVideos(cell: Cell) {
   const nextCells = getNextCells(cell);
   nextCells.forEach((nextCell) => {
     nextCell.actions.forEach((action) => {
-      if (!action.enabled || !VIDEO_ACTIONS.has(action.name)) return;
+      if (!action.enabled || !isVideoAction(action)) return;
       if (!action.props.source) return;
 
       const src =

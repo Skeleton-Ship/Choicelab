@@ -1,38 +1,24 @@
 import { SettingBoolean } from "./SettingBoolean";
 import { SettingsAppearance } from "./_CUSTOM_SettingsAppearance/SettingsAppearance";
+import {
+  BooleanProjectSettingName,
+  ProjectSettingsPane,
+  projectSettingsDefs,
+  projectSettingsPanes,
+} from "../../data/settingsDefs";
 
-type Pane = {
-  label: string;
-  id: string;
-  description: string;
-  settings: Array<string>;
-};
-
-function getSettingsForPane(paneId: string, config: { [key: string]: any }) {
-  let settings: { [key: string]: any } = {};
-  config.projectSettings.panes.forEach((pane: Pane) => {
-    if (pane.id !== paneId) return;
-    pane.settings.forEach((settingName) => {
-      settings[settingName] = config.projectSettings.settings[settingName];
-    });
-  });
-  return settings;
-}
-
-export function SettingsPane(props: {
-  id: string;
-  config: { [key: string]: any };
-}) {
-  const settings = getSettingsForPane(props.id, props.config);
+export function SettingsPane(props: { id: ProjectSettingsPane["id"] }) {
+  const pane = projectSettingsPanes.find((pane) => pane.id === props.id);
+  if (!pane) return <></>;
   return (
     <>
-      {Object.keys(settings).map((name) => {
-        const setting = settings[name];
+      {pane.settings.map((name) => {
+        const setting = projectSettingsDefs[name];
         switch (setting.type) {
           case "boolean":
             return (
               <SettingBoolean
-                name={name}
+                name={name as BooleanProjectSettingName}
                 label={setting.label}
                 description={setting.description}
               />

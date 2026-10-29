@@ -1,27 +1,30 @@
-import { Cell } from "../../../typings";
+import { Cell, CellSettings } from "../../../typings";
 import { setStore } from "../../../data/dataStore";
 import { Store } from "../../../typings";
+import { SettingDef } from "../../../data/settingsDefs";
 import NumberField from "./NumberField";
+
+type SettingValue = CellSettings[keyof CellSettings];
 
 /*
  * A setting for a node that appears at the bottom of the inspector.
  */
 export function NodeSetting(props: {
   node: Cell;
-  settingName: string;
-  playerId: string;
+  settingName: keyof CellSettings;
   store: Store;
-  def: { [key: string]: any };
+  def: SettingDef<SettingValue>;
   update: Function;
 }) {
-  function handleChange(newValue: any) {
-    if (props.node.settings.player[props.playerId][props.settingName] === newValue) return;
-    props.node.settings.player[props.playerId][props.settingName] = newValue;
+  // Controls are chosen by the def's type, so the value always matches the setting it's written to
+  const settings = props.node.settings as Record<keyof CellSettings, SettingValue>;
+  function handleChange(newValue: SettingValue) {
+    if (settings[props.settingName] === newValue) return;
+    settings[props.settingName] = newValue;
     setStore(props.store);
     props.update();
   }
-  const existingValue =
-    props.node.settings.player[props.playerId][props.settingName];
+  const existingValue = settings[props.settingName];
   let control: preact.JSX.Element = <></>;
   const controlId = `node_${props.node.id}_control_${props.settingName}`;
   switch (props.def.type) {
@@ -32,7 +35,7 @@ export function NodeSetting(props: {
             type="checkbox"
             id={controlId}
             name={controlId}
-            checked={existingValue}
+            checked={existingValue === true}
             onInput={(e) => {
               const target = e.target as HTMLInputElement;
               const value = target.checked;

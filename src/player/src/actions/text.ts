@@ -2,9 +2,9 @@ import { ActionForPlayback } from "../typings";
 import { render, clear, createActionWrapper } from "../rendering";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"text">, done: Function) => {
     let tag = "p";
-    switch (action.extendedProps["choicelab-player-html5"]?.role) {
+    switch (action.props.role) {
       case "heading":
         tag = "h1";
         break;
@@ -17,7 +17,7 @@ const action = {
     render(el, action);
     done();
   },
-  clear: (action: ActionForPlayback) => {
+  clear: (action: ActionForPlayback<"text">) => {
     clear(action);
   },
 };

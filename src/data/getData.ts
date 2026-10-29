@@ -14,7 +14,6 @@ import {
   Asset,
 } from "../typings";
 import { getViewStore } from "./dataStore";
-import { getPlayerConfig } from "../player/getPlayerConfig";
 
 function getSequence(id: string, data: Store): Sequence | undefined {
   let foundSequence;
@@ -248,17 +247,6 @@ function getAssets(data: Store): Array<Asset> {
   return data.project.assets;
 }
 
-function getPlayerSettings(
-  data: Store,
-  key?: string
-): { [key: string]: any } | undefined {
-  let settings = data.project.settings.player[getPlayerConfig().id];
-  if (key !== "" && typeof key !== "undefined") {
-    return settings[key] ? settings[key] : undefined;
-  }
-  return settings;
-}
-
 export {
   getSequence,
   getVariables,
@@ -278,5 +266,4 @@ export {
   getActionDef,
   getAsset,
   getAssets,
-  getPlayerSettings,
 };

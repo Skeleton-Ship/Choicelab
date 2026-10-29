@@ -5,7 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { getPlayerConfig } from "../player/getPlayerConfig";
+import { projectSettingsPanes } from "../data/settingsDefs";
 import { SettingsPane } from "./settings/SettingsPane";
 import { GearIcon } from "./shared/ColorIcon";
 import { PaintbrushIcon } from "./shared/ColorIcon";
@@ -43,8 +43,7 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
   }, []);
 
   const [paneId, setPaneId] = useState<PaneId>(props.startingPane);
-  const config = getPlayerConfig();
-  const panes: Array<{ id: string; label: string }> = config.projectSettings.panes;
+  const panes = projectSettingsPanes;
   const [_refresh, triggerRefresh] = useState(uuidv4());
   const handleUpdate = async () => {
     triggerRefresh(uuidv4());
@@ -94,7 +93,7 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
             hidden={paneId === pane.id ? false : true}
           >
             {pane.id === paneId ? (
-              <SettingsPane id={pane.id} config={config} />
+              <SettingsPane id={pane.id} />
             ) : null}
           </div>
         );

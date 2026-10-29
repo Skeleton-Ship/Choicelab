@@ -1,11 +1,9 @@
 import { FontDropdown } from "../../../fonts/FontDropdown";
 import { FontSizeDropdown } from "./FontSizeDropdown";
 import { ColorPicker } from "./ColorPicker";
+import type { AppearancePaneProps } from "./SettingsAppearance";
 
-export function AppearanceText(props: {
-  initial: any;
-  update: (key: string, newValues: { [key: string]: any }) => void;
-}) {
+export function AppearanceText(props: AppearancePaneProps) {
   return (
     <>
       <div class="section" id="headings">

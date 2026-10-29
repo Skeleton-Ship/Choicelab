@@ -3,9 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { getFonts } from "../fonts/fonts";
 import { getStore } from "../data/dataStore";
-import { getPlayerSettings } from "../data/getData";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
-import { PlayerFont } from "../typings";
+import { AppearanceSettings, PlayerFont } from "../typings";
 
 let lastFontFamilies = "";
 
@@ -22,22 +21,17 @@ function extractFilename(url: string): string {
   return last.split("?")[0].split("#")[0];
 }
 
-function collectFontFamilyNames(appearance: { [key: string]: any } | undefined): Set<string> {
+function collectFontFamilyNames(appearance: AppearanceSettings): Set<string> {
   const names = new Set<string>();
-  if (!appearance) return names;
   for (const key of ["headings", "subheadings", "bodyText", "inputs"] as const) {
-    if (appearance[key]?.fontFamily) names.add(appearance[key].fontFamily);
+    if (appearance[key].fontFamily) names.add(appearance[key].fontFamily);
   }
   return names;
 }
 
 export async function writeFontsToDir(targetPath: string, label?: string): Promise<void> {
   const store = getStore();
-  const appearance = getPlayerSettings(store, "appearance") as
-    | { [key: string]: any }
-    | undefined;
-
-  const fontFamilyNames = collectFontFamilyNames(appearance);
+  const fontFamilyNames = collectFontFamilyNames(store.project.settings.appearance);
   const fontsPath = await resolve(targetPath, "fonts");
 
   if (fontFamilyNames.size === 0) {
@@ -87,11 +81,7 @@ export async function writeFontsToDir(targetPath: string, label?: string): Promi
 
 export async function updatePreviewFonts(): Promise<void> {
   const store = getStore();
-  const appearance = getPlayerSettings(store, "appearance") as
-    | { [key: string]: any }
-    | undefined;
-
-  const fontFamilyNames = collectFontFamilyNames(appearance);
+  const fontFamilyNames = collectFontFamilyNames(store.project.settings.appearance);
   const currentFamilies = Array.from(fontFamilyNames).sort().join(",");
   if (currentFamilies === lastFontFamilies) return;
   lastFontFamilies = currentFamilies;

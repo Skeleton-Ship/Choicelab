@@ -1,11 +1,11 @@
 import { setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
-import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { Action, ActionDef, ActionDefProp, ActionPosition, Store } from "../../../../typings";
+import { setActionProp } from "../../../../data/actionProps";
 import NumberField from "../NumberField";
 
 const GRID_TO_PERCENT: Record<number, number> = { 1: 16, 2: 50, 3: 83 };
 
-function resolvePosition(value: { kind: string; x: number; y: number }): { x: number; y: number } {
+function resolvePosition(value: ActionPosition | undefined): { x: number; y: number } {
   if (!value) return { x: 50, y: 50 };
   if (value.kind === "absolute") return { x: value.x, y: value.y };
   if (value.kind === "grid") {
@@ -21,8 +21,7 @@ export function Position(props: {
   action: Action;
   actionDef: ActionDef;
   propDef: ActionDefProp;
-  initialValue: { kind: string; x: number; y: number };
-  extended: boolean;
+  initialValue: ActionPosition | undefined;
   store: Store;
   update: Function;
 }) {
@@ -35,15 +34,11 @@ export function Position(props: {
     const current = resolvePosition(props.initialValue);
     if (axis === "x" && current.x === value) return;
     if (axis === "y" && current.y === value) return;
-    const propsObj =
-      props.extended === false
-        ? action.props
-        : action.extendedProps[getPlayerConfig().id];
-    propsObj[propDef.name] = {
+    setActionProp(action, propDef.name, {
       kind: "absolute",
       x: axis === "x" ? value : current.x,
       y: axis === "y" ? value : current.y,
-    };
+    });
     setStore(props.store);
     props.update();
   }

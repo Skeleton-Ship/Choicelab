@@ -3,7 +3,7 @@ import { getStore } from "../store";
 import { ensureControlsEnabled, setControlState } from "../media/mediaControls";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"backgroundAudio">, done: Function) => {
     const store = getStore();
     const audio = document.createElement("audio");
     const src = store.project.projectPath + "/Assets/" + action.props.source;

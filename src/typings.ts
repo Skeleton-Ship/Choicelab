@@ -1,99 +1,8 @@
 import { Menu } from "@tauri-apps/api/menu";
+import type { ActionPropValue, AnyNode, Project, Stem } from "./schema/project";
 
-export interface Link {
-  to: string;
-}
-export interface Stem {
-  id: string;
-  type: string;
-  match: string;
-  rules: Array<Rule>;
-  link: Link;
-}
-export interface Rule {
-  id: string;
-  type: string;
-  variableId: string;
-  operator: string;
-  value: string | number | boolean;
-}
-export interface AnyNode {
-  id: string;
-  type: string;
-  label?: string;
-  actions?: Array<Action>;
-  link?: Link;
-  stems?: Array<Stem>;
-  settings?: { [key: string]: any };
-  position?: {
-    x: number;
-    y: number;
-    xSize: number;
-    ySize: number;
-    top: number;
-    left: number;
-    width?: number;
-    height?: number;
-    abandoned?: boolean;
-  };
-}
-export interface StartNode {
-  id: string;
-  type: string;
-  link: Link;
-}
-export interface Cell {
-  id: string;
-  type: string;
-  label: string;
-  actions: Array<Action>;
-  settings: { [key: string]: any };
-  link: Link;
-}
-export interface Branch {
-  id: string;
-  type: string;
-  stems: Array<Stem>;
-}
-export interface Sequence {
-  id: string;
-  label: string;
-  nodes: Array<AnyNode>;
-}
-export interface Variable {
-  name: string;
-  id: string;
-  description: string;
-  varType: string;
-  startingValue: string | number | boolean;
-}
-export interface Asset {
-  id: string;
-  fileName: string;
-  type: "image" | "audio" | "video" | "captions";
-}
-export interface Project {
-  schemaVersion: number;
-  name: string;
-  id: string;
-  app: {
-    creator: string;
-    version: string;
-  };
-  settings: {
-    activePlayer: string;
-    player: any;
-  };
-  actions: {
-    name: string;
-    path: string;
-  };
-  variables: {
-    items: Array<Variable>;
-  };
-  assets: Array<Asset>;
-  sequences: Array<Sequence>;
-}
+export type * from "./schema/project";
+
 export interface ProjectHistory {
   location: number;
   versions: Array<string>;
@@ -145,23 +54,6 @@ export interface Store {
     versions: Array<string>;
   };
 }
-export interface Action {
-  name: string;
-  id: string;
-  enabled: boolean;
-  timedActions?: {
-    [key: string]: {
-      start: number;
-      end: number;
-    };
-  };
-  props: {
-    [key: string]: any;
-  };
-  extendedProps: {
-    [key: string]: any;
-  };
-}
 export interface ActionDef {
   name: string;
   label: string;
@@ -174,7 +66,6 @@ export interface ActionDef {
   category?: "timeline" | "interact" | "event";
   description: string;
   props: Array<ActionDefProp>;
-  extendable?: boolean;
   timedElement?: boolean;
   inputElement?: boolean;
   mediaElement?: boolean;
@@ -182,9 +73,9 @@ export interface ActionDef {
 export interface ActionDefProp {
   name: string;
   label: string;
+  labelSuffix?: string;
   control: string;
-  value?: any;
-  default?: any;
+  default?: ActionPropValue;
   required?: boolean;
   className?: string;
   options?: Array<ActionDefPropDropdownOption>;

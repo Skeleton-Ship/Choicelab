@@ -3,7 +3,7 @@ import { render, createActionWrapper, clear } from "../rendering";
 import { getStore } from "../store";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"image">, done: Function) => {
     const store = getStore();
     let imageParent = createActionWrapper("figure", action);
     let image = document.createElement("img");
@@ -14,7 +14,7 @@ const action = {
     render(imageParent, action);
     done();
   },
-  clear: (action: ActionForPlayback) => {
+  clear: (action: ActionForPlayback<"image">) => {
     clear(action);
   },
 };

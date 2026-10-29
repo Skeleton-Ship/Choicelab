@@ -2,11 +2,9 @@ import { FontDropdown } from "../../../fonts/FontDropdown";
 import { FontSizeDropdown } from "./FontSizeDropdown";
 import { ColorPicker } from "./ColorPicker";
 import NumberField from "../../inspector/elements/NumberField";
+import type { AppearancePaneProps } from "./SettingsAppearance";
 
-export function AppearanceInputs(props: {
-  initial: any;
-  update: (key: string, newValues: { [key: string]: any }) => void;
-}) {
+export function AppearanceInputs(props: AppearancePaneProps) {
   return (
     <>
       <div class="section font">
@@ -83,7 +81,7 @@ export function AppearanceInputs(props: {
           <span>Border Color:</span>
           <ColorPicker
             key="inputs-border-color"
-            initial={props.initial.inputs.borderColor}
+            initial={props.initial.inputs.borderColor ?? ""}
             update={(color) => {
               props.update("inputs", {
                 borderColor: color,

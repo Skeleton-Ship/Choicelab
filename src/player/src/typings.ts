@@ -1,4 +1,4 @@
-import { Project, Action } from "./typings-project";
+import type { Project, ActionName, ActionOf } from "../../schema/project";
 
 export interface ProjectStore extends Project {
   projectPath: string;
@@ -76,10 +76,9 @@ export interface Store {
   };
 }
 
-export interface ActionForPlayback extends Action {
-  extendedProps: { [key: string]: any };
-  cellId: string;
-}
+// Actions are given their parent cell's ID when the project loads (see main.ts)
+export type ActionForPlayback<N extends ActionName = ActionName> =
+  N extends ActionName ? ActionOf<N> & { cellId: string } : never;
 
 declare global {
   interface Window {

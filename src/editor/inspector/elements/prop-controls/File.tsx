@@ -1,7 +1,7 @@
 import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
 import { Action, ActionDef, ActionDefProp, Asset, Store } from "../../../../typings";
-import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { getActionProp, setActionProp } from "../../../../data/actionProps";
 import { updatePreview } from "../../../../preview/updatePreview";
 import FileUpload from "../../../shared/FileUpload";
 
@@ -16,7 +16,6 @@ export default function File(props: {
   propDef: ActionDefProp;
   filePropName: string;
   initialValue: string;
-  extended: boolean;
   className: string;
   accept: string;
   store: Store;
@@ -27,11 +26,7 @@ export default function File(props: {
     const store = getStore();
     const action: Action | undefined = getAction(props.action.id, store);
     if (!action) return;
-    const propsObj =
-      props.extended === false
-        ? action.props
-        : action.extendedProps[getPlayerConfig().id];
-    propsObj[props.propDef.name] = "";
+    setActionProp(action, props.propDef.name, "");
     setStore(store);
     props.update();
   }
@@ -41,11 +36,7 @@ export default function File(props: {
     const store = getStore(); // get store again, because asset creation can cause the store to fall out-of-date
     const storedAction: Action | undefined = getAction(props.action.id, store);
     if (storedAction) {
-      const propsObj =
-        props.extended === false
-          ? storedAction.props
-          : storedAction.extendedProps[getPlayerConfig().id];
-      propsObj[props.filePropName] = asset.id;
+      setActionProp(storedAction, props.filePropName, asset.id);
       setStore(store);
       props.update(true, false);
       setTimeout(() => {
@@ -53,7 +44,8 @@ export default function File(props: {
       }, 500);
     }
   }
-  const existingFile = props.action.props[props.filePropName];
+  const storedFile = getActionProp(props.action, props.filePropName);
+  const existingFile = typeof storedFile === "string" ? storedFile : "";
   return (
     <FileUpload
       type={props.type}

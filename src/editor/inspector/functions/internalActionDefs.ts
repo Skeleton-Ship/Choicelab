@@ -1,4 +1,4 @@
-import { ActionDefs } from "../../../typings";
+import { ActionDefProp, ActionDefs } from "../../../typings";
 import {
   FCText,
   FCButton,
@@ -11,6 +11,33 @@ import {
   FCEndBackground,
 } from "./internalActionFlowchartEls";
 
+const positionProp: ActionDefProp = {
+  name: "position",
+  label: "Position",
+  className: "",
+  control: "__CUSTOM__Position",
+  default: { kind: "absolute", x: 50, y: 50 },
+};
+const maxWidthProp: ActionDefProp = {
+  name: "maxWidth",
+  label: "Max Width",
+  labelSuffix: "%",
+  control: "number",
+  className: "col-2",
+  default: 45,
+};
+const fitProp: ActionDefProp = {
+  name: "fit",
+  label: "Fit",
+  className: "col-2",
+  control: "dropdown",
+  default: "cover",
+  options: [
+    { value: "cover", label: "Cover" },
+    { value: "contain", label: "Contain" },
+  ],
+};
+
 const internalActionDefs: ActionDefs = {
   name: "__CHOICELAB__STANDARD__",
   label: "Choicelab Standard",
@@ -20,7 +47,6 @@ const internalActionDefs: ActionDefs = {
       label: "Show Text",
       description:
         "A block of text that can appear instantly or be associated with a timeline action.",
-      extendable: true,
       timedElement: true,
       category: "event",
       editor: {
@@ -38,13 +64,26 @@ const internalActionDefs: ActionDefs = {
           default: "",
           required: true,
         },
+        {
+          name: "role",
+          label: "Role",
+          control: "dropdown",
+          className: "col-2",
+          default: "body",
+          options: [
+            { value: "body", label: "Body Text" },
+            { value: "heading", label: "Heading" },
+            { value: "subheading", label: "Subheading" },
+          ],
+        },
+        positionProp,
+        maxWidthProp,
       ],
     },
     {
       name: "audio",
       label: "Play Audio",
       description: "Play an audio file.",
-      extendable: false,
       mediaElement: true,
       category: "timeline",
       flowchart: FCAudio,
@@ -78,7 +117,6 @@ const internalActionDefs: ActionDefs = {
       name: "video",
       label: "Play Video",
       description: "Play a video file.",
-      extendable: false,
       mediaElement: true,
       category: "timeline",
       flowchart: FCVideo,
@@ -132,6 +170,7 @@ const internalActionDefs: ActionDefs = {
             { value: "none", label: "None" },
           ],
         },
+        fitProp,
       ],
     },
     /*
@@ -140,7 +179,6 @@ const internalActionDefs: ActionDefs = {
       label: "Show Image",
       description:
         "An image file that can appear instantly or be associated with a media action.",
-      extendable: true,
       mediaElement: false,
       timedElement: true,
       flowchart: FCImage,
@@ -171,7 +209,6 @@ const internalActionDefs: ActionDefs = {
       name: "button",
       label: "Show Button",
       description: "A button that, when pressed, advances to the next node.",
-      extendable: true,
       timedElement: true,
       mediaElement: false,
       inputElement: true,
@@ -210,6 +247,8 @@ const internalActionDefs: ActionDefs = {
         //   control: "boolean",
         //   default: true,
         // },
+        positionProp,
+        maxWidthProp,
       ],
     },
     /*
@@ -217,7 +256,6 @@ const internalActionDefs: ActionDefs = {
       name: "inputField",
       label: "Show Input Field",
       description: "A fill-in-the-blank field for entering information.",
-      extendable: true,
       timedElement: true,
       mediaElement: false,
       inputElement: true,
@@ -263,6 +301,8 @@ const internalActionDefs: ActionDefs = {
           className: "col-2",
           required: true,
         },
+        positionProp,
+        maxWidthProp,
       ],
     },
 	*/
@@ -271,7 +311,6 @@ const internalActionDefs: ActionDefs = {
       label: "Play Background Audio",
       description:
         "Play an audio file in the background without blocking cell progression.",
-      extendable: false,
       mediaElement: false,
       category: "event",
       flowchart: FCBackgroundAudio,
@@ -313,7 +352,6 @@ const internalActionDefs: ActionDefs = {
       label: "Play Background Video",
       description:
         "Play a video file in the background without blocking cell progression.",
-      extendable: false,
       mediaElement: false,
       category: "event",
       flowchart: FCBackgroundVideo,
@@ -374,13 +412,13 @@ const internalActionDefs: ActionDefs = {
             { value: "none", label: "None" },
           ],
         },
+        fitProp,
       ],
     },
     {
       name: "endBackgroundAudio",
       label: "End Background Audio",
       description: "Stop background audio that persists across cells.",
-      extendable: false,
       mediaElement: false,
       category: "event",
       flowchart: FCEndBackground,
@@ -403,7 +441,6 @@ const internalActionDefs: ActionDefs = {
       name: "endBackgroundVideo",
       label: "End Background Video",
       description: "Stop background video that persists across cells.",
-      extendable: false,
       mediaElement: false,
       category: "event",
       flowchart: FCEndBackground,
@@ -428,7 +465,6 @@ const internalActionDefs: ActionDefs = {
       label: "Play Silence",
       description:
         "A block of silence, useful for timing visual elements without audio or video accompaniment.",
-      extendable: true,
       mediaElement: true,
       flowchart: FCSilence,
       editor: {

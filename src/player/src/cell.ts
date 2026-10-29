@@ -1,4 +1,5 @@
-import { Cell, Action } from "./typings-project";
+import { Cell, Action, ActionName } from "../../schema/project";
+import { ActionForPlayback } from "./typings";
 import { runEvents } from "./events";
 import { getSettings } from "./settings";
 import { getStore } from "./store";
@@ -20,7 +21,15 @@ import { getActionTiming } from "./media/actionTiming";
 import { forceReflow } from "./utils/forceReflow";
 import { cleanupStaleLookaheads, preloadLookaheadVideos } from "./lookahead";
 
-const actionDefs = {
+interface ActionRenderer<N extends ActionName> {
+  render: (
+    action: ActionForPlayback<N>,
+    done: (props?: { forceEnd: boolean }) => void
+  ) => void;
+  clear?: (action: ActionForPlayback<N>) => void;
+}
+
+const actionDefs: { [N in ActionName]?: ActionRenderer<N> } = {
   text: textAction,
   image: imageAction,
   button: buttonAction,
@@ -32,6 +41,13 @@ const actionDefs = {
   endBackgroundAudio: endBackgroundAudioAction,
   endBackgroundVideo: endBackgroundVideoAction,
 };
+
+// TypeScript can't relate an action's name to its renderer's parameter type, so lookups go through here
+function getActionRenderer(
+  action: Action
+): ActionRenderer<ActionName> | undefined {
+  return actionDefs[action.name] as ActionRenderer<ActionName> | undefined;
+}
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -80,18 +96,17 @@ export async function runCell(cell: Cell) {
   let cellEnded = false;
 
   function runAction(action: Action) {
-    // @ts-ignore
-    if (!actionDefs[action.name]) {
+    const renderer = getActionRenderer(action);
+    if (!renderer) {
       error(`No action found for ${action.name}`, action);
       return;
     }
-    // @ts-ignore
-    const actionFn = actionDefs[action.name].render;
+    const actionFn = renderer.render;
     if (!actionFn) {
       error(`No render function found for ${action.name}`, action);
       return;
     }
-    actionFn(action, (props?: { forceEnd: boolean }) => {
+    actionFn(action as ActionForPlayback, (props?: { forceEnd: boolean }) => {
       if (props && props.forceEnd === true) {
         if (cellEnded) return;
         cellEnded = true;
@@ -107,10 +122,9 @@ export async function runCell(cell: Cell) {
   }
 
   function clearAction(action: Action) {
-    // @ts-ignore
-    const actionFn = actionDefs[action.name].clear;
+    const actionFn = getActionRenderer(action)?.clear;
     if (!actionFn) return;
-    actionFn(action);
+    actionFn(action as ActionForPlayback);
   }
 
   // Run standalone actions

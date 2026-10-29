@@ -1,45 +1,4 @@
-export interface AppearanceSettings {
-  headings?: {
-    fontFamily?: string;
-    fontStyle?: string;
-    fontWeight?: string;
-    color?: string;
-    fontSize?: string;
-  };
-  subheadings?: {
-    fontFamily?: string;
-    fontStyle?: string;
-    fontWeight?: string;
-    color?: string;
-    fontSize?: string;
-  };
-  bodyText?: {
-    fontFamily?: string;
-    fontStyle?: string;
-    fontWeight?: string;
-    color?: string;
-    fontSize?: string;
-  };
-  inputs?: {
-    fontFamily?: string;
-    fontStyle?: string;
-    fontWeight?: string;
-    textColor?: string;
-    backgroundColor?: string;
-    fontSize?: string;
-    borderWidth?: number;
-    borderColor?: string;
-    borderRadius?: number;
-  };
-  background?: {
-    kind?: string;
-    file?: string;
-    color?: string;
-    size?: string;
-  };
-  aspectRatio?: string;
-  customCSS?: string;
-}
+import { AppearanceSettings } from "../../schema/project";
 
 function scaledPx(value: string): string {
   return value.startsWith("var(") ? value : `calc(${value}px * var(--cl-scale, 1))`;

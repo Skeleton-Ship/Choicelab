@@ -10,47 +10,44 @@ import { AppearanceBackground } from "./AppearanceBackground";
 import { AppearanceInputs } from "./AppearanceInputs";
 import { AppearanceLayout } from "./AppearanceLayout";
 import { AppearanceCustomCSS } from "./AppearanceCustomCSS";
-import { createPlayerSettings } from "../../../player/createPlayerSettings";
-import { getPlayerSettings } from "../../../data/getData";
+import { AppearanceSettings } from "../../../typings";
+
+type AppearanceValue<K extends keyof AppearanceSettings> =
+  AppearanceSettings[K] extends object
+    ? Partial<AppearanceSettings[K]>
+    : AppearanceSettings[K];
+export type AppearanceUpdate = <K extends keyof AppearanceSettings>(
+  key: K,
+  newValues: AppearanceValue<K>
+) => void;
+
+export interface AppearancePaneProps {
+  initial: AppearanceSettings;
+  update: AppearanceUpdate;
+}
 
 export function SettingsAppearance() {
   const store = getStore();
   const [pane, setPane] = useState("text");
-  let initial = getPlayerSettings(store, "appearance");
-  // If appearance settings don't exist, create them
-  if (!initial) {
-    const newSettings = createPlayerSettings("project", "appearance").settings
-      .appearance;
-    store.project.settings.player["choicelab-player-html5"]["appearance"] =
-      newSettings;
-    initial = newSettings;
-    emitTo(
-      getProjectWindowLabel(store.projectPath),
-      "settings-store-updated",
-      stringify(store)
-    );
-  }
+  const initial = store.project.settings.appearance;
   useEffect(() => {
     loadPlayerFonts();
   }, []);
-  function handleChange(key: string, newValues: { [key: string]: any }) {
+  const handleChange: AppearanceUpdate = (key, newValues) => {
     const newStore = getStore();
-    const settings =
-      newStore.project.settings.player["choicelab-player-html5"]["appearance"];
-    if (key === "customCSS") {
-      settings[key] = newValues.css;
-    } else if (key === "aspectRatio") {
-      settings[key] = newValues.value;
-    } else {
-      settings[key] = { ...settings[key], ...newValues };
-    }
+    const settings = newStore.project.settings.appearance;
+    const current = settings[key];
+    // Style groups are merged so a pane can update one field at a time
+    settings[key] = (
+      typeof current === "object" ? { ...current, ...(newValues as object) } : newValues
+    ) as AppearanceSettings[typeof key];
     // Emit update
     emitTo(
       getProjectWindowLabel(store.projectPath),
       "settings-store-updated",
       stringify(newStore)
     );
-  }
+  };
   return (
     <>
       <AppearanceList pane={pane} setPane={setPane} />

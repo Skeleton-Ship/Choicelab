@@ -1,11 +1,9 @@
 import FileUpload from "../../shared/FileUpload";
 import { ColorPicker } from "./ColorPicker";
 import { Asset } from "../../../typings";
+import type { AppearancePaneProps } from "./SettingsAppearance";
 
-export function AppearanceBackground(props: {
-  initial: any;
-  update: (key: string, newValues: { [key: string]: any }) => void;
-}) {
+export function AppearanceBackground(props: AppearancePaneProps) {
   return (
     <>
       <div class="section">

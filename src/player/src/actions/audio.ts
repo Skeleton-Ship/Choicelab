@@ -4,7 +4,7 @@ import { registerMedia, mediaEnded } from "../media";
 import { setCaptionsSource } from "../captions";
 
 const action = {
-  render: (action: ActionForPlayback, done: Function) => {
+  render: (action: ActionForPlayback<"audio">, done: Function) => {
     const store = getStore();
     let audio = document.createElement("audio");
     const src = store.project.projectPath + "/Assets/" + action.props.source;

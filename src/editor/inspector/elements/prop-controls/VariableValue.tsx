@@ -10,7 +10,7 @@ import {
 } from "../../../../typings";
 import { getVariable } from "../../../../data/getData";
 import NumberField from "../NumberField";
-import { getPlayerConfig } from "../../../../player/getPlayerConfig";
+import { getActionProp, setActionProp } from "../../../../data/actionProps";
 
 export default function VariableValueControl(props: {
   action: Action;
@@ -18,7 +18,6 @@ export default function VariableValueControl(props: {
   propDef: ActionDefProp;
   varFieldName: string;
   initialValue: any;
-  extended: boolean;
   className: string;
   store: Store;
   update: Function;
@@ -54,12 +53,9 @@ export default function VariableValueControl(props: {
         value = rawValue === "true" ? true : false;
         break;
     }
-    const propsObj =
-      props.extended === false
-        ? action.props
-        : action.extendedProps[getPlayerConfig().id];
-    if (propsObj[propDef.name] === value) return;
-    propsObj[propDef.name] = value;
+    if (typeof value === "undefined") return;
+    if (getActionProp(action, propDef.name) === value) return;
+    setActionProp(action, propDef.name, value);
     setStore(props.store);
     props.update();
   }
@@ -68,17 +64,17 @@ export default function VariableValueControl(props: {
     if (!variableId) return;
     if (
       typeof variable !== "undefined" &&
-      typeof action.props[propDef.name] === "undefined"
+      typeof getActionProp(action, propDef.name) === "undefined"
     ) {
       switch (variable.varType) {
         case "string":
-          action.props[propDef.name] = "";
+          setActionProp(action, propDef.name, "");
           break;
         case "boolean":
-          action.props[propDef.name] = true;
+          setActionProp(action, propDef.name, true);
           break;
         case "number":
-          action.props[propDef.name] = 0;
+          setActionProp(action, propDef.name, 0);
           break;
       }
       setStore(props.store);
@@ -94,8 +90,8 @@ export default function VariableValueControl(props: {
   const propElName = `action_${action.id}_${propDef.name}`;
   const className = `inspector-prop text-field ${props.className}`;
   // Get the variable corresponding to this value field
-  const variableId = action.props[props.varFieldName];
-  if (!variableId || variableId === "") {
+  const variableId = getActionProp(action, props.varFieldName);
+  if (typeof variableId !== "string" || variableId === "") {
     return <></>;
   }
   const store = getStore();

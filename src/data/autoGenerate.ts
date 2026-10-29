@@ -18,6 +18,7 @@ import {
   Variable,
 } from "../typings";
 import { classifyInputLabel } from "../utils/classifyInputLabel";
+import { getActionProp, setActionProp } from "./actionProps";
 import { getVariables } from "./getData";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -107,7 +108,7 @@ export function cellQualifiesForAutoGeneration(
   if (inputActions.length === 0) return false;
 
   const unassigned = inputActions.filter(
-    (a) => !a.props.varToSet || a.props.varToSet === ""
+    (a) => !getActionProp(a, "varToSet")
   );
   return unassigned.length > inputActions.length / 2;
 }
@@ -234,7 +235,7 @@ export async function buildAutoGenerationPlan(
   );
 
   const allButtonLabels = buttonActions
-    .map((a) => (a.props.label as string | undefined) ?? "")
+    .map((a) => (getActionProp(a, "label") as string | undefined) ?? "")
     .filter(Boolean);
 
   // For classification: prefer button labels; fall back to input field labels.
@@ -242,7 +243,7 @@ export async function buildAutoGenerationPlan(
     allButtonLabels.length > 0
       ? allButtonLabels
       : inputFieldActions
-          .map((a) => (a.props.label as string | undefined) ?? "")
+          .map((a) => (getActionProp(a, "label") as string | undefined) ?? "")
           .filter(Boolean);
 
   const classification = await classifyInputLabel(labelsForClassification);
@@ -266,7 +267,7 @@ export async function buildAutoGenerationPlan(
 
   // Compute deduplicated button values once — shared by actionUpdates and stemWork.
   const buttonValues = deduplicateValues(
-    buttonActions.map((a) => normalizeButtonValue((a.props.label as string | undefined) ?? ""))
+    buttonActions.map((a) => normalizeButtonValue((getActionProp(a, "label") as string | undefined) ?? ""))
   );
 
   // Build action updates.
@@ -407,8 +408,8 @@ export function applyAutoGenerationPlan(
       for (const action of node.actions) {
         const update = plan.actionUpdates.find((u) => u.actionId === action.id);
         if (!update) continue;
-        action.props.varToSet = update.varToSet;
-        if (update.value !== undefined) action.props.value = update.value;
+        setActionProp(action, "varToSet", update.varToSet);
+        if (update.value !== undefined) setActionProp(action, "value", update.value);
       }
     }
   }

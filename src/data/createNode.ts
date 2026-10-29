@@ -1,19 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 import { Cell, Branch, Stem, Rule, StartNode, Asset } from "../typings";
-import { createPlayerSettings } from "../player/createPlayerSettings";
+import { createCellSettings } from "./settingsDefs";
 
 function createCell(): Cell {
-  const cellSettings = createPlayerSettings("cell");
   const cell = {
     id: uuidv4(),
     type: "cell",
     label: "",
     actions: [],
-    settings: {
-      player: {
-        [cellSettings.id]: cellSettings.settings,
-      },
-    },
+    settings: createCellSettings(),
     link: {
       to: "",
     },

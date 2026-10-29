@@ -2,12 +2,12 @@ import { useState, useEffect } from "preact/hooks";
 import { getFocusedRegion } from "../../utils/focusedRegion";
 import { getStore, getViewStore, setViewStore } from "../../data/dataStore";
 import { getCell } from "../../data/getData";
-import { Cell, Action, ActionDef } from "../../typings";
+import { Cell, CellSettings, Action, ActionDef } from "../../typings";
 import addAction from "./functions/addAction";
 import internalActionDefs from "./functions/internalActionDefs";
 import ActionInstance from "./elements/ActionInstance";
 import ActionIcon from "./elements/ActionIcon";
-import { getPlayerConfig } from "../../player/getPlayerConfig";
+import { cellSettingsDefs } from "../../data/settingsDefs";
 import { NodeSetting } from "./elements/NodeSetting";
 import { cellPlaysQuickly } from "./functions/cellPlaysQuickly";
 import {
@@ -167,13 +167,10 @@ function NodeSettings(props: {
   const selectedNodeId = viewStore.selectedNodes[0].id;
   const node: Cell | undefined = getCell(selectedNodeId, store);
   if (!node) return <></>;
-  const activePlayerId = store.project.settings.activePlayer;
   // Create UI elements to edit
-  const cellSettingsDefs = getPlayerConfig().nodeSettings.cell;
   const settingEls: Array<preact.JSX.Element> = [];
-  const defKeys = Object.keys(cellSettingsDefs);
+  const defKeys = Object.keys(cellSettingsDefs) as Array<keyof CellSettings>;
   defKeys.forEach((key) => {
-    // @ts-ignore
     const settingDef = cellSettingsDefs[key];
     settingEls.push(
       <NodeSetting
@@ -181,7 +178,6 @@ function NodeSettings(props: {
         key={`node_${node.id}_setting_${key}`}
         settingName={key}
         store={store}
-        playerId={activePlayerId}
         def={settingDef}
         update={props.update}
       />

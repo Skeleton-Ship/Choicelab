@@ -12,11 +12,13 @@
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are now faster and use much less memory and disk space.
 - Various under-the-hood improvements to app frameworks and dependencies.
+- Various under-the-hood improvements to project data handling. Projects saved in earlier versions are updated automatically when opened.
 
 #### Fixes
 
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - Fixed an issue where the preview would flash when opened or refreshed.
+- Fixed an issue where a project's background color wasn't shown behind the preview or in exported projects before they finished loading.
 - Deleting a variable now resets it to **None** in any actions that used it.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.

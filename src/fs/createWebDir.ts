@@ -5,14 +5,9 @@ import playerJSDefault from "@surfgreen/choicelab-player-html5/dist/choicelab.js
 import { appCacheDir, resolve } from "@tauri-apps/api/path";
 import { updatePreviewFonts } from "../preview/updatePreviewFonts";
 import { getStore } from "../data/dataStore";
-import { getPlayerSettings } from "../data/getData";
 
 export function getBackgroundColor(): string | undefined {
-  const appearance = getPlayerSettings(getStore(), "appearance");
-  if (appearance?.background?.kind === "color") {
-    return appearance.background.color as string;
-  }
-  return undefined;
+  return getStore().project.settings.appearance.background.color || undefined;
 }
 
 export function patchPlayerHTML(html: string, backgroundColor?: string): string {

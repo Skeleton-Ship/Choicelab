@@ -1,5 +1,6 @@
 import { getActionDef, getBranch, getBranchStem } from "./getData";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
+import { getActionProp, setActionProp } from "./actionProps";
 import {
   Store,
   Sequence,
@@ -56,9 +57,9 @@ function deleteVariableFromData(variableId: string, store: Store) {
         actionDef.props.forEach((propDef) => {
           if (
             propDef.control === "variable" &&
-            action.props[propDef.name] === variableId
+            getActionProp(action, propDef.name) === variableId
           ) {
-            action.props[propDef.name] = "";
+            setActionProp(action, propDef.name, "");
           }
         });
       });

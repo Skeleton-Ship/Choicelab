@@ -5,7 +5,7 @@ import { error } from "./logging";
 const GRID_TO_PERCENT: Record<number, number> = { 1: 16, 2: 50, 3: 83 };
 
 function getPosition(action: ActionForPlayback): { x: number; y: number } {
-  const pos = action.extendedProps?.["choicelab-player-html5"]?.position;
+  const pos = "position" in action.props ? action.props.position : undefined;
   if (pos) {
     if (pos.kind === "absolute") return { x: pos.x, y: pos.y };
     if (pos.kind === "grid") {
@@ -19,7 +19,7 @@ function getPosition(action: ActionForPlayback): { x: number; y: number } {
 }
 
 function getMaxWidth(action: ActionForPlayback): number {
-  return action.extendedProps?.["choicelab-player-html5"]?.maxWidth ?? 45;
+  return ("maxWidth" in action.props ? action.props.maxWidth : undefined) ?? 45;
 }
 
 export function createActionWrapper(

@@ -2,14 +2,12 @@ import { useState, useEffect } from "preact/hooks";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { basicEditor } from "prism-code-editor/setups";
 import "prism-code-editor/prism/languages/markup";
+import type { AppearancePaneProps } from "./SettingsAppearance";
 
 function getEditorTheme(theme: "light" | "dark") {
   return theme === "light" ? "github-light" : "github-dark";
 }
-export function AppearanceCustomCSS(props: {
-  initial: any;
-  update: (key: string, newValues: { [key: string]: any }) => void;
-}) {
+export function AppearanceCustomCSS(props: AppearancePaneProps) {
   const [themeClass, setThemeClass] = useState("");
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -22,9 +20,7 @@ export function AppearanceCustomCSS(props: {
         value: decoded,
         onUpdate: () => {
           if (editor.value === decoded) return;
-          props.update("customCSS", {
-            css: editor.value,
-          });
+          props.update("customCSS", editor.value);
         },
       });
       setThemeClass(theme);

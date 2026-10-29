@@ -29,11 +29,7 @@ import { listen, emit, once } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
 import markUnsaved from "./data/markUnsaved";
-import {
-  needsMigration,
-  migrateProject,
-  normalizeProjectMetadata,
-} from "./fs/migrateProject";
+import { needsMigration, migrateProject } from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
 import { setMenu } from "./menu/setMenu";
@@ -292,7 +288,8 @@ async function init() {
         // autosave check failed — proceed with normal load
       }
     }
-    // Migrate legacy projects that predate the asset registry
+    // Migrate projects saved with an older schema version
+    // (the settings window receives already-migrated data from the project window)
     if (windowType === "project" && needsMigration(projectData)) {
       const dialog = getDialogText(
         "Project update required",
@@ -320,8 +317,6 @@ async function init() {
         });
       });
     }
-    // Normalize legacy metadata fields
-    projectData = normalizeProjectMetadata(projectData as Project);
     // Always derive project name from the actual file name so renames are reflected
     (projectData as Project).name = fileName.replace(/\.clx$/i, "");
     // Create data store
