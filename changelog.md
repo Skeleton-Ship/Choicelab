@@ -19,6 +19,7 @@
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - Fixed an issue where the preview would flash when opened or refreshed.
 - Fixed an issue where a project's background color wasn't shown behind the preview or in exported projects before they finished loading.
+- Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
 - Deleting a variable now resets it to **None** in any actions that used it.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.

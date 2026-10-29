@@ -59,7 +59,7 @@ function checkNumber(stemRule: Rule, storedVar: PlaybackVar): boolean {
       }
       break;
     case "notEquals":
-      if (storedVar.value === stemRule.value) {
+      if (storedVar.value !== stemRule.value) {
         valid = true;
       }
       break;
