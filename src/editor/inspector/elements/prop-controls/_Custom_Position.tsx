@@ -1,5 +1,5 @@
 import { setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, ActionPosition, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, ActionPosition, Store, UpdateFunction } from "../../../../typings";
 import { setActionProp } from "../../../../data/actionProps";
 import NumberField from "../NumberField";
 
@@ -23,7 +23,7 @@ export function Position(props: {
   propDef: ActionDefProp;
   initialValue: ActionPosition | undefined;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const action = props.action;
   const propDef = props.propDef;

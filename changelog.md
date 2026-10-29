@@ -10,9 +10,9 @@
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
+- In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are now faster and use much less memory and disk space.
-- Various under-the-hood improvements to app frameworks and dependencies.
-- Various under-the-hood improvements to project data handling. Projects saved in earlier versions are updated automatically when opened.
+- Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
 

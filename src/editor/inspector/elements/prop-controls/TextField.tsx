@@ -4,7 +4,7 @@ import {
   getViewStore,
   setViewStore,
 } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, Store, UpdateFunction } from "../../../../typings";
 import NumberField from "../NumberField";
 import { getActionProp, setActionProp } from "../../../../data/actionProps";
 import { setMenu } from "../../../../menu/setMenu";
@@ -17,7 +17,7 @@ export default function TextField(props: {
   initialValue: string | number;
   className: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const [localValue, setLocalValue] = useState(props.initialValue);
 

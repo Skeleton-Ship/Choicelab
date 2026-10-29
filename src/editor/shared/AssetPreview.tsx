@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "preact/hooks";
 import { MediaControl } from "../inspector/elements/MediaControl";
-import { Action } from "../../typings";
+import { Action, UpdateFunction } from "../../typings";
 import { v4 as uuid } from "uuid";
 
 export default function AssetPreview(props: {
@@ -10,10 +10,10 @@ export default function AssetPreview(props: {
   fileSrc: string;
   isLoading?: boolean;
   action?: Action;
-  update?: Function;
+  update?: UpdateFunction;
 }) {
   function handleMediaSrc(
-    stateFn: Function,
+    stateFn: (url: string) => void,
     url: string,
     iteration: number = 0
   ) {
@@ -37,10 +37,9 @@ export default function AssetPreview(props: {
     <></>
   );
   const [mediaSrc, setMediaSrc] = useState("");
-  const [mediaEl, setMediaEl]: [
-    HTMLVideoElement | HTMLAudioElement | false,
-    Function
-  ] = useState(false);
+  const [mediaEl, setMediaEl] = useState<
+    HTMLVideoElement | HTMLAudioElement | false
+  >(false);
   // Typed as Element so it can serve as a ref for video, audio, or img without three separate refs.
   const mediaRef = useRef<Element | null>(null);
   // Stable ID for the lifetime of this component instance.
@@ -129,9 +128,13 @@ export default function AssetPreview(props: {
   }
   useEffect(() => {
     setTimeout(() => {
-      if (mediaRef.current !== null) {
+      const el = mediaRef.current;
+      if (el !== null) {
         handleMediaSrc(setMediaSrc, props.fileSrc, 0);
-        setMediaEl(mediaRef.current);
+        // Only audio and video previews have media controls
+        if (el instanceof HTMLVideoElement || el instanceof HTMLAudioElement) {
+          setMediaEl(el);
+        }
       }
     }, 150);
   }, [props.fileSrc]);

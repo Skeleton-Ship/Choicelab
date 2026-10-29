@@ -4,7 +4,7 @@ import positionNodes from "./flowchart/linking/positionNodes";
 import drawArrows from "./flowchart/linking/drawArrows";
 import scrollNodeIntoView from "./flowchart/general/scrollNodeIntoView";
 import setSequenceDimensions from "./flowchart/general/setSequenceDimensions";
-import { Sequence, AnyNode } from "../typings";
+import { Sequence, AnyNode, UpdateFunction } from "../typings";
 import { getViewStore } from "../data/dataStore";
 import { getFocusedRegion } from "../utils/focusedRegion";
 import handleKeyNavigation from "./flowchart/general/handleKeyNavigation";
@@ -19,7 +19,7 @@ import ViewSlider from "./flowchart/ViewSlider";
  * A sequence contains a series of nodes (cells and branches), and arranges them in the order they are linked. The sequence also houses a number of events related to adding and deleting nodes.
  *
  */
-export default function SequenceEl(props: { id: string; update: Function }) {
+export default function SequenceEl(props: { id: string; update: UpdateFunction }) {
   // Listeners for arrows
   const arrowsRef = useRef(null);
   const svgRef = useRef(null);

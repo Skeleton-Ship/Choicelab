@@ -1,9 +1,9 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { getStore } from "../store";
 import { ensureControlsEnabled, setControlState } from "../media/mediaControls";
 
 const action = {
-  render: (action: ActionForPlayback<"backgroundAudio">, done: Function) => {
+  render: (action: ActionForPlayback<"backgroundAudio">, done: ActionDone) => {
     const store = getStore();
     const audio = document.createElement("audio");
     const src = store.project.projectPath + "/Assets/" + action.props.source;

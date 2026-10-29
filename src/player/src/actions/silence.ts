@@ -1,4 +1,4 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { createActionWrapper, render } from "../rendering";
 import { onEvent } from "../events";
 
@@ -88,7 +88,7 @@ function createSilentAudioElement(
 }
 
 const action = {
-  render: async (action: ActionForPlayback<"silence">, done: Function) => {
+  render: async (action: ActionForPlayback<"silence">, done: ActionDone) => {
     const audioEl = await createSilentAudioElement(action.props.duration);
     const audioWrapper = createActionWrapper("div", action);
     audioWrapper.appendChild(audioEl);

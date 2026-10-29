@@ -7,9 +7,10 @@ import BranchPane from "./inspector/BranchPane";
 import VariablesPane from "./inspector/VariablesPane";
 import { PreviewPane } from "./inspector/elements/PreviewPane";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { UpdateFunction } from "../typings";
 const appWindow = getCurrentWebviewWindow();
 
-export default function Inspector(props: { update: Function }) {
+export default function Inspector(props: { update: UpdateFunction }) {
   // Make resizable
   const paneRef = useRef(null);
   const previewRef = useRef(null);

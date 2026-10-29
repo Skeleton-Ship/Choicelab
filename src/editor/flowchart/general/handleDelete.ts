@@ -12,14 +12,14 @@ import {
 import resolveConnections from "../linking/resolveConnections";
 import sortSelectedNodes from "../selecting/sortSelectedNodes";
 import { getActiveBranchStem } from "../../../data/getData";
-import { AnyNode, Stem } from "../../../typings";
+import { AnyNode, Stem, UpdateFunction } from "../../../typings";
 
 /**
  * Handler for deleting the selected nodes in a sequence.
  *
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteNodes(update: Function) {
+function handleDeleteNodes(update: UpdateFunction) {
   let store = getStore(),
     viewStore = getViewStore();
   const selectedNodesUnsorted = viewStore.selectedNodes;
@@ -58,9 +58,9 @@ function handleDeleteNodes(update: Function) {
  *
  * @param {string} stemId - The id of the branch stem.
  * @param {string} nodeId - The id of the node.
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteStem(stemId: string, nodeId: string, update: Function) {
+function handleDeleteStem(stemId: string, nodeId: string, update: UpdateFunction) {
   const store = getStore();
   const updatedData = deleteStemFromData(stemId, nodeId, store);
   if (updatedData) {
@@ -73,9 +73,9 @@ function handleDeleteStem(stemId: string, nodeId: string, update: Function) {
  * Handler for deleting a sequence.
  *
  * @param {string} sequenceId - The id of the sequence.
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleDeleteSequence(sequenceId: string, update: Function) {
+function handleDeleteSequence(sequenceId: string, update: UpdateFunction) {
   const store = getStore();
   const updatedData = deleteSequenceFromData(sequenceId, store);
   if (updatedData) {

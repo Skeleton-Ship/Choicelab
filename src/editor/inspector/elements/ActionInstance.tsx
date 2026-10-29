@@ -1,7 +1,7 @@
 import { setStore } from "../../../data/dataStore";
 import { getActionDef, getCell } from "../../../data/getData";
 import { deleteActionFromData } from "../../../data/deleteData";
-import { Action, Store, Cell } from "../../../typings";
+import { Action, Store, Cell, UpdateFunction } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
 import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
@@ -35,7 +35,7 @@ export default function ActionInstance(props: {
   instance: Action;
   cell: Cell;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
   isNew?: boolean;
 }) {
   const action = props.instance;

@@ -3,7 +3,7 @@ import { Cell, Branch, Stem, Rule, StartNode, Asset } from "../typings";
 import { createCellSettings } from "./settingsDefs";
 
 function createCell(): Cell {
-  const cell = {
+  const cell: Cell = {
     id: uuidv4(),
     type: "cell",
     label: "",
@@ -17,7 +17,7 @@ function createCell(): Cell {
 }
 
 function createBranch(): Branch {
-  const branch = {
+  const branch: Branch = {
     id: uuidv4(),
     type: "branch",
     stems: [createBranchStem("noMatch")],
@@ -53,7 +53,7 @@ function createRule(): Rule {
 }
 
 function createStart(): StartNode {
-  const start = {
+  const start: StartNode = {
     id: uuidv4(),
     type: "start",
     link: {

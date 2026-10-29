@@ -138,8 +138,8 @@ export function getPrecedingCell(
   const matches: Cell[] = [];
   for (const sequence of store.project.sequences) {
     for (const node of sequence.nodes) {
-      if (node.type === "cell" && (node as Cell).link?.to === branchId) {
-        matches.push(node as Cell);
+      if (node.type === "cell" && node.link?.to === branchId) {
+        matches.push(node);
       }
     }
   }
@@ -301,14 +301,14 @@ export async function buildAutoGenerationPlan(
       .flatMap((seq) => seq.nodes)
       .find((n) => n.id === linkedBranchId);
 
-    const isBranch = linkedNode?.type === "branch";
     const qualifies =
-      isBranch && branchQualifiesForAutoGeneration(linkedNode as Branch);
+      linkedNode?.type === "branch" &&
+      branchQualifiesForAutoGeneration(linkedNode);
 
     if (qualifies && buttonActions.length > 0) {
       stemWork = buildStemWork(
         linkedBranchId,
-        linkedNode as Branch,
+        linkedNode,
         variable.id,
         buttonValues
       );
@@ -404,7 +404,7 @@ export function applyAutoGenerationPlan(
   // 2. Update action props.
   for (const sequence of store.project.sequences) {
     for (const node of sequence.nodes) {
-      if (!node.actions) continue;
+      if (node.type !== "cell") continue;
       for (const action of node.actions) {
         const update = plan.actionUpdates.find((u) => u.actionId === action.id);
         if (!update) continue;
@@ -419,8 +419,8 @@ export function applyAutoGenerationPlan(
     const { branchId, reuse, add } = plan.stemWork;
     for (const sequence of store.project.sequences) {
       const branchNode = sequence.nodes.find((n) => n.id === branchId);
-      if (!branchNode) continue;
-      const branch = branchNode as Branch;
+      if (!branchNode || branchNode.type !== "branch") continue;
+      const branch = branchNode;
 
       // Overwrite rules on reused stems (preserve their existing link).
       for (const stemReuse of reuse) {

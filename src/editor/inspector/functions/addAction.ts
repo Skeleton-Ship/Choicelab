@@ -1,11 +1,11 @@
-import { Action, ActionDef, Cell } from "../../../typings";
+import { Action, ActionDef, Cell, UpdateFunction } from "../../../typings";
 import { getCell } from "../../../data/getData";
 import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import { applyActionDefaults } from "../../../data/actionProps";
 import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 import { v4 as uuidv4 } from "uuid";
 
-export default function addAction(actionDef: ActionDef, update: Function) {
+export default function addAction(actionDef: ActionDef, update: UpdateFunction) {
   const store = getStore(),
     viewStore = getViewStore();
   const cell: Cell | undefined = getCell(viewStore.selectedNodes[0].id, store);

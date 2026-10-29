@@ -45,7 +45,7 @@ async function promptUnsavedChanges(
   );
 }
 
-export async function handleCloseRequest(closeFn?: Function) {
+export async function handleCloseRequest(closeFn?: () => void) {
   const store = getViewStore();
   if (store.saved === true) {
     if (typeof closeFn !== "undefined") {

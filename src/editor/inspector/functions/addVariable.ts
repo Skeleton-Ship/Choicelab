@@ -1,7 +1,7 @@
-import { Variable } from "../../../typings";
+import { Variable, UpdateFunction } from "../../../typings";
 import { getStore, setStore } from "../../../data/dataStore";
 import { v4 as uuidv4 } from "uuid";
-export default function addVariable(update: Function) {
+export default function addVariable(update: UpdateFunction) {
   const variable: Variable = {
     name: "myVar",
     id: uuidv4(),

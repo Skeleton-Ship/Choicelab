@@ -2,8 +2,9 @@ import { getViewStore, setViewStore } from "../../data/dataStore";
 import setSequenceDimensions from "./general/setSequenceDimensions";
 import setViewSettings from "../../utils/setViewSettings";
 import IconSlider from "../../assets/icons/mono/icon-slider.svg";
+import { UpdateFunction } from "../../typings";
 
-export default function ViewSlider(props: { update: Function }) {
+export default function ViewSlider(props: { update: UpdateFunction }) {
   const viewStore = getViewStore();
   const viewSettings = viewStore.viewSettings;
   function setView(target: EventTarget | null) {

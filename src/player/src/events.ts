@@ -9,7 +9,7 @@ export const events: { [key: string]: Array<Event> } = {
 
 export function onEvent(
   eventType: string,
-  fn: Function,
+  fn: () => void,
   props: { once: boolean; name: string }
 ) {
   const eventObj = events[eventType];

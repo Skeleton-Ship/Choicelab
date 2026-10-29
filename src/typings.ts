@@ -11,6 +11,11 @@ import type {
 
 export type * from "./schema/project";
 
+// Re-renders from the app root after a store change (see MainEditor's handleUpdate)
+export type UpdateFunction = (
+  updateHistory?: boolean,
+  updatePreview?: boolean
+) => void;
 export interface ProjectHistory {
   location: number;
   versions: Array<string>;

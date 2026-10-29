@@ -1,7 +1,7 @@
 import { getNode } from "../../../data/getData";
 import { getStore, getViewStore } from "../../../data/dataStore";
 import Link from "./Link";
-import { AnyNode } from "../../../typings";
+import { AnyNode, UpdateFunction } from "../../../typings";
 import isNodeSelected from "../selecting/isNodeSelected";
 import handleSelectNode from "../selecting/handleSelectNode";
 
@@ -17,7 +17,7 @@ export default function StartEl(props: {
   top: number;
   width?: number;
   height?: number;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const store = getStore(),
     viewStore = getViewStore();
@@ -26,7 +26,7 @@ export default function StartEl(props: {
   if (typeof cell === "undefined") {
     return defaultEl;
   }
-  if (typeof cell.link === "undefined") {
+  if (!("link" in cell)) {
     return defaultEl;
   }
   const selectedNodes = viewStore.selectedNodes;

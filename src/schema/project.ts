@@ -40,38 +40,33 @@ export interface NodePosition {
   height?: number;
   abandoned?: boolean;
 }
-export interface AnyNode {
-  id: string;
-  type: string;
-  label?: string;
-  actions?: Array<Action>;
-  link?: Link;
-  stems?: Array<Stem>;
-  settings?: CellSettings;
+// Set by the flowchart when the node is laid out
+interface PositionedNode {
   position?: NodePosition;
 }
-export interface StartNode {
+export interface StartNode extends PositionedNode {
   id: string;
-  type: string;
+  type: "start";
   link: Link;
 }
 export interface CellSettings {
   transitionTime: number;
   navigationPoint: boolean;
 }
-export interface Cell {
+export interface Cell extends PositionedNode {
   id: string;
-  type: string;
+  type: "cell";
   label: string;
   actions: Array<Action>;
   settings: CellSettings;
   link: Link;
 }
-export interface Branch {
+export interface Branch extends PositionedNode {
   id: string;
-  type: string;
+  type: "branch";
   stems: Array<Stem>;
 }
+export type AnyNode = StartNode | Cell | Branch;
 export interface Sequence {
   id: string;
   label: string;

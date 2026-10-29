@@ -5,7 +5,7 @@ import { stringify } from "../../../utils/stringify";
 import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
 import isJson from "../../../utils/isJson";
-import { AnyNode, Action } from "../../../typings";
+import { AnyNode, Action, Cell, UpdateFunction } from "../../../typings";
 
 /**
  * Given an object, regenerates the `id` property, clears the `link` property, and for cells, clears timed actions. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
@@ -13,7 +13,7 @@ import { AnyNode, Action } from "../../../typings";
  * @param {object} obj - The object to check.
  */
 function regenerateIdsAndLinks<T extends object>(node: T): T {
-  const obj = node as Record<string, unknown> & Partial<Pick<AnyNode, "link">>;
+  const obj = node as Record<string, unknown> & Partial<Pick<Cell, "link">>;
   const keys = Object.keys(obj);
   keys.forEach((key: string) => {
     // Change ID
@@ -81,9 +81,9 @@ function cloneObjectWithExclusion<T extends object>(
  * Add the selected nodes to the clipboard. If cutting, delete the nodes from the sequence as well.
  *
  * @param {string} action - Whether it's a cut or a copy.
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handleCutCopy(action: string, update: Function) {
+function handleCutCopy(action: string, update: UpdateFunction) {
   const viewStore = getViewStore();
   const inTextElement = viewStore.inTextElement;
   if (inTextElement === true) return;
@@ -110,9 +110,9 @@ function handleCutCopy(action: string, update: Function) {
 /**
  * Checks the clipboard for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links, then runs `handleCreateNode` to add them to the current sequence.
  *
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handlePaste(update: Function): void {
+function handlePaste(update: UpdateFunction): void {
   navigator.clipboard.readText().then((clipText) => {
     // Ignore things that aren't JSON
     if (!isJson(clipText)) return;

@@ -1,6 +1,6 @@
 import { getAction } from "../../../../data/getData";
 import { getStore, setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, Asset, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, Asset, Store, UpdateFunction } from "../../../../typings";
 import { getActionProp, setActionProp } from "../../../../data/actionProps";
 import { updatePreview } from "../../../../preview/updatePreview";
 import FileUpload from "../../../shared/FileUpload";
@@ -19,7 +19,7 @@ export default function File(props: {
   className: string;
   accept: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   // Method: Clear file
   function handleClear() {

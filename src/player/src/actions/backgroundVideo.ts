@@ -1,9 +1,9 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { getStore } from "../store";
 import { ensureControlsEnabled, setControlState } from "../media/mediaControls";
 
 const action = {
-  render: (action: ActionForPlayback<"backgroundVideo">, done: Function) => {
+  render: (action: ActionForPlayback<"backgroundVideo">, done: ActionDone) => {
     const store = getStore();
 
     // Promote lookahead element if one was pre-inserted for this action

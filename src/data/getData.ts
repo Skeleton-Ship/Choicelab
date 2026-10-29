@@ -58,7 +58,7 @@ function getCell(id: string, data: Store): Cell | undefined {
     const sequenceNodes = sequence.nodes;
     sequenceNodes.forEach((node: AnyNode) => {
       if (node.id === id && node.type === "cell") {
-        foundNode = node as Cell;
+        foundNode = node;
       }
     });
   });
@@ -69,7 +69,7 @@ function getSequenceStart(
   sequenceId: string,
   data: Store
 ): StartNode | undefined {
-  let foundNode;
+  let foundNode: StartNode | undefined;
   const sequence: Sequence | undefined = getSequence(sequenceId, data);
   if (!sequence) {
     console.error("No sequence found:", sequenceId);
@@ -78,7 +78,7 @@ function getSequenceStart(
   const sequenceNodes = sequence.nodes;
   sequenceNodes.forEach((node: AnyNode) => {
     if (node.type === "start") {
-      foundNode = node as Cell;
+      foundNode = node;
     }
   });
   return foundNode;
@@ -90,7 +90,7 @@ function getBranch(id: string, data: Store): Branch | undefined {
     const sequenceNodes = sequence.nodes;
     sequenceNodes.forEach((node: AnyNode) => {
       if (node.id === id && node.type === "branch") {
-        foundNode = node as Branch;
+        foundNode = node;
       }
     });
   });
@@ -214,7 +214,7 @@ function getAction(id: string, data: Store): Action | undefined {
   data.project.sequences.forEach((sequence: Sequence) => {
     const sequenceNodes = sequence.nodes;
     sequenceNodes.forEach((node: AnyNode) => {
-      if (node.actions) {
+      if (node.type === "cell") {
         node.actions.forEach((action: Action) => {
           if (action.id === id) {
             foundAction = action;

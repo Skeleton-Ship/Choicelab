@@ -5,7 +5,11 @@ import {
   Action,
   ActionPropValue,
   AppearanceSettings,
+  Cell,
   CellSettings,
+  Link,
+  NodePosition,
+  Stem,
   ProjectSettings,
   Sequence,
 } from "../typings";
@@ -38,7 +42,13 @@ interface LegacyAction {
   props: LegacyProps;
   extendedProps?: Record<string, LegacyProps>;
 }
-interface LegacyNode extends Omit<AnyNode, "actions" | "settings"> {
+interface LegacyNode {
+  id: string;
+  type: AnyNode["type"];
+  label?: string;
+  link?: Link;
+  stems?: Array<Stem>;
+  position?: NodePosition;
   actions?: Array<LegacyAction>;
   settings?: { player?: Record<string, Partial<CellSettings>> };
 }
@@ -190,16 +200,18 @@ function flattenAction(legacy: LegacyAction): Action {
 }
 
 function flattenNode(legacy: LegacyNode): AnyNode {
+  // Only cells carry actions and player settings
+  if (legacy.type !== "cell") return legacy as AnyNode;
   const { actions, settings, ...rest } = legacy;
-  const node: AnyNode = rest;
-  if (actions) node.actions = actions.map(flattenAction);
-  if (settings) {
-    node.settings = {
+  // Cells have always been created with both, but fill them in if a file is missing either
+  return {
+    ...rest,
+    actions: (actions ?? []).map(flattenAction),
+    settings: {
       ...createCellSettings(),
-      ...settings.player?.[LEGACY_PLAYER_ID],
-    };
-  }
-  return node;
+      ...settings?.player?.[LEGACY_PLAYER_ID],
+    },
+  } as Cell;
 }
 
 function migrateToV3(project: LegacyProject): Project {

@@ -9,6 +9,7 @@ import {
   VariableType,
   VariableValue,
   Store,
+  UpdateFunction,
 } from "../../../../typings";
 import { getVariable } from "../../../../data/getData";
 import NumberField from "../NumberField";
@@ -22,7 +23,7 @@ export default function VariableValueControl(props: {
   initialValue: VariableValue | undefined;
   className: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   function handleChange(
     target: EventTarget | null,

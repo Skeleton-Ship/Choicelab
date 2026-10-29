@@ -1,7 +1,7 @@
 import Link from "./Link";
 import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, getViewStore } from "../../../data/dataStore";
-import { Branch, Stem } from "../../../typings";
+import { Branch, Stem, UpdateFunction } from "../../../typings";
 import getStemRulesLabel from "../general/getStemRulesLabel";
 import handleSelectNode from "../selecting/handleSelectNode";
 
@@ -13,7 +13,7 @@ export default function BranchStemEl(props: {
   id: string;
   index: number;
   nodeId: string;
-  update: Function;
+  update: UpdateFunction;
 }) {
   function handleSelectStem() {
     const store = getStore();

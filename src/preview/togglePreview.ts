@@ -1,7 +1,8 @@
 import { getViewStore, setViewStore } from "../data/dataStore";
 import { updatePreview } from "./updatePreview";
+import { UpdateFunction } from "../typings";
 
-export function togglePreview(update: Function) {
+export function togglePreview(update: UpdateFunction) {
   const viewStore = getViewStore();
   const currentSetting = viewStore.viewSettings.previewVisible;
   const newSetting = currentSetting === true ? false : true;

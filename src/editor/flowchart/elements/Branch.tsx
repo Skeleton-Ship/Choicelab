@@ -4,7 +4,7 @@ import { createBranchStem } from "../../../data/createNode";
 import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
 import BranchStemEl from "./BranchStem";
-import { Branch, Stem } from "../../../typings";
+import { Branch, Stem, UpdateFunction } from "../../../typings";
 import handleSelectNode from "../selecting/handleSelectNode";
 
 /**
@@ -19,7 +19,7 @@ export default function BranchEl(props: {
   top: number;
   width?: number;
   height?: number;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const store = getStore(),
     viewStore = getViewStore();

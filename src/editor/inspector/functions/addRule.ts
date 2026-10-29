@@ -1,4 +1,4 @@
-import { Branch, Stem } from "../../../typings";
+import { Branch, Stem, UpdateFunction } from "../../../typings";
 import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createRule } from "../../../data/createNode";
@@ -7,7 +7,7 @@ import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 export default function addRule(
   stemId: string,
   branchId: string,
-  update: Function
+  update: UpdateFunction
 ) {
   const store = getStore();
   const branch: Branch | undefined = getBranch(branchId, store);

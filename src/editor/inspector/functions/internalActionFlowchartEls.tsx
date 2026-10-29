@@ -5,9 +5,9 @@ import { ActionPropsMap } from "../../../typings";
 /*
  * Text
  */
-export function FCText(props: ActionPropsMap["text"] & { tag?: string }) {
+export function FCText(props: ActionPropsMap["text"]) {
   let contents = <>{props.contents}</>;
-  if (props.tag !== "p") {
+  if (props.role === "heading" || props.role === "subheading") {
     contents = <strong>{props.contents}</strong>;
   }
   return <div>{contents}</div>;

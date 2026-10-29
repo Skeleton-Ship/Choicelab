@@ -10,7 +10,6 @@ import {
   Action,
   Rule,
   Variable,
-  Cell,
 } from "../typings";
 
 function deleteSequenceFromData(sequenceId: string, store: Store) {
@@ -51,7 +50,7 @@ function deleteVariableFromData(variableId: string, store: Store) {
   store.project.sequences.forEach((sequence: Sequence) => {
     sequence.nodes.forEach((node: AnyNode) => {
       if (node.type !== "cell") return;
-      (node as Cell).actions.forEach((action: Action) => {
+      node.actions.forEach((action: Action) => {
         const actionDef = getActionDef(action.name, internalActionDefs);
         if (!actionDef) return;
         actionDef.props.forEach((propDef) => {
@@ -150,7 +149,7 @@ function deleteActionFromData(actionId: string, nodeId: string, store: Store) {
       if (node.id === nodeId) {
         correctSequenceIndex = sequenceIndex;
         correctNodeIndex = nodeIndex;
-        if (!node.actions) return;
+        if (node.type !== "cell") return;
         let actionIndex = 0;
         node.actions.forEach((action: Action) => {
           if (action.id === actionId) {
@@ -171,7 +170,7 @@ function deleteActionFromData(actionId: string, nodeId: string, store: Store) {
   ) {
     const thisNode =
       project.sequences[correctSequenceIndex].nodes[correctNodeIndex];
-    if (thisNode.actions) {
+    if (thisNode.type === "cell") {
       thisNode.actions.splice(correctActionIndex, 1);
     }
   }

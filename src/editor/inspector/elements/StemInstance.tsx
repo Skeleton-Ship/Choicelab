@@ -1,4 +1,4 @@
-import { Stem, Branch, Rule, Store } from "../../../typings";
+import { Stem, Branch, Rule, Store, UpdateFunction } from "../../../typings";
 import { getBranchStem, getVariables } from "../../../data/getData";
 import { getStore, getViewStore, setStore } from "../../../data/dataStore";
 import addRule from "../functions/addRule";
@@ -10,7 +10,7 @@ export default function StemInstance(props: {
   stem: Stem;
   branch: Branch;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
   indexLabel: Number;
 }) {
   /*

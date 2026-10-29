@@ -1,7 +1,7 @@
 import { getBranchStem } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 import { getNode } from "../../../data/getData";
-import { Store, Stem, AnyNode, Link } from "../../../typings";
+import { Store, Stem, AnyNode, Link, UpdateFunction } from "../../../typings";
 import enterTargetMode from "../target-mode/enterTargetMode";
 
 /**
@@ -12,7 +12,7 @@ export default function LinkEl(props: {
   origin: string;
   nodeId: string;
   stemId?: string;
-  update: Function;
+  update: UpdateFunction;
 }) {
   // Get link property
   function getLinkProps(store: Store) {
@@ -23,7 +23,7 @@ export default function LinkEl(props: {
     }
     let link: Link | undefined;
     if (props.origin === "cell" || props.origin === "start") {
-      link = node.link;
+      link = "link" in node ? node.link : undefined;
     }
     if (props.origin === "branchStem" && typeof props.stemId !== "undefined") {
       const stem: Stem | undefined = getBranchStem(

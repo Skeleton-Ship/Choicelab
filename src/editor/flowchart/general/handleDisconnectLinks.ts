@@ -1,11 +1,11 @@
 import { getNode, getActiveBranchStem } from "../../../data/getData";
 import { getStore, getViewStore, setStore } from "../../../data/dataStore";
-import { AnyNode, Stem } from "../../../typings";
+import { AnyNode, Stem, UpdateFunction } from "../../../typings";
 
 /**
  * Handler for disconnecting links.
  */
-export default function handleDisconnectLinks(update: Function) {
+export default function handleDisconnectLinks(update: UpdateFunction) {
   const store = getStore(),
     viewStore = getViewStore();
   const selectedNodes = viewStore.selectedNodes;
@@ -17,7 +17,7 @@ export default function handleDisconnectLinks(update: Function) {
         console.error("Node not found.");
         return;
       }
-      linkObj = node.link;
+      linkObj = "link" in node ? node.link : undefined;
     } else if (nodeRef.type === "branch") {
       const activeStem: Stem | undefined = getActiveBranchStem(
         nodeRef.id,

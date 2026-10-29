@@ -19,7 +19,7 @@ export function resolveAssetsForPlayer(project: Project): Project {
   // Resolve action props
   resolved.sequences.forEach((sequence: Sequence) => {
     sequence.nodes.forEach((node: AnyNode) => {
-      if (!node.actions) return;
+      if (node.type !== "cell") return;
       node.actions.forEach((action: Action) => {
         const actionDef = internalActionDefs.actions.find(
           (def) => def.name === action.name

@@ -1,5 +1,5 @@
 import { getStore, getViewStore } from "../../../data/dataStore";
-import { AnyNode, Stem, Store } from "../../../typings";
+import { AnyNode, Stem, Store, UpdateFunction } from "../../../typings";
 import {
   getSequenceStart,
   getNode,
@@ -51,7 +51,7 @@ function getOriginNode(
   return origin;
 }
 
-export default function handleKeyNavigation(keyCode: string, update: Function) {
+export default function handleKeyNavigation(keyCode: string, update: UpdateFunction) {
   const direction = keyCode.replace("Arrow", "").toLowerCase();
   if (
     direction !== "down" &&

@@ -5,11 +5,11 @@ import {
   setStore,
   setViewStore,
 } from "../../../data/dataStore";
-import { AnyNode } from "../../../typings";
+import { AnyNode, Stem, UpdateFunction } from "../../../typings";
 import { getNode, getBranchStem } from "../../../data/getData";
 import elementIsNode from "../../flowchart/general/elementIsNode";
 
-export default function TargetMode(props: { update: Function }) {
+export default function TargetMode(props: { update: UpdateFunction }) {
   // Functions
   function exitTargetMode(linkTo: string | false) {
     const store = getStore(),
@@ -23,12 +23,12 @@ export default function TargetMode(props: { update: Function }) {
       } else {
         originLink = getNode(targetMode.nodeId, store);
       }
-      if (originLink && originLink.link) {
+      if (originLink && "link" in originLink) {
         originLink.link.to = linkTo;
         updateHistory = true;
       }
     } else if (linkTo === "disconnect") {
-      let linkObj: AnyNode | undefined;
+      let linkObj: AnyNode | Stem | undefined;
       if (
         targetMode.origin === "branchStem" &&
         typeof targetMode.stemId !== "undefined"
@@ -41,7 +41,7 @@ export default function TargetMode(props: { update: Function }) {
         console.error("No link object found.");
         return;
       }
-      if (linkObj.link) {
+      if ("link" in linkObj) {
         linkObj.link.to = "";
       }
       updateHistory = true;

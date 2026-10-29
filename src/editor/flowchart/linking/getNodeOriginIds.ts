@@ -31,7 +31,7 @@ export default function getNodeOriginIds(
           }
         });
       } else {
-        if (node.link && node.link.to === linkedNodeId) {
+        if ("link" in node && node.link.to === linkedNodeId) {
           nodeOrigins.push({
             type: node.type,
             id: node.id,

@@ -1,8 +1,8 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { render, clear, createActionWrapper } from "../rendering";
 
 const action = {
-  render: (action: ActionForPlayback<"text">, done: Function) => {
+  render: (action: ActionForPlayback<"text">, done: ActionDone) => {
     let tag = "p";
     switch (action.props.role) {
       case "heading":

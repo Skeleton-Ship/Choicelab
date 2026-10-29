@@ -12,7 +12,7 @@ export interface ProjectStore extends Project {
 
 export interface Event {
   name: string;
-  fn: Function;
+  fn: () => void;
   once: boolean;
 }
 
@@ -28,8 +28,8 @@ export interface MediaItem {
   type: string;
   el: HTMLMediaElement;
   fn?: {
-    play: Function;
-    pause: Function;
+    play: () => void;
+    pause: () => void;
   };
   buildIn?: string;
   buildOut?: string;
@@ -73,6 +73,9 @@ export interface Store {
     rootEl: Element;
   };
 }
+
+// Called by an action's renderer once it's complete; `forceEnd` ends the cell immediately
+export type ActionDone = (props?: { forceEnd?: boolean }) => void;
 
 // Actions are given their parent cell's ID when the project loads (see main.ts)
 export type ActionForPlayback<N extends ActionName = ActionName> =

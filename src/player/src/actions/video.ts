@@ -1,10 +1,10 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { getStore } from "../store";
 import { registerMedia, mediaEnded } from "../media";
 import { setCaptionsSource } from "../captions";
 
 const action = {
-  render: (action: ActionForPlayback<"video">, done: Function) => {
+  render: (action: ActionForPlayback<"video">, done: ActionDone) => {
     const store = getStore();
 
     // Promote lookahead element if one was pre-inserted for this action

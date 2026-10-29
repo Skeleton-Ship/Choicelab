@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import { Rule, RuleOperator, Stem, Branch, Variable, VariableValue } from "../../../typings";
+import { Rule, RuleOperator, Stem, Branch, Variable, VariableValue, UpdateFunction } from "../../../typings";
 import { getVariables, getVariable, getStemRule } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteStemRuleFromData } from "../../../data/deleteData";
@@ -11,7 +11,7 @@ export default function RuleInstance(props: {
   stem: Stem;
   branch: Branch;
   index: number;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const [localValue, setLocalValue] = useState(props.rule.value as string);
   useEffect(() => {

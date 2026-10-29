@@ -1,6 +1,6 @@
 import { JSX } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
-import { Action } from "../../../typings";
+import { Action, UpdateFunction } from "../../../typings";
 import PlayIcon from "../../../assets/icons/mono/icon-play.svg";
 import PauseIcon from "../../../assets/icons/mono/icon-pause.svg";
 import { getActionParent } from "../../../utils/getActionParent";
@@ -35,7 +35,7 @@ function setScrubberWidth(
 export function MediaControl(props: {
   media: HTMLAudioElement | HTMLVideoElement | false;
   actionId: string;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const store = getStore();
   const action = getAction(props.actionId, store);

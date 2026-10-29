@@ -1,7 +1,7 @@
 import { useEffect } from "preact/hooks";
 import { getFocusedRegion } from "../../../utils/focusedRegion";
 
-export function AppearanceList(props: { pane: string; setPane: Function }) {
+export function AppearanceList(props: { pane: string; setPane: (pane: string) => void }) {
   useEffect(() => {
     window.addEventListener(
       "keydown",

@@ -5,7 +5,7 @@ import { message } from "@tauri-apps/plugin-dialog";
 import { getStore, getViewStore, setStore } from "../../data/dataStore";
 import { getAsset } from "../../data/getData";
 import { createAsset } from "../../data/createNode";
-import { Action, Asset } from "../../typings";
+import { Action, Asset, UpdateFunction } from "../../typings";
 import getAssetPreviewURL from "./getAssetPreviewURL";
 import AssetPreview from "./AssetPreview";
 import { v4 as uuid } from "uuid";
@@ -36,9 +36,9 @@ export default function FileUpload(props: {
   action?: Action; // The parent action, if it applies per above
   accept: string; // File types accepted
   className?: string;
-  update?: Function; // Parent updater function, only passed to <AssetPreview /> to enable control of timing flags
-  onCreated: Function;
-  onClear: Function;
+  update?: UpdateFunction; // Parent updater function, only passed to <AssetPreview /> to enable control of timing flags
+  onCreated: (asset: Asset) => void;
+  onClear: () => void;
 }) {
   const filePickerEl = useRef<HTMLInputElement | null>(null);
   // Keeps changeHandler current without re-attaching the event listener on every render.

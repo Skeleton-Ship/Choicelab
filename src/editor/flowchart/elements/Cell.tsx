@@ -3,7 +3,7 @@ import { getCell } from "../../../data/getData";
 import { getStore, getViewStore } from "../../../data/dataStore";
 import isNodeSelected from "../selecting/isNodeSelected";
 import Link from "./Link";
-import { Cell, Action } from "../../../typings";
+import { Cell, Action, UpdateFunction } from "../../../typings";
 import internalActionDefs from "../../inspector/functions/internalActionDefs";
 import { getActionDef } from "../../../data/getData";
 import handleSelectNode from "../selecting/handleSelectNode";
@@ -19,7 +19,7 @@ export default function CellEl(props: {
   top: number;
   width?: number;
   height?: number;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const store = getStore(),
     viewStore = getViewStore();

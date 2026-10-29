@@ -1,4 +1,4 @@
-import { Sequence, AnyNode, Cell, Branch } from "../../schema/project";
+import { Sequence, AnyNode } from "../../schema/project";
 import { getStore } from "./store";
 import { log, warn, error } from "./logging";
 import { runCell } from "./cell";
@@ -41,21 +41,20 @@ export function getNode(nodeId: string): AnyNode | false {
 }
 
 export function navigate(item: AnyNode, forceStart?: boolean) {
-  let thisNode,
-    nextNodeId = "";
+  let nextNodeId = "";
   switch (item.type) {
     case "cell":
-    case "start":
       if (forceStart === true) {
-        runCell(item as Cell);
+        runCell(item);
         return;
       }
-      thisNode = item as Cell;
-      nextNodeId = thisNode.link.to;
+      nextNodeId = item.link.to;
+      break;
+    case "start":
+      nextNodeId = item.link.to;
       break;
     case "branch":
-      thisNode = item as Branch;
-      nextNodeId = runBranch(thisNode);
+      nextNodeId = runBranch(item);
       break;
   }
   if (nextNodeId === "") {
@@ -72,7 +71,7 @@ export function navigate(item: AnyNode, forceStart?: boolean) {
   // log(nextNode);
   switch (nextNode.type) {
     case "cell":
-      runCell(nextNode as Cell);
+      runCell(nextNode);
       break;
     case "branch":
     case "start":

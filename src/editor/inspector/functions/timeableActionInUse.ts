@@ -1,5 +1,5 @@
 import { getStore } from "../../../data/dataStore";
-import { Action, Cell } from "../../../typings";
+import { Action } from "../../../typings";
 
 export function timeableActionInUse(
   timeableAction: Action,
@@ -10,8 +10,7 @@ export function timeableActionInUse(
   store.project.sequences.forEach((sequence) => {
     sequence.nodes.forEach((node) => {
       if (node.type !== "cell") return;
-      const thisNode = node as Cell;
-      thisNode.actions.forEach((thisAction) => {
+      node.actions.forEach((thisAction) => {
         if (thisAction.timedActions && thisAction.id !== currentAction.id) {
           if (thisAction.timedActions[timeableAction.id]) {
             inUse = true;

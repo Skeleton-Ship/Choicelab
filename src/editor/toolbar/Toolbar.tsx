@@ -9,8 +9,9 @@ import { PlayIcon } from "../shared/ColorIcon";
 import { LightningIcon } from "../shared/ColorIcon";
 import { useState, useEffect } from "preact/hooks";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { UpdateFunction } from "../../typings";
 
-function Toolbar(props: { update: Function }) {
+function Toolbar(props: { update: UpdateFunction }) {
   const toolbarIconSize = 36;
   const toolbarIconSizeTall = 28;
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");

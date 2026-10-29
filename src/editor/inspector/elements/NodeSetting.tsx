@@ -1,4 +1,4 @@
-import { Cell, CellSettings } from "../../../typings";
+import { Cell, CellSettings, UpdateFunction } from "../../../typings";
 import { setStore } from "../../../data/dataStore";
 import { Store } from "../../../typings";
 import { SettingDef } from "../../../data/settingsDefs";
@@ -14,7 +14,7 @@ export function NodeSetting(props: {
   settingName: keyof CellSettings;
   store: Store;
   def: SettingDef<SettingValue>;
-  update: Function;
+  update: UpdateFunction;
 }) {
   // Controls are chosen by the def's type, so the value always matches the setting it's written to
   const settings = props.node.settings as Record<keyof CellSettings, SettingValue>;

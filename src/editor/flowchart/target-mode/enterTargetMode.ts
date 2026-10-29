@@ -5,12 +5,13 @@ import {
   setViewStore,
 } from "../../../data/dataStore";
 import { getActiveBranchStem } from "../../../data/getData";
+import { UpdateFunction } from "../../../typings";
 
 export default function enterTargetMode(props: {
   origin?: string;
   nodeId?: string;
   stemId?: string | undefined;
-  update: Function;
+  update: UpdateFunction;
 }) {
   const store = getStore(),
     viewStore = getViewStore();

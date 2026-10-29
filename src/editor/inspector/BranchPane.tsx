@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { getStore, getViewStore, setViewStore } from "../../data/dataStore";
 import { getBranch } from "../../data/getData";
-import { Branch, Stem } from "../../typings";
+import { Branch, Stem, UpdateFunction } from "../../typings";
 import StemInstance from "./elements/StemInstance";
 import internalActionDefs from "./functions/internalActionDefs";
 import {
@@ -17,7 +17,7 @@ import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
 
-export default function BranchPane(props: { update: Function }) {
+export default function BranchPane(props: { update: UpdateFunction }) {
   const store = getStore(),
     viewStore = getViewStore();
   const selectedNodeId = viewStore.selectedNodes[0]?.id ?? "";

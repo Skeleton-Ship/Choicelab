@@ -1,5 +1,5 @@
 import { Cell, Action, ActionName } from "../../schema/project";
-import { ActionForPlayback } from "./typings";
+import { ActionDone, ActionForPlayback } from "./typings";
 import { runEvents } from "./events";
 import { getSettings } from "./settings";
 import { getStore } from "./store";
@@ -24,7 +24,7 @@ import { cleanupStaleLookaheads, preloadLookaheadVideos } from "./lookahead";
 interface ActionRenderer<N extends ActionName> {
   render: (
     action: ActionForPlayback<N>,
-    done: (props?: { forceEnd: boolean }) => void
+    done: ActionDone
   ) => void;
   clear?: (action: ActionForPlayback<N>) => void;
 }
@@ -106,7 +106,7 @@ export async function runCell(cell: Cell) {
       error(`No render function found for ${action.name}`, action);
       return;
     }
-    actionFn(action as ActionForPlayback, (props?: { forceEnd: boolean }) => {
+    actionFn(action as ActionForPlayback, (props) => {
       if (props && props.forceEnd === true) {
         if (cellEnded) return;
         cellEnded = true;

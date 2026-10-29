@@ -5,6 +5,7 @@ import {
   ActionDefProp,
   ActionDefPropDropdownOption,
   Store,
+  UpdateFunction,
 } from "../../../../typings";
 import { getActionProp, setActionProp } from "../../../../data/actionProps";
 
@@ -15,7 +16,7 @@ export default function Dropdown(props: {
   initialValue: string;
   className: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   function handleChange(target: EventTarget | null) {
     if (target === null || !action) return;

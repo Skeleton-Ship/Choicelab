@@ -1,9 +1,9 @@
-import { Variable } from "../../typings";
+import { Variable, UpdateFunction } from "../../typings";
 import { getStore } from "../../data/dataStore";
 import VariableEl from "./elements/Variable";
 import addVariable from "./functions/addVariable";
 
-export default function VariablesPane(props: { update: Function }) {
+export default function VariablesPane(props: { update: UpdateFunction }) {
   function handleCreateVariable() {
     addVariable(props.update);
   }

@@ -12,7 +12,7 @@ import {
 import markUnsaved from "./markUnsaved";
 import { triggerAutosave } from "../fs/autosave";
 import { getNode } from "./getData";
-import { AnyNode } from "../typings";
+import { AnyNode, UpdateFunction } from "../typings";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 /**
@@ -81,7 +81,7 @@ export function canRedo() {
   return true;
 }
 
-export async function handleUndoRedo(undoOrRedo: string, update: Function) {
+export async function handleUndoRedo(undoOrRedo: string, update: UpdateFunction) {
   // First, see if we need to treat this like a regular text edit undo/redo
   if (inTextElement() === true) {
     // TODO: execCommand is deprecated in the HTML spec but remains supported in WKWebView.

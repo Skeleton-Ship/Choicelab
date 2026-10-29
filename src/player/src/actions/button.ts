@@ -1,10 +1,10 @@
-import { ActionForPlayback } from "../typings";
+import { ActionDone, ActionForPlayback } from "../typings";
 import { render, createActionWrapper, clear } from "../rendering";
 import { onEvent, runEvents } from "../events";
 import { setVariable } from "../variables";
 
 const action = {
-  render: (action: ActionForPlayback<"button">, done: Function) => {
+  render: (action: ActionForPlayback<"button">, done: ActionDone) => {
     let el = createActionWrapper("button", action);
     el.innerText = action.props.label;
     render(el, action);

@@ -10,7 +10,7 @@ import { forceReflow } from "./utils/forceReflow";
 import { generateAppearanceCSS } from "./appearance";
 import { enableAutoplay, registerAutoplayQualifier } from "./autoplay";
 import { ActionForPlayback } from "./typings";
-import { VariableValue } from "../../schema/project";
+import { Project, VariableValue } from "../../schema/project";
 
 interface InitProps {
   path: string; // URL of the project's JSON file
@@ -41,7 +41,8 @@ function Choicelab() {
         .then((response) => {
           return response.json();
         })
-        .then((json) => {
+        // The app writes this file from its own (already migrated) project data
+        .then((json: Project) => {
           const isAppPreview =
             new URLSearchParams(window.location.search).get(
               "startMediaOnLoad"
@@ -49,7 +50,7 @@ function Choicelab() {
           const rememberHistory =
             !isAppPreview && json.settings?.rememberHistory === true;
           window.__CHOICELAB__ = {
-            project: json,
+            project: { ...json, projectPath: dirname(filePath) },
             playback: {
               isAppPreview,
               variables: {
@@ -134,14 +135,12 @@ function Choicelab() {
           window.__CHOICELAB__.project.sequences.forEach((sequence) => {
             sequence.nodes.forEach((node) => {
               const id = node.id;
-              if (!node.actions) return;
+              if (node.type !== "cell") return;
               node.actions.forEach((action) => {
                 (action as ActionForPlayback).cellId = id;
               });
             });
           });
-          // Set project path
-          window.__CHOICELAB__.project.projectPath = dirname(filePath);
           // Create stage
           const appWrapper = document.createElement("div");
           appWrapper.classList.add("cl-stage");

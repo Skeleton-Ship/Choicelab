@@ -5,6 +5,7 @@ import {
   ActionDefProp,
   Store,
   Variable,
+  UpdateFunction,
 } from "../../../../typings";
 import { getVariables } from "../../../../data/getData";
 import { getActionProp, setActionProp } from "../../../../data/actionProps";
@@ -16,7 +17,7 @@ export default function VariableControl(props: {
   initialValue: string;
   className: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   function handleChange(target: EventTarget | null) {
     if (target === null || !action) return;

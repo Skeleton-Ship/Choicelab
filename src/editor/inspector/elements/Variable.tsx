@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import { Variable, VariableType, VariableValue } from "../../../typings";
+import { Variable, VariableType, VariableValue, UpdateFunction } from "../../../typings";
 import { getVariable } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
@@ -9,7 +9,7 @@ import NumberField from "./NumberField";
 
 export default function VariableEl(props: {
   instance: Variable;
-  update: Function;
+  update: UpdateFunction;
 }) {
   /*
    * Methods for updating, deleting

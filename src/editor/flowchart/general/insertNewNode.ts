@@ -12,15 +12,15 @@ import {
   setViewStore,
 } from "../../../data/dataStore";
 import identifyOriginLink from "../linking/identifyOriginLink";
-import { AnyNode } from "../../../typings";
+import { AnyNode, Stem, UpdateFunction } from "../../../typings";
 
 /**
  * Handler for inserting a newly created node into the current sequence.
  *
  * @param {string} newNode - The node object to be added to the sequence
- * @param {Function} update - A React handler that traverses back to the app root, triggering a refresh.
+ * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-export default function insertNewNode(newNode: AnyNode, update: Function) {
+export default function insertNewNode(newNode: AnyNode, update: UpdateFunction) {
   // Add the new node to the sequence
   const store = getStore(),
     viewStore = getViewStore();
@@ -31,7 +31,7 @@ export default function insertNewNode(newNode: AnyNode, update: Function) {
   }
   thisSequence.nodes.push(newNode);
   // Update origin node with link to new node
-  let linkInData: AnyNode | undefined;
+  let linkInData: AnyNode | Stem | undefined;
   const originLink = identifyOriginLink(store);
   // Use the right function to find the originating node
   if (originLink) {
@@ -52,7 +52,7 @@ export default function insertNewNode(newNode: AnyNode, update: Function) {
       linkInData = getBranchStem(originLink.link.id, stemParent.id, store);
     }
     // If the current node has a link, move it to the new node
-    if (typeof linkInData === "undefined" || linkInData.link === undefined) {
+    if (typeof linkInData === "undefined" || !("link" in linkInData)) {
       console.error("No link found.");
       return;
     }

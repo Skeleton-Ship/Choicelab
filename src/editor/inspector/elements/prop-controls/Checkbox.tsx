@@ -1,5 +1,5 @@
 import { setStore } from "../../../../data/dataStore";
-import { Action, ActionDef, ActionDefProp, Store } from "../../../../typings";
+import { Action, ActionDef, ActionDefProp, Store, UpdateFunction } from "../../../../typings";
 import { getActionProp, setActionProp } from "../../../../data/actionProps";
 
 export default function Checkbox(props: {
@@ -9,7 +9,7 @@ export default function Checkbox(props: {
   initialValue: boolean;
   className: string;
   store: Store;
-  update: Function;
+  update: UpdateFunction;
 }) {
   function handleChange(target: EventTarget | null) {
     if (target === null || !action) return;

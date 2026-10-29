@@ -9,10 +9,9 @@ export function getActionParent(
   sequences.forEach((sequence) => {
     sequence.nodes.forEach((node: AnyNode) => {
       if (node.type !== "cell") return;
-      const thisNode = node as Cell;
-      thisNode.actions.forEach((thisAction) => {
+      node.actions.forEach((thisAction) => {
         if (thisAction.id === action.id) {
-          thisParent = thisNode;
+          thisParent = node;
         }
       });
     });

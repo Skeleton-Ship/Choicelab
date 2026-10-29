@@ -13,12 +13,12 @@ function getNextCells(cell: Cell): Cell[] {
   if (!nextId) return [];
   const next = getNode(nextId);
   if (!next) return [];
-  if (next.type === "cell") return [next as unknown as Cell];
+  if (next.type === "cell") return [next];
   if (next.type === "branch" && next.stems) {
     return next.stems
       .map((stem) => {
         const node = stem.link?.to ? getNode(stem.link.to) : null;
-        return node && node.type === "cell" ? (node as unknown as Cell) : null;
+        return node && node.type === "cell" ? node : null;
       })
       .filter((c): c is Cell => c !== null);
   }

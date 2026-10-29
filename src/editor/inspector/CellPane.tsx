@@ -2,7 +2,7 @@ import { useState, useEffect } from "preact/hooks";
 import { getFocusedRegion } from "../../utils/focusedRegion";
 import { getStore, getViewStore, setViewStore } from "../../data/dataStore";
 import { getCell } from "../../data/getData";
-import { Cell, CellSettings, Action, ActionDef } from "../../typings";
+import { Cell, CellSettings, Action, ActionDef, UpdateFunction } from "../../typings";
 import addAction from "./functions/addAction";
 import internalActionDefs from "./functions/internalActionDefs";
 import ActionInstance from "./elements/ActionInstance";
@@ -24,7 +24,7 @@ import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
 
 function AvailableActions(props: {
-  update: Function;
+  update: UpdateFunction;
   onActionAdded: (id: string) => void;
 }) {
   const [selectedDef, selectDef] = useState("");
@@ -86,7 +86,7 @@ function AvailableActions(props: {
 }
 
 function ActionsEditor(props: {
-  update: Function;
+  update: UpdateFunction;
   lastAddedId: string | null;
   clearLastAdded: () => void;
 }) {
@@ -158,7 +158,7 @@ function ActionsEditor(props: {
 }
 
 function NodeSettings(props: {
-  update: Function;
+  update: UpdateFunction;
   plan: AutoGenerationPlan | null;
   onApply: () => void;
 }) {
@@ -199,7 +199,7 @@ function NodeSettings(props: {
   );
 }
 
-export default function CellPane(props: { update: Function }) {
+export default function CellPane(props: { update: UpdateFunction }) {
   const selectedNodeId = getViewStore().selectedNodes[0]?.id ?? "";
   const [plan, setPlan] = useState<AutoGenerationPlan | null>(null);
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
