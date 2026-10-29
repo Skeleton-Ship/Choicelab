@@ -11,7 +11,7 @@
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
-- Adding media files to a project, previewing them in the editor, and opening projects that contain media are now faster and use much less memory and disk space.
+- Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
@@ -23,7 +23,7 @@
 - Deleting a variable now resets it to **None** in any actions that used it.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
-- Fixed an issue where copies of previewed media files built up in the app's cache and were never removed. Existing copies are cleared automatically.
+- Fixed an issue where copies of previewed media files built up in the app's cache and were never removed.
 
 ## 1.1
 
