@@ -7,7 +7,7 @@
  *   2. Tokenize        — lowercase, strip punctuation, remove stop words
  *   3. Embed           — look up each token in the trimmed GloVe vocab
  *   4. Compare         — cosine similarity against pre-computed category centroids
- *   5. Threshold       — return "path" if best similarity is below MIN_CONFIDENCE
+ *   5. Threshold       — return "Path" if best similarity is below MIN_CONFIDENCE
  *
  * The vocab JSON (src/assets/embeddings/vocab.json) is loaded once and cached
  * as a dynamic import — Vite splits it into a content-hashed chunk so it is
@@ -18,7 +18,7 @@
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export interface Classification {
-  /** camelCase variable name, e.g. "place", "characterName", "emotion" */
+  /** Title Case variable name, e.g. "Place", "Character Name", "Emotion" */
   name: string;
   /** 0–1 cosine similarity against the winning category centroid */
   confidence: number;
@@ -418,24 +418,22 @@ function tokenize(text: string): string[] {
     .filter((t) => t.length > 1 && !STOP_WORDS.has(t));
 }
 
-function toCamelCase(s: string): string {
+function toTitleCase(s: string): string {
   return s
     .replace(/[^a-zA-Z0-9\s]/g, "")
     .trim()
     .split(/\s+/)
-    .map((word, i) =>
-      i === 0
-        ? word.toLowerCase()
-        : word[0].toUpperCase() + word.slice(1).toLowerCase()
-    )
-    .join("");
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
+
+const FALLBACK_NAME = "Path";
 
 function bestMatch(
   inputVec: Float32Array,
   centroids: Map<string, Float32Array>
 ): Classification {
-  let bestCategory = "path";
+  let bestCategory = FALLBACK_NAME;
   let bestScore = -Infinity;
   for (const [category, centroid] of centroids.entries()) {
     const score = cosineSimilarity(inputVec, centroid);
@@ -445,7 +443,7 @@ function bestMatch(
     }
   }
   return {
-    name: toCamelCase(bestCategory),
+    name: toTitleCase(bestCategory),
     confidence: Math.max(0, bestScore),
   };
 }
@@ -468,7 +466,7 @@ export function classifyWithVocab(
     const core = extractCoreTerm(labels[0]);
     if (core) {
       if (CATEGORY_ANCHORS[core])
-        return { name: toCamelCase(core), confidence: 1.0 };
+        return { name: toTitleCase(core), confidence: 1.0 };
       const vec = averageVectors([core], vocab);
       if (vec) {
         const result = bestMatch(vec, centroids);
@@ -479,15 +477,15 @@ export function classifyWithVocab(
 
   // Stage 2: embed the full label set
   const allTokens = labels.flatMap(tokenize);
-  if (allTokens.length === 0) return { name: "path", confidence: 0 };
+  if (allTokens.length === 0) return { name: FALLBACK_NAME, confidence: 0 };
 
   const inputVec = averageVectors(allTokens, vocab);
-  if (!inputVec) return { name: "path", confidence: 0 };
+  if (!inputVec) return { name: FALLBACK_NAME, confidence: 0 };
 
   const result = bestMatch(inputVec, centroids);
   return result.confidence >= MIN_CONFIDENCE
     ? result
-    : { name: "path", confidence: 0 };
+    : { name: FALLBACK_NAME, confidence: 0 };
 }
 
 // ── Async public API ──────────────────────────────────────────────────────────
@@ -519,8 +517,8 @@ async function loadVocab(): Promise<VocabMap> {
  *
  * @param labels - For button groups, pass all button label strings.
  *                 For an inputField, pass a single-element array with the field label.
- * @returns { name, confidence } — name is a camelCase variable name suggestion.
- *          Falls back to "path" with confidence 0 if the vocab fails to load
+ * @returns { name, confidence } — name is a Title Case variable name suggestion.
+ *          Falls back to "Path" with confidence 0 if the vocab fails to load
  *          or no category clears the similarity threshold.
  */
 export async function classifyInputLabel(
@@ -530,7 +528,7 @@ export async function classifyInputLabel(
   try {
     vocab = await loadVocab();
   } catch {
-    return { name: "path", confidence: 0 };
+    return { name: FALLBACK_NAME, confidence: 0 };
   }
   return classifyWithVocab(labels, vocab);
 }

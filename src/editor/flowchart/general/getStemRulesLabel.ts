@@ -54,8 +54,9 @@ export default function getStemRulesLabel(stem: Stem): string {
   });
   for (var i = 0; i < labels.length; i++) {
     var label = labels[i];
-    if (i !== 0) {
-      label = label.charAt(0).toLowerCase() + label.slice(1);
+    // Lowercase the placeholder mid-sentence, but leave variable names as written
+    if (i !== 0 && label === "Rule not set") {
+      label = "rule not set";
     }
     if (i !== labels.length - 1) {
       label += "; ";

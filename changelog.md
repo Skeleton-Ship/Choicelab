@@ -6,12 +6,14 @@
 
 #### Enhancements
 
-- When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and qualified nodes are now easier to see.
+- When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and linkable nodes are now easier to see.
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
+- Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
+- New variables and rules now scroll into view when added, and a new variable's name is selected so you can type over it right away.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes

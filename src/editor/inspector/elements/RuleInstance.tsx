@@ -1,10 +1,11 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { Rule, RuleOperator, Stem, Branch, Variable, VariableValue, UpdateFunction } from "../../../typings";
 import { getVariables, getVariable, getStemRule } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteStemRuleFromData } from "../../../data/deleteData";
 import { setMenu } from "../../../menu/setMenu";
 import NumberField from "./NumberField";
+import { useScrollToNewItem } from "../functions/scrollToNewItem";
 
 export default function RuleInstance(props: {
   rule: Rule;
@@ -13,6 +14,8 @@ export default function RuleInstance(props: {
   index: number;
   update: UpdateFunction;
 }) {
+  const itemRef = useRef<HTMLLIElement>(null);
+  useScrollToNewItem(props.rule.id, itemRef);
   const [localValue, setLocalValue] = useState(props.rule.value as string);
   useEffect(() => {
     setLocalValue(props.rule.value as string);
@@ -240,7 +243,7 @@ export default function RuleInstance(props: {
       ""
     );
   return (
-    <li class="rule">
+    <li class="rule" ref={itemRef}>
       <div class="variables ui-dropdown">
         <select
           value={rule.variableId}

@@ -1,9 +1,11 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { Variable, VariableType, VariableValue, UpdateFunction } from "../../../typings";
 import { getVariable } from "../../../data/getData";
 import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
+import { resolveVariableName } from "../../../data/variableNames";
 import { setMenu } from "../../../menu/setMenu";
+import { useScrollToNewItem } from "../functions/scrollToNewItem";
 import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
 import NumberField from "./NumberField";
 
@@ -14,22 +16,6 @@ export default function VariableEl(props: {
   /*
    * Methods for updating, deleting
    */
-  function setVariableName(rawName: string) {
-    const components = rawName.split(/[\s\.\-_]/g);
-    let newName = "";
-    for (var i = 0; i < components.length; i++) {
-      var component = components[i];
-      if (i === 0) {
-        component = component.charAt(0).toLowerCase() + component.slice(1);
-      }
-      if (i > 0) {
-        component = component.charAt(0).toUpperCase() + component.slice(1);
-      }
-      newName += component;
-    }
-    newName = newName.replace(/[^a-zA-Z0-9]/g, "");
-    return newName;
-  }
   function handleDelete() {
     const store = getStore();
     const newStore = deleteVariableFromData(props.instance.id, store);
@@ -55,7 +41,14 @@ export default function VariableEl(props: {
     const rawValue = target ? (target as HTMLInputElement).value : "";
     switch (field) {
       case "name": {
-        const name = setVariableName(rawValue);
+        const name = resolveVariableName(
+          rawValue,
+          store.project.variables.items,
+          varInStore.id
+        );
+        // Show the resolved name even when it matches the stored one
+        // (e.g. after trimming), since the field still holds the raw text
+        setLocalName(name);
         if (varInStore.name === name) return;
         varInStore.name = name;
         break;
@@ -100,6 +93,8 @@ export default function VariableEl(props: {
    * Front-end display
    */
   const variable = props.instance;
+  const itemRef = useRef<HTMLLIElement>(null);
+  useScrollToNewItem(variable.id, itemRef, ".var-name input");
   const [localName, setLocalName] = useState(variable.name);
   useEffect(() => { setLocalName(variable.name); }, [variable.name]);
   const [localDescription, setLocalDescription] = useState(variable.description ?? "");
@@ -170,7 +165,7 @@ export default function VariableEl(props: {
    * Return JSX
    */
   return (
-    <li class="variable inspector-item">
+    <li class="variable inspector-item" ref={itemRef}>
       <div class="item-toolbar">
         <div class="var-name inspector-prop">
           <label class="aria-only" for={nameField}>

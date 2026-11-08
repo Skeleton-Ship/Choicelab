@@ -2,6 +2,7 @@ import { Branch, Stem, UpdateFunction } from "../../../typings";
 import { getBranch, getBranchStem } from "../../../data/getData";
 import { getStore, setStore } from "../../../data/dataStore";
 import { createRule } from "../../../data/createNode";
+import { markNewInspectorItem } from "./scrollToNewItem";
 import handleSelectNode from "../../flowchart/selecting/handleSelectNode";
 
 export default function addRule(
@@ -16,6 +17,7 @@ export default function addRule(
   const rule = createRule();
   stem.rules.push(rule);
   setStore(store);
+  markNewInspectorItem(rule.id);
   update();
   handleSelectNode(branch, update);
 }

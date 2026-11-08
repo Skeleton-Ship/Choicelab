@@ -15,9 +15,9 @@ import {
   Cell,
   Stem,
   Store,
-  Variable,
 } from "../typings";
 import { classifyInputLabel } from "../utils/classifyInputLabel";
+import { resolveVariableName } from "./variableNames";
 import { getActionProp, setActionProp } from "./actionProps";
 import { getVariables } from "./getData";
 
@@ -67,18 +67,6 @@ export function deduplicateValues(values: string[]): string[] {
     counts.set(v, n);
     return n === 1 ? v : `${v}${n}`;
   });
-}
-
-/**
- * Resolves a unique variable name against the existing project variables.
- * If the base name already exists, appends a numeric suffix (e.g. "choice2").
- */
-function resolveUniqueName(baseName: string, existing: Variable[]): string {
-  const existingNames = new Set(existing.map((v) => v.name));
-  if (!existingNames.has(baseName)) return baseName;
-  let i = 2;
-  while (existingNames.has(`${baseName}${i}`)) i++;
-  return `${baseName}${i}`;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -252,7 +240,7 @@ export async function buildAutoGenerationPlan(
     throw new DOMException("Auto-generation cancelled", "AbortError");
   }
 
-  const uniqueName = resolveUniqueName(
+  const uniqueName = resolveVariableName(
     classification.name,
     getVariables(store)
   );
