@@ -22,8 +22,8 @@
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable (which could lead to conditions that look correct but fail to match).
-- If a window stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first, instead of becoming unresponsive.
-- Auto-save now always includes your latest changes, instead of sometimes missing edits made shortly after the previous auto-save.
+- If Choicelab stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first.
+- Various improvements to reliability of auto-save, export, and project creation and loading.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
@@ -39,6 +39,7 @@
 - Fixed a few rare instances where auto-save, undo, and the preview could stop working when a project 1) is stored in deeply nested folders, 2) has a project with a similar name, or 3) was modified by cleanup or sync applications.
 - Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved. Choicelab now explains what went wrong and offers to save it somewhere else.
 - Fixed an issue where **Save As** could close the open project without saving it if the new location couldn't be written to.
+- Fixed a few rare crashes that could happen when a window closed while it was still loading.
 
 ## 1.1
 
