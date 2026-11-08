@@ -6,10 +6,13 @@ import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getStore, getViewStore } from "../data/dataStore";
 import { saveProject } from "./saveProject";
 import { clearProjectCache } from "./projectCache";
+import { cancelAutosave } from "./autosave";
 const appWindow = getCurrentWebviewWindow();
 
 export async function handleClose() {
   // Clear this project's cache subdirectory only
+  // Don't let a scheduled autosave recreate the folder after it's cleared
+  cancelAutosave();
   await clearProjectCache(getViewStore().projectPath).catch(() => {});
   // Close settings window if it's open
   const projectSettingsWindow = await getProjectSettingsWindow(
@@ -47,7 +50,8 @@ export async function handleCloseRequest(closeFn?: () => void) {
   }
   const result = await promptUnsavedChanges("closing");
   if (result === "save") {
-    await saveProject();
+    // Stay open if the save didn't happen, so the changes aren't lost
+    if (!(await saveProject())) return;
     if (typeof closeFn !== "undefined") {
       closeFn();
     } else {
@@ -70,7 +74,8 @@ export async function handleQuit() {
   if (store.saved !== true) {
     const result = await promptUnsavedChanges("quitting");
     if (result === "save") {
-      await saveProject();
+      // Don't quit if the save didn't happen, so the changes aren't lost
+      if (!(await saveProject())) return;
     } else if (result !== "dont_save") {
       return; // "cancel" → do nothing
     }

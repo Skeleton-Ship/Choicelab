@@ -6,7 +6,7 @@
 
 #### New features
 
-- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one. Variable names will stay up to date even if the variable is renamed.
+- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
 
 #### Enhancements
@@ -22,6 +22,8 @@
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable (which could lead to conditions that look correct but fail to match).
+- If a window stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first, instead of becoming unresponsive.
+- Auto-save now always includes your latest changes, instead of sometimes missing edits made shortly after the previous auto-save.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
@@ -35,6 +37,8 @@
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Cached media files are now properly removed from disk.
 - Fixed a few rare instances where auto-save, undo, and the preview could stop working when a project 1) is stored in deeply nested folders, 2) has a project with a similar name, or 3) was modified by cleanup or sync applications.
+- Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved. Choicelab now explains what went wrong and offers to save it somewhere else.
+- Fixed an issue where **Save As** could close the open project without saving it if the new location couldn't be written to.
 
 ## 1.1
 

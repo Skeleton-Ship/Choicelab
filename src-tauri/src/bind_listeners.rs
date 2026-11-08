@@ -1,5 +1,5 @@
 use crate::file_operations::{
-    copy_directory_contents, create_directory, create_text_file, export_project_files,
+    create_directory, create_text_file, export_project_files,
     load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
@@ -380,31 +380,6 @@ let handle_update = app_handle.clone();
                             },
                         )
                         .unwrap();
-                }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
-
-    // listen for directory copy requests
-    let handle_copy_dir = app_handle.clone();
-    app.listen("copy-directory-contents", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let src = json["src"].as_str().unwrap_or("N/A");
-                let dst = json["dst"].as_str().unwrap_or("N/A");
-                let window_label = json["label"].as_str().unwrap_or("N/A");
-                let _ = copy_directory_contents(src, dst);
-                // Do callback
-                let callback = json["callback"].as_str().unwrap_or("N/A");
-                if callback != "N/A" && !callback.is_empty() {
-                    if let Some(window) = handle_copy_dir.get_webview_window(window_label) {
-                        let _ = window.emit(callback, Payload { message: "success".to_string() });
-                    }
                 }
             }
             Err(e) => {

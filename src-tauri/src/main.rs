@@ -9,6 +9,7 @@ mod globals;
 mod preferences;
 mod preview_server;
 mod project_cache;
+mod project_files;
 mod volume_name;
 mod check_for_updates;
 #[cfg(target_os = "macos")]
@@ -306,6 +307,8 @@ fn main() {
             project_cache::get_project_cache_dir,
             project_cache::write_project_cache_file,
             project_cache::clear_project_cache,
+            project_files::save_project_file,
+            project_files::copy_project_folder,
             assets::create_asset,
             assets::allow_asset_preview,
             assets::save_binary_file,

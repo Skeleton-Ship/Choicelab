@@ -43,6 +43,8 @@ import { buildMenu } from "./menu/buildMenu";
 import { exportProject, getExportDirName } from "./fs/exportProject";
 import { desktopDir, resolve } from "@tauri-apps/api/path";
 import { getDialogText } from "./utils/dialogText";
+import { ErrorBoundary } from "./errors/ErrorBoundary";
+import { installGlobalErrorHandlers } from "./errors/globalErrorHandlers";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -382,7 +384,7 @@ async function init() {
 
   const appDOM = (
     <div id="App" data-platform={platform} data-focused-region="">
-      {elements}
+      <ErrorBoundary windowType={windowType}>{elements}</ErrorBoundary>
     </div>
   );
   const root = document.getElementById("root") as HTMLElement;
@@ -390,4 +392,5 @@ async function init() {
   buildMenu(windowType, recentFiles);
 }
 
+installGlobalErrorHandlers();
 init();
