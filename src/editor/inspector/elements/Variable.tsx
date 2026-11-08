@@ -98,6 +98,7 @@ export default function VariableEl(props: {
         // Reset the starting value to a sensible default
         if (varType === "boolean") varInStore.startingValue = true;
         else if (varType === "string") varInStore.startingValue = "";
+        else if (varType === "number") varInStore.startingValue = 0;
         varInStore.varType = varType;
         break;
       }
@@ -263,14 +264,22 @@ export default function VariableEl(props: {
         </div>
         <div class="inspector-prop">
           <label class="break-line" for={startingValField}>
-            Starting Value:
+            Starting Value
+            {/* Booleans always have a starting value, so it isn't optional */}
+            {variable.varType !== "boolean" && (
+              <>
+                {" "}
+                <span class="optional">(optional)</span>
+              </>
+            )}
+            :
           </label>
           {startingValueInput}
         </div>
       </div>
       <div class="inspector-prop">
         <label class="break-line" for={descField}>
-          Description (optional):
+          Description <span class="optional">(optional)</span>:
         </label>
         <textarea
           id={descField}

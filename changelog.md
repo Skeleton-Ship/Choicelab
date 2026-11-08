@@ -21,6 +21,7 @@
 
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - Fixed an issue where the preview would flash when opened or refreshed.
+- Fixed an issue where changing a variable's type to Number kept its previous starting value, instead of resetting it to 0.
 - Fixed an issue where a project's background color wasn't shown behind the preview or in exported projects before they finished loading.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
 - Deleting a variable now removes the variable from any actions or rules that used it.
