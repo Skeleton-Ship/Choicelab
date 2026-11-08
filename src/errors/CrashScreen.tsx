@@ -76,7 +76,9 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
   useEffect(() => {
     getVersion()
       .then((version) =>
-        setDetails(`Choicelab ${version} (${getPlatform()})\n\n${describeError(error)}`)
+        setDetails(
+          `Choicelab ${version} (${getPlatform()})\n\n${describeError(error)}`
+        )
       )
       .catch(() => {});
   }, [error]);
@@ -102,7 +104,10 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
     if (isProject) {
       // Reloading opens the saved version unless the author restores the
       // autosave, which marks the window as edited again
-      emit("set-document-edited", { state: false, windowLabel: appWindow.label });
+      emit("set-document-edited", {
+        state: false,
+        windowLabel: appWindow.label,
+      });
     }
     window.location.reload();
   }
@@ -129,7 +134,7 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
       break;
     default:
       message = isProject
-        ? "Your project has no unsaved changes. Reload the window to keep working."
+        ? "No project data was lost. Reload the window to keep working."
         : "Reload the window to try again.";
   }
 
@@ -161,7 +166,10 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
           {/* When autosave failed, saving a copy comes first */}
           {autosave === "failed" && saveAsButton}
           {reloadButton}
-          {isProject && autosave !== "failed" && autosave !== "not-needed" && saveAsButton}
+          {isProject &&
+            autosave !== "failed" &&
+            autosave !== "not-needed" &&
+            saveAsButton}
           <button class="ui-button large" onClick={copyDetails}>
             {copied ? "Copied" : "Copy Error Details"}
           </button>
