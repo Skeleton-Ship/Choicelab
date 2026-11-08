@@ -14,6 +14,7 @@
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
 - New variables and rules now scroll into view when added, and a new variable's name is selected so you can type over it right away.
+- Deleting a variable that's used by actions or branch stems now asks for confirmation first, and shows how many places use it.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
@@ -22,7 +23,7 @@
 - Fixed an issue where the preview would flash when opened or refreshed.
 - Fixed an issue where a project's background color wasn't shown behind the preview or in exported projects before they finished loading.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
-- Deleting a variable now resets it to **None** in any actions that used it.
+- Deleting a variable now removes the variable from any actions or rules that used it.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
 - Fixed an issue where copies of previewed media files built up in the app's cache and were never removed.

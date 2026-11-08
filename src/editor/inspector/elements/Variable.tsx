@@ -1,9 +1,25 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { Variable, VariableType, VariableValue, UpdateFunction } from "../../../typings";
+import { ask } from "@tauri-apps/plugin-dialog";
+import {
+  Variable,
+  VariableType,
+  VariableValue,
+  UpdateFunction,
+} from "../../../typings";
 import { getVariable } from "../../../data/getData";
-import { getStore, setStore, getViewStore, setViewStore } from "../../../data/dataStore";
+import {
+  getStore,
+  setStore,
+  getViewStore,
+  setViewStore,
+} from "../../../data/dataStore";
 import { deleteVariableFromData } from "../../../data/deleteData";
 import { resolveVariableName } from "../../../data/variableNames";
+import {
+  countVariableUses,
+  describeVariableUses,
+} from "../../../data/variableUses";
+import { getDialogText } from "../../../utils/dialogText";
 import { setMenu } from "../../../menu/setMenu";
 import { useScrollToNewItem } from "../functions/scrollToNewItem";
 import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
@@ -16,7 +32,26 @@ export default function VariableEl(props: {
   /*
    * Methods for updating, deleting
    */
-  function handleDelete() {
+  async function handleDelete() {
+    // Warn before deleting a variable that's in use
+    const usesText = describeVariableUses(
+      countVariableUses(props.instance.id, getStore())
+    );
+    if (usesText) {
+      const text = getDialogText(
+        "Delete variable?",
+        `"${props.instance.name}" is used in ${usesText}.`,
+        "Are you sure you want to delete this variable?"
+      );
+      const confirmed = await ask(text.message, {
+        title: text.title,
+        kind: "warning",
+        okLabel: `Delete "${props.instance.name}"`,
+        cancelLabel: "Cancel",
+      });
+      if (!confirmed) return;
+    }
+    // Re-read the store, since it may have changed while the dialog was open
     const store = getStore();
     const newStore = deleteVariableFromData(props.instance.id, store);
     setStore(newStore);
@@ -96,9 +131,15 @@ export default function VariableEl(props: {
   const itemRef = useRef<HTMLLIElement>(null);
   useScrollToNewItem(variable.id, itemRef, ".var-name input");
   const [localName, setLocalName] = useState(variable.name);
-  useEffect(() => { setLocalName(variable.name); }, [variable.name]);
-  const [localDescription, setLocalDescription] = useState(variable.description ?? "");
-  useEffect(() => { setLocalDescription(variable.description ?? ""); }, [variable.description]);
+  useEffect(() => {
+    setLocalName(variable.name);
+  }, [variable.name]);
+  const [localDescription, setLocalDescription] = useState(
+    variable.description ?? ""
+  );
+  useEffect(() => {
+    setLocalDescription(variable.description ?? "");
+  }, [variable.description]);
   // Get names of fields
   const nameField = `name_${variable.id}`;
   const typeField = `varType_${variable.id}`;
@@ -106,8 +147,10 @@ export default function VariableEl(props: {
   const startingValField = `starting_value_${variable.id}`;
   // Get starting value field based on var type
   const startingValue = variable.startingValue;
-  const stringStartingValue = variable.varType === "string" ? String(startingValue ?? "") : "";
-  const [localStartingValue, setLocalStartingValue] = useState(stringStartingValue);
+  const stringStartingValue =
+    variable.varType === "string" ? String(startingValue ?? "") : "";
+  const [localStartingValue, setLocalStartingValue] =
+    useState(stringStartingValue);
   useEffect(() => {
     setLocalStartingValue(stringStartingValue);
   }, [stringStartingValue]);

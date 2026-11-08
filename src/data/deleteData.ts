@@ -49,6 +49,19 @@ function deleteVariableFromData(variableId: string, store: Store) {
   // auto-filled) instead of pointing at a variable that no longer exists
   store.project.sequences.forEach((sequence: Sequence) => {
     sequence.nodes.forEach((node: AnyNode) => {
+      // Reset rules that checked the variable to blank, so they read as "Rule
+      // not set" instead of silently making their stem fail during playback
+      if (node.type === "branch") {
+        node.stems.forEach((stem: Stem) => {
+          stem.rules.forEach((rule: Rule) => {
+            if (rule.variableId !== variableId) return;
+            rule.variableId = "";
+            rule.operator = "";
+            rule.value = "";
+          });
+        });
+        return;
+      }
       if (node.type !== "cell") return;
       node.actions.forEach((action: Action) => {
         const actionDef = getActionDef(action.name, internalActionDefs);
