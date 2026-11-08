@@ -1,5 +1,6 @@
 import { emit } from "@tauri-apps/api/event";
 import { canUndo, canRedo } from "../data/history";
+import { hasActiveRichTextEditor } from "../editor/richText/activeRichTextEditor";
 import { getViewStore } from "../data/dataStore";
 import { WindowType } from "../typings";
 
@@ -51,6 +52,9 @@ export async function setMenu(windowType: WindowType = "project") {
           windowType === "project" || windowType === "projectSettings"
             ? canRedo()
             : false,
+      },
+      insert_variable: {
+        enabled: windowType === "project" && hasActiveRichTextEditor(),
       },
     },
     view: {

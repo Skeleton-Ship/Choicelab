@@ -4,7 +4,7 @@ import type {
   ActionOf,
   VariableType,
   VariableValue,
-} from "../../schema/project";
+} from "./schema/project";
 
 export interface ProjectStore extends Project {
   projectPath: string;

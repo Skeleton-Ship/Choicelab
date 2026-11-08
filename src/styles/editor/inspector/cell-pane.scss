@@ -230,7 +230,8 @@ $item-border-radius: 10px;
   }
   // Visually hide, showing only for screen readers
   .aria-only,
-  .hide-label label {
+  .hide-label label,
+  .hide-label > .label {
     position: absolute;
     top: -9999px;
     left: -9999px;

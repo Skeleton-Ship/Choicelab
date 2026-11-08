@@ -1,4 +1,5 @@
 import { ActionDefProp, ActionDefs } from "../../../typings";
+import { richTextFromPlainText } from "../../../data/richText";
 import {
   FCText,
   FCButton,
@@ -59,9 +60,9 @@ const internalActionDefs: ActionDefs = {
         {
           name: "contents",
           label: "Contents",
-          control: "textarea",
+          control: "richTextarea",
           className: "large hide-label",
-          default: "",
+          default: [],
           required: true,
         },
         {
@@ -223,9 +224,9 @@ const internalActionDefs: ActionDefs = {
         {
           name: "label",
           label: "Label",
-          control: "text",
+          control: "richText",
           required: true,
-          default: "Continue",
+          default: richTextFromPlainText("Continue"),
         },
         {
           name: "varToSet",

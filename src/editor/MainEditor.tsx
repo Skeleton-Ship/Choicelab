@@ -14,6 +14,7 @@ import {
 } from "../data/dataStore";
 import { getCurrentSequence, getStemParent } from "../data/getData";
 import { handleUndoRedo, saveHistoryVersion } from "../data/history";
+import { insertVariableInActiveField } from "./richText/activeRichTextEditor";
 import { handleCloseRequest, handleClose, handleQuit } from "../fs/handleCloseRequest";
 import {
   handleCutCopy,
@@ -171,6 +172,13 @@ export default function MainEditor() {
         handleUndoRedo("redo", handleUpdate);
       }
     );
+    const unlistenMenuInsertVariable = appWindow.listen<{ label: string }>(
+      "menu-insert-variable",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        insertVariableInActiveField();
+      }
+    );
     const unlistenMenuNewCell = appWindow.listen<{ label: string }>(
       "menu-new-cell",
       (event) => {
@@ -269,6 +277,7 @@ export default function MainEditor() {
       unlistenMenuOpenPreview.then((fn) => fn());
       unlistenMenuUndo.then((fn) => fn());
       unlistenMenuRedo.then((fn) => fn());
+      unlistenMenuInsertVariable.then((fn) => fn());
       unlistenMenuNewCell.then((fn) => fn());
       unlistenMenuNewBranch.then((fn) => fn());
       unlistenMenuSetLink.then((fn) => fn());

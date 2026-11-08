@@ -1,4 +1,4 @@
-import { Cell, Action } from "../../../schema/project";
+import { Cell, Action } from "../schema/project";
 
 interface ActionTiming {
   parentId: string;

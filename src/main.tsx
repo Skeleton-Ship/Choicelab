@@ -29,7 +29,12 @@ import { listen, emit, once } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
 import markUnsaved from "./data/markUnsaved";
-import { needsMigration, migrateProject } from "./fs/migrateProject";
+import {
+  needsMigration,
+  migrateProject,
+  isFromNewerVersion,
+  upgradeProjectRichText,
+} from "./fs/migrateProject";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
 import { setMenu } from "./menu/setMenu";
@@ -288,6 +293,17 @@ async function init() {
         // autosave check failed — proceed with normal load
       }
     }
+    // Refuse projects saved by a newer version, which this one can't read correctly
+    if (windowType === "project" && isFromNewerVersion(projectData)) {
+      const dialog = getDialogText(
+        "Newer version required",
+        "This project was saved with a newer version of Choicelab.",
+        "To open it, update Choicelab to the latest version."
+      );
+      await message(dialog.message, { title: dialog.title, kind: "warning" });
+      appWindow.close();
+      return;
+    }
     // Migrate projects saved with an older schema version
     // (the settings window receives already-migrated data from the project window)
     if (windowType === "project" && needsMigration(projectData)) {
@@ -317,6 +333,8 @@ async function init() {
         });
       });
     }
+    // Projects saved by development builds of schema 3 may predate rich text
+    upgradeProjectRichText(projectData as Project);
     // Always derive project name from the actual file name so renames are reflected
     (projectData as Project).name = fileName.replace(/\.clx$/i, "");
     // Create data store

@@ -2,11 +2,12 @@ import { Store } from "../typings";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 import { getActionDef } from "./getData";
 import { getActionProp } from "./actionProps";
+import { countRichTextVariableRefs, isRichText } from "./richText";
 
 export interface VariableUses {
   /** Action props (e.g. a button's "set variable") pointing at the variable */
   actions: number;
-  /** Inline {} references in text */
+  /** Variables shown in text (rich text props) */
   inline: number;
   /** Branch stems with at least one rule that checks the variable */
   stems: number;
@@ -21,14 +22,13 @@ export function countVariableUses(variableId: string, store: Store): VariableUse
           const actionDef = getActionDef(action.name, internalActionDefs);
           if (!actionDef) return;
           actionDef.props.forEach((propDef) => {
-            if (
-              propDef.control === "variable" &&
-              getActionProp(action, propDef.name) === variableId
-            ) {
+            const value = getActionProp(action, propDef.name);
+            if (propDef.control === "variable" && value === variableId) {
               uses.actions++;
+            } else if (isRichText(value)) {
+              uses.inline += countRichTextVariableRefs(value, variableId);
             }
           });
-          // TODO: count inline {} references once they exist
         });
       } else if (node.type === "branch") {
         node.stems.forEach((stem) => {
@@ -47,14 +47,14 @@ function plural(count: number, singular: string, pluralForm: string) {
 }
 
 /**
- * Describes a variable's uses as a readable list, e.g. "3 actions, 1 inline
- * reference, and 2 branch stems". Returns an empty string if it has none.
+ * Describes a variable's uses as a readable list, e.g. "3 actions, 1 place
+ * in text, and 2 branch stems". Returns an empty string if it has none.
  */
 export function describeVariableUses(uses: VariableUses): string {
   const parts: string[] = [];
   if (uses.actions) parts.push(plural(uses.actions, "action", "actions"));
   if (uses.inline)
-    parts.push(plural(uses.inline, "inline reference", "inline references"));
+    parts.push(plural(uses.inline, "place in text", "places in text"));
   if (uses.stems) parts.push(plural(uses.stems, "branch stem", "branch stems"));
   if (parts.length <= 2) return parts.join(" and ");
   return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;

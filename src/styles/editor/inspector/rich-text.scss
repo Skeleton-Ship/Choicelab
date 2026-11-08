@@ -1,0 +1,108 @@
+// Rich text fields (src/editor/richText)
+.rich-text-host {
+  width: 100%;
+  .rich-text-field {
+    display: block;
+    width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    cursor: text;
+    color: rgba(0, 0, 0, 0.85);
+    @media (prefers-color-scheme: dark) {
+      color: rgba(255, 255, 255, 0.85);
+    }
+    p {
+      margin: 0;
+    }
+    &.multiline {
+      min-height: 4.5em;
+      p + p {
+        margin-top: 0.5em;
+      }
+    }
+    &:not(.multiline) {
+      max-width: 550px;
+      white-space: pre;
+      overflow: hidden;
+    }
+  }
+}
+
+// Inline variable references
+.variable-chip {
+  display: inline-block;
+  padding: 0 0.35em;
+  margin: 0 0.05em;
+  border-radius: 0.35em;
+  line-height: 1.35;
+  color: var(--pink-vibrant);
+  background-color: rgba(238, 66, 141, 0.1);
+  white-space: nowrap;
+  user-select: all;
+  cursor: default;
+  @media (prefers-color-scheme: dark) {
+    color: var(--pink-faded-light);
+    background-color: rgba(255, 141, 191, 0.15);
+  }
+  &.missing {
+    color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.06);
+    text-decoration: line-through;
+    @media (prefers-color-scheme: dark) {
+      color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+  &.ProseMirror-selectednode {
+    outline: 2px solid var(--accent-color);
+  }
+}
+
+// Variable picker, opened by typing "{"
+.rich-text-suggestions {
+  position: fixed;
+  z-index: 1000;
+  min-width: 160px;
+  max-width: 280px;
+  padding: 4px;
+  font-size: 13px;
+  max-height: 220px;
+  overflow-y: auto;
+  cursor: default;
+  user-select: none;
+  border-radius: 6px;
+  color: var(--text-light);
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-dark);
+    background-color: rgba(44, 44, 46, 0.85);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  // Appears instantly, fades out when closed (timing matches FADE_OUT_MS)
+  &.closing {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+  .option,
+  .empty {
+    padding: 3px 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .option.selected {
+    color: #fff;
+    background-color: var(--accent-color);
+  }
+  .empty {
+    opacity: 0.6;
+  }
+}

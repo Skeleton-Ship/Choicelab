@@ -271,7 +271,7 @@ body {
   animation: fade-out 0.3s ease forwards;
 }
 
-:is(h1, h2, h3, p, button).cl-action {
+:is(h1, h2, h3, p, button, .text).cl-action {
   max-width: var(--cl-max-width, 45%);
 }
 
@@ -297,12 +297,18 @@ h2.cl-action {
   margin-bottom: 0.5rem;
 }
 
-p.cl-action {
+/* Body text: a wrapper with one <p> per paragraph */
+.text.body.cl-action {
   font-family: var(--cl-body-font-family);
   font-weight: var(--cl-body-font-weight);
   font-size: var(--cl-body-font-size);
   line-height: var(--cl-body-line-height);
   color: var(--cl-body-color);
+}
+
+/* One blank line between paragraphs */
+.text.body.cl-action p + p {
+  margin-top: calc(var(--cl-body-line-height) * 1em);
 }
 
 /*

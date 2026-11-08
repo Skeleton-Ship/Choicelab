@@ -1,6 +1,9 @@
 /*
  * Types for the project file (.clx) format, shared by the editor and the player.
- * The player bundles separately, so this file must stay types-only: no imports, no runtime code.
+ * It lives with the player so that the player, which is MIT-licensed (see
+ * src/player/LICENSE), is self-contained; the editor imports it from here.
+ * Keep it types-only (no imports, no runtime code), so importing it never
+ * brings player code into the editor.
  *
  * Current schema version: 3
  */
@@ -81,6 +84,31 @@ export interface Variable {
   varType: VariableType;
   startingValue: VariableValue;
 }
+/*
+ * Rich text, stored as a subset of Portable Text (https://www.portabletext.org).
+ * Each block is a paragraph; a "\n" in a span's text is a line break within it.
+ * Inline objects reference other project data by ID, never by name.
+ */
+export interface RichTextSpan {
+  _type: "span";
+  _key: string;
+  text: string;
+  marks: string[];
+}
+export interface RichTextVariable {
+  _type: "variable";
+  _key: string;
+  variableId: string;
+}
+export type RichTextInline = RichTextSpan | RichTextVariable;
+export interface RichTextBlock {
+  _type: "block";
+  _key: string;
+  style: "normal";
+  markDefs: never[];
+  children: RichTextInline[];
+}
+export type RichText = RichTextBlock[];
 export interface Asset {
   id: string;
   fileName: string;
@@ -137,12 +165,12 @@ export interface ActionPosition {
   x: number;
   y: number;
 }
-export type ActionPropValue = string | number | boolean | ActionPosition;
+export type ActionPropValue = string | number | boolean | ActionPosition | RichText;
 type MediaBuild = "fade" | "none";
 type MediaFit = "cover" | "contain";
 export interface ActionPropsMap {
   text: {
-    contents: string;
+    contents: RichText;
     role: "body" | "heading" | "subheading";
     position: ActionPosition;
     maxWidth: number;
@@ -166,7 +194,7 @@ export interface ActionPropsMap {
     fit: MediaFit;
   };
   button: {
-    label: string;
+    label: RichText;
     varToSet?: string;
     value?: VariableValue;
     position: ActionPosition;

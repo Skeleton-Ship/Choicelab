@@ -4,30 +4,36 @@
 
 ### 2026-11-xx
 
+#### New features
+
+- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one. Variable names will stay up to date even if the variable is renamed.
+- Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
+
 #### Enhancements
 
-- When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and linkable nodes are now easier to see.
+- Opening a project that was saved with a newer version of Choicelab now explains that an update is needed, instead of opening it incorrectly.
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
-- Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable, so conditions no longer look correct but fail to match.
+- Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
+- Body text now shows as separate paragraphs, with **Shift-Return** adding a line break within one. Existing text looks the same as before.
+- New variables and rules now scroll into view and auto-select their name for easier input.
+- Deleting a variable that's used by actions, text, or branch stems
+  now asks for confirmation first, and shows how many places use it.
+- When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and linkable nodes are now easier to see.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
-- Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
-- Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
-- New variables and rules now scroll into view when added, and a new variable's name is selected so you can type over it right away.
-- Deleting a variable that's used by actions or branch stems now asks for confirmation first, and shows how many places use it.
+- Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable (which could lead to conditions that look correct but fail to match).
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
 
 #### Fixes
 
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
-- Fixed an issue where the preview would flash when opened or refreshed.
-- Fixed an issue where changing a variable's type to Number kept its previous starting value, instead of resetting it to 0.
-- Fixed an issue where a project's background color wasn't shown behind the preview or in exported projects before they finished loading.
+- The preview no longer flashes when opened or refreshed.
+- Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
 - Deleting a variable now removes the variable from any actions or rules that used it.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
-- Fixed an issue where copies of previewed media files built up in the app's cache and were never removed.
+- Cached media files are now properly removed from disk.
 
 ## 1.1
 

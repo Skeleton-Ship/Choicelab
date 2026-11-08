@@ -41,7 +41,7 @@ Two sources of truth live in...let's call them _unexpected_ places. Every action
 
 ### Data model
 
-Project file types live in `src/schema/project.ts`, which both the editor and the player import:
+Project file types live in `src/player/src/schema/project.ts`, which both the editor and the player import. It lives with the player so that the MIT-licensed player (see [License](#license)) is self-contained:
 
 ```
 Project
@@ -58,7 +58,9 @@ Project
         └── StartNode { id, type, link }
 ```
 
-Note: This file must stay types-only (no imports, no runtime code), because the player bundles separately. `src/typings.ts` re-exports them alongside editor-only types.
+Note: This file must stay types-only (no imports, no runtime code), so the editor can import it without pulling in player code. `src/typings.ts` re-exports them alongside editor-only types.
+
+Text that viewers see (currently text contents and button labels) is stored as rich text: a subset of [Portable Text](https://www.portabletext.org), where each block is a paragraph and variables are inline objects referenced by ID, never by name. The editor edits it with [Tiptap](https://tiptap.dev) (`src/editor/richText/`), and the player renders it in `src/player/src/richText.ts`.
 
 Each project records a `schemaVersion`. When an older project is opened, `src/fs/migrateProject.ts` updates it step by step to the current version.
 

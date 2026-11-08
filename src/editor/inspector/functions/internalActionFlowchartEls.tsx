@@ -1,14 +1,15 @@
 import { getVariable, getAsset } from "../../../data/getData";
 import { getStore } from "../../../data/dataStore";
 import { ActionPropsMap } from "../../../typings";
+import RichTextPreview from "../../richText/RichTextPreview";
 
 /*
  * Text
  */
 export function FCText(props: ActionPropsMap["text"]) {
-  let contents = <>{props.contents}</>;
+  let contents = <RichTextPreview value={props.contents} />;
   if (props.role === "heading" || props.role === "subheading") {
-    contents = <strong>{props.contents}</strong>;
+    contents = <strong>{contents}</strong>;
   }
   return <div>{contents}</div>;
 }
@@ -25,7 +26,9 @@ export function FCButton(props: ActionPropsMap["button"]) {
   }
   return (
     <div>
-      <span class="button-label">{props.label}</span>
+      <span class="button-label">
+        <RichTextPreview value={props.label} />
+      </span>
       {varEl}
     </div>
   );

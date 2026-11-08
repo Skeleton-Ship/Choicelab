@@ -18,10 +18,21 @@ import {
 } from "../typings";
 import { classifyInputLabel } from "../utils/classifyInputLabel";
 import { resolveVariableName } from "./variableNames";
+import { isRichText, richTextToPlainText } from "./richText";
 import { getActionProp, setActionProp } from "./actionProps";
 import { getVariables } from "./getData";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * An input action's label as plain text. Button labels are rich text;
+ * variables in them are left out, since they aren't known until playback.
+ */
+function getLabelText(action: Action): string {
+  const label = getActionProp(action, "label");
+  if (isRichText(label)) return richTextToPlainText(label, () => "", " ").trim();
+  return typeof label === "string" ? label : "";
+}
 
 /**
  * Returns only the input-element actions from a cell (buttons and input fields).
@@ -223,7 +234,7 @@ export async function buildAutoGenerationPlan(
   );
 
   const allButtonLabels = buttonActions
-    .map((a) => (getActionProp(a, "label") as string | undefined) ?? "")
+    .map((a) => getLabelText(a))
     .filter(Boolean);
 
   // For classification: prefer button labels; fall back to input field labels.
@@ -231,7 +242,7 @@ export async function buildAutoGenerationPlan(
     allButtonLabels.length > 0
       ? allButtonLabels
       : inputFieldActions
-          .map((a) => (getActionProp(a, "label") as string | undefined) ?? "")
+          .map((a) => getLabelText(a))
           .filter(Boolean);
 
   const classification = await classifyInputLabel(labelsForClassification);
@@ -255,7 +266,7 @@ export async function buildAutoGenerationPlan(
 
   // Compute deduplicated button values once — shared by actionUpdates and stemWork.
   const buttonValues = deduplicateValues(
-    buttonActions.map((a) => normalizeButtonValue((getActionProp(a, "label") as string | undefined) ?? ""))
+    buttonActions.map((a) => normalizeButtonValue(getLabelText(a)))
   );
 
   // Build action updates.

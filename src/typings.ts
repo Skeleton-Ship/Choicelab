@@ -7,9 +7,9 @@ import type {
   AnyNode,
   Project,
   Stem,
-} from "./schema/project";
+} from "./player/src/schema/project";
 
-export type * from "./schema/project";
+export type * from "./player/src/schema/project";
 
 // Re-renders from the app root after a store change (see MainEditor's handleUpdate)
 export type UpdateFunction = (

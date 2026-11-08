@@ -1,6 +1,6 @@
 import { getStore } from "./store";
 import { getNode } from "./navigation";
-import { Action, ActionOf, Cell } from "../../schema/project";
+import { Action, ActionOf, Cell } from "./schema/project";
 
 function isVideoAction(
   action: Action

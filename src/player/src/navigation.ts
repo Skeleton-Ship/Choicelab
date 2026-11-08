@@ -1,4 +1,4 @@
-import { Sequence, AnyNode } from "../../schema/project";
+import { Sequence, AnyNode } from "./schema/project";
 import { getStore } from "./store";
 import { log, warn, error } from "./logging";
 import { runCell } from "./cell";

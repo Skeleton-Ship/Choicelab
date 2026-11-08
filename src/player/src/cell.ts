@@ -1,4 +1,4 @@
-import { Cell, Action, ActionName } from "../../schema/project";
+import { Cell, Action, ActionName } from "./schema/project";
 import { ActionDone, ActionForPlayback } from "./typings";
 import { runEvents } from "./events";
 import { getSettings } from "./settings";

@@ -186,6 +186,14 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "SelectAll",
       }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      await MenuItem.new({
+        text: "Insert Variable",
+        id: "insert_variable",
+        enabled: false,
+      }),
     ],
   });
 

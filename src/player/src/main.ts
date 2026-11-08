@@ -10,7 +10,7 @@ import { forceReflow } from "./utils/forceReflow";
 import { generateAppearanceCSS } from "./appearance";
 import { enableAutoplay, registerAutoplayQualifier } from "./autoplay";
 import { ActionForPlayback } from "./typings";
-import { Project, VariableValue } from "../../schema/project";
+import { Project, VariableValue } from "./schema/project";
 
 interface InitProps {
   path: string; // URL of the project's JSON file

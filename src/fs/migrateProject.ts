@@ -14,7 +14,8 @@ import {
   Sequence,
 } from "../typings";
 import { createAsset } from "../data/createNode";
-import { applyActionDefaults } from "../data/actionProps";
+import { applyActionDefaults, getActionProp, setActionProp } from "../data/actionProps";
+import { richTextFromPlainText } from "../data/richText";
 import { createCellSettings, createProjectSettings } from "../data/settingsDefs";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 
@@ -23,7 +24,8 @@ import internalActionDefs from "../editor/inspector/functions/internalActionDefs
  * 1: Unversioned. Asset file names stored directly in props, `appVersion` at the root.
  * 2: Asset registry, `app` metadata.
  * 3: Player-specific props (`extendedProps`) and settings (`settings.player`) flattened
- *    into the action's props and the cell/project settings.
+ *    into the action's props and the cell/project settings. Text contents and button
+ *    labels are rich text (Portable Text), so they can include variables.
  */
 export const CURRENT_SCHEMA_VERSION = 3;
 
@@ -196,6 +198,7 @@ function flattenAction(legacy: LegacyAction): Action {
     (def) => def.name === action.name
   );
   if (actionDef) applyActionDefaults(action, actionDef);
+  upgradeRichTextProps(action);
   return action;
 }
 
@@ -229,6 +232,36 @@ function migrateToV3(project: LegacyProject): Project {
 }
 
 /*
+ * Rich text
+ */
+
+/**
+ * Converts any plain text props that are now rich text. Runs as part of the
+ * version 3 migration, on every project load (projects saved by development
+ * builds of version 3 may predate rich text), and on pasted nodes (which may
+ * come from an older version). Props that are already rich text are skipped.
+ */
+export function upgradeRichTextProps(action: Action) {
+  const actionDef = internalActionDefs.actions.find((def) => def.name === action.name);
+  actionDef?.props.forEach((propDef) => {
+    if (propDef.control !== "richText" && propDef.control !== "richTextarea") return;
+    const value = getActionProp(action, propDef.name);
+    if (typeof value === "string") {
+      setActionProp(action, propDef.name, richTextFromPlainText(value));
+    }
+  });
+}
+
+/** Runs upgradeRichTextProps on every action in a project, in place. */
+export function upgradeProjectRichText(project: Project) {
+  project.sequences.forEach((sequence) => {
+    sequence.nodes.forEach((node) => {
+      if (node.type === "cell") node.actions.forEach(upgradeRichTextProps);
+    });
+  });
+}
+
+/*
  * Entry points
  */
 function getSchemaVersion(project: Project | LegacyProject): number {
@@ -237,6 +270,11 @@ function getSchemaVersion(project: Project | LegacyProject): number {
 
 export function needsMigration(project: Project | LegacyProject): boolean {
   return getSchemaVersion(project) < CURRENT_SCHEMA_VERSION;
+}
+
+/** Whether the project was saved by a newer version of Choicelab. */
+export function isFromNewerVersion(project: Project | LegacyProject): boolean {
+  return getSchemaVersion(project) > CURRENT_SCHEMA_VERSION;
 }
 
 // Runs each migration step in order, from the project's schema version to the current one

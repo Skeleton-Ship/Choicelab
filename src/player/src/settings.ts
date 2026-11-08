@@ -1,4 +1,4 @@
-import { Cell, CellSettings } from "../../schema/project";
+import { Cell, CellSettings } from "./schema/project";
 import { error } from "./logging";
 
 export function getSettings(node: Cell): CellSettings | false {

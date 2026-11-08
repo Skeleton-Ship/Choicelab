@@ -1,13 +1,20 @@
-import { Action } from "../../../typings";
+import { Action, RichText } from "../../../typings";
+import { getStore } from "../../../data/dataStore";
+import { getVariables } from "../../../data/getData";
+import { richTextToDisplayText } from "../../../data/richText";
+
+function displayText(richText: RichText): string {
+  return richTextToDisplayText(richText, getVariables(getStore()), " ").trim();
+}
 
 export function getActionTextLabel(action: Action): string {
   let label = "";
   switch (action.name) {
     case "text":
-      label = action.props.contents !== "" ? action.props.contents : "Text Block";
+      label = displayText(action.props.contents) || "Text Block";
       break;
     case "button":
-      label = action.props.label !== "" ? action.props.label : "Button";
+      label = displayText(action.props.label) || "Button";
       break;
     case "image":
       label =

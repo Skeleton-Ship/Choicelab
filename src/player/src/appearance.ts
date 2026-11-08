@@ -1,4 +1,4 @@
-import { AppearanceSettings } from "../../schema/project";
+import { AppearanceSettings } from "./schema/project";
 
 function scaledPx(value: string): string {
   return value.startsWith("var(") ? value : `calc(${value}px * var(--cl-scale, 1))`;
@@ -69,7 +69,7 @@ export function generateAppearanceCSS(appearance: AppearanceSettings, projectPat
     css += `h2.cl-action { font-style: ${appearance.subheadings.fontStyle}; }\n`;
   }
   if (appearance.bodyText?.fontStyle) {
-    css += `p.cl-action { font-style: ${appearance.bodyText.fontStyle}; }\n`;
+    css += `.text.body.cl-action { font-style: ${appearance.bodyText.fontStyle}; }\n`;
   }
   if (appearance.inputs?.fontStyle) {
     css += `button.cl-action { font-style: ${appearance.inputs.fontStyle}; }\n`;

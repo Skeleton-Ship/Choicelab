@@ -3,6 +3,7 @@ import { emit, emitTo, once } from "@tauri-apps/api/event";
 import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
+import { richTextUndoRedo } from "../editor/richText/activeRichTextEditor";
 import {
   getStore,
   getViewStore,
@@ -84,6 +85,8 @@ export function canRedo() {
 export async function handleUndoRedo(undoOrRedo: string, update: UpdateFunction) {
   // First, see if we need to treat this like a regular text edit undo/redo
   if (inTextElement() === true) {
+    // Rich text fields keep their own history
+    if (richTextUndoRedo(undoOrRedo === "undo" ? "undo" : "redo")) return;
     // TODO: execCommand is deprecated in the HTML spec but remains supported in WKWebView.
     // Replace with a custom per-element undo stack if this ever breaks.
     document.execCommand(undoOrRedo === "undo" ? "undo" : "redo");

@@ -5,6 +5,7 @@ import { stringify } from "../../../utils/stringify";
 import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
 import isJson from "../../../utils/isJson";
+import { upgradeRichTextProps } from "../../../fs/migrateProject";
 import { AnyNode, Action, Cell, UpdateFunction } from "../../../typings";
 
 /**
@@ -126,6 +127,8 @@ function handlePaste(update: UpdateFunction): void {
       // Clone node, removing the `position` prop
       let newNode = cloneObjectWithExclusion(node, "position");
       newNode = regenerateIdsAndLinks(newNode);
+      // Nodes copied from an older version may have plain text where rich text is expected
+      if (newNode.type === "cell") newNode.actions.forEach(upgradeRichTextProps);
       processedNodes.push(newNode);
     });
     // Create new nodes — use a no-op so each insertion mutates the store

@@ -1,6 +1,7 @@
 import { getActionDef, getBranch, getBranchStem } from "./getData";
 import internalActionDefs from "../editor/inspector/functions/internalActionDefs";
 import { getActionProp, setActionProp } from "./actionProps";
+import { isRichText, replaceRichTextVariableRefs } from "./richText";
 import {
   Store,
   Sequence,
@@ -32,6 +33,8 @@ function deleteSequenceFromData(sequenceId: string, store: Store) {
 
 function deleteVariableFromData(variableId: string, store: Store) {
   const variables = store.project.variables;
+  const deletedName =
+    variables.items.find((variable) => variable.id === variableId)?.name ?? "";
   let correctVariableIndex: number | false = false;
   // Find sequence
   let variableIndex: number = 0;
@@ -46,7 +49,8 @@ function deleteVariableFromData(variableId: string, store: Store) {
     variables.items.splice(correctVariableIndex, 1);
   }
   // Clear references from actions, so they read as "None" again (and can be
-  // auto-filled) instead of pointing at a variable that no longer exists
+  // auto-filled) instead of pointing at a variable that no longer exists.
+  // In rich text, references become the variable's name as plain text.
   store.project.sequences.forEach((sequence: Sequence) => {
     sequence.nodes.forEach((node: AnyNode) => {
       // Reset rules that checked the variable to blank, so they read as "Rule
@@ -67,11 +71,13 @@ function deleteVariableFromData(variableId: string, store: Store) {
         const actionDef = getActionDef(action.name, internalActionDefs);
         if (!actionDef) return;
         actionDef.props.forEach((propDef) => {
-          if (
-            propDef.control === "variable" &&
-            getActionProp(action, propDef.name) === variableId
-          ) {
+          const value = getActionProp(action, propDef.name);
+          if (propDef.control === "variable" && value === variableId) {
             setActionProp(action, propDef.name, "");
+          } else if (isRichText(value)) {
+            // Keep the name visible as plain text; typing or pasting it as
+            // "{Name}" relinks it if a variable with that name exists again
+            replaceRichTextVariableRefs(value, variableId, `{${deletedName}}`);
           }
         });
       });

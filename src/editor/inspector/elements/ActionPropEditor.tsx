@@ -7,6 +7,8 @@ import VariableControl from "./prop-controls/Variable";
 import VariableValueControl from "./prop-controls/VariableValue";
 import { Position } from "./prop-controls/_Custom_Position";
 import { getActionProp } from "../../../data/actionProps";
+import RichTextControl from "./prop-controls/RichText";
+import { isRichText } from "../../../data/richText";
 
 export default function ActionPropEditor(props: {
   instance: Action;
@@ -27,7 +29,9 @@ export default function ActionPropEditor(props: {
   const initialString = typeof initialValue === "string" ? initialValue : "";
   const initialNumber = typeof initialValue === "number" ? initialValue : 0;
   const initialBoolean = initialValue === true;
-  const initialPosition = typeof initialValue === "object" ? initialValue : undefined;
+  const initialRichText = isRichText(initialValue) ? initialValue : [];
+  const initialPosition =
+    typeof initialValue === "object" && !isRichText(initialValue) ? initialValue : undefined;
   const initialVariableValue = typeof initialValue === "object" ? undefined : initialValue;
   switch (defProp.control) {
     case "text":
@@ -52,6 +56,20 @@ export default function ActionPropEditor(props: {
           actionDef={actionDef}
           propDef={defProp}
           initialValue={initialString}
+          className={className}
+          store={props.store}
+          update={props.update}
+        />
+      );
+      break;
+    case "richText":
+    case "richTextarea":
+      propControl = (
+        <RichTextControl
+          action={action}
+          propDef={defProp}
+          multiline={defProp.control === "richTextarea"}
+          initialValue={initialRichText}
           className={className}
           store={props.store}
           update={props.update}

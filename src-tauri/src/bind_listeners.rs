@@ -876,6 +876,7 @@ let handle_update = app_handle.clone();
 			"export" => "menu-export-project",
             "undo" => "menu-undo",
             "redo" => "menu-redo",
+            "insert_variable" => "menu-insert-variable",
             "show_node_editor" => "menu-show-node-editor",
             "show_variables" => "menu-show-variables",
             "toggle_preview" => "menu-toggle-preview",

@@ -30,6 +30,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@tauri-apps/api": "^2.12.4",
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2",
@@ -37,6 +38,14 @@
     "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-shell": "~2",
     "@tauri-apps/plugin-updater": "~2",
+    "@tiptap/core": "3.33.0",
+    "@tiptap/extension-document": "3.33.0",
+    "@tiptap/extension-hard-break": "3.33.0",
+    "@tiptap/extension-paragraph": "3.33.0",
+    "@tiptap/extension-text": "3.33.0",
+    "@tiptap/extensions": "3.33.0",
+    "@tiptap/pm": "3.33.0",
+    "@tiptap/suggestion": "3.33.0",
     "@ungap/structured-clone": "^1.4.0",
     "can-autoplay": "^3.0.2",
     "compare-versions": "^6.1.1",
