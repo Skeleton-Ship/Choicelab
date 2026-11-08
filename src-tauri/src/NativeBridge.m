@@ -202,3 +202,21 @@ int8_t show_unsaved_changes_dialog_native(const char *title, const char *body) {
     });
     return result;
 }
+
+// Writes the display name of the volume containing `path` (as Finder shows it,
+// e.g. "Macintosh HD") into `out` as UTF-8. `path` must exist. Returns NO if the
+// name isn't available or doesn't fit. Safe to call from any thread.
+BOOL get_volume_display_name(const char *path, char *out, size_t out_len) {
+    BOOL ok = NO;
+    @autoreleasepool {
+        NSString *pathString = [NSString stringWithUTF8String:path];
+        if (pathString) {
+            NSURL *url = [NSURL fileURLWithPath:pathString];
+            NSString *name = nil;
+            if ([url getResourceValue:&name forKey:NSURLVolumeLocalizedNameKey error:nil] && name.length > 0) {
+                ok = [name getCString:out maxLength:out_len encoding:NSUTF8StringEncoding];
+            }
+        }
+    }
+    return ok;
+}

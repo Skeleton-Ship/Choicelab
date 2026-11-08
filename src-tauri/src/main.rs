@@ -9,6 +9,7 @@ mod globals;
 mod preferences;
 mod preview_server;
 mod project_cache;
+mod volume_name;
 mod check_for_updates;
 #[cfg(target_os = "macos")]
 mod native_bridge_macos;

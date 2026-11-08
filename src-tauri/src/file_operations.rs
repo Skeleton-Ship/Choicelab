@@ -79,14 +79,35 @@ pub struct FileError {
     pub code: FileErrorCode,
     /// The OS's own description, for logs and "copy details"; not user copy.
     pub message: String,
+    /// The display name of the disk, for errors about the disk itself (full or
+    /// read-only), if it could be found.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub drive: Option<String>,
+}
+
+impl FileError {
+    pub fn new(code: FileErrorCode, message: &str) -> Self {
+        FileError {
+            code,
+            message: message.to_string(),
+            drive: None,
+        }
+    }
+
+    /// Build from an I/O error while writing to `path`, naming the disk when
+    /// the error is about the disk itself.
+    pub fn for_path(e: io::Error, path: &Path) -> Self {
+        let mut error = FileError::from(e);
+        if matches!(error.code, FileErrorCode::StorageFull | FileErrorCode::ReadOnly) {
+            error.drive = crate::volume_name::volume_display_name(path);
+        }
+        error
+    }
 }
 
 impl From<io::Error> for FileError {
     fn from(e: io::Error) -> Self {
-        FileError {
-            code: classify_io_error(&e),
-            message: e.to_string(),
-        }
+        FileError::new(classify_io_error(&e), &e.to_string())
     }
 }
 

@@ -71,16 +71,12 @@ pub async fn write_project_cache_file(
     name: String,
     contents: String,
 ) -> Result<(), FileError> {
-    let invalid = |message: &str| FileError {
-        code: FileErrorCode::InvalidName,
-        message: message.to_string(),
-    };
+    let invalid = |message: &str| FileError::new(FileErrorCode::InvalidName, message);
     if !is_plain_segment(&name) || subdir.as_deref().is_some_and(|s| !is_plain_segment(s)) {
         return Err(invalid("File name must be a single path segment"));
     }
-    let mut dir = project_cache_dir(&app, &project_path).ok_or_else(|| FileError {
-        code: FileErrorCode::NotFound,
-        message: "Couldn't find the app cache folder".to_string(),
+    let mut dir = project_cache_dir(&app, &project_path).ok_or_else(|| {
+        FileError::new(FileErrorCode::NotFound, "Couldn't find the app cache folder")
     })?;
     if let Some(subdir) = subdir {
         dir.push(subdir);
@@ -89,14 +85,13 @@ pub async fn write_project_cache_file(
         .to_str()
         .ok_or_else(|| invalid("Cache folder path isn't valid UTF-8"))?
         .to_string();
-    // Retries sleep the thread, so keep them off the async runtime's workers
-    tauri::async_runtime::spawn_blocking(move || create_text_file(&name, &contents, &dir))
-        .await
-        .map_err(|e| FileError {
-            code: FileErrorCode::Unknown,
-            message: e.to_string(),
-        })?
-        .map_err(FileError::from)
+    // Retries sleep the thread (and the disk name lookup should run off the UI
+    // thread), so keep this off the async runtime's workers
+    tauri::async_runtime::spawn_blocking(move || {
+        create_text_file(&name, &contents, &dir).map_err(|e| FileError::for_path(e, Path::new(&dir)))
+    })
+    .await
+    .map_err(|e| FileError::new(FileErrorCode::Unknown, &e.to_string()))?
 }
 
 /// Remove the project's cache folder, including one left at the pre-1.2
