@@ -8,6 +8,7 @@ mod file_operations;
 mod globals;
 mod preferences;
 mod preview_server;
+mod project_cache;
 mod check_for_updates;
 #[cfg(target_os = "macos")]
 mod native_bridge_macos;
@@ -301,6 +302,9 @@ fn main() {
             autosave::read_autosave_file,
             autosave::delete_autosave,
             autosave::show_autosave_recovery_dialog,
+            project_cache::get_project_cache_dir,
+            project_cache::write_project_cache_file,
+            project_cache::clear_project_cache,
             assets::create_asset,
             assets::allow_asset_preview,
             assets::save_binary_file,

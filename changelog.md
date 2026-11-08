@@ -28,12 +28,13 @@
 
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - The preview no longer flashes when opened or refreshed.
-- Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
-- Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
-- Deleting a variable now removes the variable from any actions or rules that used it.
-- Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
+- Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
+- Deleting a variable now removes the variable from any actions or rules that used it.
+- Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
+- Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Cached media files are now properly removed from disk.
+- Fixed a few rare instances where auto-save, undo, and the preview could stop working when a project 1) is stored in deeply nested folders, 2) has a project with a similar name, or 3) was modified by cleanup or sync applications.
 
 ## 1.1
 

@@ -1,26 +1,16 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { appCacheDir, resolve } from "@tauri-apps/api/path";
-import { emit } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import { exit } from "@tauri-apps/plugin-process";
 import { getProjectSettingsWindow } from "../editor/settings/getProjectSettingsWindow";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getStore, getViewStore } from "../data/dataStore";
 import { saveProject } from "./saveProject";
+import { clearProjectCache } from "./projectCache";
 const appWindow = getCurrentWebviewWindow();
-
-// Returns the cache directory for the currently-open project.
-async function projectCachePath(): Promise<string> {
-  const cacheBase = await appCacheDir();
-  const projectLabel = getProjectWindowLabel(getViewStore().projectPath);
-  return resolve(cacheBase, "Projects", projectLabel);
-}
 
 export async function handleClose() {
   // Clear this project's cache subdirectory only
-  emit("clear-cache", {
-    path: await projectCachePath(),
-  });
+  await clearProjectCache(getViewStore().projectPath).catch(() => {});
   // Close settings window if it's open
   const projectSettingsWindow = await getProjectSettingsWindow(
     getProjectWindowLabel(getViewStore().projectPath, "settings")

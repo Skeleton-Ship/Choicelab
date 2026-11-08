@@ -7,7 +7,7 @@ import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { loadPreviewFrame } from "./previewFrames";
 import { updatePreviewFonts } from "./updatePreviewFonts";
 import { resolveAssetsForPlayer } from "./resolveAssetsForPlayer";
-import { appCacheDir, resolve } from "@tauri-apps/api/path";
+import { getProjectCachePath } from "../fs/projectCache";
 import { patchPlayerHTML, playerHTMLDefault, playerCSSDefault, playerJSDefault, getBackgroundColor } from "../fs/createWebDir";
 
 function getPreviewId(store: Store) {
@@ -46,7 +46,7 @@ export async function updatePreview() {
   });
   // Re-write index.html with the current background color so it's set before JS runs
   const label = getProjectWindowLabel(projectPath);
-  const previewPath = await resolve(await appCacheDir(), "Projects", label, "Preview");
+  const previewPath = await getProjectCachePath(projectPath, "Preview");
   emit("save-text-file", { name: "index.html", contents: patchPlayerHTML(playerHTMLDefault, getBackgroundColor()), path: previewPath, label });
   emit("save-text-file", { name: "choicelab.js", contents: playerJSDefault, path: previewPath, label });
   emit("save-text-file", { name: "choicelab.css", contents: playerCSSDefault, path: previewPath, label });

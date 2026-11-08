@@ -9,7 +9,6 @@ use crate::native_bridge_macos::{add_native_menus, set_document_edited_for_windo
 use serde::{Serialize};
 use serde_json::{from_str, Value};
 use std::collections::HashMap;
-use std::fs;
 use std::path::Path;
 use std::sync::{Mutex, OnceLock};
 use tauri::Emitter;
@@ -261,8 +260,14 @@ let handle_update = app_handle.clone();
                             "preview-port",
                             serde_json::json!({ "port": existing_port, "label": window_label }),
                         );
-                    } else if let Some(preview_path) =
-                        crate::file_operations::get_preview_path(&window_label)
+                    } else if let Some(preview_path) = json["projectPath"]
+                        .as_str()
+                        .and_then(|project_path| {
+                            crate::file_operations::get_preview_path(
+                                &handle_project_open,
+                                project_path,
+                            )
+                        })
                     {
                         if let Some(port) = get_next_available_port() {
                             let label_for_server = window_label.to_string();
@@ -328,7 +333,9 @@ let handle_update = app_handle.clone();
                 let contents = json["contents"].as_str().unwrap_or("N/A");
                 let path = json["path"].as_str().unwrap_or("N/A");
                 let window_label = json["label"].as_str().unwrap_or("N/A");
-                let _ = create_text_file(name, contents, path);
+                if let Err(e) = create_text_file(name, contents, path) {
+                    eprintln!("Error writing {}/{}: {}", path, name, e);
+                }
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {
@@ -476,25 +483,9 @@ let handle_update = app_handle.clone();
         }
     });
 
-    // listen for cache clear
-    app.listen("clear-cache", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let cache_path = json["path"].as_str().unwrap_or("N/A");
-                if cache_path != "N/A" {
-                    let _ = fs::remove_dir_all(cache_path);
-                }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
 
     // listen for preview mode
-    // let handle_show_preview = app.app_handle();
+    let handle_preview = app_handle.clone();
     app.listen("update-preview", move |event| {
         let json_raw = event.payload();
         let json_value: Result<Value, _> = from_str(json_raw);
@@ -508,7 +499,7 @@ let handle_update = app_handle.clone();
                         .lock()
                         .unwrap()
                         .insert(project_label.to_string(), Path::new(project_path).join("Assets"));
-                    if let Err(e) = load_preview_files(project_path, project_data, project_label) {
+                    if let Err(e) = load_preview_files(&handle_preview, project_path, project_data) {
                         eprintln!("Error loading preview files: {}", e);
                     }
                 }

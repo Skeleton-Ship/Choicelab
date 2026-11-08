@@ -361,7 +361,7 @@ async function init() {
       // Create editor
       elements = <MainEditor />;
       // Create web folder
-      createWebDir(label);
+      createWebDir(store.projectPath, label);
     } else if (windowType === "projectSettings") {
       const pane = urlParams.get("pane") as "general" | "appearance";
       elements = <ProjectSettings startingPane={pane} />;

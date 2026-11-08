@@ -1,6 +1,7 @@
 import { emit } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
-import { appCacheDir, resolve } from "@tauri-apps/api/path";
+import { resolve } from "@tauri-apps/api/path";
+import { getProjectCachePath } from "../fs/projectCache";
 import { getFonts } from "../fonts/fonts";
 import { getStore } from "../data/dataStore";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
@@ -87,12 +88,7 @@ export async function updatePreviewFonts(): Promise<void> {
   lastFontFamilies = currentFamilies;
 
   const label = getProjectWindowLabel(store.projectPath);
-  const previewPath = await resolve(
-    await appCacheDir(),
-    "Projects",
-    label,
-    "Preview"
-  );
+  const previewPath = await getProjectCachePath(store.projectPath, "Preview");
 
   await writeFontsToDir(previewPath, label);
 }

@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import { emit, emitTo, once } from "@tauri-apps/api/event";
-import { resolve, appCacheDir } from "@tauri-apps/api/path";
 import { stringify } from "../utils/stringify";
 import inTextElement from "../utils/inTextElement";
 import { richTextUndoRedo } from "../editor/richText/activeRichTextEditor";
@@ -12,6 +11,8 @@ import {
 } from "../data/dataStore";
 import markUnsaved from "./markUnsaved";
 import { triggerAutosave } from "../fs/autosave";
+import { getProjectCachePath, writeProjectCacheFile } from "../fs/projectCache";
+import { getFileErrorText } from "../fs/fileErrorText";
 import { getNode } from "./getData";
 import { AnyNode, UpdateFunction } from "../typings";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
@@ -34,18 +35,16 @@ export async function saveHistoryVersion(initial: boolean = false) {
     triggerAutosave();
   }
   // Write to fs
-  const cacheBase = await appCacheDir();
-  const cachePath = await resolve(
-    cacheBase,
-    "Projects",
-    getProjectWindowLabel(store.projectPath),
+  writeProjectCacheFile(
+    store.projectPath,
+    versionId,
+    stringify(store.project),
     "History"
-  );
-  emit("save-text-file", {
-    name: versionId,
-    contents: stringify(store.project),
-    path: cachePath,
-    label: getProjectWindowLabel(store.projectPath),
+  ).catch((error) => {
+    // TODO: show this to the user instead of logging; undo can't reach this
+    // version without it
+    const text = getFileErrorText(error, store.project.name);
+    console.error(`Undo history couldn't be saved: ${text.title} ${text.body}`, error);
   });
   // Update settings window, if active
   emitTo(
@@ -113,11 +112,8 @@ export async function handleUndoRedo(undoOrRedo: string, update: UpdateFunction)
   }
   */
   const stepVersion = projectHistory.versions[stepIndex];
-  const cacheBase = await appCacheDir();
-  const versionPath = await resolve(
-    cacheBase,
-    "Projects",
-    getProjectWindowLabel(store.projectPath),
+  const versionPath = await getProjectCachePath(
+    store.projectPath,
     "History",
     stepVersion
   );

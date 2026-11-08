@@ -1,10 +1,19 @@
+use crate::project_cache::{legacy_project_cache_dir, project_cache_dir};
 use std::time::UNIX_EPOCH;
-use tauri::Manager;
 
+const AUTOSAVE_FILE_NAME: &str = "autosave.clx";
+
+/// The autosave to recover, if any. Checks the pre-1.2 cache location too, so
+/// an autosave left by a crash in an older version can still be recovered.
 fn autosave_path(app: &tauri::AppHandle, project_path: &str) -> Option<std::path::PathBuf> {
-    let cache = app.path().app_cache_dir().ok()?;
-    let label = crate::project_window_label(project_path);
-    Some(cache.join("Projects").join(label).join("autosave.clx"))
+    let current = project_cache_dir(app, project_path)?.join(AUTOSAVE_FILE_NAME);
+    if current.exists() {
+        return Some(current);
+    }
+    legacy_project_cache_dir(app, project_path)
+        .map(|dir| dir.join(AUTOSAVE_FILE_NAME))
+        .filter(|legacy| legacy.exists())
+        .or(Some(current))
 }
 
 #[tauri::command]
@@ -53,8 +62,12 @@ pub fn read_autosave_file(
 
 #[tauri::command]
 pub fn delete_autosave(app: tauri::AppHandle, project_path: String) {
-    if let Some(path) = autosave_path(&app, &project_path) {
-        let _ = std::fs::remove_file(path);
+    if let Some(dir) = project_cache_dir(&app, &project_path) {
+        let _ = std::fs::remove_file(dir.join(AUTOSAVE_FILE_NAME));
+    }
+    // Nothing else uses the pre-1.2 folder, so remove all of it
+    if let Some(dir) = legacy_project_cache_dir(&app, &project_path) {
+        let _ = std::fs::remove_dir_all(dir);
     }
 }
 

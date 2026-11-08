@@ -68,7 +68,7 @@ export default function MainEditor() {
       }
     }).then((unlisten) => {
       appWindow.setTitle(store.project.name);
-      emit("window-ready", { label });
+      emit("window-ready", { label, projectPath: store.projectPath });
       return unlisten;
     });
     // Set up cut/copy/paste listeners
