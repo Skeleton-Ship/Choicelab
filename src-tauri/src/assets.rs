@@ -1,4 +1,4 @@
-use crate::file_operations::find_file_in_dir;
+use crate::file_operations::{find_file_in_dir, FileError, FileErrorCode};
 use percent_encoding::percent_decode_str;
 use serde::Serialize;
 use std::fs::{self, File};
@@ -38,17 +38,16 @@ fn validate_file_name(file_name: &str) -> Result<(), String> {
 /// Writes to a temporary file and renames it into place, so a failed or
 /// interrupted write never leaves a partial file behind (or one that the
 /// preview server could serve half-written).
-fn write_atomic(dir: &Path, file_name: &str, contents: &[u8]) -> Result<(), String> {
-    fs::create_dir_all(dir).map_err(|e| e.to_string())?;
+fn write_atomic(dir: &Path, file_name: &str, contents: &[u8]) -> std::io::Result<()> {
+    fs::create_dir_all(dir)?;
     let temp_path = dir.join(format!(".{}.tmp", file_name));
     let result = File::create(&temp_path)
         .and_then(|mut file| file.write_all(contents))
         .and_then(|_| fs::rename(&temp_path, dir.join(file_name)));
-    if let Err(e) = result {
+    if result.is_err() {
         let _ = fs::remove_file(&temp_path);
-        return Err(e.to_string());
     }
-    Ok(())
+    result
 }
 
 fn raw_body<'a>(request: &'a Request<'_>) -> Result<&'a [u8], String> {
@@ -73,19 +72,21 @@ pub async fn create_asset(request: Request<'_>) -> Result<String, String> {
     if let Some(existing) = find_file_in_dir(assets_dir, &file_name) {
         return Ok(existing);
     }
-    write_atomic(assets_dir, &file_name, contents)?;
+    write_atomic(assets_dir, &file_name, contents).map_err(|e| e.to_string())?;
     Ok(file_name)
 }
 
 /// Writes a binary file (e.g. a font for the preview or an export) from the raw
 /// request body, replacing any existing file with the same name.
 #[tauri::command]
-pub async fn save_binary_file(request: Request<'_>) -> Result<(), String> {
-    let file_name = header(&request, "x-file-name")?;
-    let dir_path = header(&request, "x-dir-path")?;
-    let contents = raw_body(&request)?;
-    validate_file_name(&file_name)?;
-    write_atomic(Path::new(&dir_path), &file_name, contents)
+pub async fn save_binary_file(request: Request<'_>) -> Result<(), FileError> {
+    let invalid = |message: String| FileError::new(FileErrorCode::InvalidName, &message);
+    let file_name = header(&request, "x-file-name").map_err(invalid)?;
+    let dir_path = header(&request, "x-dir-path").map_err(invalid)?;
+    let contents = raw_body(&request).map_err(invalid)?;
+    validate_file_name(&file_name).map_err(invalid)?;
+    let dir = Path::new(&dir_path);
+    write_atomic(dir, &file_name, contents).map_err(|e| FileError::for_path(e, dir))
 }
 
 #[derive(Serialize)]

@@ -31,3 +31,19 @@ export async function showSaveErrorDialog(
   if (result === RETRY_LABEL || result === "No") return "retry";
   return "cancel";
 }
+
+/**
+ * Tell the author a file operation failed, when there's nothing to choose
+ * (e.g. an export, which they can just try again). `windowTitle` is only used
+ * on Windows, where dialogs have a title bar.
+ */
+export async function showFileErrorMessage(
+  error: unknown,
+  name: string,
+  windowTitle: string
+): Promise<void> {
+  console.error(`${windowTitle}:`, error);
+  const text = getFileErrorText(error, name);
+  const dialog = getDialogText(windowTitle, text.title, text.body);
+  await message(dialog.message, { title: dialog.title, kind: "error" });
+}

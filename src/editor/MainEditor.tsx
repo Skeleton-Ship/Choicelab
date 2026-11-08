@@ -36,6 +36,7 @@ import TargetMode from "./flowchart/target-mode/TargetMode";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { stringify } from "../utils/stringify";
 import { saveProject } from "../fs/saveProject";
+import { WriteFailureBanner } from "../errors/WriteFailureBanner";
 import { saveAsProject } from "../fs/saveAsProject";
 import { createBranch, createCell } from "../data/createNode";
 import insertNewNode from "./flowchart/general/insertNewNode";
@@ -337,6 +338,7 @@ export default function MainEditor() {
         <Inspector update={handleUpdate} />
         <TargetMode update={handleUpdate} />
       </div>
+      <WriteFailureBanner />
     </div>
   );
 }

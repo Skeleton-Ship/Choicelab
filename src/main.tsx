@@ -25,7 +25,7 @@ import "./styles/_style.scss";
 import { getProjectWindowLabel } from "./utils/getProjectWindowLabel";
 import { createWebDir } from "./fs/createWebDir";
 import { setAccentColor } from "./utils/setAccentColor";
-import { listen, emit, once } from "@tauri-apps/api/event";
+import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import loadProject from "./fs/loadProject";
 import markUnsaved from "./data/markUnsaved";
@@ -45,6 +45,7 @@ import { desktopDir, resolve } from "@tauri-apps/api/path";
 import { getDialogText } from "./utils/dialogText";
 import { ErrorBoundary } from "./errors/ErrorBoundary";
 import { installGlobalErrorHandlers } from "./errors/globalErrorHandlers";
+import { handleStartupError } from "./errors/startupError";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -324,16 +325,17 @@ async function init() {
         return;
       }
       projectData = migrateProject(projectData);
-      await new Promise<void>((resolveSave) => {
-        once("migration-saved", () => resolveSave());
-        emit("save-text-file", {
-          name: fileName,
+      try {
+        await invoke("save_project_file", {
+          directory: projectPath,
+          fileName,
           contents: stringify(projectData as Project),
-          path: projectPath,
-          callback: "migration-saved",
-          label: getProjectWindowLabel(projectPath),
         });
-      });
+      } catch (error) {
+        // The updated project is still open, and saving it will report the
+        // problem then; no need to stop here
+        console.error("Couldn't save the updated project:", error);
+      }
     }
     // Projects saved by development builds of schema 3 may predate rich text
     upgradeProjectRichText(projectData as Project);
@@ -393,4 +395,4 @@ async function init() {
 }
 
 installGlobalErrorHandlers();
-init();
+init().catch(handleStartupError);

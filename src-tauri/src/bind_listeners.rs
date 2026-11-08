@@ -1,5 +1,5 @@
 use crate::file_operations::{
-    create_directory, create_text_file, export_project_files,
+    create_directory, create_text_file,
     load_preview_files, read_text_file,
 };
 use crate::check_for_updates::update;
@@ -99,9 +99,13 @@ pub fn open_whats_new_window(app: tauri::AppHandle) {
 		let builder = builder
 			.hidden_title(true)
 			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		let window = builder.build().unwrap();
-		let _ = window.show();
-		let _ = window.set_focus();
+		match builder.build() {
+			Ok(window) => {
+				let _ = window.show();
+				let _ = window.set_focus();
+			}
+			Err(e) => eprintln!("Failed to open window: {}", e),
+		}
 	}
 }
 
@@ -122,9 +126,13 @@ pub fn open_license_window(app: tauri::AppHandle) {
 		#[cfg(target_os = "macos")]
 		let builder = builder
 			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		let window = builder.build().unwrap();
-		let _ = window.show();
-		let _ = window.set_focus();
+		match builder.build() {
+			Ok(window) => {
+				let _ = window.show();
+				let _ = window.set_focus();
+			}
+			Err(e) => eprintln!("Failed to open window: {}", e),
+		}
 	}
 }
 
@@ -145,9 +153,13 @@ pub fn open_acknowledgments_window(app: tauri::AppHandle) {
 		#[cfg(target_os = "macos")]
 		let builder = builder
 			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		let window = builder.build().unwrap();
-		let _ = window.show();
-		let _ = window.set_focus();
+		match builder.build() {
+			Ok(window) => {
+				let _ = window.show();
+				let _ = window.set_focus();
+			}
+			Err(e) => eprintln!("Failed to open window: {}", e),
+		}
 	}
 }
 
@@ -242,20 +254,21 @@ let handle_update = app_handle.clone();
             Ok(json) => {
                 let window_label = json["label"].as_str().unwrap_or("N/A");
                 mark_app_ready();
-                let project_window = handle_project_open
-                    .get_webview_window(window_label)
-                    .unwrap();
+                // The window may have closed since it sent this
+                let Some(project_window) = handle_project_open.get_webview_window(window_label)
+                else {
+                    eprintln!("window-ready: window not found: {}", window_label);
+                    return;
+                };
+                let vibrancy_window = project_window.clone();
                 let _ = handle_project_open
-                    .run_on_main_thread(|| apply_project_vibrancy(project_window));
+                    .run_on_main_thread(move || apply_project_vibrancy(vibrancy_window));
 
                 // If the window label indicates a project, start a preview server for it
                 if window_label.starts_with("project_")
                     && !window_label.starts_with("project_settings_")
                 {
                     if let Some(existing_port) = get_port_for_label(window_label) {
-                        let project_window = handle_project_open
-                            .get_webview_window(window_label)
-                            .unwrap();
                         let _ = project_window.emit(
                             "preview-port",
                             serde_json::json!({ "port": existing_port, "label": window_label }),
@@ -281,9 +294,6 @@ let handle_update = app_handle.clone();
                                 );
                                 let _ = rt.block_on(async move { fut.await });
                             });
-                            let project_window = handle_project_open
-                                .get_webview_window(window_label)
-                                .unwrap();
                             let _ = project_window.emit(
                                 "preview-port",
                                 serde_json::json!({ "port": port, "label": window_label }),
@@ -339,15 +349,14 @@ let handle_update = app_handle.clone();
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {
-                    let main_window = handle_text_file.get_webview_window(window_label).unwrap();
-                    main_window
-                        .emit(
+                    if let Some(main_window) = handle_text_file.get_webview_window(window_label) {
+                        let _ = main_window.emit(
                             callback,
                             Payload {
                                 message: "success".to_string(),
                             },
-                        )
-                        .unwrap();
+                        );
+                    }
                 }
             }
             Err(e) => {
@@ -371,15 +380,14 @@ let handle_update = app_handle.clone();
                 // Do callback
                 let callback = json["callback"].as_str().unwrap_or("N/A");
                 if callback != "N/A" && callback != "" {
-                    let main_window = handle_project_dir.get_webview_window(window_label).unwrap();
-                    main_window
-                        .emit(
+                    if let Some(main_window) = handle_project_dir.get_webview_window(window_label) {
+                        let _ = main_window.emit(
                             callback,
                             Payload {
                                 message: "success".to_string(),
                             },
-                        )
-                        .unwrap();
+                        );
+                    }
                 }
             }
             Err(e) => {
@@ -397,17 +405,18 @@ let handle_update = app_handle.clone();
             Ok(json) => {
                 let version_path = json["path"].as_str().unwrap_or("N/A");
                 let window_label = json["label"].as_str().unwrap_or("N/A");
-                let project_window = handle_request_project
-                    .get_webview_window(window_label)
-                    .unwrap();
+                let Some(project_window) = handle_request_project.get_webview_window(window_label)
+                else {
+                    eprintln!("request-project-file: window not found: {}", window_label);
+                    return;
+                };
                 match read_text_file(version_path) {
                     Ok(contents) => {
                         let encoded = serde_json::to_string(&contents).unwrap_or_else(|_| "\"\"".to_string());
                         let script_text = format!("window.__CHOICELAB_DATA_RAW__ = {};", encoded);
                         let _ = project_window.eval(&script_text);
-                        project_window
-                            .emit("receive-project-file", Payload { message: contents })
-                            .unwrap();
+                        let _ = project_window
+                            .emit("receive-project-file", Payload { message: contents });
                     }
                     Err(e) => {
                         let script_text = "window.__CHOICELAB_DATA_RAW__ = \"__INVALID_CHOICELAB_FILE__\";";
@@ -484,26 +493,6 @@ let handle_update = app_handle.clone();
             }
         }
     });
-    app.listen("export-project", move |event| {
-        let json_raw = event.payload();
-        let json_value: Result<Value, _> = from_str(json_raw);
-        match json_value {
-            Ok(json) => {
-                let project_path = json["projectPath"].as_str().unwrap_or("N/A");
-                let project_data = json["projectData"].as_str().unwrap_or("N/A");
-                let export_dir = json["exportDir"].as_str().unwrap_or("N/A");
-                if project_path != "N/A" && project_data != "N/A" && export_dir != "N/A" {
-                    if let Err(e) = export_project_files(project_path, project_data, export_dir) {
-                        eprintln!("Error exporting project files: {}", e);
-                    }
-                }
-            }
-            Err(e) => {
-                eprintln!("Error parsing JSON: {}", e);
-            }
-        }
-    });
-
     // Check whether a project window is currently open
     let handle_check_project = app_handle.clone();
     app.listen("check-project-window", move |_event| {

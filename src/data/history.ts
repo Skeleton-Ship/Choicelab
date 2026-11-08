@@ -12,7 +12,7 @@ import {
 import markUnsaved from "./markUnsaved";
 import { triggerAutosave } from "../fs/autosave";
 import { getProjectCachePath, writeProjectCacheFile } from "../fs/projectCache";
-import { getFileErrorText } from "../fs/fileErrorText";
+import { clearWriteFailure, reportWriteFailure } from "../errors/writeFailures";
 import { getNode } from "./getData";
 import { AnyNode, UpdateFunction } from "../typings";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
@@ -40,12 +40,14 @@ export async function saveHistoryVersion(initial: boolean = false) {
     versionId,
     stringify(store.project),
     "History"
-  ).catch((error) => {
-    // TODO: show this to the user instead of logging; undo can't reach this
-    // version without it
-    const text = getFileErrorText(error, store.project.name);
-    console.error(`Undo history couldn't be saved: ${text.title} ${text.body}`, error);
-  });
+  ).then(
+    () => clearWriteFailure("history"),
+    (error) => {
+      // Undo can't reach this version without it
+      console.error("Undo history couldn't be saved:", error);
+      reportWriteFailure("history", error, store.project.name);
+    }
+  );
   // Update settings window, if active
   emitTo(
     getProjectWindowLabel(store.projectPath, "settings"),

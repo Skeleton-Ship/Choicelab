@@ -4,7 +4,7 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 
 **Stack**: Tauri 2, Preact, TypeScript (strict), Vite, SCSS, Rust/Actix backend
 **State**: Window globals (`window.__CHOICELAB_DATA__`, `window.__CHOICELAB_VIEW__`) with manual `update()` callbacks threaded through props
-**Tests**: None (no framework configured)
+**Tests**: None for the frontend (no framework configured); a few Rust unit tests (`cargo test`)
 **Linting**: ESLint covers `.js`, `.ts`, and `.tsx` files, with ~80 existing problems
 **Formatting**: `.prettierrc` exists, but there's no `format` script and it isn't run
 **~180 TS/TSX files** (including the player), ~17,100 lines of code
@@ -25,17 +25,47 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 **Fix**: Add a lightweight validation step after parsing (checking required top-level keys, version compatibility). A `validateProject()` function that throws a user-friendly error before the project is mounted. No external schema library needed.
 **Files**: `src/fs/loadProjectData.ts`, new `src/data/validateProject.ts`
 
-### 1d. Add Error Boundaries (Medium Impact, Low Effort)
+### 1d. Add Error Boundaries Around Subsystems (Low Impact, Low Effort)
 
-**Problem**: The entire Preact app has no error boundary. An unhandled exception in any component crashes the whole UI silently.
-**Fix**: Wrap the root component (and potentially the inspector/flowchart subsystems) with Preact's `Component`-based error boundary, showing a recoverable error state rather than a blank screen. Preact supports the same `componentDidCatch` API as React.
-**Files**: `src/main.tsx`, new `src/components/ErrorBoundary.tsx`
+**Problem**: Each window has one error boundary at its root (`src/errors/ErrorBoundary.tsx`), so a crash anywhere replaces the whole window with the crash screen. A crash in, say, the inspector takes the flowchart down with it.
+**Fix**: Add smaller boundaries around the flowchart and the inspector, each showing a compact "this panel couldn't be displayed" state with a retry, while the rest of the window keeps working. The root boundary stays as the backstop.
+**Files**: `src/editor/MainEditor.tsx`, `src/errors/ErrorBoundary.tsx`
 
 ### 1e. Fix Recursive Node Position Calculation (Low Impact, Low Effort)
 
 **Problem**: `positionNodes.ts` resolves x-coordinate conflicts by recursively calling itself with `x + 1` until no collision is found. With a large flowchart this could eventually stack overflow.
 **Fix**: Convert to an iterative `while` loop.
 **File**: `src/editor/flowchart/linking/positionNodes.ts`
+
+### 1f. Log Errors to a File (Medium Impact, Low Effort)
+
+**Problem**: Errors only go to the webview console and Rust's stderr, neither of which a user can see or send. When someone reports an issue, there's no record of what went wrong beyond what the crash screen's "Copy Error Details" captured. Rust panics aren't recorded anywhere.
+**Fix**: Add `tauri-plugin-log` to write frontend and backend errors to a file in the app's log folder, and install a Rust panic hook (`std::panic::set_hook`) that writes there too. Add a **Help → Show Log** menu item, or attach the recent log to "Copy Error Details".
+**Files**: `src-tauri/Cargo.toml`, `src-tauri/src/main.rs`, `src/errors/globalErrorHandlers.ts`, `src/errors/CrashScreen.tsx`
+
+### 1g. Detect Unresponsive Windows (Medium Impact, Medium Effort)
+
+**Problem**: If JavaScript gets stuck (e.g. an infinite loop), the window stops responding, but the OS doesn't notice: the app's native main thread is still fine, so there's no spinning cursor or "not responding" prompt. The crash screen can't help, since it needs JavaScript to run.
+**Fix**: Have each window send Rust a heartbeat every few seconds. If heartbeats stop, show a native dialog ("The window isn't responding") with **Wait** and **Reload**. Reloading already offers to restore the autosave. Electron's `unresponsive` event works this way; Tauri has no equivalent.
+**Files**: New `src-tauri/src/watchdog.rs`, `src/main.tsx`
+
+### 1h. Recover When the Webview Process Ends (Low Impact, Medium Effort)
+
+**Problem**: The webview's content process can be ended by the OS (memory pressure, large media) or crash on its own, leaving a blank window with no explanation.
+**Fix**: Listen for the platform's notification — `webViewWebContentProcessDidTerminate` on macOS (via `NativeBridge.m`), WebView2's `ProcessFailed` on Windows — and reload the window, which offers to restore the autosave.
+**Files**: `src-tauri/src/NativeBridge.m`, `src-tauri/src/native_bridge_windows.rs`
+
+### 1i. Recover From Errors Without the Crash Screen (Low Impact, Medium Effort)
+
+**Problem**: When an event handler or async task throws, `globalErrorHandlers.ts` logs it, and only shows the crash screen if errors keep happening. In between, the view can be left inconsistent (e.g. a selection pointing at a deleted node), and an edit that threw partway through may have written a half-finished change to the store.
+**Fix**: After an uncaught error, reset temporary view state (selection, open popovers, drags) and re-render from the store. For risky edits (structural flowchart changes, deleting variables), snapshot the store first and restore it if the edit throws. With 2b's dispatcher, this becomes one try/catch around `dispatch()`.
+**Files**: `src/errors/globalErrorHandlers.ts`, `src/data/dataStore.ts`
+
+### 1j. Retire the `save-text-file` and `create-directory` Events (Low Impact, Low Effort)
+
+**Problem**: Project saves, exports, autosave, and undo history now go through commands that report failures (`src-tauri/src/project_files.rs`, `project_cache.rs`). The remaining writes — mostly preview files — still use these older events, which can't report errors, run on the main thread, and let the webview write to any path.
+**Fix**: Move the remaining callers to commands that write only inside the project's cache folder (like `write_project_cache_file`), then remove both listeners from `bind_listeners.rs`.
+**Files**: `src/preview/updatePreview.ts`, `src/preview/updatePreviewFonts.ts`, `src/fs/createWebDir.ts`, `src/fs/newProject.ts`, `src-tauri/src/bind_listeners.rs`
 
 ---
 
@@ -74,7 +104,7 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 ### 3a. Add Vitest for Unit Testing (High Impact, Medium Effort)
 
 **Problem**: Zero test coverage. The data layer (`getData.ts`, `createNode.ts`, `history.ts`, `deleteData.ts`) and utility functions are pure functions that are trivially testable and represent the highest-value coverage.
-**Fix**: Add Vitest (shares Vite config, zero extra setup needed). Start by testing the data layer and utility functions.
+**Fix**: Add Vitest (shares Vite config, zero extra setup needed). Start by testing the data layer and utility functions. Other good early candidates: the file error text mapper (`src/fs/fileErrorText.ts`) and the autosave timing in `src/fs/autosave.ts`.
 
 ```bash
 bun add -D vitest
@@ -112,16 +142,21 @@ bun add -D husky lint-staged
 | #   | Suggestion                                       | Effort | Impact                     |
 | --- | ------------------------------------------------ | ------ | -------------------------- |
 | 1   | Add Prettier                                     | Low    | Medium DX                  |
-| 4   | Add `.editorconfig`                              | Low    | Low DX                     |
-| 5   | Add Vitest + data layer tests                    | Medium | High long-term reliability |
-| 6   | Project file validation on load                  | Low    | Medium reliability         |
-| 7   | Add Preact error boundaries                      | Low    | Medium reliability         |
-| 8   | Replace polling in loadProjectData               | Medium | Medium reliability         |
-| 9   | Add pre-commit hooks                             | Low    | Medium DX                  |
-| 10  | Fix recursive position calculation               | Low    | Low reliability            |
-| 11  | Route project edits through commands             | High   | High (long-term)           |
-| 12  | Migrate state to Preact Signals                  | High   | High (long-term)           |
-| 13  | Consolidate getData patterns                     | Low    | Low DX                     |
-| 14  | Break up `fonts.ts`                              | Low    | Low DX                     |
+| 2   | Add `.editorconfig`                              | Low    | Low DX                     |
+| 3   | Add Vitest + data layer tests                    | Medium | High long-term reliability |
+| 4   | Log errors to a file                             | Low    | Medium reliability         |
+| 5   | Project file validation on load                  | Low    | Medium reliability         |
+| 6   | Detect unresponsive windows                      | Medium | Medium reliability         |
+| 7   | Replace polling in loadProjectData               | Medium | Medium reliability         |
+| 8   | Add pre-commit hooks                             | Low    | Medium DX                  |
+| 9   | Retire `save-text-file` / `create-directory`     | Low    | Low reliability            |
+| 10  | Add error boundaries around subsystems           | Low    | Low reliability            |
+| 11  | Recover when the webview process ends            | Medium | Low reliability            |
+| 12  | Fix recursive position calculation               | Low    | Low reliability            |
+| 13  | Route project edits through commands             | High   | High (long-term)           |
+| 14  | Recover from errors without the crash screen     | Medium | Low reliability            |
+| 15  | Migrate state to Preact Signals                  | High   | High (long-term)           |
+| 16  | Consolidate getData patterns                     | Low    | Low DX                     |
+| 17  | Break up `fonts.ts`                              | Low    | Low DX                     |
 
-Items 1–9 can all be done independently and incrementally. Items 11 (commands) and 12 (Signals migration) are the highest-leverage long-term changes but the most involved — best tackled after the others are in place, with 11 first, since 12 depends on it for project data.
+Items 1–12 can all be done independently and incrementally. Items 13 (commands) and 15 (Signals migration) are the highest-leverage long-term changes but the most involved — best tackled after the others are in place, with 13 first, since 15 depends on it for project data. Item 14 is much simpler once 13 is done.

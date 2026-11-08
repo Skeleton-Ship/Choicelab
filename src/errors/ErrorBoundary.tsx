@@ -22,6 +22,11 @@ export function showCrashScreen(error: unknown) {
   crashHandler?.(error);
 }
 
+/** Whether a window's contents (and so its error boundary) are on screen. */
+export function isErrorBoundaryMounted(): boolean {
+  return crashHandler !== undefined;
+}
+
 /**
  * Wraps each window's contents. If rendering throws, shows the crash screen
  * instead of leaving the window blank or frozen.

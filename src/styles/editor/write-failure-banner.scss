@@ -1,0 +1,34 @@
+#write-failure-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: min(640px, calc(100% - 32px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-light);
+  background-color: rgb(255, 244, 214);
+  border: 1px solid rgba(180, 120, 0, 0.35);
+  box-shadow: rgba(0, 0, 0, 0.12) 0 4px 12px;
+  -webkit-user-select: text;
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-dark);
+    background-color: rgb(74, 58, 20);
+    border-color: rgba(255, 200, 80, 0.3);
+  }
+
+  p {
+    flex: 1;
+    margin: 0;
+  }
+
+  .ui-button {
+    flex-shrink: 0;
+  }
+}

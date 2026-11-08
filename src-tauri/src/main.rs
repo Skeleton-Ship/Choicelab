@@ -309,6 +309,7 @@ fn main() {
             project_cache::clear_project_cache,
             project_files::save_project_file,
             project_files::copy_project_folder,
+            project_files::export_project,
             assets::create_asset,
             assets::allow_asset_preview,
             assets::save_binary_file,

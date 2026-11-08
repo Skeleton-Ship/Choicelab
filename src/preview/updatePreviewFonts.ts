@@ -30,14 +30,31 @@ function collectFontFamilyNames(appearance: AppearanceSettings): Set<string> {
   return names;
 }
 
-export async function writeFontsToDir(targetPath: string, label?: string): Promise<void> {
+// Written with save_binary_file rather than the save-text-file event, so a
+// failure is reported instead of lost
+async function writeFontsCSS(targetPath: string, css: string): Promise<void> {
+  await invoke("save_binary_file", new TextEncoder().encode(css), {
+    headers: {
+      "x-file-name": "fonts.css",
+      "x-dir-path": encodeURIComponent(targetPath),
+    },
+  });
+}
+
+/**
+ * Write the fonts the project uses, and a fonts.css that loads them, into
+ * `targetPath`. Resolves to the names of any font families that couldn't be
+ * included (e.g. when offline); rejects with a `FileError` if fonts.css can't
+ * be written.
+ */
+export async function writeFontsToDir(targetPath: string, label?: string): Promise<string[]> {
   const store = getStore();
   const fontFamilyNames = collectFontFamilyNames(store.project.settings.appearance);
   const fontsPath = await resolve(targetPath, "fonts");
 
   if (fontFamilyNames.size === 0) {
-    emit("save-text-file", { name: "fonts.css", contents: "", path: targetPath, label });
-    return;
+    await writeFontsCSS(targetPath, "");
+    return [];
   }
 
   const fonts = await getFonts();
@@ -49,6 +66,7 @@ export async function writeFontsToDir(targetPath: string, label?: string): Promi
   await emit("create-directory", { name: "fonts", path: targetPath, overwrite: true, label });
 
   let cssRules = "";
+  const failedFamilies = new Set<string>();
   for (const family of neededFamilies) {
     for (const style of family.styles) {
       const fontUrl: string = style.url.default;
@@ -73,11 +91,13 @@ export async function writeFontsToDir(targetPath: string, label?: string): Promi
 }\n`;
       } catch (e) {
         console.error(`Failed to load font: ${fontUrl}`, e);
+        failedFamilies.add(family.name);
       }
     }
   }
 
-  emit("save-text-file", { name: "fonts.css", contents: cssRules, path: targetPath, label });
+  await writeFontsCSS(targetPath, cssRules);
+  return Array.from(failedFamilies);
 }
 
 export async function updatePreviewFonts(): Promise<void> {
@@ -90,5 +110,10 @@ export async function updatePreviewFonts(): Promise<void> {
   const label = getProjectWindowLabel(store.projectPath);
   const previewPath = await getProjectCachePath(store.projectPath, "Preview");
 
-  await writeFontsToDir(previewPath, label);
+  try {
+    await writeFontsToDir(previewPath, label);
+  } catch (error) {
+    // The preview falls back to other fonts; not worth interrupting the author
+    console.error("Couldn't write fonts for the preview:", error);
+  }
 }

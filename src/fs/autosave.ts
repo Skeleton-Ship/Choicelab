@@ -1,7 +1,7 @@
 import { getStore } from "../data/dataStore";
 import { stringify } from "../utils/stringify";
 import { writeProjectCacheFile } from "./projectCache";
-import { getFileErrorText } from "./fileErrorText";
+import { clearWriteFailure, reportWriteFailure } from "../errors/writeFailures";
 
 /** At most one autosave per this many milliseconds. */
 const AUTOSAVE_INTERVAL_MS = 30_000;
@@ -54,13 +54,13 @@ async function writeAutosave(): Promise<boolean> {
       "autosave.clx",
       stringify(store.project)
     );
+    clearWriteFailure("autosave");
     return true;
   } catch (error) {
     // Let the next edit try again instead of waiting out the interval
     lastAutosaveTime = 0;
-    // TODO: show this to the user (e.g. a persistent banner) instead of logging
-    const text = getFileErrorText(error, projectName);
-    console.error(`Autosave failed: ${text.title} ${text.body}`, error);
+    console.error("Autosave failed:", error);
+    reportWriteFailure("autosave", error, projectName);
     return false;
   }
 }
