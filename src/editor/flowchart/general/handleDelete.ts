@@ -11,7 +11,8 @@ import {
 } from "../../../data/deleteData";
 import resolveConnections from "../linking/resolveConnections";
 import sortSelectedNodes from "../selecting/sortSelectedNodes";
-import { getActiveBranchStem } from "../../../data/getData";
+import { getActiveBranchStem, getBranch } from "../../../data/getData";
+import { canDeleteStem } from "../../../data/branchStems";
 import { AnyNode, Stem, UpdateFunction } from "../../../typings";
 
 /**
@@ -37,11 +38,9 @@ function handleDeleteNodes(update: UpdateFunction) {
     } else if (node.type === "branch") {
       // First, grab the active stem link; then delete and resolve
       const activeStem: Stem | undefined = getActiveBranchStem(node.id, store);
-      if (activeStem) {
-        const activeStemLink = activeStem.link.to;
-        store = deleteNodeFromData(node.id, store);
-        store = resolveConnections(store, activeStemLink);
-      }
+      const activeStemLink = activeStem ? activeStem.link.to : "";
+      store = deleteNodeFromData(node.id, store);
+      store = resolveConnections(store, activeStemLink);
     }
   });
   // Run resolveConnections one more time without any attempt to re-connect
@@ -62,9 +61,20 @@ function handleDeleteNodes(update: UpdateFunction) {
  */
 function handleDeleteStem(stemId: string, nodeId: string, update: UpdateFunction) {
   const store = getStore();
+  const branch = getBranch(nodeId, store);
+  if (!branch || !canDeleteStem(branch)) return;
+  if (!branch.stems.some((stem) => stem.id === stemId)) return;
   const updatedData = deleteStemFromData(stemId, nodeId, store);
   if (updatedData) {
     setStore(updatedData);
+    // If the deleted stem was selected, deselect it, leaving just the branch
+    // selected. (Selecting a neighboring stem would let a repeated Delete
+    // Branch Stem shortcut delete that stem too.)
+    const viewStore = getViewStore();
+    if (viewStore.selectedStem !== false && viewStore.selectedStem.id === stemId) {
+      viewStore.selectedStem = false;
+      setViewStore(viewStore);
+    }
     update();
   }
 }

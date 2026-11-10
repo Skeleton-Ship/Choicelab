@@ -1,6 +1,6 @@
 import { getBranch } from "../../../data/getData";
 import { getStore, getViewStore, setStore } from "../../../data/dataStore";
-import { createBranchStem } from "../../../data/createNode";
+import { addStemToBranch, canAddStem } from "../../../data/branchStems";
 import elementIsStem from "../general/elementIsStem";
 import isNodeSelected from "../selecting/isNodeSelected";
 import BranchStemEl from "./BranchStem";
@@ -8,7 +8,7 @@ import { Branch, Stem, UpdateFunction } from "../../../typings";
 import handleSelectNode from "../selecting/handleSelectNode";
 
 /**
- * A node that allows the flowchart to "branch off" into one or more possible directions. By default, all branches include a "no match" stem, and usually (though optionally) can add additional branch *stems* to test for possible values in the branch's variable.
+ * A node that allows the flowchart to "branch off" into one or more possible directions. New branches start with a single empty stem; authors can add more, and can optionally add one "no match" stem as a fallback for when no other stem matches.
  *
  */
 export default function BranchEl(props: {
@@ -40,26 +40,7 @@ export default function BranchEl(props: {
   }
   function addBranchStem() {
     const store = getStore();
-    const branch: Branch | undefined = getBranch(props.id, store);
-    if (!branch) return;
-    // Create the new stem
-    const stem = createBranchStem("rules");
-    branch.stems.push(stem);
-    // Re-sort stems so no-match is last
-    const newStems: Array<Stem> = [];
-    let noMatchStem;
-    branch.stems.forEach((stem: Stem) => {
-      if (stem.type === "noMatch") {
-        noMatchStem = stem;
-      } else {
-        newStems.push(stem);
-      }
-    });
-    if (noMatchStem) {
-      newStems.push(noMatchStem);
-    }
-    branch.stems = newStems;
-    // Update
+    if (!addStemToBranch(props.id, "rules", store)) return;
     setStore(store);
     props.update();
   }
@@ -87,7 +68,7 @@ export default function BranchEl(props: {
     stemEls.push(stemEl);
     stemIndex++;
   });
-  const stemButtonDisabled = stems.length >= 10 ? true : false;
+  const stemButtonDisabled = !canAddStem(branch, "rules");
   const style = {
     top: props.top + "px",
     left: props.left + "px",

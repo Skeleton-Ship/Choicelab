@@ -284,6 +284,21 @@ export async function buildMenu(
         item: "Separator",
       }),
       await MenuItem.new({
+        id: "add_stem",
+        text: "Add Branch Stem",
+        enabled: false,
+      }),
+      // On macOS, this is turned into an alternate of "Add Branch Stem" that
+      // shows while holding Option (see addNativeMenus in NativeBridge.m)
+      await MenuItem.new({
+        id: "add_no_match_stem",
+        text: "Add No-Match Stem",
+        enabled: false,
+      }),
+      await PredefinedMenuItem.new({
+        item: "Separator",
+      }),
+      await MenuItem.new({
         id: "delete_nodes",
         text: "Delete Node",
         enabled: false,

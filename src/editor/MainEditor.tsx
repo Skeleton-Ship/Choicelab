@@ -47,6 +47,7 @@ import {
   handleDeleteStem,
 } from "./flowchart/general/handleDelete";
 import { triggerApply } from "../data/autoGenerate";
+import { addStemToBranch, AddableStemType } from "../data/branchStems";
 import { openProjectSettings } from "./settings/openProjectSettings";
 import loadProject from "../fs/loadProject";
 import { setProjectWindowTitle } from "../utils/windowTitle";
@@ -231,10 +232,34 @@ export default function MainEditor() {
             selectedStem.id,
             store
           );
-          if (parentBranch && selectedStem.type !== "noMatch") {
+          if (parentBranch) {
             handleDeleteStem(selectedStem.id, parentBranch.id, handleUpdate);
           }
         }
+      }
+    );
+    const handleMenuAddStem = (type: AddableStemType) => {
+      const store = getStore();
+      const viewStore = getViewStore();
+      const selectedNode = viewStore.selectedNodes[0];
+      if (viewStore.selectedNodes.length !== 1 || selectedNode?.type !== "branch")
+        return;
+      if (!addStemToBranch(selectedNode.id, type, store)) return;
+      setStore(store);
+      handleUpdate();
+    };
+    const unlistenMenuAddStem = appWindow.listen<{ label: string }>(
+      "menu-add-stem",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleMenuAddStem("rules");
+      }
+    );
+    const unlistenMenuAddNoMatchStem = appWindow.listen<{ label: string }>(
+      "menu-add-no-match-stem",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleMenuAddStem("noMatch");
       }
     );
     const unlistenMenuProjectSettings = appWindow.listen<{ label: string }>(
@@ -286,6 +311,8 @@ export default function MainEditor() {
       unlistenMenuDisconnectLink.then((fn) => fn());
       unlistenMenuDeleteNodes.then((fn) => fn());
       unlistenMenuDeleteStem.then((fn) => fn());
+      unlistenMenuAddStem.then((fn) => fn());
+      unlistenMenuAddNoMatchStem.then((fn) => fn());
       unlistenMenuProjectSettings.then((fn) => fn());
       unlistenMenuAutofill.then((fn) => fn());
       unlistenCloseForProjectOpen.then((fn) => fn());

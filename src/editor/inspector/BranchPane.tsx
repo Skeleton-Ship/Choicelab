@@ -16,6 +16,11 @@ import {
 import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
+import {
+  addStemToBranch,
+  canAddStem,
+  hasNoMatchStem,
+} from "../../data/branchStems";
 
 export default function BranchPane(props: { update: UpdateFunction }) {
   const store = getStore(),
@@ -37,6 +42,13 @@ export default function BranchPane(props: { update: UpdateFunction }) {
     setPlan(null);
     setAutoGenerateLabel(null);
     clearApplyCallback();
+    props.update();
+  }
+
+  function handleAddNoMatchStem() {
+    const currentStore = getStore();
+    if (!addStemToBranch(selectedNodeId, "noMatch", currentStore)) return;
+    setStore(currentStore);
     props.update();
   }
 
@@ -75,7 +87,7 @@ export default function BranchPane(props: { update: UpdateFunction }) {
   if (!node) return <></>;
   let editorEls: Array<preact.JSX.Element> = [];
   let indexLabel = 1;
-  if (node.stems.length === 1) {
+  if (!node.stems.some((stem) => stem.type !== "noMatch")) {
     editorEls.push(<p class="placeholder">No Stems in Branch</p>);
   } else {
     node.stems.forEach((stem: Stem) => {
@@ -99,8 +111,22 @@ export default function BranchPane(props: { update: UpdateFunction }) {
       <ul id="branch-editor">
         <div class="inner">{editorEls}</div>
       </ul>
-      <ul id="node-settings">
+      <ul id="node-settings" class="branch-settings">
         <div class="inner">
+          <li class="node-setting add-no-match-stem">
+            <button
+              class="ui-button small"
+              disabled={!canAddStem(node, "noMatch")}
+              title={
+                hasNoMatchStem(node)
+                  ? "This branch already has a no-match stem"
+                  : undefined
+              }
+              onClick={handleAddNoMatchStem}
+            >
+              Add No-Match Stem
+            </button>
+          </li>
           <AutoGenerateButton plan={plan} context="branch" onApply={handleApply} />
         </div>
       </ul>

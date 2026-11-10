@@ -20,7 +20,7 @@ function createBranch(): Branch {
   const branch: Branch = {
     id: uuidv4(),
     type: "branch",
-    stems: [createBranchStem("noMatch")],
+    stems: [createBranchStem("rules")],
   };
   return branch;
 }

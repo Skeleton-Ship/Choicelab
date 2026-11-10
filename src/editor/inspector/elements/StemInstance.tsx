@@ -96,7 +96,7 @@ export default function StemInstance(props: {
     ruleIndex++;
   });
   const stemIndex =
-    props.branch.stems.length > 2 ? (
+    props.branch.stems.filter((s) => s.type !== "noMatch").length > 1 ? (
       <div class="stem-index">{props.indexLabel}</div>
     ) : (
       ""

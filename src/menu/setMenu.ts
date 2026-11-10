@@ -1,8 +1,10 @@
 import { emit } from "@tauri-apps/api/event";
 import { canUndo, canRedo } from "../data/history";
 import { hasActiveRichTextEditor } from "../editor/richText/activeRichTextEditor";
-import { getViewStore } from "../data/dataStore";
-import { WindowType } from "../typings";
+import { getStore, getViewStore } from "../data/dataStore";
+import { getBranch, getStemParent } from "../data/getData";
+import { canAddStem, canDeleteStem } from "../data/branchStems";
+import { Branch, WindowType } from "../typings";
 
 type SubmenuId = "app" | "file" | "edit" | "view" | "project";
 
@@ -18,6 +20,19 @@ type SubmenuState = {
 
 export async function setMenu(windowType: WindowType = "project") {
   const viewStore = getViewStore();
+  // The selected branch, and the branch containing the selected stem
+  let selectedBranch: Branch | undefined;
+  let selectedStemBranch: Branch | undefined;
+  const store = windowType === "project" && viewStore ? getStore() : undefined;
+  if (viewStore && store?.project) {
+    const selectedNodes = viewStore.selectedNodes;
+    if (selectedNodes.length === 1 && selectedNodes[0].type === "branch") {
+      selectedBranch = getBranch(selectedNodes[0].id, store);
+    }
+    if (viewStore.selectedStem !== false) {
+      selectedStemBranch = getStemParent(viewStore.selectedStem.id, store);
+    }
+  }
   const states: SubmenuState = {
     app: {},
     file: {
@@ -116,14 +131,18 @@ export async function setMenu(windowType: WindowType = "project") {
             ? true
             : false,
       },
+      add_stem: {
+        enabled:
+          selectedBranch !== undefined && canAddStem(selectedBranch, "rules"),
+      },
+      add_no_match_stem: {
+        enabled:
+          selectedBranch !== undefined &&
+          canAddStem(selectedBranch, "noMatch"),
+      },
       delete_stem: {
         enabled:
-          windowType === "project" &&
-          viewStore &&
-          viewStore.selectedStem !== false &&
-          viewStore.selectedStem.type !== "noMatch"
-            ? true
-            : false,
+          selectedStemBranch !== undefined && canDeleteStem(selectedStemBranch),
       },
       open_in_browser: {
         enabled: windowType === "project" ? true : false,

@@ -37,6 +37,21 @@ void menu_license_clicked(void);
         NSMenu *mainMenu = [NSApp mainMenu];
         if (!mainMenu) return;
 
+        // Project menu: show "Add No-Match Stem" in place of "Add Branch Stem"
+        // while Option is held. Tauri can't make alternate items itself.
+        NSMenu *projectMenu = [[mainMenu itemWithTitle:@"Project"] submenu];
+        NSMenuItem *addStemItem = [projectMenu itemWithTitle:@"Add Branch Stem"];
+        NSMenuItem *addNoMatchItem = [projectMenu itemWithTitle:@"Add No-Match Stem"];
+        if (addStemItem && addNoMatchItem &&
+            [projectMenu indexOfItem:addNoMatchItem] == [projectMenu indexOfItem:addStemItem] + 1) {
+            // Alternates must share a key equivalent and differ only by modifiers
+            addStemItem.keyEquivalent = @"";
+            addStemItem.keyEquivalentModifierMask = 0;
+            addNoMatchItem.keyEquivalent = @"";
+            addNoMatchItem.keyEquivalentModifierMask = NSEventModifierFlagOption;
+            addNoMatchItem.alternate = YES;
+        }
+
         // Help menu
         BOOL hasHelp = NO;
         for (NSMenuItem *item in [mainMenu itemArray]) {

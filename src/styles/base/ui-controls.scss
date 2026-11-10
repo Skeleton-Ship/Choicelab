@@ -108,12 +108,16 @@ $field-padding: 4px 6px;
 .ui-button {
   padding: 0px 10px 1px;
   height: 22px;
-  &:active {
+  &:active:not(:disabled) {
     background-color: #eee;
+  }
+  &:disabled {
+    opacity: 0.5;
+    box-shadow: none;
   }
   @mixin dark-button {
     color: rgba(255, 255, 255, 0.9) !important;
-    &:active {
+    &:active:not(:disabled) {
       background-color: #777677;
     }
   }

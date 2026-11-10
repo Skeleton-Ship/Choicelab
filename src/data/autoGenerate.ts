@@ -114,7 +114,7 @@ export function cellQualifiesForAutoGeneration(
 
 /**
  * A branch qualifies when:
- *   - It has only a no-match stem (no rule stems at all), OR
+ *   - It has no rule stems at all, OR
  *   - The majority of its rule stems have no rules
  */
 export function branchQualifiesForAutoGeneration(branch: Branch): boolean {
@@ -165,7 +165,7 @@ export interface PlannedActionUpdate {
 }
 
 /**
- * A new stem to be inserted before the no-match stem.
+ * A new stem to be inserted before the no-match stem (if there is one).
  * variableId and value define the single rule that will be written into it.
  */
 export interface PlannedNewStem {
@@ -436,7 +436,13 @@ export function applyAutoGenerationPlan(
         ];
       }
 
-      // Insert new stems before the noMatch stem.
+      // Remove the no-match stem, unless it links somewhere (removing it
+      // would disconnect that path)
+      branch.stems = branch.stems.filter(
+        (s) => s.type !== "noMatch" || s.link.to !== ""
+      );
+
+      // Insert new stems before the noMatch stem, if one is left.
       const noMatchIndex = branch.stems.findIndex((s) => s.type === "noMatch");
       const insertAt = noMatchIndex >= 0 ? noMatchIndex : branch.stems.length;
       const newStems: Stem[] = add.map((planned) => ({

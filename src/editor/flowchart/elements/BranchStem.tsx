@@ -63,7 +63,7 @@ export default function BranchStemEl(props: {
     const branch: Branch | undefined = getBranch(props.nodeId, store);
     if (branch) {
       stemIndex =
-        branch.stems.length > 2 ? (
+        branch.stems.filter((s) => s.type !== "noMatch").length > 1 ? (
           <span class="stem-index">{props.index + 1}</span>
         ) : (
           ""

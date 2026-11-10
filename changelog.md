@@ -19,6 +19,8 @@
 - Deleting a variable that's used by actions, text, or branch stems
   now asks for confirmation first, and shows how many places use it.
 - When setting a node's link, pressing Escape now cancels the action, the panel's positioning is improved, and linkable nodes are now easier to see.
+- A No Match stem is now optional, and can be deleted like any other stem. you can press **Add No-Match Stem** at the bottom of the branch inspector, or by holding down Option while navigating the Project menu.
+- New branches now start with a single empty stem, instead of a **No Match** stem.
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable (which could lead to conditions that look correct but fail to match).

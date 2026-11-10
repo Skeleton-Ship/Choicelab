@@ -109,7 +109,9 @@ function getActiveBranchStem(branchId: string, data: Store): Stem | undefined {
   }
   const viewStore = getViewStore();
   const selectedStem = viewStore.selectedStem;
-  // First, find the no-match branch
+  // First, fall back to the no-match stem, or the first stem if the branch
+  // doesn't have one
+  foundStem = branch.stems[0];
   branch.stems.forEach((stem: Stem) => {
     if (stem.type === "noMatch") {
       foundStem = stem;
