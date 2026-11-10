@@ -17,7 +17,7 @@ fn main() {
             .args(&[
                 "-x", "objective-c",
                 "-arch", arch,
-                "-mmacosx-version-min=13.0",
+                "-mmacosx-version-min=13.5",
                 "-c", "src/NativeBridge.m",
                 "-o", &obj,
             ])
