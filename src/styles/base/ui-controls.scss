@@ -571,13 +571,40 @@ $toggle-height: 20px;
   }
   .toolbar-region {
     display: flex;
-    height: calc(100% - 31px);
+    height: calc(100% - 34px);
     padding-left: 9px;
     padding-right: 9px;
     gap: 1px;
     &.spacer {
       flex-grow: 1;
     }
+  }
+}
+
+// Project window title on macOS, matching AppKit's own (see WindowTitle.tsx)
+.ui-toolbar .window-title {
+  position: absolute;
+  max-width: 50%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  @media (prefers-color-scheme: dark) {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+#App[data-focus="false"] .ui-toolbar .window-title {
+  color: rgba(0, 0, 0, 0.26);
+  @media (prefers-color-scheme: dark) {
+    color: rgba(255, 255, 255, 0.25);
   }
 }
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
@@ -10,6 +9,7 @@ import { flushAutosave } from "../fs/autosave";
 import { saveProject } from "../fs/saveProject";
 import { saveAsProject } from "../fs/saveAsProject";
 import { handleCloseRequest, handleQuit } from "../fs/handleCloseRequest";
+import { setDocumentEdited } from "../utils/windowTitle";
 
 const appWindow = getCurrentWebviewWindow();
 
@@ -145,10 +145,7 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
     if (isProject) {
       // Reloading opens the saved version unless the author restores the
       // autosave, which marks the window as edited again
-      emit("set-document-edited", {
-        state: false,
-        windowLabel: appWindow.label,
-      });
+      setDocumentEdited(false);
     }
     window.location.reload();
   }

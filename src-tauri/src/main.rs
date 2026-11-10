@@ -137,23 +137,44 @@ pub fn open_project_from_path(app: &tauri::AppHandle, file_path: &str) -> Result
     #[cfg(not(target_os = "macos"))]
     let transparent = false;
 
-    let builder = tauri::WebviewWindowBuilder::new(
-        app,
-        &label,
-        tauri::WebviewUrl::App(url.into()),
-    )
-    .title("")
-    .inner_size(width, height)
-    .min_inner_size(700.0, 360.0)
-    .transparent(transparent)
-    .visible(true)
-    .on_navigation(|url| is_allowed_navigation(url));
-
-    #[cfg(target_os = "macos")]
-    let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
-
-    builder.build().map_err(|e| e.to_string())?;
+    project_window_builder(app, label, url, width, height, transparent)
+        .and_then(|builder| builder.build())
+        .map_err(|e| e.to_string())?;
     Ok(())
+}
+
+/// Starts building a project window, shared by every way one opens.
+fn project_window_builder<'a, R: tauri::Runtime, M: tauri::Manager<R>>(
+    manager: &'a M,
+    label: String,
+    url: String,
+    width: f64,
+    height: f64,
+    transparent: bool,
+) -> tauri::Result<tauri::WebviewWindowBuilder<'a, R, M>> {
+    let url = tauri::WebviewUrl::App(url.into());
+    #[cfg(target_os = "macos")]
+    let builder = native_bridge_macos::project_window_builder(manager, label, url)?;
+    #[cfg(not(target_os = "macos"))]
+    let builder = tauri::WebviewWindowBuilder::new(manager, label, url);
+    Ok(builder
+        .title("")
+        .inner_size(width, height)
+        .min_inner_size(700.0, 360.0)
+        .transparent(transparent)
+        .visible(true)
+        .on_navigation(|url| is_allowed_navigation(url)))
+}
+
+/// Where the frontend should draw a project window's title on macOS, or
+/// `None` if the native title is shown instead.
+#[tauri::command]
+fn get_project_title_bar_layout() -> Option<serde_json::Value> {
+    #[cfg(target_os = "macos")]
+    return native_bridge_macos::project_title_bar_layout()
+        .and_then(|layout| serde_json::to_value(layout).ok());
+    #[cfg(not(target_os = "macos"))]
+    None
 }
 
 #[tauri::command]
@@ -170,23 +191,9 @@ fn create_project_window(
     // tries to dispatch callbacks back to that same thread → deadlock.
     // Spawning a separate OS thread keeps the main thread free.
     std::thread::spawn(move || {
-        let builder = tauri::WebviewWindowBuilder::new(
-            &app,
-            label,
-            tauri::WebviewUrl::App(url.into()),
-        )
-        .title("")
-        .inner_size(width, height)
-        .min_inner_size(700.0, 360.0)
-        .transparent(transparent)
-        .visible(true)
-        .on_navigation(|url| is_allowed_navigation(url));
-
-        #[cfg(target_os = "macos")]
-        let builder = builder
-            .title_bar_style(tauri::TitleBarStyle::Overlay);
-
-        if let Err(e) = builder.build() {
+        let result = project_window_builder(&app, label, url, width, height, transparent)
+            .and_then(|builder| builder.build());
+        if let Err(e) = result {
             eprintln!("Failed to create project window: {}", e);
         }
     });
@@ -277,7 +284,10 @@ fn main() {
             let handle = app.handle().clone();
             std::thread::spawn(move || assets::remove_legacy_asset_cache(&handle));
             #[cfg(target_os = "macos")]
-            native_bridge_macos::set_app_handle(app.handle().clone());
+            {
+                native_bridge_macos::set_app_handle(app.handle().clone());
+                native_bridge_macos::init_project_title_bar_layout();
+            }
             // Windows cold-start: file path arrives as a command-line argument
             #[cfg(target_os = "windows")]
             {
@@ -298,6 +308,7 @@ fn main() {
             set_focused_window,
             print_focused_window,
             create_project_window,
+            get_project_title_bar_layout,
             get_recent_files,
             show_unsaved_changes_dialog,
             autosave::check_autosave,

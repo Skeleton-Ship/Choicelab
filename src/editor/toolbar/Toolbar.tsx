@@ -10,6 +10,7 @@ import { LightningIcon } from "../shared/ColorIcon";
 import { useState, useEffect } from "preact/hooks";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { UpdateFunction } from "../../typings";
+import WindowTitle from "./WindowTitle";
 
 function Toolbar(props: { update: UpdateFunction }) {
   const toolbarIconSize = 36;
@@ -40,6 +41,7 @@ function Toolbar(props: { update: UpdateFunction }) {
   const paneInView = viewStore.viewSettings.paneInView;
   return (
     <div class="ui-toolbar" id="toolbar" data-tauri-drag-region>
+      <WindowTitle />
       <div class="toolbar-region add-nodes left">
         <button
           title="Add Cell"

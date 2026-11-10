@@ -1,8 +1,5 @@
-import { emit } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import { getVersion } from "@tauri-apps/api/app";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-const appWindow = getCurrentWebviewWindow();
 import {
   getStore,
   getViewStore,
@@ -13,6 +10,7 @@ import { stringify } from "../utils/stringify";
 import { resolve } from "@tauri-apps/api/path";
 import { showSaveErrorDialog } from "./saveErrorDialog";
 import { saveAsProject } from "./saveAsProject";
+import { setDocumentEdited, setProjectWindowTitle } from "../utils/windowTitle";
 
 /** The history version currently shown, to tell if anything changed. */
 function currentHistoryVersion(): string | undefined {
@@ -51,9 +49,9 @@ export async function saveProject(): Promise<boolean> {
     const viewStore = getViewStore();
     viewStore.saved = true;
     setViewStore(viewStore);
-    emit("set-document-edited", { state: false, windowLabel: appWindow.label });
+    setDocumentEdited(false);
   }
-  appWindow.setTitle(latestStore.project.name);
+  setProjectWindowTitle(latestStore.project.name);
   window.__CHOICELAB_FUNCTIONS__.updateProject(false);
   return true;
 }

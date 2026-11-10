@@ -220,3 +220,38 @@ BOOL get_volume_display_name(const char *path, char *out, size_t out_len) {
     }
     return ok;
 }
+
+// Gap between the close button's bottom edge and the bottom of the title bar
+// in a window styled like a project window (overlay title bar), in points.
+// Tauri's traffic_light_position() measures from there, and the gap differs
+// between macOS versions, so the app needs it to place the buttons in the
+// same spot on all of them. Returns -1 if it can't be measured. Must be
+// called on the main thread.
+double get_window_button_bottom_gap(void) {
+    double gap = -1;
+    @autoreleasepool {
+        NSWindowStyleMask style = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
+            NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable |
+            NSWindowStyleMaskFullSizeContentView;
+        // Never shown; only laid out so its title bar can be measured
+        NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1000, 700)
+                                                       styleMask:style
+                                                         backing:NSBackingStoreBuffered
+                                                           defer:NO];
+        window.releasedWhenClosed = NO;
+        window.titlebarAppearsTransparent = YES;
+        [window layoutIfNeeded];
+
+        NSButton *close = [window standardWindowButton:NSWindowCloseButton];
+        // The view Tauri resizes to move the buttons
+        NSView *container = close.superview.superview;
+        if (close && container) {
+            NSRect closeInContainer = [close convertRect:close.bounds toView:container];
+            gap = container.isFlipped
+                ? NSHeight(container.bounds) - NSMaxY(closeInContainer)
+                : NSMinY(closeInContainer);
+        }
+        [window release];
+    }
+    return gap;
+}

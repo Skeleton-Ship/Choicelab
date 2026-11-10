@@ -22,6 +22,7 @@
 - Clicking a rule in the Rules pane now selects its branch stem in the flowchart, matching the existing behavior in the other direction.
 - In the flowchart, text actions now appear in bold only when their role is Heading or Subheading, so body text is easier to tell apart.
 - Leading and trailing spaces are now automatically trimmed from text values in rules and in actions that set a variable (which could lead to conditions that look correct but fail to match).
+- On Windows, a project window's title now starts with an asterisk (\*) when it has unsaved changes.
 - If Choicelab stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first.
 - Various improvements to reliability of auto-save, export, and project creation and loading.
 - Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.

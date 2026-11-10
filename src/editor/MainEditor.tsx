@@ -49,6 +49,7 @@ import {
 import { triggerApply } from "../data/autoGenerate";
 import { openProjectSettings } from "./settings/openProjectSettings";
 import loadProject from "../fs/loadProject";
+import { setProjectWindowTitle } from "../utils/windowTitle";
 const appWindow = getCurrentWebviewWindow();
 
 type PreviewPortPayload = { port: number; label: string };
@@ -68,7 +69,7 @@ export default function MainEditor() {
         setViewStore(viewStore);
       }
     }).then((unlisten) => {
-      appWindow.setTitle(store.project.name);
+      setProjectWindowTitle(store.project.name);
       emit("window-ready", { label, projectPath: store.projectPath });
       return unlisten;
     });

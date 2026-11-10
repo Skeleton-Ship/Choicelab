@@ -116,3 +116,90 @@ pub extern "C" fn menu_acknowledgments_clicked() {
         eprintln!("ERROR: AppHandle not set. Call set_app_handle() early in your Tauri main function.");
     }
 }
+extern "C" {
+    fn get_window_button_bottom_gap() -> f64;
+}
+
+// Where the project window's traffic lights and title go, in points from the
+// window's top-left corner. Fixed rather than following the system default,
+// since they sit in Choicelab's own toolbar, which looks the same on every
+// macOS version.
+const TRAFFIC_LIGHT_LEFT: f64 = 12.0;
+const TRAFFIC_LIGHT_TOP: f64 = 12.0;
+const TITLE_LEFT: f64 = 85.0;
+const TITLE_TOP: f64 = 11.0;
+
+/// Where the frontend draws the project window's title. AppKit doesn't move
+/// its own title along with the traffic lights, so it's hidden.
+#[derive(Clone, Copy, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectTitleBarLayout {
+    /// The close button's position, in the units `traffic_light_position()`
+    /// expects, which puts the button's top edge `y - bottom gap` from the
+    /// window's top.
+    #[serde(skip)]
+    traffic_light_x: f64,
+    #[serde(skip)]
+    traffic_light_y: f64,
+    title_left: f64,
+    title_top: f64,
+}
+
+static PROJECT_TITLE_BAR_LAYOUT: OnceLock<Option<ProjectTitleBarLayout>> = OnceLock::new();
+
+/// Must be called on the main thread, before any project window opens
+/// (project windows opened earlier keep the system layout).
+pub fn init_project_title_bar_layout() {
+    PROJECT_TITLE_BAR_LAYOUT.get_or_init(|| {
+        let bottom_gap = unsafe { get_window_button_bottom_gap() };
+        if bottom_gap < 0.0 {
+            eprintln!("Couldn't measure the title bar; using the system layout.");
+            return None;
+        }
+        #[cfg(debug_assertions)]
+        println!(
+            "Project title bar: traffic lights at ({}, {}), button bottom gap {}",
+            TRAFFIC_LIGHT_LEFT, TRAFFIC_LIGHT_TOP, bottom_gap
+        );
+        Some(ProjectTitleBarLayout {
+            traffic_light_x: TRAFFIC_LIGHT_LEFT,
+            traffic_light_y: TRAFFIC_LIGHT_TOP + bottom_gap,
+            title_left: TITLE_LEFT,
+            title_top: TITLE_TOP,
+        })
+    });
+}
+
+pub fn project_title_bar_layout() -> Option<ProjectTitleBarLayout> {
+    PROJECT_TITLE_BAR_LAYOUT.get().copied().flatten()
+}
+
+/// Starts building a project window with an overlay title bar and inset
+/// traffic lights, with the native title hidden so the frontend can draw it in
+/// the matching spot. Falls back to the system layout (native title included)
+/// if the title bar couldn't be measured.
+///
+/// Goes through a window config because `traffic_light_position()` on the
+/// builder only reaches the webview, which re-applies the position when it
+/// redraws, but not when AppKit resets the buttons on a title change. The
+/// config also gives it to the window itself, which does handle that.
+pub fn project_window_builder<'a, R: tauri::Runtime, M: tauri::Manager<R>>(
+    manager: &'a M,
+    label: String,
+    url: tauri::WebviewUrl,
+) -> tauri::Result<tauri::WebviewWindowBuilder<'a, R, M>> {
+    use tauri::utils::config::{LogicalPosition, WindowConfig};
+    let layout = project_title_bar_layout();
+    let config = WindowConfig {
+        label,
+        url,
+        title_bar_style: tauri::TitleBarStyle::Overlay,
+        hidden_title: layout.is_some(),
+        traffic_light_position: layout.map(|layout| LogicalPosition {
+            x: layout.traffic_light_x,
+            y: layout.traffic_light_y,
+        }),
+        ..Default::default()
+    };
+    tauri::WebviewWindowBuilder::from_config(manager, &config)
+}
