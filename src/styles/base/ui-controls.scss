@@ -488,10 +488,12 @@ $toggle-height: 20px;
     justify-items: center;
     appearance: none;
     background: transparent;
+    margin-top: 3px;
     height: 100%;
+    position: relative;
     flex-basis: 80px;
     max-width: 100px;
-    padding: 6px 10px;
+    padding: 3px 10px 9px;
     border-radius: 7px;
     align-items: center;
     justify-content: center;
@@ -518,9 +520,9 @@ $toggle-height: 20px;
       }
     }
     @media (prefers-contrast: more) {
-      border: 1px solid rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.5);
       @media (prefers-color-scheme: dark) {
-        border: 1px solid rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.5);
       }
     }
     &[aria-selected="true"] {
@@ -584,7 +586,6 @@ $toggle-height: 20px;
 // Project window title on macOS, matching AppKit's own (see WindowTitle.tsx)
 .ui-toolbar .window-title {
   position: absolute;
-  max-width: 50%;
   overflow: hidden;
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 13px;
