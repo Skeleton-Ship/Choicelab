@@ -152,8 +152,13 @@ static PROJECT_TITLE_BAR_LAYOUT: OnceLock<Option<ProjectTitleBarLayout>> = OnceL
 pub fn init_project_title_bar_layout() {
     PROJECT_TITLE_BAR_LAYOUT.get_or_init(|| {
         let bottom_gap = unsafe { get_window_button_bottom_gap() };
-        if bottom_gap < 0.0 {
-            eprintln!("Couldn't measure the title bar; using the system layout.");
+        // Anything outside this range means AppKit's title bar isn't laid
+        // out the way this expects (e.g. a future macOS changed it)
+        if !(bottom_gap > 0.0 && bottom_gap < 30.0) {
+            eprintln!(
+                "Unexpected title bar measurement ({}); using the system layout.",
+                bottom_gap
+            );
             return None;
         }
         #[cfg(debug_assertions)]
