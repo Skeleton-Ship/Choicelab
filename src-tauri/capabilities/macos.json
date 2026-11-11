@@ -43,7 +43,6 @@
     "dialog:default",
     "fs:default",
     "dialog:default",
-    "updater:default",
     "process:default",
     "accent-color:allow-get-accent-color"
   ]

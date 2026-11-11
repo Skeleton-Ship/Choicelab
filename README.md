@@ -30,6 +30,7 @@ Once you're in the repo, you'll probably use these commands most:
 ```bash
 bun install-all     # Install all dependencies for Rust + Node
 bun dev             # Run the app locally, with hot reloading (dev server on port 1420); also rebuilds the player (see below) whenever its source has changed
+bun run dev:updater # Run the app against a fake update server; see scripts/test-updater.ts
 bun run typecheck   # Type-check the frontend and player
 bun lint            # Run ESLint over src/
 bun clean           # Run cargo clean; use this when Rust won't compile after big changes
@@ -127,6 +128,15 @@ Run `bun run version-[version_type]` — substituting `[version_type]` depending
 Deploying automatic app updates requires creating a Tauri private and public key pair, then associating it with the [GitHub repo](https://github.com/Skeleton-Ship/Choicelab). You can generate a key pair by running `bun run keygen`; see [Tauri's updater docs](https://tauri.app/plugin/updater/#checking-for-updates) for more info on the full setup.
 
 Once you successfully build the app (using the process above), merge into the **release** branch (per above), review the build, then publish.
+
+### Raising the minimum OS version
+
+Updates are only offered to machines that can run them. The release workflow adds each platform's minimum OS version to the updater manifest (`latest.json`), and the app checks it before offering an update (`src-tauri/src/check_for_updates.rs`). The minimums come from:
+
+- **macOS:** `bundle.macOS.minimumSystemVersion` in `src-tauri/tauri.conf.json`. Also update `-mmacosx-version-min` in `src-tauri/build.rs` to match.
+- **Windows:** `MINIMUM_SYSTEM_VERSIONS` in `scripts/updater-manifest.cjs` (e.g. `"10.0.22000"` for Windows 11).
+
+Only releases that include this check are protected, so make sure users have had a release with it before raising a minimum.
 
 ## License
 

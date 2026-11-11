@@ -2,7 +2,6 @@ use crate::file_operations::{
     create_directory, create_text_file,
     load_preview_files, read_text_file,
 };
-use crate::check_for_updates::update;
 use crate::globals::{mark_app_ready, FOCUSED_WINDOW};
 #[cfg(target_os = "macos")]
 use crate::native_bridge_macos::{add_native_menus, set_document_edited_for_window};
@@ -234,16 +233,6 @@ pub fn bind_listeners(app: &tauri::App) {
             add_native_menus();
         });
     });
-let handle_update = app_handle.clone();
-	app.listen("handle-update", move |_event| {
-		let handle_update = handle_update.clone();
-		tauri::async_runtime::spawn(async move {
-			if let Err(e) = update(handle_update.clone()).await {
-				eprintln!("Update failed: {:?}", e);
-				let _ = handle_update.emit("update-failed", Payload { message: e.to_string() });
-			}
-		});
-	});
     // When project is ready, set vibrancy
     let handle_project_open = app_handle.clone();
     app.listen("window-ready", move |event| {
@@ -824,6 +813,7 @@ let handle_update = app_handle.clone();
         // Map menu item IDs to event names
         let event_name = match menu_id {
             "about" => "menu-about",
+            "check_for_updates" => "menu-check-for-updates",
             "new_project" => "menu-new-project",
             "open_project" => "menu-open-project",
             "save" => "menu-save-project",

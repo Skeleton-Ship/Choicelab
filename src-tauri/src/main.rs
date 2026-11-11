@@ -246,6 +246,7 @@ fn main() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .manage(check_for_updates::PendingUpdate::default())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_dialog::init())
@@ -324,6 +325,8 @@ fn main() {
             assets::create_asset,
             assets::allow_asset_preview,
             assets::save_binary_file,
+            check_for_updates::check_for_update,
+            check_for_updates::install_update,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

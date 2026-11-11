@@ -33,6 +33,10 @@ export async function buildMenu(
         text: "About Choicelab",
         enabled: false,
       }),
+      await MenuItem.new({
+        id: "check_for_updates",
+        text: "Check for Updates...",
+      }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
@@ -370,6 +374,16 @@ export async function buildMenu(
         id: "open_acknowledgments",
         text: "Acknowledgments",
       }),
+      // On macOS, this is in the app menu instead
+      ...(platform === "macos"
+        ? []
+        : [
+            await PredefinedMenuItem.new({ item: "Separator" }),
+            await MenuItem.new({
+              id: "check_for_updates",
+              text: "Check for Updates...",
+            }),
+          ]),
     ],
   });
 

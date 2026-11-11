@@ -8,6 +8,7 @@
 
 - You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
+- You can now check for updates at any time with **Choicelab -> Check for Updates...** on macOS, or **Help -> Check for Updates...** on Windows.
 
 #### Enhancements
 
@@ -27,7 +28,8 @@
 - On Windows, a project window's title now starts with an asterisk (\*) when it has unsaved changes.
 - If Choicelab stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first.
 - Various improvements to reliability of auto-save, export, and project creation and loading.
-- Various under-the-hood improvements to project handling, as well as app frameworks and dependencies.
+- Choicelab no longer offers an update that your computer's operating system can't run. **Check for Updates...** explains when this is the case.
+- Various under-the-hood improvements to project handling, app update security, as well as app frameworks and dependencies.
 
 #### Fixes
 

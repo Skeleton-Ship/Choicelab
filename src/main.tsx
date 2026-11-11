@@ -46,6 +46,7 @@ import { getDialogText } from "./utils/dialogText";
 import { ErrorBoundary } from "./errors/ErrorBoundary";
 import { installGlobalErrorHandlers } from "./errors/globalErrorHandlers";
 import { handleStartupError } from "./errors/startupError";
+import { checkForUpdatesFromMenu } from "./utils/checkForUpdates";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -167,6 +168,10 @@ async function init() {
   appWindow.listen<{ label: string }>("menu-report-issue", async (event) => {
     if (event.payload.label !== appWindow.label) return;
     await open("https://github.com/Skeleton-Ship/Choicelab/issues");
+  });
+  appWindow.listen<{ label: string }>("menu-check-for-updates", (event) => {
+    if (event.payload.label !== appWindow.label) return;
+    checkForUpdatesFromMenu(windowType);
   });
   appWindow.listen<{ label: string }>("menu-open-repo", async (event) => {
     if (event.payload.label !== appWindow.label) return;

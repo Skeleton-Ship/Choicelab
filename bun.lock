@@ -12,7 +12,6 @@
         "@tauri-apps/plugin-os": "~2",
         "@tauri-apps/plugin-process": "~2",
         "@tauri-apps/plugin-shell": "~2",
-        "@tauri-apps/plugin-updater": "~2",
         "@tiptap/core": "3.33.0",
         "@tiptap/extension-document": "3.33.0",
         "@tiptap/extension-hard-break": "3.33.0",
@@ -307,8 +306,6 @@
     "@tauri-apps/plugin-process": ["@tauri-apps/plugin-process@2.4.0", "", { "dependencies": { "@tauri-apps/api": "^2.12.0" } }, "sha512-GddrmsSLAYrLa/yTXlXK/YRDzUgYeeOnUXTbiyvJWkmI424RmDPD3FVLeqcon7rv6O6ZfhBilcrHWnSo7o6hIQ=="],
 
     "@tauri-apps/plugin-shell": ["@tauri-apps/plugin-shell@2.6.0", "", { "dependencies": { "@tauri-apps/api": "^2.12.0" } }, "sha512-z9LZGSr8jfD0FWWJ+CdD99i2FQcmJ26ebNJlYJdrlFdMLcggUS29BYrfS4hJlXO1UAI6A6r084vJUAG5734Y6w=="],
-
-    "@tauri-apps/plugin-updater": ["@tauri-apps/plugin-updater@2.14.1", "", { "dependencies": { "@tauri-apps/api": "^2.12.0" } }, "sha512-Hr7nlBm1wT6xbwzjZ/S36YULazu8MNlj5vvOwMl47fXI7HTa5Bjl1PbDEwVHaZTAKzE1VZsUy35UqnbrQxmYQw=="],
 
     "@tiptap/core": ["@tiptap/core@3.33.0", "", { "peerDependencies": { "@tiptap/pm": "3.33.0" } }, "sha512-sZjBCwK9+h0kbc/CZvkepX6RTJ2jOfeWY1aId9O3YnG0CAiOs/4DbqFmpcmv5BQAGPA6gC96gqdafa/9Dpg0tw=="],
 
