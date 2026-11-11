@@ -38,9 +38,11 @@ export default function BranchEl(props: {
     if (elementIsStem(target)) return;
     if (branch) handleSelectNode(branch, props.update);
   }
-  function addBranchStem() {
+  // Option/Alt-click adds a no-match stem, matching the Project menu
+  function addBranchStem(e: MouseEvent) {
     const store = getStore();
-    if (!addStemToBranch(props.id, "rules", store)) return;
+    const type = e.altKey ? "noMatch" : "rules";
+    if (!addStemToBranch(props.id, type, store)) return;
     setStore(store);
     props.update();
   }
