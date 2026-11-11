@@ -14,8 +14,9 @@ A pre-built version of the app is available for both Mac and Windows.
 
 Development requires macOS 13.5 and newer, or Windows 11:
 
-1. Follow Tauri's guide for [setup on macOS\*](https://v2.tauri.app/start/prerequisites/#macos) or [setup on Windows](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
+1. Follow Tauri's guide for [setup on macOS\*](https://v2.tauri.app/start/prerequisites/#macos) or [setup on Windows\*\*](https://v2.tauri.app/start/prerequisites/#windows). Then, continue reading there to [install Rust and Node.js](https://v2.tauri.app/start/prerequisites/#rust).
    - \* **Mac developers**: [Install the Xcode app](https://developer.apple.com/xcode/), _not_ just the command line tools. Tauri's docs state otherwise, but you'll need the full app because Choicelab uses some Objective-C.
+   - \*\* **Windows developers**: When installing Rust, make sure you select the **MSVC** toolchain (`x86_64-pc-windows-msvc`, "default host triple" in the installer dialog). Don't use `-gnu`, which will result in Choicelab failing to compile. You can check that the correct toolchain is installed with `rustup show`.
 2. Install [Bun](https://bun.sh/package-manager); you can run `bun` to see if you already have it installed.
 3. Install [Git](https://git-scm.com/install), if you don't have it already. Any installation method should work.
 4. **If you're using Windows on ARM**, two extra tools are required:
