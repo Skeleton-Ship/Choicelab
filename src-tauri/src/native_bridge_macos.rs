@@ -20,6 +20,15 @@ pub fn set_document_edited_for_window(window: &WebviewWindow, edited: bool) {
         unsafe {
             let ns_window = ns_window_ptr as *mut Object;
             let _: () = msg_send![ns_window, setDocumentEdited: flag];
+            // AppKit moves the traffic lights back to their default spot when
+            // this changes, and Tauri doesn't know to put them back
+            if let Some(layout) = project_title_bar_layout() {
+                set_window_button_position(
+                    ns_window_ptr,
+                    layout.traffic_light_x,
+                    layout.traffic_light_y,
+                );
+            }
         }
     }
 }
@@ -118,6 +127,7 @@ pub extern "C" fn menu_acknowledgments_clicked() {
 }
 extern "C" {
     fn get_window_button_bottom_gap() -> f64;
+    fn set_window_button_position(ns_window: *mut std::ffi::c_void, x: f64, y: f64);
 }
 
 // Where the project window's traffic lights and title go, in points from the

@@ -270,3 +270,31 @@ double get_window_button_bottom_gap(void) {
     }
     return gap;
 }
+
+// Moves the window's traffic lights to (x, y), the same way Tauri does for
+// `traffic_light_position`. AppKit resets them on some changes (like
+// `setDocumentEdited:`) that Tauri doesn't know to re-apply after.
+// Must run on the main thread.
+void set_window_button_position(void *ns_window, double x, double y) {
+    NSWindow *window = (NSWindow *)ns_window;
+    NSButton *close = [window standardWindowButton:NSWindowCloseButton];
+    NSButton *miniaturize = [window standardWindowButton:NSWindowMiniaturizeButton];
+    NSButton *zoom = [window standardWindowButton:NSWindowZoomButton];
+    NSView *container = close.superview.superview;
+    if (!close || !miniaturize || !zoom || !container) return;
+
+    NSRect closeRect = close.frame;
+    CGFloat titleBarHeight = NSHeight(closeRect) + y;
+    NSRect titleBarRect = container.frame;
+    titleBarRect.size.height = titleBarHeight;
+    titleBarRect.origin.y = NSHeight(window.frame) - titleBarHeight;
+    container.frame = titleBarRect;
+
+    CGFloat spaceBetween = NSMinX(miniaturize.frame) - NSMinX(closeRect);
+    NSArray<NSButton *> *buttons = @[close, miniaturize, zoom];
+    for (NSUInteger i = 0; i < buttons.count; i++) {
+        NSPoint origin = buttons[i].frame.origin;
+        origin.x = x + i * spaceBetween;
+        [buttons[i] setFrameOrigin:origin];
+    }
+}
