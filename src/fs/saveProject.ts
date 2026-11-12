@@ -11,12 +11,7 @@ import { resolve } from "@tauri-apps/api/path";
 import { showSaveErrorDialog } from "./saveErrorDialog";
 import { saveAsProject } from "./saveAsProject";
 import { setDocumentEdited, setProjectWindowTitle } from "../utils/windowTitle";
-
-/** The history version currently shown, to tell if anything changed. */
-function currentHistoryVersion(): string | undefined {
-  const history = getStore().history;
-  return history.versions[history.location];
-}
+import { currentHistoryId } from "../data/history";
 
 /**
  * Save the project to its file. Resolves to true once it's saved, or false if
@@ -26,7 +21,7 @@ function currentHistoryVersion(): string | undefined {
 export async function saveProject(): Promise<boolean> {
   const store = getStore();
   const appVersion = await getVersion();
-  const savedVersion = currentHistoryVersion();
+  const savedVersion = currentHistoryId();
   const project = { ...store.project, app: { ...store.project.app, version: appVersion } };
   try {
     await invoke("save_project_file", {
@@ -45,7 +40,7 @@ export async function saveProject(): Promise<boolean> {
   latestStore.project.app.version = appVersion;
   setStore(latestStore);
   // Only mark as saved if what was written is still what's shown
-  if (currentHistoryVersion() === savedVersion) {
+  if (currentHistoryId() === savedVersion) {
     const viewStore = getViewStore();
     viewStore.saved = true;
     setViewStore(viewStore);

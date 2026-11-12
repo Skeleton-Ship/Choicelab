@@ -17,7 +17,7 @@ import {
   setViewStore,
   createViewStore,
 } from "./data/dataStore";
-import { saveHistoryVersion } from "./data/history";
+import { initHistory } from "./data/history";
 import { setFocusedRegion } from "./utils/focusedRegion";
 import { stringify } from "./utils/stringify";
 import { Project, LoadError, WindowType } from "./typings";
@@ -375,8 +375,8 @@ async function init() {
       // Load the default sequence
       viewStore.currentSequenceId = store.project.sequences[0].id;
       setViewStore(viewStore);
-      // Save initial history version
-      saveHistoryVersion(true);
+      // Start undo history
+      initHistory();
       if (loadedFromAutosave) {
         markUnsaved();
       }

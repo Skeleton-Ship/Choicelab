@@ -74,8 +74,9 @@ export default function createDataStore(
     projectPath: projectPath,
     projectFileName: projectFileName,
     history: {
-      location: -1,
-      versions: [],
+      baseline: "",
+      entries: [],
+      location: 0,
     },
   };
   window.__CHOICELAB_DATA__ = store;

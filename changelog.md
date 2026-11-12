@@ -29,7 +29,7 @@
 - If Choicelab stops working unexpectedly, it now explains what happened and offers to reload, auto-saving your changes first.
 - Various improvements to reliability of auto-save, export, and project creation and loading.
 - Choicelab no longer offers an update that your computer's operating system can't run. **Check for Updates...** explains when this is the case.
-- Various under-the-hood improvements to project handling, app update security, as well as app frameworks and dependencies.
+- Various under-the-hood improvements to project handling, undo/redo, app update security, as well as app frameworks and dependencies.
 
 #### Fixes
 
@@ -45,6 +45,7 @@
 - Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved. Choicelab now explains what went wrong and offers to save it somewhere else.
 - Fixed an issue where **Save As** could close the open project without saving it if the new location couldn't be written to.
 - Fixed a few rare crashes that could happen when a window closed while it was still loading.
+- Fixed an issue where changing a project setting cleared the undo history, so earlier changes in the flowchart couldn't be undone.
 
 ## 1.1
 

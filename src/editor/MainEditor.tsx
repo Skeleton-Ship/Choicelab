@@ -5,7 +5,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
-import { Branch, Sequence } from "../typings";
+import { Branch, Sequence, Store } from "../typings";
 import {
   getStore,
   getViewStore,
@@ -13,7 +13,7 @@ import {
   setViewStore,
 } from "../data/dataStore";
 import { getCurrentSequence, getStemParent } from "../data/getData";
-import { handleUndoRedo, saveHistoryVersion } from "../data/history";
+import { handleUndoRedo, recordSnapshot } from "../data/history";
 import { insertVariableInActiveField } from "./richText/activeRichTextEditor";
 import { handleCloseRequest, handleClose, handleQuit } from "../fs/handleCloseRequest";
 import {
@@ -109,9 +109,14 @@ export default function MainEditor() {
       "settings-store-updated",
       async (event) => {
         const payload = event.payload as string;
-        const newStore = JSON.parse(payload);
-        if (newStore.project.id !== store.project.id) return;
-        setStore(newStore);
+        const newStore: Store = JSON.parse(payload);
+        const currentStore = getStore();
+        if (newStore.project.id !== currentStore.project.id) return;
+        // Take only the project: history belongs to this window, and the
+        // settings window's copy may be out of date (or empty, if it opened
+        // after the last change here)
+        currentStore.project = newStore.project;
+        setStore(currentStore);
         handleUpdate(true, true);
       }
     );
@@ -335,7 +340,7 @@ export default function MainEditor() {
   ) => {
     // Update history
     if (updateHistory === true) {
-      saveHistoryVersion();
+      recordSnapshot();
     }
     // Update preview
     if (typeof updatePreview === "undefined" || updatePreview === true) {

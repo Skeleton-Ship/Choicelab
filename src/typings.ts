@@ -16,10 +16,34 @@ export type UpdateFunction = (
   updateHistory?: boolean,
   updatePreview?: boolean
 ) => void;
+/**
+ * Project undo history: a stack of entries, each one change that can be
+ * undone and redone. See src/data/history.ts.
+ */
 export interface ProjectHistory {
+  /** Snapshot of the project as it was opened, before any entries */
+  baseline: string;
+  entries: Array<HistoryEntry>;
+  /** How many entries are applied; undo steps back from here */
   location: number;
-  versions: Array<string>;
 }
+/** The window a history entry came from */
+export type HistorySource = "editor" | "settings";
+/**
+ * A change recorded as whole-project snapshots: undo restores `before`, redo
+ * restores `after`. This is the original history model, which other entry
+ * kinds will gradually replace.
+ */
+export interface SnapshotHistoryEntry {
+  id: string;
+  kind: "snapshot";
+  source: HistorySource;
+  /** Snapshot (cache version ID) of the project before this change */
+  before: string;
+  /** Snapshot (cache version ID) of the project after this change */
+  after: string;
+}
+export type HistoryEntry = SnapshotHistoryEntry;
 export interface ViewStore {
   windowType: string;
   projectName: string;
@@ -62,10 +86,7 @@ export interface Store {
   project: Project;
   projectPath: string;
   projectFileName: string;
-  history: {
-    location: number;
-    versions: Array<string>;
-  };
+  history: ProjectHistory;
 }
 export interface ActionDefOf<N extends ActionName> {
   name: N;
