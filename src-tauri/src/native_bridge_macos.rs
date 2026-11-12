@@ -171,11 +171,6 @@ pub fn init_project_title_bar_layout() {
             );
             return None;
         }
-        #[cfg(debug_assertions)]
-        println!(
-            "Project title bar: traffic lights at ({}, {}), button bottom gap {}",
-            TRAFFIC_LIGHT_LEFT, TRAFFIC_LIGHT_TOP, bottom_gap
-        );
         Some(ProjectTitleBarLayout {
             traffic_light_x: TRAFFIC_LIGHT_LEFT,
             traffic_light_y: TRAFFIC_LIGHT_TOP + bottom_gap,
