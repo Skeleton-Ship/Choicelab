@@ -619,6 +619,11 @@ $toggle-height: 20px;
     .toolbar-region {
       height: calc(100% - 9px);
     }
+    // Keeps the button row the same height when --toolbar-height grows for
+    // the update banner; the extra space goes above the buttons, not into them
+    &:has(#update button) .toolbar-region {
+      height: calc(100% - 33px);
+    }
   }
 }
 
@@ -647,8 +652,10 @@ $toggle-height: 20px;
   @include mixins.scrollbar;
 }
 
-// A stable gutter on the root would reserve scrollbar space along the window's right edge
+// A stable gutter on these would reserve scrollbar space along the window's right edge,
+// even though neither ever shows a native scrollbar (the flowchart canvas pans/zooms via JS)
 html,
-body {
+body,
+#sequence-wrap {
   scrollbar-gutter: auto;
 }

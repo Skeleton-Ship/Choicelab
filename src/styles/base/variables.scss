@@ -19,6 +19,14 @@
   --toolbar-height: 68px;
 }
 
+/* The "Update Ready" banner (#update) sits top:0 in the toolbar. Mac's taller
+   toolbar already leaves headroom for it (see .toolbar-region in
+   ui-controls.scss); Windows' shorter default doesn't, so grow it to match
+   whenever the banner exists. */
+[data-platform="windows"]:has(#update button) {
+  --toolbar-height: 92px;
+}
+
 /* Standard window background color — used by launcher, whats-new, acknowledgments */
 :root {
   --standard-window-bg-color: rgba(255, 255, 255, 0.9);

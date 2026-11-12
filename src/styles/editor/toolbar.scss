@@ -38,6 +38,10 @@ $update-button-height: 22px;
     position: absolute;
     right: 0;
     top: 0;
+    [data-platform="windows"] & {
+      right: auto;
+      left: 0;
+    }
     button {
       display: flex;
       font-size: 12px;
@@ -53,6 +57,9 @@ $update-button-height: 22px;
       overflow: hidden;
       border-radius: 0 0 0 5px;
       text-shadow: rgba(0, 0, 0, 0.3) 0 -0.5px 1px;
+      [data-platform="windows"] & {
+        border-radius: 0 0 5px 0;
+      }
       &:active {
         background-color: hsl(141, 74%, 34%);
       }
