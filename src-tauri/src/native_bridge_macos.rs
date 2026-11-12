@@ -137,7 +137,7 @@ extern "C" {
 const TRAFFIC_LIGHT_LEFT: f64 = 12.0;
 const TRAFFIC_LIGHT_TOP: f64 = 12.0;
 const TITLE_LEFT: f64 = 85.0;
-const TITLE_TOP: f64 = 11.0;
+const TITLE_TOP: f64 = 10.5;
 
 /// Where the frontend draws the project window's title. AppKit doesn't move
 /// its own title along with the traffic lights, so it's hidden.
