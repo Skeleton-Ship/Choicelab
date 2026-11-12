@@ -3,11 +3,12 @@
  * check, the toolbar's "Update Ready" button, and Check for Updates... without
  * publishing a release.
  *
- *   bun run dev:updater [scenario]
+ *   bun run dev:update-available
+ *   bun run dev:update-unsupported
+ *   bun run dev:update-up-to-date
+ *   bun run dev:update-offline
  *
- * Type a scenario name and press Return to switch while the app is running.
- * The toolbar check runs when a project opens, so reopen the project after
- * switching; Check for Updates... picks up the change immediately.
+ * To switch scenarios, quit and rerun with another one.
  *
  * Download URLs don't exist, so clicking "Update Ready" or "Install and Relaunch"
  * tests the failure path without installing anything. Don't point this at real
@@ -48,8 +49,8 @@ function manifest(scenario: Scenario) {
   };
 }
 
-function printScenarios(current: Scenario) {
-  console.log("\n[updater] Scenarios (type one and press Return to switch):");
+function printScenarios(current?: Scenario) {
+  console.log("\n[updater] Scenarios (run with bun run dev:update-<scenario>):");
   for (const [name, description] of Object.entries(SCENARIOS)) {
     const marker = name === current ? "→" : " ";
     console.log(`[updater]  ${marker} ${name.padEnd(11)} ${description}`);
@@ -57,13 +58,13 @@ function printScenarios(current: Scenario) {
   console.log("");
 }
 
-const initial = process.argv[2] ?? "available";
-if (!isScenario(initial)) {
-  console.error(`Unknown scenario "${initial}".`);
-  printScenarios("available");
+const arg = process.argv[2] ?? "";
+if (!isScenario(arg)) {
+  console.error(arg ? `Unknown scenario "${arg}".` : "No scenario given.");
+  printScenarios();
   process.exit(1);
 }
-let scenario: Scenario = initial;
+const scenario: Scenario = arg;
 
 Bun.serve({
   port: PORT,
@@ -82,21 +83,6 @@ Bun.serve({
 
 printScenarios(scenario);
 
-// Switch scenarios from the terminal
-(async () => {
-  for await (const line of console) {
-    const value = line.trim();
-    if (value === "") continue;
-    if (isScenario(value)) {
-      scenario = value;
-      console.log(`[updater] Switched to "${scenario}"`);
-    } else {
-      console.log(`[updater] Unknown scenario "${value}"`);
-      printScenarios(scenario);
-    }
-  }
-})();
-
 // Only the endpoint is overridden; the rest of the updater config (including
 // the public key) is kept. Dev builds allow http endpoints; release builds don't.
 const config = {
@@ -107,7 +93,6 @@ const config = {
 
 const app = Bun.spawn(
   ["bun", "run", "tauri", "dev", "--config", JSON.stringify(config)],
-  // stdin stays with this script, for switching scenarios
-  { stdio: ["ignore", "inherit", "inherit"] }
+  { stdio: ["inherit", "inherit", "inherit"] }
 );
 process.exit(await app.exited);

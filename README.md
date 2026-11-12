@@ -31,7 +31,7 @@ Once you're in the repo, you'll probably use these commands most:
 ```bash
 bun install-all     # Install all dependencies for Rust + Node
 bun dev             # Run the app locally, with hot reloading (dev server on port 1420); also rebuilds the player (see below) whenever its source has changed
-bun run dev:updater # Run the app against a fake update server; see scripts/test-updater.ts
+bun run dev:update-available # Run the app against a fake update server; also -unsupported, -up-to-date, -offline (see scripts/test-updater.ts)
 bun run typecheck   # Type-check the frontend and player
 bun lint            # Run ESLint over src/
 bun clean           # Run cargo clean; use this when Rust won't compile after big changes
