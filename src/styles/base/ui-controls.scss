@@ -659,3 +659,11 @@ body,
 #sequence-wrap {
   scrollbar-gutter: auto;
 }
+
+// The toolbar never scrolls. A stable gutter also applies to overflow: hidden, which
+// toolbar elements use for clipping (e.g. the update banner's wipe, the window title's
+// ellipsis), and would pad them with an empty scrollbar strip on Windows
+.ui-toolbar,
+.ui-toolbar * {
+  scrollbar-gutter: auto;
+}
