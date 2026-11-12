@@ -58,17 +58,22 @@ export async function setMenu(windowType: WindowType = "project") {
       },
     },
     edit: {
+      // The settings window only undoes changes made in settings
       undo: {
         enabled:
-          windowType === "project" || windowType === "projectSettings"
+          windowType === "project"
             ? canUndo()
-            : false,
+            : windowType === "projectSettings"
+              ? canUndo("settings")
+              : false,
       },
       redo: {
         enabled:
-          windowType === "project" || windowType === "projectSettings"
+          windowType === "project"
             ? canRedo()
-            : false,
+            : windowType === "projectSettings"
+              ? canRedo("settings")
+              : false,
       },
       insert_variable: {
         enabled: windowType === "project" && hasActiveRichTextEditor(),

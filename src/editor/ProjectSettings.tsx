@@ -1,7 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { v4 as uuidv4 } from "uuid";
-import { emit } from "@tauri-apps/api/event";
-import { listen } from "@tauri-apps/api/event";
+import { emit, emitTo, listen } from "@tauri-apps/api/event";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -10,6 +9,11 @@ import { SettingsPane } from "./settings/SettingsPane";
 import { GearIcon } from "./shared/ColorIcon";
 import { PaintbrushIcon } from "./shared/ColorIcon";
 import { LogicalSize } from "@tauri-apps/api/dpi";
+import { setMenu } from "../menu/setMenu";
+import {
+  handleSettingsUndoRedo,
+  SETTINGS_SYNC_EVENT,
+} from "./settings/settingsUndo";
 const appWindow = getCurrentWebviewWindow();
 
 type PaneId = "general" | "appearance";
@@ -34,12 +38,46 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
     emit("window-ready", {
       label: getProjectWindowLabel(store.projectPath, "settings"),
     });
-    listen("editor-store-updated", async (event) => {
-      const payload = event.payload as string;
-      const newStore = JSON.parse(payload);
-      setStore(newStore);
+    const unlistenStore = listen<string>("editor-store-updated", (event) => {
+      setStore(JSON.parse(event.payload));
       handleUpdate();
+      setMenu("projectSettings");
     });
+    // This window opens with only the project, so ask for the rest (e.g.
+    // history, for undo) once it can be received
+    unlistenStore.then(() =>
+      emitTo(getProjectWindowLabel(store.projectPath), SETTINGS_SYNC_EVENT, {
+        projectId: store.project.id,
+      })
+    );
+    // Undo and redo. Menu events reach every window, labeled with the
+    // focused one.
+    const unlistenUndo = appWindow.listen<{ label: string }>(
+      "menu-undo",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleSettingsUndoRedo("undo");
+      }
+    );
+    const unlistenRedo = appWindow.listen<{ label: string }>(
+      "menu-redo",
+      (event) => {
+        if (event.payload.label !== appWindow.label) return;
+        handleSettingsUndoRedo("redo");
+      }
+    );
+    // Undo and redo are available in text fields, so update the menu as
+    // focus moves
+    const updateMenu = () => setMenu("projectSettings");
+    window.addEventListener("focusin", updateMenu);
+    window.addEventListener("focusout", updateMenu);
+    return () => {
+      unlistenStore.then((fn) => fn());
+      unlistenUndo.then((fn) => fn());
+      unlistenRedo.then((fn) => fn());
+      window.removeEventListener("focusin", updateMenu);
+      window.removeEventListener("focusout", updateMenu);
+    };
   }, []);
 
   const [paneId, setPaneId] = useState<PaneId>(props.startingPane);

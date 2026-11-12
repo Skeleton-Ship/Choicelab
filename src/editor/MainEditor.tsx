@@ -13,7 +13,12 @@ import {
   setViewStore,
 } from "../data/dataStore";
 import { getCurrentSequence, getStemParent } from "../data/getData";
-import { handleUndoRedo, recordSnapshot } from "../data/history";
+import {
+  handleUndoRedo,
+  recordSnapshot,
+  stepProjectHistory,
+  syncSettingsWindow,
+} from "../data/history";
 import { insertVariableInActiveField } from "./richText/activeRichTextEditor";
 import { handleCloseRequest, handleClose, handleQuit } from "../fs/handleCloseRequest";
 import {
@@ -54,6 +59,11 @@ import {
   SETTING_CHANGE_EVENT,
   SettingChangeRequest,
 } from "./settings/settingChanges";
+import {
+  SETTINGS_SYNC_EVENT,
+  SETTINGS_UNDO_EVENT,
+  SettingsUndoRequest,
+} from "./settings/settingsUndo";
 import loadProject from "../fs/loadProject";
 import { setProjectWindowTitle } from "../utils/windowTitle";
 const appWindow = getCurrentWebviewWindow();
@@ -115,6 +125,21 @@ export default function MainEditor() {
       (event) => {
         // Recorded in history as a setting change, not a snapshot
         if (applySettingChange(event.payload)) handleUpdate(false, true);
+      }
+    );
+    const unlistenSettingsUndo = listen<SettingsUndoRequest>(
+      SETTINGS_UNDO_EVENT,
+      (event) => {
+        if (event.payload.projectId !== getStore().project.id) return;
+        stepProjectHistory(event.payload.direction, handleUpdate, "settings");
+      }
+    );
+    const unlistenSettingsSync = listen<{ projectId: string }>(
+      SETTINGS_SYNC_EVENT,
+      (event) => {
+        const store = getStore();
+        if (event.payload.projectId !== store.project.id) return;
+        syncSettingsWindow(store);
       }
     );
     // Close listeners
@@ -298,6 +323,8 @@ export default function MainEditor() {
       unlistenPreviewPort.then((fn) => fn());
       unlistenRequestProject.then((fn) => fn());
       unlistenSettingChange.then((fn) => fn());
+      unlistenSettingsUndo.then((fn) => fn());
+      unlistenSettingsSync.then((fn) => fn());
       unlistenCloseRequested.then((fn) => fn());
       unlistenMenuQuit.then((fn) => fn());
       unlistenMenuSave.then((fn) => fn());

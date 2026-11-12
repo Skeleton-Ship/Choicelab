@@ -16,6 +16,10 @@
  *
  * History belongs to the project window. Other windows (e.g. project settings)
  * get a copy of the store, history included, through "editor-store-updated".
+ * Each entry records the window it came from (`source`): the settings window
+ * only undoes and redoes its own entries (see settingsUndo.ts), so it never
+ * changes something that isn't on screen. The project window steps through
+ * everything.
  */
 
 import { v4 as uuidv4 } from "uuid";
@@ -186,22 +190,34 @@ function lastSnapshotIn(entry: HistoryEntry): string | undefined {
  * Undo and redo
  */
 
-type Direction = "undo" | "redo";
+export type Direction = "undo" | "redo";
 
 /**
- * Determine if, based on the project history and text field focus, if we can undo — move backward in the project history.
+ * Whether undo can do anything: in a text field, or with an entry to undo.
+ * With `source`, only entries from that window count.
  */
-export function canUndo() {
-  const history = getStore().history;
-  return history.location > 0 || inTextElement();
+export function canUndo(source?: HistorySource) {
+  return inTextElement() || canStep("undo", source);
 }
 
 /**
- * Determine if, based on the project history and text field focus, if we can redo — move forward the project history.
+ * Whether redo can do anything: in a text field, or with an entry to redo.
+ * With `source`, only entries from that window count.
  */
-export function canRedo() {
-  const history = getStore().history;
-  return history.location < history.entries.length || inTextElement();
+export function canRedo(source?: HistorySource) {
+  return inTextElement() || canStep("redo", source);
+}
+
+/** Whether there's a history entry to undo or redo (from `source`, if given) */
+export function canStep(undoOrRedo: Direction, source?: HistorySource) {
+  const entry = nextEntry(getStore().history, undoOrRedo);
+  return entry !== undefined && (source === undefined || entry.source === source);
+}
+
+function nextEntry(history: ProjectHistory, undoOrRedo: Direction) {
+  return history.entries[
+    undoOrRedo === "undo" ? history.location - 1 : history.location
+  ];
 }
 
 // Steps run one at a time, so a quick series of undos each starts from where
@@ -218,17 +234,35 @@ export function handleUndoRedo(undoOrRedo: Direction, update: UpdateFunction) {
     document.execCommand(undoOrRedo);
     return;
   }
+  stepProjectHistory(undoOrRedo, update);
+}
+
+/**
+ * Undo or redo in project history (not in a text field). With `source`, only
+ * steps if the entry came from that window.
+ */
+export function stepProjectHistory(
+  undoOrRedo: Direction,
+  update: UpdateFunction,
+  source?: HistorySource
+) {
   stepQueue = stepQueue
-    .then(() => stepHistory(undoOrRedo, update))
+    .then(() => stepHistory(undoOrRedo, update, source))
     .catch((error) => console.error(`Couldn't ${undoOrRedo}:`, error));
 }
 
-async function stepHistory(undoOrRedo: Direction, update: UpdateFunction) {
+async function stepHistory(
+  undoOrRedo: Direction,
+  update: UpdateFunction,
+  source?: HistorySource
+) {
   const history = getStore().history;
   const location = history.location;
   const index = undoOrRedo === "undo" ? location - 1 : location;
   const entry = history.entries[index];
   if (!entry) return;
+  // Checked here, not when asked, since earlier queued steps move location
+  if (source !== undefined && entry.source !== source) return;
   /*
   // NOTE: This is marks the document as unedited if you go to the beginning of history. The idea is that if you made a bunch of changes and then backed all the way up, it should mark the document as unedited.
   // BUT: That's not tenable if you saved the document and THEN backed all the way up to the beginning. It'd technically be a different version than what you saved, which is no good.
@@ -397,7 +431,7 @@ const SNAPSHOT_TIMEOUT_MS = 10000;
  */
 
 /** Send the store to the project settings window, if it's open */
-function syncSettingsWindow(store: Store) {
+export function syncSettingsWindow(store: Store) {
   emitTo(
     getProjectWindowLabel(store.projectPath, "settings"),
     "editor-store-updated",
