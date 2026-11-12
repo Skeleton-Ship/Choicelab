@@ -9,6 +9,7 @@ import { SettingsPane } from "./settings/SettingsPane";
 import { GearIcon } from "./shared/ColorIcon";
 import { PaintbrushIcon } from "./shared/ColorIcon";
 import { LogicalSize } from "@tauri-apps/api/dpi";
+import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "../menu/setMenu";
 import {
   handleSettingsUndoRedo,
@@ -17,6 +18,13 @@ import {
 const appWindow = getCurrentWebviewWindow();
 
 type PaneId = "general" | "appearance";
+
+// Z on the keyboard's layout, or the physical Z key on layouts without Latin
+// letters (as menu shortcuts match; see menuShortcuts.ts)
+function isZKey(e: KeyboardEvent) {
+  const key = e.key.toLowerCase();
+  return /^[a-z]$/.test(key) ? key === "z" : e.code === "KeyZ";
+}
 
 async function setWindowSize(paneId: PaneId) {
   const heights: { general: number; appearance: number } = {
@@ -66,17 +74,23 @@ export function ProjectSettings(props: { startingPane: PaneId }) {
         handleSettingsUndoRedo("redo");
       }
     );
-    // Undo and redo are available in text fields, so update the menu as
-    // focus moves
-    const updateMenu = () => setMenu("projectSettings");
-    window.addEventListener("focusin", updateMenu);
-    window.addEventListener("focusout", updateMenu);
+    // On Windows and Linux, this window has no menu, so handle the undo and
+    // redo shortcuts here. (Capturing on window runs first, so the Custom CSS
+    // editor doesn't also handle them.)
+    const handleUndoKeys = (e: KeyboardEvent) => {
+      if (!e.ctrlKey || e.altKey || e.metaKey || e.isComposing) return;
+      if (!isZKey(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      handleSettingsUndoRedo(e.shiftKey ? "redo" : "undo");
+    };
+    const hasMenu = getPlatform() === "macos";
+    if (!hasMenu) window.addEventListener("keydown", handleUndoKeys, true);
     return () => {
+      if (!hasMenu) window.removeEventListener("keydown", handleUndoKeys, true);
       unlistenStore.then((fn) => fn());
       unlistenUndo.then((fn) => fn());
       unlistenRedo.then((fn) => fn());
-      window.removeEventListener("focusin", updateMenu);
-      window.removeEventListener("focusout", updateMenu);
     };
   }, []);
 

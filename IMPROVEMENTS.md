@@ -78,12 +78,61 @@ Choicelab's codebase is well-organized and functional, but accumulated technical
 **Depends on**: 2b, at least for project data. Signals only pay off when writes are granular; with today's whole-store replacement, every edit would still re-render everything. And `update()` also triggers history snapshots and preview refreshes, which need a home before it can be removed; 2b's dispatcher provides one. `ViewStore` doesn't have undo history, so it can move to signals independently.
 **Files**: `src/data/dataStore.ts`, `src/editor/MainEditor.tsx`, all component files that receive `update: UpdateFunction` props. New `src/data/signals.ts`.
 
-### 2b. Route Project Edits Through Commands (High Impact, High Effort)
+### 2b. Route Project Edits Through Commands (High Impact, High Effort) — in progress
 
-**Problem**: Every edit works on the whole project at once. `getStore()` and `setStore()` deep-clone the entire store on each read and write, and ~30 files modify their copy directly before writing all of it back. Each history entry is a full snapshot of the project written to disk, the settings window is sent the full store as JSON, and nothing records _what_ changed, so undo can only restore a whole earlier version.
-**Fix**: Express each kind of edit as a named command (e.g. `addAction`, `setActionProp`, `linkNode`, `deleteNodes`), applied through a single `dispatch()` function. The dispatcher becomes the one place that applies the change, records history, marks the project unsaved, refreshes the preview, and notifies other windows. Commands can also carry their own behavior, like coalescing consecutive keystrokes into a single undo step, which replaces the `updateHistory` / `updatePreview` flags passed to `update()` today. Undo can store each command's inverse instead of a full snapshot; [Immer](https://immerjs.github.io/immer/)'s `produceWithPatches` generates both the change and its inverse as patches, which avoids hand-writing an inverse for every command. Migrate incrementally: the dispatcher and today's direct writes can coexist while call sites move over one area at a time.
+**Problem**: Most edits work on the whole project at once. `getStore()` and `setStore()` deep-clone the entire store on each read and write, and ~30 files modify their copy directly before writing all of it back. Most history entries are a full snapshot of the project written to disk, and the settings window is sent the full store as JSON after every change.
+**Fix**: Express each kind of edit as a named command (e.g. `addAction`, `setActionProp`, `linkNode`, `deleteNodes`), applied through a single `dispatch()` function. The dispatcher becomes the one place that applies the change, records history, marks the project unsaved, refreshes the preview, and notifies other windows. Commands can also carry their own behavior, like coalescing consecutive keystrokes into a single undo step, which replaces the `updateHistory` / `updatePreview` flags passed to `update()` today. Undo can store each command's inverse instead of a full snapshot; [Immer](https://immerjs.github.io/immer/)'s `produceWithPatches` generates both the change and its inverse as patches, which avoids hand-writing an inverse for every command. Migrate incrementally, one area of the project at a time.
 **Order**: Do this before (or alongside) 2a; see the note there.
 **Files**: `src/data/dataStore.ts`, `src/data/history.ts`, `src/editor/MainEditor.tsx`, every file that calls `setStore()`. New `src/data/commands/`.
+
+#### Done so far
+
+History is now a stack of entries (`ProjectHistory` in `src/typings.ts`; see the header of `src/data/history.ts`). Snapshots are one kind of entry, so commands and snapshots share the same stack while areas move over.
+
+- **Phase 1: History entries.** Snapshots are wrapped as `snapshot` entries with `before` / `after` versions. All recording goes through `pushHistory()`. Undo steps are queued so they run one at a time.
+- **Phase 2: Project settings as commands.** `setProjectSetting` entries record a key, `before` and `after`. The settings window sends change requests, not its store (`src/editor/settings/settingChanges.ts`). `group` entries undo several entries as one step. `pushHistory(entry, { merge: true })` merges a burst of changes from continuous controls (typing, spinners).
+- **Phase 3: Undo in the settings window.** Each entry records its `source` window. The settings window only undoes its own entries, after giving text fields (including the Custom CSS editor's own history) the first chance (`src/editor/settings/settingsUndo.ts`). The project window undoes everything.
+
+#### Next phases
+
+Each area moves over completely, then snapshot restores stop touching it (see "Ownership" below). Roughly from easiest to hardest:
+
+- **Phase 4: Assets.** An `addAsset` command. Nothing removes assets today, and unused assets are harmless, so snapshot restores can simply keep the current asset list. This also replaces the snapshot that background image changes currently put in a `group` with their setting (`applySettingChange()`).
+- **Phase 5: Variables.** Commands for adding, changing (name, type, starting value), and deleting variables. Nodes refer to variables by ID, so renaming doesn't touch them. But two edits reach into nodes, which are still snapshot-owned until phase 6, so each records a `group` of variable commands plus a snapshot:
+  - Deleting a variable also removes it from actions and rules.
+  - Auto-generate (`triggerApply()` in `src/data/autoGenerate.ts`) creates variables and branch stems together.
+- **Phase 6: Sequences and nodes.** The bulk of the work: about 27 files record edits through `update()`. Nodes refer to each other through links, so sequences can't be split up the way settings were. They have to move over as one area. Two ways to get there:
+  - _Named commands through `dispatch()`_ (the original plan above), with Immer patches as the inverse. Clearest history, but every call site changes before the area can switch.
+  - _A generated fallback first:_ when a snapshot would be recorded, diff the project against the previous state and store the changed parts as patches instead. Every call site works at once, and they can move to named commands later. The cost is a diff on every edit, which may be slow on large projects.
+- **Phase 7: Retire snapshots.** Once nothing records them, remove:
+  - the `snapshot` entry kind and the restore logic that keeps command-owned areas
+  - the History cache files (`writeSnapshot()` / `loadSnapshot()`)
+  - the `request-history-version` listener in `src-tauri/src/bind_listeners.rs`
+  - the "history" background write failure (`src/fs/fileErrorText.ts`)
+
+**Unlocked along the way:**
+
+- Marking a project as unsaved again after you undo back to the point where you last saved. History entries now have stable IDs, so `currentHistoryId()` can be compared with the ID recorded at save (see the commented-out NOTE in `stepHistory()`). This doesn't depend on later phases.
+- Sending other windows only what changed, rather than the whole store (`syncSettingsWindow()`).
+- 2a and 1i, as noted there.
+
+#### Lessons from phases 1–3
+
+- **Ownership.** Each area of the project belongs to exactly one model: snapshots or commands. When restoring a snapshot, keep the current value of every command-owned area (`applyEntry()`). Otherwise, undoing an unrelated edit reverts it.
+- **Changes that span areas** go in a `group` entry, so they undo as one step.
+- **`getStore()` returns a deep copy.** Compare entries by ID, never by object identity.
+- **Other windows send requests, never stores.** The project window owns history, and checks an entry's `source` when the step runs, not when it's requested, since queued steps move `location`.
+- **Events reach more windows than you'd expect.** Menu events are labeled with the focused window but reach all of them, and a global `listen()` also receives `emitTo()` events meant for other windows. Filter by window label or project ID. (`request-history-version` in `bind_listeners.rs` uses a broadcast `emit`; `emit_to` would be more precise.)
+- **Merging is opt-in**, only for continuous controls; discrete changes stay separate steps. A merged entry gets a new ID, so save's change check still works.
+- **Uncontrolled editors** (like the Prism-based Custom CSS editor) have to follow the store themselves. Ignore incoming values while the editor is focused: they're echoes of typing, and can lag behind it.
+
+#### Known issues
+
+Found in review, not yet fixed:
+
+- **A missing snapshot holds up undo for 10 seconds.** When the backend can't read a snapshot, `request-history-version` in `bind_listeners.rs` only logs the error and sends nothing back. `loadSnapshot()` waits for its timeout, and every queued undo waits behind it. Fix: send an error response so the step fails right away. (Phase 7 removes snapshots entirely.)
+- **The Custom CSS editor can skip an undo result it asked for.** When Cmd+Z in the editor continues into project history, `expectExternalValue()` lets the next incoming value through even though the editor is focused. A lagging echo of earlier typing can use that up first, and the real result is then skipped as an echo. Rare: the editor's own history has to be empty while echoes are still arriving. Fix: record the value being waited for (or the history entry ID), and only let that one through. Files: `src/editor/settings/activeCodeEditor.ts`, `AppearanceCustomCSS.tsx`.
+- **`decodeCSS()` changes valid CSS escapes.** It turns every literal `\n` into a newline, to read older projects that stored newlines escaped. It used to run only when the editor opened; now it runs on every sync, so CSS like `content: "\n";` is changed the next time the editor isn't focused. Fix: decode once in a migration step (`src/fs/migrateProject.ts`, with a schema version bump) and remove `decodeCSS()`.
 
 ### 2c. Add a Code Formatter (High Impact, Low Effort)
 

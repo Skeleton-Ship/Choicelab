@@ -37,13 +37,14 @@
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - The preview no longer flashes when opened or refreshed.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
+- On Windows, keyboard shortcuts for menu commands now work reliably (after, uh, not working not very well at all).
 - Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
 - Deleting a variable now removes the variable from any actions or rules that used it.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
 - Fixed an issue where adding a large media file could incorrectly show a warning about downloading it from the cloud.
 - Cached media files are now properly removed from disk.
 - Fixed a few rare instances where auto-save, undo, and the preview could stop working when a project 1) is stored in deeply nested folders, 2) has a project with a similar name, or 3) was modified by cleanup or sync applications.
-- Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved. Choicelab now explains what went wrong and offers to save it somewhere else.
+- Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved.
 - Fixed an issue where **Save As** could close the open project without saving it if the new location couldn't be written to.
 - Fixed a few rare crashes that could happen when a window closed while it was still loading.
 - The Custom CSS editor in Project Settings now correctly responds to deletions and undo/redo.

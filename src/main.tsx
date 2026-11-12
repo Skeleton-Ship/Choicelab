@@ -113,6 +113,21 @@ async function init() {
       setViewStore(viewStore);
     }
   });
+  // Undo, redo, and delete depend on whether a text field is focused, so
+  // update the menu as focus moves (once, after focus settles)
+  if (windowType === "project" || windowType === "projectSettings") {
+    let menuUpdateScheduled = false;
+    const scheduleMenuUpdate = () => {
+      if (menuUpdateScheduled) return;
+      menuUpdateScheduled = true;
+      setTimeout(() => {
+        menuUpdateScheduled = false;
+        setMenu(windowType);
+      }, 0);
+    };
+    window.addEventListener("focusin", scheduleMenuUpdate);
+    window.addEventListener("focusout", scheduleMenuUpdate);
+  }
   // Region focus listeners
   window.addEventListener("pointerdown", (e) => {
     const targetEl = e.target as HTMLElement;

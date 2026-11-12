@@ -20,14 +20,25 @@ import {
 } from "./menuShortcuts";
 import { WindowType } from "../typings";
 
+// Builds run one at a time: shortcuts are recorded as items are created (see
+// menuShortcuts.ts), so overlapping builds would mix up each other's
+let buildQueue: Promise<void> = Promise.resolve();
+
+export function buildMenu(
+  windowType: WindowType,
+  recentFiles: string[] = []
+): Promise<void> {
+  buildQueue = buildQueue
+    .then(() => buildMenuNow(windowType, recentFiles))
+    .catch((error) => console.error("Couldn't build the menu:", error));
+  return buildQueue;
+}
+
 /*
  * Create items with menuItem/checkMenuItem (not MenuItem.new/CheckMenuItem.new)
  * so their accelerators also work on Windows (see menuShortcuts.ts).
  */
-export async function buildMenu(
-  windowType: WindowType,
-  recentFiles: string[] = []
-) {
+async function buildMenuNow(windowType: WindowType, recentFiles: string[]) {
   const platform = getPlatform();
   beginShortcuts();
 

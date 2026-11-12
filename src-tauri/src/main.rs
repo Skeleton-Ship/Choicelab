@@ -56,12 +56,14 @@ fn open_folder(path: String) {
 
 /// Run a menu item as if it were clicked. On Windows, WebView2 receives
 /// keystrokes before the window's menu accelerators can, so the frontend
-/// matches menu shortcuts itself and calls this.
+/// matches menu shortcuts itself and calls this. The command goes to the
+/// window the shortcut was pressed in, which may not be recorded as focused yet.
 #[tauri::command]
-fn trigger_menu_item(app: tauri::AppHandle, id: String) {
+fn trigger_menu_item(app: tauri::AppHandle, window: tauri::WebviewWindow, id: String) {
     let handle = app.clone();
+    let label = window.label().to_string();
     let _ = app.run_on_main_thread(move || {
-        bind_listeners::handle_menu_item(&handle, &id);
+        bind_listeners::handle_menu_item(&handle, &id, Some(label));
     });
 }
 

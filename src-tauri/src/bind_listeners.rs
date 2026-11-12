@@ -674,13 +674,17 @@ pub fn bind_listeners(app: &tauri::App) {
 
     // Listen for menu item clicks
     app.on_menu_event(move |app_handle, event| {
-        handle_menu_item(app_handle, event.id().as_ref());
+        handle_menu_item(app_handle, event.id().as_ref(), None);
     });
 }
 
 /// Run a menu item by ID. Used for menu clicks, and on Windows for keyboard
 /// shortcuts, which WebView2 receives before the menu can (see trigger_menu_item).
-pub fn handle_menu_item(app_handle: &tauri::AppHandle, menu_id: &str) {
+///
+/// `window_label` is the window the command is for. A shortcut knows which
+/// window it was pressed in; for a menu click, it's None, and the focused
+/// window is used.
+pub fn handle_menu_item(app_handle: &tauri::AppHandle, menu_id: &str, window_label: Option<String>) {
     // Quit is handled directly in Rust: emit to open project windows so they
     // can prompt for unsaved changes. If none are open, exit immediately.
     if menu_id == "request-quit" {
@@ -860,7 +864,7 @@ pub fn handle_menu_item(app_handle: &tauri::AppHandle, menu_id: &str) {
         }
     };
 
-    let label = FOCUSED_WINDOW.lock().unwrap().clone();
+    let label = window_label.unwrap_or_else(|| FOCUSED_WINDOW.lock().unwrap().clone());
     if let Some(window) = app_handle.get_webview_window(&label) {
         let _ = window.emit(event_name, serde_json::json!({ "label": label }));
     }

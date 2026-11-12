@@ -6,10 +6,15 @@
  * accelerator (see menuItem/checkMenuItem below) is recorded here, and a
  * keydown listener runs the matching item through the same path as a click.
  *
- * A matching shortcut is always consumed, as a native accelerator would be:
- * the WebView never sees it, so it can't trigger the browser's own shortcuts
+ * A matching shortcut is consumed, as a native accelerator would be: the
+ * WebView never sees it, so it can't trigger the browser's own shortcuts
  * (Ctrl+N, Ctrl+R, etc.) or editor keymaps. Following Windows convention, a
  * shortcut for a disabled item does nothing.
+ *
+ * The exception is a focused text field, which keeps its own editing keys
+ * (e.g. Ctrl+Delete deletes a word, not the selected node) and any shortcut
+ * whose item is disabled (e.g. Ctrl+Z before the project has history), as it
+ * would with no menu at all.
  *
  * Built-in items (Cut, Copy, Paste, Select All) have no accelerator here and
  * are left to the WebView.
@@ -25,6 +30,7 @@ import {
   CheckMenuItemOptions,
 } from "@tauri-apps/api/menu";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
+import inTextElement from "../utils/inTextElement";
 
 type Shortcut = {
   id: string;
@@ -104,14 +110,36 @@ export function installMenuShortcuts() {
       if (e.isComposing) return;
       const shortcut = active.find((s) => matches(s, e));
       if (!shortcut) return;
+      const isEnabled = enabled.get(shortcut.id) !== false;
+      if (
+        inTextElement() &&
+        (textEditingKeys.has(shortcut.key) || !isEnabled)
+      ) {
+        return;
+      }
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (enabled.get(shortcut.id) === false) return;
+      if (!isEnabled) return;
       invoke("trigger_menu_item", { id: shortcut.id });
     },
     true
   );
 }
+
+// Keys text fields use for editing and moving the cursor, with or without
+// modifiers (KeyboardEvent.code)
+const textEditingKeys = new Set([
+  "Backspace",
+  "Delete",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "Home",
+  "End",
+  "PageUp",
+  "PageDown",
+]);
 
 /*
  * Accelerator parsing and matching

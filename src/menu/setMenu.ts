@@ -2,6 +2,7 @@ import { emit } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { setShortcutEnabled } from "./menuShortcuts";
 import { canUndo, canRedo } from "../data/history";
+import inTextElement from "../utils/inTextElement";
 import { hasActiveRichTextEditor } from "../editor/richText/activeRichTextEditor";
 import { getStore, getViewStore } from "../data/dataStore";
 import { getBranch, getStemParent } from "../data/getData";
@@ -129,12 +130,14 @@ export async function setMenu(windowType: WindowType = "project") {
         text:
           (viewStore && viewStore.autoGenerateLabel) ?? "Autofill Variables",
       },
+      // Not while typing, where the shortcuts delete text (e.g. a word)
       delete_nodes: {
         enabled:
           windowType === "project" &&
           viewStore &&
           viewStore.selectedNodes.length > 0 &&
-          viewStore.selectedNodes[0].type !== "start"
+          viewStore.selectedNodes[0].type !== "start" &&
+          !inTextElement()
             ? true
             : false,
       },
@@ -149,7 +152,9 @@ export async function setMenu(windowType: WindowType = "project") {
       },
       delete_stem: {
         enabled:
-          selectedStemBranch !== undefined && canDeleteStem(selectedStemBranch),
+          selectedStemBranch !== undefined &&
+          canDeleteStem(selectedStemBranch) &&
+          !inTextElement(),
       },
       open_in_browser: {
         enabled: windowType === "project" ? true : false,
