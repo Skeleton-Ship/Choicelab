@@ -1,8 +1,8 @@
 # Changelog
 
-## [draft] 1.2
+## 1.2
 
-### 2026-11-xx
+### 2026-11-14
 
 #### New features
 

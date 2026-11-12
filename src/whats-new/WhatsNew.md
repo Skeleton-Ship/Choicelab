@@ -1,6 +1,6 @@
-## [draft] 1.2
+## 1.2
 
-### 2026-11-xx
+### November 14, 2026
 
 #### New features
 
@@ -47,5 +47,3 @@
 - Fixed a few rare crashes that could happen when a window closed while it was still loading.
 - The Custom CSS editor in Project Settings now correctly responds to deletions and undo/redo.
 - Fixed an issue where changing a project setting cleared the undo history, so earlier changes in the flowchart couldn't be undone.
-
-##
