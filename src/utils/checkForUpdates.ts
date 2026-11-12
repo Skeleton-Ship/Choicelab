@@ -194,7 +194,7 @@ export async function checkForUpdatesFromMenu(windowType: WindowType) {
   switch (status.kind) {
     case "upToDate": {
       const dialog = getDialogText(
-        "Check for Updates",
+        "Choicelab is up to date",
         "You're up to date!",
         `Choicelab ${status.currentVersion} is the latest version.`
       );
@@ -204,7 +204,7 @@ export async function checkForUpdatesFromMenu(windowType: WindowType) {
     case "unsupported": {
       const system = describeSystemVersion(status.minimumSystemVersion);
       const dialog = getDialogText(
-        "Check for Updates",
+        "Update not available for this computer",
         `Choicelab ${status.version} requires ${system} or later.`,
         "You have the latest version of Choicelab that supports this computer."
       );
@@ -214,7 +214,7 @@ export async function checkForUpdatesFromMenu(windowType: WindowType) {
     case "available": {
       if (windowType === "project") showUpdateButton();
       const dialog = getDialogText(
-        "Check for Updates",
+        "Update available",
         `Choicelab ${status.version} is available.`,
         "Choicelab will relaunch once the update is installed."
       );
