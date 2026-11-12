@@ -5,7 +5,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "preact/hooks";
 // App functions
-import { Branch, Sequence, Store } from "../typings";
+import { Branch, Sequence } from "../typings";
 import {
   getStore,
   getViewStore,
@@ -49,6 +49,11 @@ import {
 import { triggerApply } from "../data/autoGenerate";
 import { addStemToBranch, AddableStemType } from "../data/branchStems";
 import { openProjectSettings } from "./settings/openProjectSettings";
+import {
+  applySettingChange,
+  SETTING_CHANGE_EVENT,
+  SettingChangeRequest,
+} from "./settings/settingChanges";
 import loadProject from "../fs/loadProject";
 import { setProjectWindowTitle } from "../utils/windowTitle";
 const appWindow = getCurrentWebviewWindow();
@@ -105,19 +110,11 @@ export default function MainEditor() {
         emitTo(label, "receive-project-from-parent", { data: data });
       }
     );
-    const unlistenSettingsStore = listen(
-      "settings-store-updated",
-      async (event) => {
-        const payload = event.payload as string;
-        const newStore: Store = JSON.parse(payload);
-        const currentStore = getStore();
-        if (newStore.project.id !== currentStore.project.id) return;
-        // Take only the project: history belongs to this window, and the
-        // settings window's copy may be out of date (or empty, if it opened
-        // after the last change here)
-        currentStore.project = newStore.project;
-        setStore(currentStore);
-        handleUpdate(true, true);
+    const unlistenSettingChange = listen<SettingChangeRequest>(
+      SETTING_CHANGE_EVENT,
+      (event) => {
+        // Recorded in history as a setting change, not a snapshot
+        if (applySettingChange(event.payload)) handleUpdate(false, true);
       }
     );
     // Close listeners
@@ -300,7 +297,7 @@ export default function MainEditor() {
       window.removeEventListener("paste", pasteHandler);
       unlistenPreviewPort.then((fn) => fn());
       unlistenRequestProject.then((fn) => fn());
-      unlistenSettingsStore.then((fn) => fn());
+      unlistenSettingChange.then((fn) => fn());
       unlistenCloseRequested.then((fn) => fn());
       unlistenMenuQuit.then((fn) => fn());
       unlistenMenuSave.then((fn) => fn());

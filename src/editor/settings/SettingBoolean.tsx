@@ -1,9 +1,7 @@
 import { ChangeEvent } from "preact/compat";
 import { getStore } from "../../data/dataStore";
 import { BooleanProjectSettingName } from "../../data/settingsDefs";
-import { emitTo } from "@tauri-apps/api/event";
-import { stringify } from "../../utils/stringify";
-import { getProjectWindowLabel } from "../../utils/getProjectWindowLabel";
+import { requestSettingChange } from "./settingChanges";
 
 export function SettingBoolean(props: {
   name: BooleanProjectSettingName;
@@ -15,16 +13,7 @@ export function SettingBoolean(props: {
   const initial = store.project.settings[props.name];
   function handleChange(e: ChangeEvent) {
     const el = e.target as HTMLInputElement;
-    const newStore = getStore();
-    const settings = newStore.project.settings;
-    if (settings[props.name] === el.checked) return;
-    settings[props.name] = el.checked;
-    // Emit update
-    emitTo(
-      getProjectWindowLabel(store.projectPath),
-      "settings-store-updated",
-      stringify(newStore)
-    );
+    requestSettingChange(props.name, el.checked);
   }
   return (
     <div class="setting boolean">

@@ -45,6 +45,7 @@
 - Fixed an issue where a project could appear saved, and close without warning, when it actually couldn't be saved. Choicelab now explains what went wrong and offers to save it somewhere else.
 - Fixed an issue where **Save As** could close the open project without saving it if the new location couldn't be written to.
 - Fixed a few rare crashes that could happen when a window closed while it was still loading.
+- The Custom CSS editor in Project Settings now correctly responds to deletions and undo/redo.
 - Fixed an issue where changing a project setting cleared the undo history, so earlier changes in the flowchart couldn't be undone.
 
 ## 1.1

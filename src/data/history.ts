@@ -10,6 +10,10 @@
  * time, with each area owned by exactly one model. Snapshot entries are one
  * kind of entry, so both kinds share the same stack.
  *
+ * Areas owned by commands so far:
+ * - Project settings (setProjectSetting entries). Restoring a snapshot keeps
+ *   the current settings.
+ *
  * History belongs to the project window. Other windows (e.g. project settings)
  * get a copy of the store, history included, through "editor-store-updated".
  */
@@ -30,15 +34,18 @@ import { triggerAutosave } from "../fs/autosave";
 import { getProjectCachePath, writeProjectCacheFile } from "../fs/projectCache";
 import { clearWriteFailure, reportWriteFailure } from "../errors/writeFailures";
 import { getNode } from "./getData";
+import structuredClone from "@ungap/structured-clone";
 import {
   AnyNode,
   HistoryEntry,
   HistorySource,
   Project,
   ProjectHistory,
+  SnapshotHistoryEntry,
   Store,
   UpdateFunction,
 } from "../typings";
+import { setProjectSetting, settingValuesEqual } from "./projectSettings";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 
 /*
@@ -63,28 +70,77 @@ export function initHistory() {
  * the project.
  */
 export function recordSnapshot(source: HistorySource = "editor") {
+  pushHistory(createSnapshotEntry(source));
+}
+
+/**
+ * Save the project's current state as a snapshot, and return an entry for it
+ * (to push, or include in a group). Push it before anything else is recorded.
+ */
+export function createSnapshotEntry(
+  source: HistorySource
+): SnapshotHistoryEntry {
   const store = getStore();
   const versionId = uuidv4();
-  pushHistory({
+  writeSnapshot(store, versionId);
+  return {
     id: uuidv4(),
     kind: "snapshot",
     source,
     before: currentSnapshot(store.history),
     after: versionId,
-  });
-  writeSnapshot(store, versionId);
+  };
 }
+
+// The last entry pushed with `merge`, if nothing's happened since
+let lastMergeable: { id: string; time: number } | null = null;
+// How long after a mergeable change the next one can merge into it
+const MERGE_WINDOW_MS = 1000;
 
 /**
  * Add an entry for a change that's already been applied to the project,
  * discarding any entries that could have been redone.
+ *
+ * With `merge`, a setting change merges into the previous entry if that was
+ * a mergeable change to the same setting, made within the last second. Use
+ * this for controls that change continuously (typing, spinner buttons), so
+ * each burst of changes is one undo step.
  */
-function pushHistory(entry: HistoryEntry) {
+export function pushHistory(
+  entry: HistoryEntry,
+  options: { merge?: boolean } = {}
+) {
   const store = getStore();
   const history = store.history;
-  history.entries.length = history.location;
-  history.entries.push(entry);
-  history.location = history.entries.length;
+  const now = Date.now();
+  const top = history.entries[history.location - 1];
+  if (
+    options.merge &&
+    top &&
+    history.location === history.entries.length &&
+    lastMergeable?.id === top.id &&
+    now - lastMergeable.time < MERGE_WINDOW_MS &&
+    top.kind === "setProjectSetting" &&
+    entry.kind === "setProjectSetting" &&
+    top.key === entry.key
+  ) {
+    top.after = entry.after;
+    // A new ID, since the state it represents changed
+    top.id = uuidv4();
+    if (settingValuesEqual(top.before, top.after)) {
+      // Changed back: nothing left to undo
+      history.entries.pop();
+      history.location = history.entries.length;
+      lastMergeable = null;
+    } else {
+      lastMergeable = { id: top.id, time: now };
+    }
+  } else {
+    history.entries.length = history.location;
+    history.entries.push(entry);
+    history.location = history.entries.length;
+    lastMergeable = options.merge ? { id: entry.id, time: now } : null;
+  }
   setStore(store);
   markUnsaved();
   triggerAutosave();
@@ -105,15 +161,32 @@ export function currentHistoryId(): string {
 /** The latest applied snapshot: the project state snapshot entries build on */
 function currentSnapshot(history: ProjectHistory): string {
   for (let i = history.location - 1; i >= 0; i--) {
-    const entry = history.entries[i];
-    if (entry.kind === "snapshot") return entry.after;
+    const snapshot = lastSnapshotIn(history.entries[i]);
+    if (snapshot) return snapshot;
   }
   return history.baseline;
+}
+
+function lastSnapshotIn(entry: HistoryEntry): string | undefined {
+  switch (entry.kind) {
+    case "snapshot":
+      return entry.after;
+    case "group":
+      for (let i = entry.entries.length - 1; i >= 0; i--) {
+        const snapshot = lastSnapshotIn(entry.entries[i]);
+        if (snapshot) return snapshot;
+      }
+      return undefined;
+    case "setProjectSetting":
+      return undefined;
+  }
 }
 
 /*
  * Undo and redo
  */
+
+type Direction = "undo" | "redo";
 
 /**
  * Determine if, based on the project history and text field focus, if we can undo — move backward in the project history.
@@ -135,10 +208,7 @@ export function canRedo() {
 // the last one left off
 let stepQueue: Promise<void> = Promise.resolve();
 
-export function handleUndoRedo(
-  undoOrRedo: "undo" | "redo",
-  update: UpdateFunction
-) {
+export function handleUndoRedo(undoOrRedo: Direction, update: UpdateFunction) {
   // First, see if we need to treat this like a regular text edit undo/redo
   if (inTextElement() === true) {
     // Rich text fields keep their own history
@@ -153,12 +223,11 @@ export function handleUndoRedo(
     .catch((error) => console.error(`Couldn't ${undoOrRedo}:`, error));
 }
 
-async function stepHistory(undoOrRedo: "undo" | "redo", update: UpdateFunction) {
+async function stepHistory(undoOrRedo: Direction, update: UpdateFunction) {
   const history = getStore().history;
-  const entry =
-    undoOrRedo === "undo"
-      ? history.entries[history.location - 1]
-      : history.entries[history.location];
+  const location = history.location;
+  const index = undoOrRedo === "undo" ? location - 1 : location;
+  const entry = history.entries[index];
   if (!entry) return;
   /*
   // NOTE: This is marks the document as unedited if you go to the beginning of history. The idea is that if you made a bunch of changes and then backed all the way up, it should mark the document as unedited.
@@ -168,19 +237,23 @@ async function stepHistory(undoOrRedo: "undo" | "redo", update: UpdateFunction) 
     emit("set-document-edited", { state: false });
   }
   */
-  // Apply the entry. Re-read the store afterward, since loading a snapshot
-  // waits on the backend.
-  let project: Project | undefined;
-  switch (entry.kind) {
-    case "snapshot":
-      project = await loadSnapshot(
-        undoOrRedo === "undo" ? entry.before : entry.after
-      );
-      break;
-  }
+  // Load any snapshots first, since that waits on the backend
+  const snapshots = new Map<string, Project>();
+  await loadSnapshotsFor(entry, undoOrRedo, snapshots);
+  // (Compare by ID: getStore() returns a copy, so entries are never the same
+  // object between reads)
   const store = getStore();
-  if (project) store.project = project;
-  store.history.location += undoOrRedo === "undo" ? -1 : 1;
+  if (
+    store.history.location !== location ||
+    store.history.entries[index]?.id !== entry.id
+  ) {
+    // Something was recorded in the meantime, so this step no longer applies
+    console.warn(`History changed during ${undoOrRedo}; skipped.`);
+    return;
+  }
+  store.project = applyEntry(entry, undoOrRedo, store.project, snapshots);
+  store.history.location = undoOrRedo === "undo" ? index : index + 1;
+  lastMergeable = null;
   // Deselect nodes that no longer exist
   const viewStore = getViewStore();
   viewStore.selectedNodes = viewStore.selectedNodes.filter(
@@ -192,6 +265,62 @@ async function stepHistory(undoOrRedo: "undo" | "redo", update: UpdateFunction) 
   setViewStore(viewStore);
   syncSettingsWindow(store);
   update(false);
+}
+
+/** The order to step through a group's entries */
+function inOrder(entries: Array<HistoryEntry>, undoOrRedo: Direction) {
+  return undoOrRedo === "undo" ? [...entries].reverse() : entries;
+}
+
+async function loadSnapshotsFor(
+  entry: HistoryEntry,
+  undoOrRedo: Direction,
+  snapshots: Map<string, Project>
+) {
+  switch (entry.kind) {
+    case "snapshot": {
+      const versionId = undoOrRedo === "undo" ? entry.before : entry.after;
+      snapshots.set(versionId, await loadSnapshot(versionId));
+      break;
+    }
+    case "group":
+      for (const child of inOrder(entry.entries, undoOrRedo)) {
+        await loadSnapshotsFor(child, undoOrRedo, snapshots);
+      }
+      break;
+    case "setProjectSetting":
+      break;
+  }
+}
+
+/** Undo or redo an entry, returning the resulting project */
+function applyEntry(
+  entry: HistoryEntry,
+  undoOrRedo: Direction,
+  project: Project,
+  snapshots: Map<string, Project>
+): Project {
+  switch (entry.kind) {
+    case "snapshot": {
+      const versionId = undoOrRedo === "undo" ? entry.before : entry.after;
+      const snapshot = snapshots.get(versionId);
+      if (!snapshot) throw new Error(`History version ${versionId} not loaded`);
+      // Settings belong to setting commands, so keep them as they are
+      return { ...snapshot, settings: project.settings };
+    }
+    case "setProjectSetting":
+      setProjectSetting(
+        project.settings,
+        entry.key,
+        structuredClone(undoOrRedo === "undo" ? entry.before : entry.after)
+      );
+      return project;
+    case "group":
+      return inOrder(entry.entries, undoOrRedo).reduce(
+        (result, child) => applyEntry(child, undoOrRedo, result, snapshots),
+        project
+      );
+  }
 }
 
 /*

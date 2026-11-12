@@ -73,7 +73,7 @@ export function AppearanceInputs(props: AppearancePaneProps) {
             onChange={(number: number) => {
               props.update("inputs", {
                 borderWidth: number,
-              });
+              }, { merge: true });
             }}
           />
         </label>
@@ -102,7 +102,7 @@ export function AppearanceInputs(props: AppearancePaneProps) {
             onChange={(number: number) => {
               props.update("inputs", {
                 borderRadius: number,
-              });
+              }, { merge: true });
             }}
           />
         </label>

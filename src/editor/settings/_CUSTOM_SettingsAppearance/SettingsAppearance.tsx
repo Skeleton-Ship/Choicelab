@@ -1,9 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { getStore } from "../../../data/dataStore";
-import { emitTo } from "@tauri-apps/api/event";
 import { loadPlayerFonts } from "../../../utils/loadPlayerFonts";
-import { getProjectWindowLabel } from "../../../utils/getProjectWindowLabel";
-import { stringify } from "../../../utils/stringify";
 import { AppearanceList } from "./List";
 import { AppearanceText } from "./AppearanceText";
 import { AppearanceBackground } from "./AppearanceBackground";
@@ -11,6 +8,11 @@ import { AppearanceInputs } from "./AppearanceInputs";
 import { AppearanceLayout } from "./AppearanceLayout";
 import { AppearanceCustomCSS } from "./AppearanceCustomCSS";
 import { AppearanceSettings } from "../../../typings";
+import { appearanceSetting } from "../../../data/projectSettings";
+import {
+  requestSettingChange,
+  SettingChangeOptions,
+} from "../settingChanges";
 
 type AppearanceValue<K extends keyof AppearanceSettings> =
   AppearanceSettings[K] extends object
@@ -18,7 +20,8 @@ type AppearanceValue<K extends keyof AppearanceSettings> =
     : AppearanceSettings[K];
 export type AppearanceUpdate = <K extends keyof AppearanceSettings>(
   key: K,
-  newValues: AppearanceValue<K>
+  newValues: AppearanceValue<K>,
+  options?: SettingChangeOptions
 ) => void;
 
 export interface AppearancePaneProps {
@@ -33,20 +36,14 @@ export function SettingsAppearance() {
   useEffect(() => {
     loadPlayerFonts();
   }, []);
-  const handleChange: AppearanceUpdate = (key, newValues) => {
-    const newStore = getStore();
-    const settings = newStore.project.settings.appearance;
-    const current = settings[key];
+  const handleChange: AppearanceUpdate = (key, newValues, options) => {
+    const current = getStore().project.settings.appearance[key];
     // Style groups are merged so a pane can update one field at a time
-    settings[key] = (
+    const value = (
       typeof current === "object" ? { ...current, ...(newValues as object) } : newValues
     ) as AppearanceSettings[typeof key];
-    // Emit update
-    emitTo(
-      getProjectWindowLabel(store.projectPath),
-      "settings-store-updated",
-      stringify(newStore)
-    );
+    const setting = appearanceSetting(key, value);
+    requestSettingChange(setting.key, setting.value, options);
   };
   return (
     <>

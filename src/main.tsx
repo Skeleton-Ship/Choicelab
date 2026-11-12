@@ -134,7 +134,9 @@ async function init() {
         !e.ctrlKey &&
         !e.altKey
       ) {
-        const target = e.target as Element;
+        // The original target: e.target is only the shadow host for fields
+        // in a shadow root (e.g. the Custom CSS editor)
+        const target = (e.composedPath()[0] ?? e.target) as Element;
         const isEditable =
           target instanceof HTMLInputElement ||
           target instanceof HTMLTextAreaElement ||

@@ -5,9 +5,12 @@ import type {
   ActionPropsMap,
   ActionPropValue,
   AnyNode,
+  AppearanceSettings,
   Project,
+  ProjectSettings,
   Stem,
 } from "./player/src/schema/project";
+import type { BooleanProjectSettingName } from "./data/settingsDefs";
 
 export type * from "./player/src/schema/project";
 
@@ -43,7 +46,44 @@ export interface SnapshotHistoryEntry {
   /** Snapshot (cache version ID) of the project after this change */
   after: string;
 }
-export type HistoryEntry = SnapshotHistoryEntry;
+/**
+ * A change to one project setting. Settings belong to commands: snapshot
+ * entries leave them as they are (see src/data/history.ts).
+ */
+export interface SetProjectSettingHistoryEntry {
+  id: string;
+  kind: "setProjectSetting";
+  source: HistorySource;
+  key: ProjectSettingKey;
+  before: ProjectSettingValue;
+  after: ProjectSettingValue;
+}
+/** Several entries undone and redone as one step */
+export interface GroupHistoryEntry {
+  id: string;
+  kind: "group";
+  source: HistorySource;
+  entries: Array<HistoryEntry>;
+}
+export type HistoryEntry =
+  | SnapshotHistoryEntry
+  | SetProjectSettingHistoryEntry
+  | GroupHistoryEntry;
+/**
+ * A single project setting: a top-level setting, or one property of the
+ * appearance settings. Read and write them with getProjectSetting() /
+ * setProjectSetting() in src/data/projectSettings.ts.
+ */
+export type ProjectSettingKey =
+  | BooleanProjectSettingName
+  | `appearance.${keyof AppearanceSettings}`;
+type ProjectSettingValues = {
+  [K in BooleanProjectSettingName]: ProjectSettings[K];
+} & {
+  [K in keyof AppearanceSettings as `appearance.${K}`]: AppearanceSettings[K];
+};
+export type ProjectSettingValue<K extends ProjectSettingKey = ProjectSettingKey> =
+  ProjectSettingValues[K];
 export interface ViewStore {
   windowType: string;
   projectName: string;

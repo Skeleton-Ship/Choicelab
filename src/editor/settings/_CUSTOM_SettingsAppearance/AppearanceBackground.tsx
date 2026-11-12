@@ -30,7 +30,7 @@ export function AppearanceBackground(props: AppearancePaneProps) {
             props.update("background", { file: "" });
           }}
           onCreated={(asset: Asset) => {
-            props.update("background", { file: asset.id });
+            props.update("background", { file: asset.id }, { assets: [asset] });
           }}
         />
       </div>
