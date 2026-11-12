@@ -1,4 +1,6 @@
 import { emit } from "@tauri-apps/api/event";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { setShortcutEnabled } from "./menuShortcuts";
 import { canUndo, canRedo } from "../data/history";
 import { hasActiveRichTextEditor } from "../editor/richText/activeRichTextEditor";
 import { getStore, getViewStore } from "../data/dataStore";
@@ -152,6 +154,7 @@ export async function setMenu(windowType: WindowType = "project") {
       },
     },
   };
+  const label = getCurrentWebviewWindow().label;
   const menuIds: Array<SubmenuId> = ["app", "file", "edit", "view", "project"];
   menuIds.forEach(async (menuId) => {
     const commands = states[menuId];
@@ -170,7 +173,11 @@ export async function setMenu(windowType: WindowType = "project") {
         );
         return;
       }
+      if (state.enabled !== undefined) {
+        setShortcutEnabled(keyName, state.enabled);
+      }
       emit("set-menu-item-state", {
+        label,
         submenu: menuId + "_submenu",
         id: keyName,
         enabled: state.enabled !== undefined ? state.enabled : undefined,

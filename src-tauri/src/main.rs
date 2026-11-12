@@ -54,6 +54,17 @@ fn open_folder(path: String) {
     let _ = std::process::Command::new("explorer").arg(&path).spawn();
 }
 
+/// Run a menu item as if it were clicked. On Windows, WebView2 receives
+/// keystrokes before the window's menu accelerators can, so the frontend
+/// matches menu shortcuts itself and calls this.
+#[tauri::command]
+fn trigger_menu_item(app: tauri::AppHandle, id: String) {
+    let handle = app.clone();
+    let _ = app.run_on_main_thread(move || {
+        bind_listeners::handle_menu_item(&handle, &id);
+    });
+}
+
 #[tauri::command]
 fn set_focused_window(label: String) {
     *FOCUSED_WINDOW.lock().unwrap() = label;
@@ -307,6 +318,7 @@ fn main() {
             get_pending_files,
             open_folder,
             set_focused_window,
+            trigger_menu_item,
             print_focused_window,
             create_project_window,
             get_project_title_bar_layout,

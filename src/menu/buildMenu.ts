@@ -7,19 +7,29 @@ import {
   Menu,
   MenuItem,
   PredefinedMenuItem,
-  CheckMenuItem,
   Submenu,
 } from "@tauri-apps/api/menu";
 import { emit } from "@tauri-apps/api/event";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { setMenu } from "./setMenu";
+import {
+  menuItem,
+  checkMenuItem,
+  beginShortcuts,
+  commitShortcuts,
+} from "./menuShortcuts";
 import { WindowType } from "../typings";
 
+/*
+ * Create items with menuItem/checkMenuItem (not MenuItem.new/CheckMenuItem.new)
+ * so their accelerators also work on Windows (see menuShortcuts.ts).
+ */
 export async function buildMenu(
   windowType: WindowType,
   recentFiles: string[] = []
 ) {
   const platform = getPlatform();
+  beginShortcuts();
 
   /*
    * App menu
@@ -28,12 +38,12 @@ export async function buildMenu(
     text: "Choicelab",
     id: "app_submenu",
     items: [
-      await MenuItem.new({
+      await menuItem({
         id: "about",
         text: "About Choicelab",
         enabled: false,
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "check_for_updates",
         text: "Check for Updates...",
       }),
@@ -57,7 +67,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "request-quit",
         text: "Quit Choicelab",
         accelerator: "CmdOrCtrl+Q",
@@ -72,7 +82,7 @@ export async function buildMenu(
   const recentItems: Array<MenuItem | PredefinedMenuItem> = [];
   if (recentFiles.length === 0) {
     recentItems.push(
-      await MenuItem.new({
+      await menuItem({
         id: "open_recent_no_items",
         text: "No Recent Projects",
         enabled: false,
@@ -87,12 +97,12 @@ export async function buildMenu(
           .pop()
           ?.replace(/\.clx$/i, "") ?? filePath;
       recentItems.push(
-        await MenuItem.new({ id: `open_recent_${i}`, text: name })
+        await menuItem({ id: `open_recent_${i}`, text: name })
       );
     }
     recentItems.push(await PredefinedMenuItem.new({ item: "Separator" }));
     recentItems.push(
-      await MenuItem.new({ id: "clear_recent", text: "Clear Menu" })
+      await menuItem({ id: "clear_recent", text: "Clear Menu" })
     );
   }
 
@@ -110,12 +120,12 @@ export async function buildMenu(
     text: "File",
     id: "file_submenu",
     items: [
-      await MenuItem.new({
+      await menuItem({
         id: "new_project",
         text: "New...",
         accelerator: "CmdOrCtrl+Shift+N",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_project",
         text: "Open...",
         accelerator: "CmdOrCtrl+O",
@@ -124,13 +134,13 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         text: "Save",
         id: "save",
         accelerator: "CmdOrCtrl+S",
         enabled: false,
       }),
-      await MenuItem.new({
+      await menuItem({
         text: "Save As...",
         id: "save_as",
         accelerator: "Shift+CmdOrCtrl+S",
@@ -139,7 +149,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         text: "Export for Web...",
         id: "export",
         accelerator: "CmdOrCtrl+E",
@@ -163,13 +173,13 @@ export async function buildMenu(
     text: "Edit",
     id: "edit_submenu",
     items: [
-      await MenuItem.new({
+      await menuItem({
         text: "Undo",
         id: "undo",
         accelerator: "CmdOrCtrl+Z",
         enabled: false,
       }),
-      await MenuItem.new({
+      await menuItem({
         text: "Redo",
         id: "redo",
         accelerator: "CmdOrCtrl+Shift+Z",
@@ -193,7 +203,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         text: "Insert Variable",
         id: "insert_variable",
         enabled: false,
@@ -209,13 +219,13 @@ export async function buildMenu(
     text: "View",
     id: "view_submenu",
     items: [
-      await CheckMenuItem.new({
+      await checkMenuItem({
         id: "show_node_editor",
         text: "Show Node Editor",
         enabled: false,
         accelerator: "CmdOrCtrl+R",
       }),
-      await CheckMenuItem.new({
+      await checkMenuItem({
         id: "show_variables",
         text: "Show Variables",
         enabled: false,
@@ -224,7 +234,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "toggle_preview",
         text: "Toggle Preview",
         accelerator: "CmdOrCtrl+G",
@@ -244,13 +254,13 @@ export async function buildMenu(
     text: "Project",
     id: "project_submenu",
     items: [
-      await MenuItem.new({
+      await menuItem({
         id: "new_cell",
         text: "New Cell",
         enabled: false,
         accelerator: "CmdOrCtrl+N",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "new_branch",
         text: "New Branch",
         enabled: false,
@@ -259,14 +269,14 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "add_stem",
         text: "Add Branch Stem",
         enabled: false,
       }),
       // On macOS, this is turned into an alternate of "Add Branch Stem" that
       // shows while holding Option (see addNativeMenus in NativeBridge.m)
-      await MenuItem.new({
+      await menuItem({
         id: "add_no_match_stem",
         text: "Add No-Match Stem",
         enabled: false,
@@ -274,19 +284,19 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "set_link",
         text: "Set Link",
         enabled: false,
         accelerator: "CmdOrCtrl+L",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "disconnect_link",
         text: "Disconnect Link",
         enabled: false,
         accelerator: "CmdOrCtrl+D",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "autofill",
         text: "Autofill Variables",
         enabled: false,
@@ -294,7 +304,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_in_browser",
         text: "Open Preview in Browser",
         enabled: false,
@@ -302,14 +312,14 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "delete_nodes",
         text: "Delete Node",
         enabled: false,
         accelerator:
           platform === "macos" ? "CmdOrCtrl+Backspace" : "CmdOrCtrl+Delete",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "delete_stem",
         text: "Delete Branch Stem",
         enabled: false,
@@ -321,7 +331,7 @@ export async function buildMenu(
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "project_settings",
         text: "Project Settings...",
         enabled: false,
@@ -343,34 +353,34 @@ export async function buildMenu(
     text: "Help",
     id: "help_submenu",
     items: [
-      await MenuItem.new({
+      await menuItem({
         id: "open_help",
         text: "Choicelab Help",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "report_issue",
         text: "Report Issue or Request Feature...",
       }),
       await PredefinedMenuItem.new({
         item: "Separator",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_choicelab_site",
         text: "Website",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_license",
         text: "License",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_whatsNew",
         text: "Release Notes",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_repo",
         text: "GitHub Repository",
       }),
-      await MenuItem.new({
+      await menuItem({
         id: "open_acknowledgments",
         text: "Acknowledgments",
       }),
@@ -379,7 +389,7 @@ export async function buildMenu(
         ? []
         : [
             await PredefinedMenuItem.new({ item: "Separator" }),
-            await MenuItem.new({
+            await menuItem({
               id: "check_for_updates",
               text: "Check for Updates...",
             }),
@@ -390,7 +400,7 @@ export async function buildMenu(
   /*
    * Set the menu
    */
-  let menu = null;
+  let menu: Menu | null = null;
   switch (platform) {
     case "windows":
     case "linux":
@@ -404,7 +414,8 @@ export async function buildMenu(
           helpSubmenu,
         ];
         menu = await Menu.new({ items: items });
-        menu.setAsWindowMenu();
+        // Wait for the menu to be attached, so setMenu below can find it
+        await menu.setAsWindowMenu();
       }
       break;
     case "macos":
@@ -420,10 +431,13 @@ export async function buildMenu(
       menu = await Menu.new({ items: items });
       // await windowSubmenu.setAsWindowsMenuForNSApp();
       // await helpSubmenu.setAsHelpMenuForNSApp();
-      menu.setAsAppMenu();
+      // Wait for the menu to be installed, so setMenu below updates it
+      // rather than the menu it replaces
+      await menu.setAsAppMenu();
       emit("add-native-menus");
       break;
   }
+  await commitShortcuts(menu);
   if (menu === null) return;
   setMenu(windowType);
 }

@@ -585,21 +585,27 @@ pub fn bind_listeners(app: &tauri::App) {
                 let enabled: Option<bool> = json["enabled"].as_bool();
                 let checked: Option<bool> = json["checked"].as_bool();
                 let text = json["text"].as_str().unwrap_or("").to_string();
+                // The window whose state this is
+                let label = json["label"].as_str().unwrap_or("").to_string();
 
                 let handle = handle_menu_item_state.clone();
                 let _ = handle_menu_item_state.run_on_main_thread(move || {
-                    // Try to get the menu - on macOS use app menu, on Windows/Linux use window menu
                     let menu_opt = {
+                        // macOS has one app-wide menu, which reflects the focused
+                        // window. Ignore state from any other window.
                         #[cfg(target_os = "macos")]
                         {
+                            if *FOCUSED_WINDOW.lock().unwrap() != label {
+                                return;
+                            }
                             handle.app_handle().menu()
                         }
+                        // Windows/Linux: each window has its own menu
                         #[cfg(not(target_os = "macos"))]
                         {
-                            // Try to get menu from any webview window that has one
-                            handle.webview_windows()
-                                .values()
-                                .find_map(|w| w.menu())
+                            handle
+                                .get_webview_window(&label)
+                                .and_then(|w| w.menu())
                         }
                     };
 
@@ -668,191 +674,194 @@ pub fn bind_listeners(app: &tauri::App) {
 
     // Listen for menu item clicks
     app.on_menu_event(move |app_handle, event| {
-        let menu_id = event.id().as_ref();
+        handle_menu_item(app_handle, event.id().as_ref());
+    });
+}
 
-        // Quit is handled directly in Rust: emit to open project windows so they
-        // can prompt for unsaved changes. If none are open, exit immediately.
-        if menu_id == "request-quit" {
-            let all_windows = app_handle.webview_windows();
-            let project_windows: Vec<_> = all_windows
-                .iter()
-                .filter(|(label, _)| {
-                    label.starts_with("project_") && !label.starts_with("project_settings_")
-                })
-                .collect();
-            if !project_windows.is_empty() {
-                for (win_label, window) in &project_windows {
-                    let _ = window.emit("menu-request-quit", serde_json::json!({ "label": win_label }));
-                }
-            } else {
-                app_handle.exit(0);
+/// Run a menu item by ID. Used for menu clicks, and on Windows for keyboard
+/// shortcuts, which WebView2 receives before the menu can (see trigger_menu_item).
+pub fn handle_menu_item(app_handle: &tauri::AppHandle, menu_id: &str) {
+    // Quit is handled directly in Rust: emit to open project windows so they
+    // can prompt for unsaved changes. If none are open, exit immediately.
+    if menu_id == "request-quit" {
+        let all_windows = app_handle.webview_windows();
+        let project_windows: Vec<_> = all_windows
+            .iter()
+            .filter(|(label, _)| {
+                label.starts_with("project_") && !label.starts_with("project_settings_")
+            })
+            .collect();
+        if !project_windows.is_empty() {
+            for (win_label, window) in &project_windows {
+                let _ = window.emit("menu-request-quit", serde_json::json!({ "label": win_label }));
             }
-            return;
+        } else {
+            app_handle.exit(0);
         }
+        return;
+    }
 
-        // Open Recent: Rust resolves the path and opens the window directly.
-        if menu_id.starts_with("open_recent_") {
-            let idx: usize = menu_id["open_recent_".len()..].parse().unwrap_or(usize::MAX);
-            // Use the raw (unpruned) list so the clicked index matches what was in
-            // the menu when it was built, regardless of any files that may have gone
-            // missing since then.
-            let files = crate::preferences::read_recent_files_raw(app_handle);
-            if let Some(file_path) = files.get(idx).cloned() {
-                if !std::path::Path::new(&file_path).exists() {
-                    // Remove the stale entry and trigger a menu rebuild before
-                    // notifying JS to show the not-found dialog.
-                    crate::preferences::remove_recent_file(app_handle, &file_path);
-                    for (_, window) in app_handle.webview_windows() {
-                        let _ = window.emit("rebuild-open-recent-menu", ());
-                    }
-                    let project_name = std::path::Path::new(&file_path)
-                        .file_stem()
-                        .and_then(|s| s.to_str())
-                        .unwrap_or("Unknown")
-                        .to_string();
-                    #[cfg(target_os = "macos")]
-                    let file_manager = "Finder";
-                    #[cfg(not(target_os = "macos"))]
-                    let file_manager = "Explorer";
-                    let (dialog_title, dialog_body) = get_dialog_texts(
-                        "Couldn't locate project",
-                        &format!("\"{}\" couldn't be located.", project_name),
-                        &format!("If the file was recently moved, try opening it from {} first.", file_manager),
-                    );
-                    #[cfg(target_os = "macos")]
+    // Open Recent: Rust resolves the path and opens the window directly.
+    if menu_id.starts_with("open_recent_") {
+        let idx: usize = menu_id["open_recent_".len()..].parse().unwrap_or(usize::MAX);
+        // Use the raw (unpruned) list so the clicked index matches what was in
+        // the menu when it was built, regardless of any files that may have gone
+        // missing since then.
+        let files = crate::preferences::read_recent_files_raw(app_handle);
+        if let Some(file_path) = files.get(idx).cloned() {
+            if !std::path::Path::new(&file_path).exists() {
+                // Remove the stale entry and trigger a menu rebuild before
+                // notifying JS to show the not-found dialog.
+                crate::preferences::remove_recent_file(app_handle, &file_path);
+                for (_, window) in app_handle.webview_windows() {
+                    let _ = window.emit("rebuild-open-recent-menu", ());
+                }
+                let project_name = std::path::Path::new(&file_path)
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("Unknown")
+                    .to_string();
+                #[cfg(target_os = "macos")]
+                let file_manager = "Finder";
+                #[cfg(not(target_os = "macos"))]
+                let file_manager = "Explorer";
+                let (dialog_title, dialog_body) = get_dialog_texts(
+                    "Couldn't locate project",
+                    &format!("\"{}\" couldn't be located.", project_name),
+                    &format!("If the file was recently moved, try opening it from {} first.", file_manager),
+                );
+                #[cfg(target_os = "macos")]
+                std::thread::spawn(move || {
+                    crate::native_bridge_macos::show_app_message(&dialog_title, &dialog_body);
+                });
+                #[cfg(not(target_os = "macos"))]
+                app_handle
+                    .dialog()
+                    .message(&dialog_body)
+                    .title(&dialog_title)
+                    .kind(MessageDialogKind::Info)
+                    .show(|_| {});
+            } else if find_open_project_label(app_handle).is_some()
+                && find_open_project_label(app_handle) == project_window_label_for_file(&file_path)
+            {
+                // The chosen project is already the open one — nothing to do.
+            } else if let Some(existing_label) = find_open_project_label(app_handle) {
+                // A project is already open — ask it to handle close/save then open the new one.
+                let new_project_name = std::path::Path::new(&file_path)
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("the new project")
+                    .to_string();
+                let current_project_name = app_handle
+                    .get_webview_window(&existing_label)
+                    .and_then(|w| w.title().ok())
+                    .unwrap_or_else(|| "the current project".to_string());
+                let (dialog_title, dialog_body) = get_dialog_texts(
+                    "Open Project",
+                    &format!("To open \"{}\", you'll need to close \"{}\" first.", new_project_name, current_project_name),
+                    "",
+                );
+                let handle_guard = app_handle.clone();
+                #[cfg(target_os = "macos")]
+                {
+                    // Spawn a background thread so we can use dispatch_sync to the
+                    // main queue without deadlocking (on_menu_event runs on main).
                     std::thread::spawn(move || {
-                        crate::native_bridge_macos::show_app_message(&dialog_title, &dialog_body);
+                        let confirmed = crate::native_bridge_macos::show_guard_dialog(
+                            &dialog_title,
+                            &dialog_body,
+                            "Switch Project",
+                            "Cancel",
+                        );
+                        if confirmed {
+                            if let Some(window) = handle_guard.get_webview_window(&existing_label) {
+                                let _ = window.emit("close-for-project-open", serde_json::json!({ "path": file_path }));
+                            }
+                        }
                     });
-                    #[cfg(not(target_os = "macos"))]
+                }
+                #[cfg(not(target_os = "macos"))]
+                {
                     app_handle
                         .dialog()
                         .message(&dialog_body)
                         .title(&dialog_title)
                         .kind(MessageDialogKind::Info)
-                        .show(|_| {});
-                } else if find_open_project_label(app_handle).is_some()
-                    && find_open_project_label(app_handle) == project_window_label_for_file(&file_path)
-                {
-                    // The chosen project is already the open one — nothing to do.
-                } else if let Some(existing_label) = find_open_project_label(app_handle) {
-                    // A project is already open — ask it to handle close/save then open the new one.
-                    let new_project_name = std::path::Path::new(&file_path)
-                        .file_stem()
-                        .and_then(|s| s.to_str())
-                        .unwrap_or("the new project")
-                        .to_string();
-                    let current_project_name = app_handle
-                        .get_webview_window(&existing_label)
-                        .and_then(|w| w.title().ok())
-                        .unwrap_or_else(|| "the current project".to_string());
-                    let (dialog_title, dialog_body) = get_dialog_texts(
-                        "Open Project",
-                        &format!("To open \"{}\", you'll need to close \"{}\" first.", new_project_name, current_project_name),
-                        "",
-                    );
-                    let handle_guard = app_handle.clone();
-                    #[cfg(target_os = "macos")]
-                    {
-                        // Spawn a background thread so we can use dispatch_sync to the
-                        // main queue without deadlocking (on_menu_event runs on main).
-                        std::thread::spawn(move || {
-                            let confirmed = crate::native_bridge_macos::show_guard_dialog(
-                                &dialog_title,
-                                &dialog_body,
-                                "Switch Project",
-                                "Cancel",
-                            );
+                        .buttons(MessageDialogButtons::OkCancelCustom(
+                            "OK".into(),
+                            "Cancel".into(),
+                        ))
+                        .show(move |confirmed| {
                             if confirmed {
                                 if let Some(window) = handle_guard.get_webview_window(&existing_label) {
                                     let _ = window.emit("close-for-project-open", serde_json::json!({ "path": file_path }));
                                 }
                             }
                         });
-                    }
-                    #[cfg(not(target_os = "macos"))]
-                    {
-                        app_handle
-                            .dialog()
-                            .message(&dialog_body)
-                            .title(&dialog_title)
-                            .kind(MessageDialogKind::Info)
-                            .buttons(MessageDialogButtons::OkCancelCustom(
-                                "OK".into(),
-                                "Cancel".into(),
-                            ))
-                            .show(move |confirmed| {
-                                if confirmed {
-                                    if let Some(window) = handle_guard.get_webview_window(&existing_label) {
-                                        let _ = window.emit("close-for-project-open", serde_json::json!({ "path": file_path }));
-                                    }
-                                }
-                            });
-                    }
-                } else {
-                    // No existing project — open directly.
-                    let handle = app_handle.clone();
-                    let _ = app_handle.run_on_main_thread(move || {
-                        if let Err(e) = crate::open_project_from_path(&handle, &file_path) {
-                            eprintln!("Failed to open recent project: {}", e);
-                        }
-                    });
                 }
+            } else {
+                // No existing project — open directly.
+                let handle = app_handle.clone();
+                let _ = app_handle.run_on_main_thread(move || {
+                    if let Err(e) = crate::open_project_from_path(&handle, &file_path) {
+                        eprintln!("Failed to open recent project: {}", e);
+                    }
+                });
             }
-            return;
         }
+        return;
+    }
 
-        // Clear Menu: wipe the list and ask all windows to rebuild their menus.
-        if menu_id == "clear_recent" {
-            crate::preferences::clear_recent_files(app_handle);
-            for (_, window) in app_handle.webview_windows() {
-                let _ = window.emit("rebuild-open-recent-menu", ());
-            }
-            return;
+    // Clear Menu: wipe the list and ask all windows to rebuild their menus.
+    if menu_id == "clear_recent" {
+        crate::preferences::clear_recent_files(app_handle);
+        for (_, window) in app_handle.webview_windows() {
+            let _ = window.emit("rebuild-open-recent-menu", ());
         }
+        return;
+    }
 
-        // Map menu item IDs to event names
-        let event_name = match menu_id {
-            "about" => "menu-about",
-            "check_for_updates" => "menu-check-for-updates",
-            "new_project" => "menu-new-project",
-            "open_project" => "menu-open-project",
-            "save" => "menu-save-project",
-            "save_as" => "menu-save-as-project",
+    // Map menu item IDs to event names
+    let event_name = match menu_id {
+        "about" => "menu-about",
+        "check_for_updates" => "menu-check-for-updates",
+        "new_project" => "menu-new-project",
+        "open_project" => "menu-open-project",
+        "save" => "menu-save-project",
+        "save_as" => "menu-save-as-project",
 			"export" => "menu-export-project",
-            "undo" => "menu-undo",
-            "redo" => "menu-redo",
-            "insert_variable" => "menu-insert-variable",
-            "show_node_editor" => "menu-show-node-editor",
-            "show_variables" => "menu-show-variables",
-            "toggle_preview" => "menu-toggle-preview",
-            "new_cell" => "menu-new-cell",
-            "new_branch" => "menu-new-branch",
-            "set_link" => "menu-set-link",
-            "disconnect_link" => "menu-disconnect-link",
+        "undo" => "menu-undo",
+        "redo" => "menu-redo",
+        "insert_variable" => "menu-insert-variable",
+        "show_node_editor" => "menu-show-node-editor",
+        "show_variables" => "menu-show-variables",
+        "toggle_preview" => "menu-toggle-preview",
+        "new_cell" => "menu-new-cell",
+        "new_branch" => "menu-new-branch",
+        "set_link" => "menu-set-link",
+        "disconnect_link" => "menu-disconnect-link",
 			"autofill" => "menu-autofill",
-            "open_in_browser" => "menu-open-preview",
-            "delete_nodes" => "menu-delete-nodes",
-            "add_stem" => "menu-add-stem",
-            "add_no_match_stem" => "menu-add-no-match-stem",
-            "delete_stem" => "menu-delete-stem",
-            "project_settings" => "menu-open-project-settings",
+        "open_in_browser" => "menu-open-preview",
+        "delete_nodes" => "menu-delete-nodes",
+        "add_stem" => "menu-add-stem",
+        "add_no_match_stem" => "menu-add-no-match-stem",
+        "delete_stem" => "menu-delete-stem",
+        "project_settings" => "menu-open-project-settings",
 			"open_help" => "menu-open-help",
-            "report_issue" => "menu-report-issue",
+        "report_issue" => "menu-report-issue",
 			"open_choicelab_site" => "menu-open-choicelab-site",
 			"open_repo" => "menu-open-repo",
-            "open_whatsNew" => "whatsNew-window",
-            "open_license" => "license-window",
-            "open_acknowledgments" => "acknowledgments-window",
-            _ => {
-                eprintln!("Unknown menu item: {}", menu_id);
-                return;
-            }
-        };
-
-        let label = FOCUSED_WINDOW.lock().unwrap().clone();
-        if let Some(window) = app_handle.get_webview_window(&label) {
-            let _ = window.emit(event_name, serde_json::json!({ "label": label }));
+        "open_whatsNew" => "whatsNew-window",
+        "open_license" => "license-window",
+        "open_acknowledgments" => "acknowledgments-window",
+        _ => {
+            eprintln!("Unknown menu item: {}", menu_id);
+            return;
         }
-    });
+    };
 
+    let label = FOCUSED_WINDOW.lock().unwrap().clone();
+    if let Some(window) = app_handle.get_webview_window(&label) {
+        let _ = window.emit(event_name, serde_json::json!({ "label": label }));
+    }
 }

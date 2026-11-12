@@ -40,6 +40,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { setMenu } from "./menu/setMenu";
 import openProject from "./fs/openProject";
 import { buildMenu } from "./menu/buildMenu";
+import { installMenuShortcuts } from "./menu/menuShortcuts";
 import { exportProject, getExportDirName } from "./fs/exportProject";
 import { desktopDir, resolve } from "@tauri-apps/api/path";
 import { getDialogText } from "./utils/dialogText";
@@ -49,6 +50,11 @@ import { handleStartupError } from "./errors/startupError";
 import { checkForUpdatesFromMenu } from "./utils/checkForUpdates";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
+
+// macOS: set when this window skipped a menu rebuild while in the background
+let menuNeedsRebuild = false;
+const getRecentFiles = () =>
+  invoke<string[]>("get_recent_files").catch(() => [] as string[]);
 
 function formatAutosaveTime(ms: number): string {
   const d = new Date(ms);
@@ -79,7 +85,7 @@ async function init() {
   const reportFocusedWindow = () =>
     invoke("set_focused_window", { label: appWindow.label });
   // Window focus
-  reportFocusedWindow();
+  await reportFocusedWindow();
   appWindow.listen("tauri://focus", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "true");
     // Update view store
@@ -88,9 +94,16 @@ async function init() {
       viewStore.focus = true;
       setViewStore(viewStore);
     }
+    // Report focus before updating the menu: on macOS, menu state from
+    // windows other than the focused one is ignored
+    await reportFocusedWindow();
     // Update menu
-    setMenu(windowType);
-    reportFocusedWindow();
+    if (menuNeedsRebuild) {
+      menuNeedsRebuild = false;
+      buildMenu(windowType, await getRecentFiles());
+    } else {
+      setMenu(windowType);
+    }
   });
   appWindow.listen("tauri://blur", async () => {
     document.querySelector("#App")?.setAttribute("data-focus", "false");
@@ -378,15 +391,16 @@ async function init() {
   }
 
   // Build menu with current recent files; rebuild whenever the list changes.
-  const recentFiles = await invoke<string[]>("get_recent_files").catch(
-    () => [] as string[]
-  );
+  const recentFiles = await getRecentFiles();
 
   listen("rebuild-open-recent-menu", async () => {
-    const files = await invoke<string[]>("get_recent_files").catch(
-      () => [] as string[]
-    );
-    buildMenu(windowType, files);
+    // macOS has one app-wide menu, which reflects the focused window. Other
+    // windows rebuild when they next gain focus.
+    if (platform === "macos" && !(await appWindow.isFocused())) {
+      menuNeedsRebuild = true;
+      return;
+    }
+    buildMenu(windowType, await getRecentFiles());
   });
 
   const appDOM = (
@@ -396,6 +410,7 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
+  installMenuShortcuts();
   buildMenu(windowType, recentFiles);
 }
 
