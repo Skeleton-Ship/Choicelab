@@ -5,6 +5,7 @@ function getElementRegion(targetEl: Element): string {
     "#toolbar",
     "#sequence-wrap",
     "#available-actions",
+    "#actions-editor",
     "#variables-toolbar",
     "#variables-list",
     "#branch-editor",

@@ -97,6 +97,8 @@ export interface ViewStore {
   };
   selectedNodes: Array<AnyNode>;
   selectedStem: Stem | false;
+  /** The action selected in the inspector, within the selected cell */
+  selectedActionId: string | null;
   autoGenerateLabel: string | null;
   clipboardListener: boolean;
   inTextElement: boolean;

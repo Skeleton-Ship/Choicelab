@@ -8,6 +8,7 @@ import { getStore, getViewStore } from "../data/dataStore";
 import { getBranch, getStemParent } from "../data/getData";
 import { canAddStem, canDeleteStem } from "../data/branchStems";
 import { Branch, WindowType } from "../typings";
+import { shouldTargetSelectedAction } from "../editor/inspector/functions/handleActionCopyPaste";
 
 type SubmenuId = "app" | "file" | "edit" | "view" | "project";
 
@@ -130,8 +131,13 @@ export async function setMenu(windowType: WindowType = "project") {
         text:
           (viewStore && viewStore.autoGenerateLabel) ?? "Autofill Variables",
       },
-      // Not while typing, where the shortcuts delete text (e.g. a word)
+      // Not while typing, where the shortcuts delete text (e.g. a word).
+      // With an action selected in the inspector, deletes that instead.
       delete_nodes: {
+        text:
+          windowType === "project" && store?.project && shouldTargetSelectedAction()
+            ? "Delete Action"
+            : "Delete Node",
         enabled:
           windowType === "project" &&
           viewStore &&

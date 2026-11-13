@@ -204,11 +204,13 @@ $item-border-radius: 10px;
   &.branch-stem {
     transition: none;
   }
-  &.is-new {
-    border-color: var(--accent-color-400);
-    @media (prefers-color-scheme: dark) {
-      border-color: var(--accent-color-400);
-    }
+  // As should action selection, both ways. A newly added action's highlight
+  // fades out with an animation instead (see is-new).
+  &.action {
+    transition: none;
+  }
+  &.is-new:not(.selected) {
+    animation: new-item-highlight 1.8s ease forwards;
   }
   &.disabled {
     background-color: rgba(255, 255, 255, 0.5);
@@ -346,5 +348,16 @@ $item-border-radius: 10px;
     strong {
       color: var(--accent-color-400);
     }
+  }
+}
+
+// Highlights a newly added item, then fades out
+@keyframes new-item-highlight {
+  0%,
+  25% {
+    border-color: var(--accent-color-400);
+  }
+  100% {
+    border-color: transparent;
   }
 }

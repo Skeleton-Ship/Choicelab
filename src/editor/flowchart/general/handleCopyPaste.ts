@@ -1,10 +1,9 @@
 import { getViewStore, setViewStore } from "../../../data/dataStore";
 import isObject from "../../../utils/isObject";
 import { v4 as uuidv4 } from "uuid";
-import { stringify } from "../../../utils/stringify";
+import { writeClipboardJson } from "../../../utils/clipboard";
 import insertNewNode from "./insertNewNode";
 import { handleDeleteNodes } from "./handleDelete";
-import isJson from "../../../utils/isJson";
 import { upgradeRichTextProps } from "../../../fs/migrateProject";
 import { AnyNode, Action, Cell, UpdateFunction } from "../../../typings";
 
@@ -94,14 +93,7 @@ function handleCutCopy(action: string, update: UpdateFunction) {
     if (node.type === "start") return;
     selectedNodes.push(node);
   });
-  let clipboardContents = {
-    ChoicelabNodes: selectedNodes,
-  };
-  const clipboardStr: string = stringify(clipboardContents);
-  const type = "text/plain";
-  const blob = new Blob([clipboardStr], { type });
-  const data = [new ClipboardItem({ [type]: blob })];
-  navigator.clipboard.write(data);
+  writeClipboardJson({ ChoicelabNodes: selectedNodes });
   // If cutting, delete the nodes from screen
   if (action === "cut") {
     handleDeleteNodes(update);
@@ -109,40 +101,36 @@ function handleCutCopy(action: string, update: UpdateFunction) {
 }
 
 /**
- * Checks the clipboard for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links, then runs `handleCreateNode` to add them to the current sequence.
+ * Checks clipboard contents for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links, then runs `handleCreateNode` to add them to the current sequence.
  *
+ * @param {object} data - The clipboard contents, parsed from JSON (see readClipboardJson()).
  * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
  */
-function handlePaste(update: UpdateFunction): void {
-  navigator.clipboard.readText().then((clipText) => {
-    // Ignore things that aren't JSON
-    if (!isJson(clipText)) return;
-    const data = JSON.parse(clipText);
-    // If JSON didn't originate from Choicelab, ignore
-    if (!data.ChoicelabNodes) return;
-    const nodes = data.ChoicelabNodes;
-    // Process nodes: remove the `position` prop, and re-generate IDs and links
-    const processedNodes: Array<AnyNode> = [];
-    nodes.forEach((node: AnyNode) => {
-      // Clone node, removing the `position` prop
-      let newNode = cloneObjectWithExclusion(node, "position");
-      newNode = regenerateIdsAndLinks(newNode);
-      // Nodes copied from an older version may have plain text where rich text is expected
-      if (newNode.type === "cell") newNode.actions.forEach(upgradeRichTextProps);
-      processedNodes.push(newNode);
-    });
-    // Create new nodes — use a no-op so each insertion mutates the store
-    // without saving a history entry; one entry is saved at the end.
-    const noop = () => {};
-    processedNodes.forEach((node: AnyNode) => {
-      insertNewNode(node, noop);
-    });
-    // Finally, set selection to processed nodes and save one history entry
-    const viewStore = getViewStore();
-    viewStore.selectedNodes = processedNodes;
-    setViewStore(viewStore);
-    update();
+function handlePaste(data: Record<string, unknown>, update: UpdateFunction): void {
+  // If JSON didn't originate from Choicelab, ignore
+  if (!Array.isArray(data.ChoicelabNodes)) return;
+  const nodes = data.ChoicelabNodes as Array<AnyNode>;
+  // Process nodes: remove the `position` prop, and re-generate IDs and links
+  const processedNodes: Array<AnyNode> = [];
+  nodes.forEach((node: AnyNode) => {
+    // Clone node, removing the `position` prop
+    let newNode = cloneObjectWithExclusion(node, "position");
+    newNode = regenerateIdsAndLinks(newNode);
+    // Nodes copied from an older version may have plain text where rich text is expected
+    if (newNode.type === "cell") newNode.actions.forEach(upgradeRichTextProps);
+    processedNodes.push(newNode);
   });
+  // Create new nodes — use a no-op so each insertion mutates the store
+  // without saving a history entry; one entry is saved at the end.
+  const noop = () => {};
+  processedNodes.forEach((node: AnyNode) => {
+    insertNewNode(node, noop);
+  });
+  // Finally, set selection to processed nodes and save one history entry
+  const viewStore = getViewStore();
+  viewStore.selectedNodes = processedNodes;
+  setViewStore(viewStore);
+  update();
 }
 
 export { handleCutCopy, handlePaste };

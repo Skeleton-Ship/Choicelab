@@ -25,7 +25,16 @@ import {
   handleCutCopy,
   handlePaste,
 } from "./flowchart/general/handleCopyPaste";
+import {
+  shouldTargetSelectedAction,
+  clipboardHasActions,
+  handleActionCutCopy,
+  handleActionPaste,
+  handleDeleteSelectedAction,
+} from "./inspector/functions/handleActionCopyPaste";
+import { readClipboardJson } from "../utils/clipboard";
 import { getFocusedRegion } from "../utils/focusedRegion";
+import inTextElement from "../utils/inTextElement";
 import { togglePreview } from "../preview/togglePreview";
 import {
   updatePreview as handleUpdatePreview,
@@ -89,24 +98,42 @@ export default function MainEditor() {
       emit("window-ready", { label, projectPath: store.projectPath });
       return unlisten;
     });
-    // Set up cut/copy/paste listeners
+    // Set up cut/copy/paste listeners. A selected action in the inspector
+    // takes cut and copy; otherwise they apply to the selected nodes.
     const cutHandler = (e: Event) => {
-      if (getFocusedRegion() === "sequence") {
+      if (shouldTargetSelectedAction()) {
+        e.preventDefault();
+        handleActionCutCopy("cut", handleUpdate);
+      } else if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("cut", handleUpdate);
       }
     };
     const copyHandler = (e: Event) => {
-      if (getFocusedRegion() === "sequence") {
+      if (shouldTargetSelectedAction()) {
+        e.preventDefault();
+        handleActionCutCopy("copy", handleUpdate);
+      } else if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("copy", handleUpdate);
       }
     };
+    // Copied actions paste into the selected cell from the flowchart or the
+    // cell's inspector; copied nodes paste only from the flowchart
+    const actionPasteRegions = ["sequence", "actions-editor", "available-actions"];
     const pasteHandler = (e: Event) => {
-      if (getFocusedRegion() === "sequence") {
-        e.preventDefault();
-        handlePaste(handleUpdate);
-      }
+      const region = getFocusedRegion();
+      if (region !== "sequence" && (!actionPasteRegions.includes(region) || inTextElement()))
+        return;
+      e.preventDefault();
+      readClipboardJson().then((data) => {
+        if (!data) return;
+        if (clipboardHasActions(data)) {
+          handleActionPaste(data, handleUpdate);
+        } else if (region === "sequence") {
+          handlePaste(data, handleUpdate);
+        }
+      });
     };
     window.addEventListener("cut", cutHandler);
     window.addEventListener("copy", copyHandler);
@@ -245,7 +272,13 @@ export default function MainEditor() {
       "menu-delete-nodes",
       (event) => {
         if (event.payload.label !== appWindow.label) return;
-        handleDeleteNodes(handleUpdate);
+        // With an action selected in the inspector, the menu item reads
+        // "Delete Action" (see setMenu)
+        if (shouldTargetSelectedAction()) {
+          handleDeleteSelectedAction(handleUpdate);
+        } else {
+          handleDeleteNodes(handleUpdate);
+        }
       }
     );
     const unlistenMenuDeleteStem = appWindow.listen<{ label: string }>(

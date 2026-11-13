@@ -22,6 +22,7 @@ import {
 import { AutoGenerateButton } from "./elements/AutoGenerateButton";
 import { setMenu } from "../../menu/setMenu";
 import { setStore } from "../../data/dataStore";
+import { setSelectedActionId } from "./functions/handleActionCopyPaste";
 
 function AvailableActions(props: {
   update: UpdateFunction;
@@ -108,7 +109,8 @@ function ActionsEditor(props: {
         ) as HTMLElement | null
       )?.focus();
     }, 300);
-    const timer = setTimeout(props.clearLastAdded, 1000);
+    // Matches the length of the new-item-highlight animation
+    const timer = setTimeout(props.clearLastAdded, 1800);
     return () => {
       clearTimeout(focusTimer);
       clearTimeout(timer);
@@ -116,6 +118,12 @@ function ActionsEditor(props: {
   }, [props.lastAddedId]);
 
   if (!node) return <></>;
+  // Clicking outside of any action clears the selected action
+  function handlePointerDown(e: PointerEvent) {
+    const target = e.target as Element | null;
+    if (target?.closest(".inspector-item.action")) return;
+    setSelectedActionId(null);
+  }
   let editorEls: Array<preact.JSX.Element> = [];
   node.actions.forEach((action: Action) => {
     const actionKey = `action_${action.id}`;
@@ -134,6 +142,7 @@ function ActionsEditor(props: {
     <ul
       id="actions-editor"
       class={editorEls.length === 0 ? "empty-contents" : ""}
+      onPointerDown={handlePointerDown}
     >
       <div class="inner">
         {editorEls.length === 0 ? (

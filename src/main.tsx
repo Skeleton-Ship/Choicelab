@@ -18,7 +18,7 @@ import {
   createViewStore,
 } from "./data/dataStore";
 import { initHistory } from "./data/history";
-import { setFocusedRegion } from "./utils/focusedRegion";
+import { getFocusedRegion, setFocusedRegion } from "./utils/focusedRegion";
 import { stringify } from "./utils/stringify";
 import { Project, LoadError, WindowType } from "./typings";
 import "./styles/_style.scss";
@@ -128,14 +128,25 @@ async function init() {
     window.addEventListener("focusin", scheduleMenuUpdate);
     window.addEventListener("focusout", scheduleMenuUpdate);
   }
-  // Region focus listeners
-  window.addEventListener("pointerdown", (e) => {
-    const targetEl = e.target as HTMLElement;
+  // Region focus listeners. Some menu items depend on the region (e.g.
+  // "Delete Action" vs. "Delete Node"), so update the menu when it changes.
+  const updateFocusedRegion = (targetEl: Element) => {
+    const previousRegion = getFocusedRegion();
     setFocusedRegion(targetEl);
+    if (windowType === "project" && getFocusedRegion() !== previousRegion) {
+      setMenu(windowType);
+    }
+  };
+  window.addEventListener("pointerdown", (e) => {
+    updateFocusedRegion(e.target as HTMLElement);
   });
+  // Clicking a non-focusable area (e.g. an action's background) leaves focus
+  // on the body, which is in no region; keep the clicked region in that case,
+  // or a shortcut's keyup (e.g. Cmd+C) would clear it before the next one
   window.addEventListener("keyup", () => {
-    if (document.activeElement !== null) {
-      setFocusedRegion(document.activeElement);
+    const activeEl = document.activeElement;
+    if (activeEl !== null && activeEl !== document.body) {
+      updateFocusedRegion(activeEl);
     }
   });
   // Prevent bare Backspace/Delete from triggering WKWebView's built-in

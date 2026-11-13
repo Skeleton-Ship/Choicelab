@@ -8,6 +8,7 @@
 
 - You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
+- You can now **cut, copy, and paste individual actions** within the same cell or to a different one.
 - You can now check for updates at any time with **Choicelab -> Check for Updates...** on macOS, or **Help -> Check for Updates...** on Windows.
 
 #### Enhancements

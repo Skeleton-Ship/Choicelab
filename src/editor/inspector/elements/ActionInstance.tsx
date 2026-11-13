@@ -1,4 +1,5 @@
-import { setStore } from "../../../data/dataStore";
+import { useRef } from "preact/hooks";
+import { getViewStore, setStore } from "../../../data/dataStore";
 import { getActionDef, getCell } from "../../../data/getData";
 import { deleteActionFromData } from "../../../data/deleteData";
 import { Action, Store, Cell, UpdateFunction } from "../../../typings";
@@ -8,6 +9,8 @@ import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
 import IconActionEnabled from "../../../assets/icons/mono/icon-action-enabled.svg";
 import IconActionDisabled from "../../../assets/icons/mono/icon-action-disabled.svg";
 import ActionIcon from "./ActionIcon";
+import { setSelectedActionId } from "../functions/handleActionCopyPaste";
+import { useScrollToNewItem } from "../functions/scrollToNewItem";
 
 function moveAction<T>(
   arr: Array<T | undefined>,
@@ -40,6 +43,9 @@ export default function ActionInstance(props: {
 }) {
   const action = props.instance;
   const actionDef = getActionDef(action.name, internalActionDefs);
+  const itemRef = useRef<HTMLLIElement>(null);
+  // Pasted actions scroll into view
+  useScrollToNewItem(action.id, itemRef);
   if (!actionDef) return <></>;
   // Enable/disable action
   function setEnabled() {
@@ -58,8 +64,15 @@ export default function ActionInstance(props: {
       props.cell.id,
       props.store
     );
+    if (getViewStore().selectedActionId === action.id) {
+      setSelectedActionId(null, false);
+    }
     setStore(newStore);
     props.update();
+  }
+  // Clicking anywhere in an action selects it, for copy, cut, and delete
+  function handleSelect() {
+    setSelectedActionId(action.id);
   }
   // Update position
   function updateArrayPosition(relativePosition: number) {
@@ -134,12 +147,19 @@ export default function ActionInstance(props: {
   const enabledClass = action.enabled === true ? `enabled` : `disabled`;
   const enableButtonAlt =
     action.enabled === true ? "Disable Action" : "Enable Action";
-  const liClass = `inspector-item action ${actionDef.name} ${enabledClass}${props.isNew ? " is-new" : ""}`;
+  const selectedClass =
+    getViewStore().selectedActionId === action.id ? " selected" : "";
+  const liClass = `inspector-item action ${actionDef.name} ${enabledClass}${selectedClass}${props.isNew ? " is-new" : ""}`;
   const canMove = canMoveAction(action.id);
   const upDisabled = canMove.up === true ? false : true;
   const downDisabled = canMove.down === true ? false : true;
   return (
-    <li class={liClass} data-action-id={action.id}>
+    <li
+      class={liClass}
+      data-action-id={action.id}
+      ref={itemRef}
+      onPointerDown={handleSelect}
+    >
       <div class="item-toolbar">
         <h5 class="item-heading">
           <ActionIcon def={actionDef} />

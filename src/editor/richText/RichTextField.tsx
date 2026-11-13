@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef } from "preact/hooks";
 import { Editor, Extension } from "@tiptap/core";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
@@ -50,7 +50,9 @@ export default function RichTextField(props: {
   const singleLine = !props.multiline;
   const valueJSON = JSON.stringify(docFromRichText(props.value, singleLine));
 
-  useEffect(() => {
+  // Create the editor before the browser paints, so the field appears at its
+  // full height rather than flashing empty for a frame
+  useLayoutEffect(() => {
     if (!hostRef.current) return;
     const editor = new Editor({
       element: hostRef.current,

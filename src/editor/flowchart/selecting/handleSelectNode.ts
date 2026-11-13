@@ -21,6 +21,11 @@ export default function handleSelectNode(
   // Ignore if node is undefined (happens when node is deleted), or if target mode is on
   if (typeof node === "undefined" || viewStore.targetMode.active === true)
     return;
+  // A selected action belongs to the selected cell, so clear it when the cell changes
+  const previousNode = viewStore.selectedNodes[0];
+  if (viewStore.selectedNodes.length !== 1 || previousNode?.id !== node.id) {
+    viewStore.selectedActionId = null;
+  }
   viewStore.selectedNodes = [node];
   // For branches, select a stem
   if (node.type === "branch") {
