@@ -31,6 +31,7 @@
 - You can now undo and redo project settings.
 - Various improvements to reliability of auto-save, export, and project creation and loading.
 - Choicelab no longer offers an update that your computer's operating system can't run. **Check for Updates...** explains when this is the case.
+- A new About window (the Choicelab menu on Mac, Help on Windows) will show you the current version of the app.
 - Various under-the-hood improvements to project handling, undo/redo, copy/paste, app update security, as well as app frameworks and dependencies.
 
 #### Fixes

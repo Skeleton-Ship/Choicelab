@@ -123,7 +123,8 @@ export type WindowType =
   | "launcher"
   | "whatsNew"
   | "acknowledgments"
-  | "license";
+  | "license"
+  | "about";
 export interface Store {
   project: Project;
   projectPath: string;
@@ -188,6 +189,9 @@ export interface PlayerFonts {
 }
 
 declare global {
+  // Injected by Vite at build time (see vite.config.ts)
+  const __BUILD_NUMBER__: string;
+  const __BUILD_YEAR__: number;
   interface Window {
     __CHOICELAB_DATA_RAW__: string;
     __CHOICELAB_FUNCTIONS__: {

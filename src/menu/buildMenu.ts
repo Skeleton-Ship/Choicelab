@@ -52,7 +52,6 @@ async function buildMenuNow(windowType: WindowType, recentFiles: string[]) {
       await menuItem({
         id: "about",
         text: "About Choicelab",
-        enabled: false,
       }),
       await menuItem({
         id: "check_for_updates",
@@ -403,6 +402,10 @@ async function buildMenuNow(windowType: WindowType, recentFiles: string[]) {
             await menuItem({
               id: "check_for_updates",
               text: "Check for Updates...",
+            }),
+            await menuItem({
+              id: "about",
+              text: "About Choicelab",
             }),
           ]),
     ],

@@ -135,6 +135,38 @@ pub fn open_license_window(app: tauri::AppHandle) {
 	}
 }
 
+pub fn open_about_window(app: tauri::AppHandle) {
+	if let Some(window) = app.get_webview_window("about") {
+		let _ = window.show();
+		let _ = window.set_focus();
+	} else {
+		let builder = tauri::WebviewWindowBuilder::new(
+			&app,
+			"about",
+			tauri::WebviewUrl::App("index.html?window_type=about".into()),
+		)
+		.title("About Choicelab")
+		.inner_size(520.0, 300.0)
+		.resizable(false)
+		.minimizable(false)
+		.maximizable(false)
+		.transparent(true)
+		// Links open in the default browser (see About.tsx); never load them here
+		.on_navigation(|url| crate::is_allowed_navigation(url));
+		#[cfg(target_os = "macos")]
+		let builder = builder
+			.hidden_title(true)
+			.title_bar_style(tauri::TitleBarStyle::Overlay);
+		match builder.build() {
+			Ok(window) => {
+				let _ = window.show();
+				let _ = window.set_focus();
+			}
+			Err(e) => eprintln!("Failed to open window: {}", e),
+		}
+	}
+}
+
 pub fn open_acknowledgments_window(app: tauri::AppHandle) {
 	if let Some(window) = app.get_webview_window("acknowledgments") {
 		let _ = window.show();
@@ -546,6 +578,12 @@ pub fn bind_listeners(app: &tauri::App) {
 		open_license_window(handle_license.clone());
 	});
 
+	// listen for about window to open
+	let handle_about = app_handle.clone();
+	app.listen("about-window", move |_event| {
+		open_about_window(handle_about.clone());
+	});
+
 	// listen for acknowledgments window to open
 	let handle_acknowledgments = app_handle.clone();
 	app.listen("acknowledgments-window", move |_event| {
@@ -827,7 +865,7 @@ pub fn handle_menu_item(app_handle: &tauri::AppHandle, menu_id: &str, window_lab
 
     // Map menu item IDs to event names
     let event_name = match menu_id {
-        "about" => "menu-about",
+        "about" => "about-window",
         "check_for_updates" => "menu-check-for-updates",
         "new_project" => "menu-new-project",
         "open_project" => "menu-open-project",

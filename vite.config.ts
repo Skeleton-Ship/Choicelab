@@ -1,6 +1,17 @@
 import { defineConfig, type ViteDevServer } from "vite";
 import { fileURLToPath } from "url";
 import svgr from "vite-plugin-svgr";
+import { execSync } from "child_process";
+
+// The build number shown in the About window: the number of commits in the
+// current branch's history, so it increases with every release
+function getBuildNumber(): string {
+  try {
+    return execSync("git rev-list --count HEAD", { encoding: "utf8" }).trim();
+  } catch {
+    return "";
+  }
+}
 
 const playerDistDir = fileURLToPath(new URL("./src/player/dist", import.meta.url));
 
@@ -59,6 +70,10 @@ export default defineConfig(async () => ({
   // 3. to make use of `TAURI_DEBUG` and other env variables
   // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand
   envPrefix: ["VITE_", "TAURI_"],
+  define: {
+    __BUILD_NUMBER__: JSON.stringify(getBuildNumber()),
+    __BUILD_YEAR__: new Date().getFullYear(),
+  },
   resolve: {
     alias: {
       "@surfgreen/choicelab-player-html5": fileURLToPath(

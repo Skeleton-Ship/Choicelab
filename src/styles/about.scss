@@ -1,0 +1,121 @@
+$toolbar-offset: 28px;
+
+#about {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  -webkit-app-region: drag;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  // Only the info column sets the row height; the credits scroll within it
+  align-items: stretch;
+  align-content: center;
+  column-gap: 32px;
+  padding: $toolbar-offset 36px 32px;
+  background-color: var(--standard-window-bg-color);
+  @media (prefers-color-scheme: dark) {
+    color: white;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-icon {
+    width: 96px;
+    height: 96px;
+    margin-left: -8px;
+    margin-bottom: 6px;
+    pointer-events: none;
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    line-height: 1;
+    svg {
+      display: block;
+      width: 150px;
+      height: auto;
+    }
+    svg path {
+      fill: #111;
+      @media (prefers-color-scheme: dark) {
+        fill: var(--text-dark);
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-app-region: no-drag;
+  }
+
+  .version {
+    font-size: 16px;
+    strong {
+      font-weight: 900;
+    }
+    .build {
+      font-weight: 300;
+      opacity: 0.8;
+    }
+  }
+
+  .release-date,
+  .copyright {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  .credits {
+    // Positioned so the credits don't add to the row's height: they fill
+    // the space the info column sets, and scroll if they need more
+    position: relative;
+    -webkit-app-region: no-drag;
+  }
+
+  .credits-inner {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    font-size: 12px;
+    -webkit-user-select: text;
+    user-select: text;
+    display: flex;
+    align-items: center;
+    h1,
+    h2,
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: inherit;
+    }
+    p {
+      margin: 0;
+      &:not(:last-of-type) {
+        margin-bottom: 10px;
+      }
+    }
+    a {
+      -webkit-app-region: no-drag;
+      color: #0068da;
+      text-decoration: none;
+      @media (prefers-color-scheme: dark) {
+        color: #419cff;
+      }
+    }
+  }
+}
+
+#App[data-focus="false"] #about {
+  .info,
+  .credits {
+    opacity: 0.7;
+  }
+}

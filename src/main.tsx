@@ -3,6 +3,7 @@ import Launcher from "./launcher/Launcher";
 import { WhatsNew } from "./whats-new/WhatsNew";
 import { Acknowledgments } from "./acknowledgments/Acknowledgments";
 import { License } from "./license/License";
+import { About } from "./about/About";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { message, confirm, save } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
@@ -265,6 +266,9 @@ async function init() {
   }
   if (windowType === "license") {
     elements = <License />;
+  }
+  if (windowType === "about") {
+    elements = <About />;
   }
   if (windowType === "project" || windowType === "projectSettings") {
     // Get project path
