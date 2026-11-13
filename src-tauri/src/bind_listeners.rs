@@ -79,119 +79,120 @@ fn release_port_for_label(label: &str) {
 }
 
 
-pub fn open_whats_new_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_webview_window("whatsNew") {
+/// A window that only shows static content (release notes, license, etc.),
+/// whose label is also its `window_type` in the frontend.
+struct StaticWindow {
+	label: &'static str,
+	title: &'static str,
+	size: (f64, f64),
+	position: Option<(f64, f64)>,
+	resizable: bool,
+	minimizable: bool,
+	maximizable: bool,
+	/// macOS only: hide the title in the title bar
+	#[cfg_attr(not(target_os = "macos"), allow(dead_code))]
+	hidden_title: bool,
+}
+
+/// Focuses the window if it's already open, or opens it if not.
+fn open_static_window(app: &tauri::AppHandle, config: StaticWindow) {
+	if let Some(window) = app.get_webview_window(config.label) {
 		let _ = window.show();
 		let _ = window.set_focus();
-	} else {
-		let builder = tauri::WebviewWindowBuilder::new(
-			&app,
-			"whatsNew",
-			tauri::WebviewUrl::App("index.html?window_type=whatsNew".into()),
-		)
-		.title("What's New in Choicelab")
-		.inner_size(600.0, 400.0)
-		.position(600.0, 400.0)
-		.resizable(false)
-		.transparent(true);
-		#[cfg(target_os = "macos")]
-		let builder = builder
-			.hidden_title(true)
-			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		match builder.build() {
-			Ok(window) => {
-				let _ = window.show();
-				let _ = window.set_focus();
-			}
-			Err(e) => eprintln!("Failed to open window: {}", e),
-		}
+		return;
 	}
+	let url = format!("index.html?window_type={}", config.label);
+	let mut builder =
+		tauri::WebviewWindowBuilder::new(app, config.label, tauri::WebviewUrl::App(url.into()))
+			.title(config.title)
+			.inner_size(config.size.0, config.size.1)
+			.resizable(config.resizable)
+			.minimizable(config.minimizable)
+			.maximizable(config.maximizable)
+			.transparent(true)
+			// Links open in the default browser (see openExternalLinks.ts);
+			// never load them in the window itself
+			.on_navigation(|url| crate::is_allowed_navigation(url));
+	if let Some((x, y)) = config.position {
+		builder = builder.position(x, y);
+	}
+	#[cfg(target_os = "macos")]
+	{
+		builder = builder
+			.hidden_title(config.hidden_title)
+			.title_bar_style(tauri::TitleBarStyle::Overlay);
+	}
+	match builder.build() {
+		Ok(window) => {
+			let _ = window.show();
+			let _ = window.set_focus();
+		}
+		Err(e) => eprintln!("Failed to open window: {}", e),
+	}
+}
+
+pub fn open_whats_new_window(app: tauri::AppHandle) {
+	open_static_window(
+		&app,
+		StaticWindow {
+			label: "whatsNew",
+			title: "What's New in Choicelab",
+			size: (600.0, 400.0),
+			position: Some((600.0, 400.0)),
+			resizable: false,
+			minimizable: true,
+			maximizable: true,
+			hidden_title: true,
+		},
+	);
 }
 
 pub fn open_license_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_webview_window("license") {
-		let _ = window.show();
-		let _ = window.set_focus();
-	} else {
-		let builder = tauri::WebviewWindowBuilder::new(
-			&app,
-			"license",
-			tauri::WebviewUrl::App("index.html?window_type=license".into()),
-		)
-		.title("Choicelab License")
-		.inner_size(620.0, 560.0)
-		.resizable(true)
-		.transparent(true);
-		#[cfg(target_os = "macos")]
-		let builder = builder
-			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		match builder.build() {
-			Ok(window) => {
-				let _ = window.show();
-				let _ = window.set_focus();
-			}
-			Err(e) => eprintln!("Failed to open window: {}", e),
-		}
-	}
+	open_static_window(
+		&app,
+		StaticWindow {
+			label: "license",
+			title: "Choicelab License",
+			size: (620.0, 560.0),
+			position: None,
+			resizable: true,
+			minimizable: true,
+			maximizable: true,
+			hidden_title: false,
+		},
+	);
 }
 
 pub fn open_about_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_webview_window("about") {
-		let _ = window.show();
-		let _ = window.set_focus();
-	} else {
-		let builder = tauri::WebviewWindowBuilder::new(
-			&app,
-			"about",
-			tauri::WebviewUrl::App("index.html?window_type=about".into()),
-		)
-		.title("About Choicelab")
-		.inner_size(520.0, 300.0)
-		.resizable(false)
-		.minimizable(false)
-		.maximizable(false)
-		.transparent(true)
-		// Links open in the default browser (see About.tsx); never load them here
-		.on_navigation(|url| crate::is_allowed_navigation(url));
-		#[cfg(target_os = "macos")]
-		let builder = builder
-			.hidden_title(true)
-			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		match builder.build() {
-			Ok(window) => {
-				let _ = window.show();
-				let _ = window.set_focus();
-			}
-			Err(e) => eprintln!("Failed to open window: {}", e),
-		}
-	}
+	open_static_window(
+		&app,
+		StaticWindow {
+			label: "about",
+			title: "About Choicelab",
+			size: (520.0, 300.0),
+			position: None,
+			resizable: false,
+			minimizable: false,
+			maximizable: false,
+			hidden_title: true,
+		},
+	);
 }
 
 pub fn open_acknowledgments_window(app: tauri::AppHandle) {
-	if let Some(window) = app.get_webview_window("acknowledgments") {
-		let _ = window.show();
-		let _ = window.set_focus();
-	} else {
-		let builder = tauri::WebviewWindowBuilder::new(
-			&app,
-			"acknowledgments",
-			tauri::WebviewUrl::App("index.html?window_type=acknowledgments".into()),
-		)
-		.title("Acknowledgments")
-		.inner_size(620.0, 520.0)
-		.resizable(true)
-		.transparent(true);
-		#[cfg(target_os = "macos")]
-		let builder = builder
-			.title_bar_style(tauri::TitleBarStyle::Overlay);
-		match builder.build() {
-			Ok(window) => {
-				let _ = window.show();
-				let _ = window.set_focus();
-			}
-			Err(e) => eprintln!("Failed to open window: {}", e),
-		}
-	}
+	open_static_window(
+		&app,
+		StaticWindow {
+			label: "acknowledgments",
+			title: "Acknowledgments",
+			size: (620.0, 520.0),
+			position: None,
+			resizable: true,
+			minimizable: true,
+			maximizable: true,
+			hidden_title: false,
+		},
+	);
 }
 
 /// Rust equivalent of getDialogText() from src/utils/dialogText.ts.
