@@ -1,6 +1,7 @@
 import { useEffect } from "preact/hooks";
 import { emit } from "@tauri-apps/api/event";
 import data from "./data.json";
+import { openExternalLinks } from "../utils/openExternalLinks";
 
 type FontEntry = { name: string; licenseText: string };
 type PackageEntry = {
@@ -56,7 +57,7 @@ export function Acknowledgments() {
 
   return (
     <div id="acknowledgments" data-tauri-drag-region>
-      <div class="inner">
+      <div class="inner" onClick={openExternalLinks}>
         <h2>Fonts</h2>
         {(data.fonts as FontEntry[]).map((f) => (
           <FontSection key={f.name} {...f} />

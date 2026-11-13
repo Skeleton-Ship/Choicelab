@@ -1,12 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import { emit } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
-import { open } from "@tauri-apps/plugin-shell";
 import Markdown from "preact-markdown";
 import LogoSvg from "../assets/launcher/Logo-Text.svg?react";
 import appIcon from "../../src-tauri/icons/128x128@2x.png";
 import credits from "./Credits.md?raw";
 import releaseNotes from "../whats-new/WhatsNew.md?raw";
+import { openExternalLinks } from "../utils/openExternalLinks";
 
 // "1.2" and "1.2.0" are the same version
 function normalizeVersion(version: string): string {
@@ -43,17 +43,6 @@ function formatDate(date: Date): string {
   });
 }
 
-// Open links in the credits in the default browser, not this window
-function openCreditsLink(e: MouseEvent) {
-  const link = (e.target as Element).closest("a[href]");
-  if (!link) return;
-  e.preventDefault();
-  const href = link.getAttribute("href") ?? "";
-  if (/^https?:\/\//.test(href)) {
-    open(href).catch((error) => console.error("Couldn't open link:", error));
-  }
-}
-
 export function About() {
   const [version, setVersion] = useState("");
   const releaseDate = version ? getReleaseDate(version) : null;
@@ -86,7 +75,7 @@ export function About() {
         <p class="copyright">Copyright © {copyrightYear} Austin Heller</p>
       </div>
       <div class="credits">
-        <div class="credits-inner" onClick={openCreditsLink}>
+        <div class="credits-inner" onClick={openExternalLinks}>
           {Markdown(credits)}
         </div>
       </div>
