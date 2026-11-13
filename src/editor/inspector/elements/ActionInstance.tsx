@@ -1,7 +1,6 @@
 import { useRef } from "preact/hooks";
 import { getViewStore, setStore } from "../../../data/dataStore";
 import { getActionDef, getCell } from "../../../data/getData";
-import { deleteActionFromData } from "../../../data/deleteData";
 import { Action, Store, Cell, UpdateFunction } from "../../../typings";
 import internalActionDefs from "../functions/internalActionDefs";
 import ActionPropEditor from "./ActionPropEditor";
@@ -9,7 +8,7 @@ import IconDelete from "../../../assets/icons/mono/icon-delete.svg";
 import IconActionEnabled from "../../../assets/icons/mono/icon-action-enabled.svg";
 import IconActionDisabled from "../../../assets/icons/mono/icon-action-disabled.svg";
 import ActionIcon from "./ActionIcon";
-import { setSelectedActionId } from "../functions/handleActionCopyPaste";
+import { deleteAction, setSelectedActionId } from "../functions/handleActionCopyPaste";
 import { useScrollToNewItem } from "../functions/scrollToNewItem";
 
 function moveAction<T>(
@@ -59,20 +58,11 @@ export default function ActionInstance(props: {
   }
   // Delete action
   function handleDelete() {
-    const newStore = deleteActionFromData(
-      action.id,
-      props.cell.id,
-      props.store
-    );
-    if (getViewStore().selectedActionId === action.id) {
-      setSelectedActionId(null, false);
-    }
-    setStore(newStore);
-    props.update();
+    deleteAction(action.id, props.cell.id, props.update);
   }
   // Clicking anywhere in an action selects it, for copy, cut, and delete
   function handleSelect() {
-    setSelectedActionId(action.id);
+    setSelectedActionId(action.id, props.update);
   }
   // Update position
   function updateArrayPosition(relativePosition: number) {

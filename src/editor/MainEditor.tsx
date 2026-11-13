@@ -102,8 +102,8 @@ export default function MainEditor() {
     // takes cut and copy; otherwise they apply to the selected nodes.
     const cutHandler = (e: Event) => {
       if (shouldTargetSelectedAction()) {
-        e.preventDefault();
-        handleActionCutCopy("cut", handleUpdate);
+        // Not copied if text is selected, so the text copies instead
+        if (handleActionCutCopy("cut", handleUpdate)) e.preventDefault();
       } else if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("cut", handleUpdate);
@@ -111,8 +111,8 @@ export default function MainEditor() {
     };
     const copyHandler = (e: Event) => {
       if (shouldTargetSelectedAction()) {
-        e.preventDefault();
-        handleActionCutCopy("copy", handleUpdate);
+        // Not copied if text is selected, so the text copies instead
+        if (handleActionCutCopy("copy", handleUpdate)) e.preventDefault();
       } else if (getFocusedRegion() === "sequence") {
         e.preventDefault();
         handleCutCopy("copy", handleUpdate);
@@ -126,14 +126,19 @@ export default function MainEditor() {
       if (region !== "sequence" && (!actionPasteRegions.includes(region) || inTextElement()))
         return;
       e.preventDefault();
-      readClipboardJson().then((data) => {
-        if (!data) return;
-        if (clipboardHasActions(data)) {
-          handleActionPaste(data, handleUpdate);
-        } else if (region === "sequence") {
-          handlePaste(data, handleUpdate);
-        }
-      });
+      readClipboardJson()
+        .then((data) => {
+          if (!data) return;
+          if (clipboardHasActions(data)) {
+            handleActionPaste(data, handleUpdate);
+          } else if (region === "sequence") {
+            handlePaste(data, handleUpdate);
+          }
+        })
+        .catch((err) => {
+          // e.g. the clipboard holds no text, or reading it was denied
+          console.warn("[Paste] Couldn't read the clipboard:", err);
+        });
     };
     window.addEventListener("cut", cutHandler);
     window.addEventListener("copy", copyHandler);

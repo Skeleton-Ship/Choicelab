@@ -122,7 +122,7 @@ function ActionsEditor(props: {
   function handlePointerDown(e: PointerEvent) {
     const target = e.target as Element | null;
     if (target?.closest(".inspector-item.action")) return;
-    setSelectedActionId(null);
+    setSelectedActionId(null, props.update);
   }
   let editorEls: Array<preact.JSX.Element> = [];
   node.actions.forEach((action: Action) => {

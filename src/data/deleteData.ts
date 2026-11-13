@@ -191,6 +191,10 @@ function deleteActionFromData(actionId: string, nodeId: string, store: Store) {
       project.sequences[correctSequenceIndex].nodes[correctNodeIndex];
     if (thisNode.type === "cell") {
       thisNode.actions.splice(correctActionIndex, 1);
+      // Remove any timing other actions (e.g. media) held for it
+      thisNode.actions.forEach((action: Action) => {
+        if (action.timedActions) delete action.timedActions[actionId];
+      });
     }
   }
   return store;
