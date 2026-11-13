@@ -8,7 +8,9 @@ import { upgradeRichTextProps } from "../../../fs/migrateProject";
 import { AnyNode, Action, Cell, UpdateFunction } from "../../../typings";
 
 /**
- * Given an object, regenerates the `id` property, clears the `link` property, and for cells, clears timed actions. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
+ * Given an object, regenerates the `id` property and clears the `link` property. This ensures that copy/pasted nodes won't have duplicate identifiers or dead links.
+ *
+ * Timed actions are keyed by action ID, so for cells, re-link them afterwards with relinkTimedActions().
  *
  * @param {object} obj - The object to check.
  */
@@ -26,15 +28,6 @@ function regenerateIdsAndLinks<T extends object>(node: T): T {
       if (typeof obj.link.to === "undefined") return;
       obj.link.to = "";
     }
-    // Remove timed actions
-    if (key === "actions") {
-      const actions = obj.actions as Array<Action>;
-      actions.forEach((action) => {
-        if (action.timedActions) {
-          action.timedActions = {};
-        }
-      });
-    }
     // Check nested props
     const value = obj[key];
     if (isObject(value)) {
@@ -50,6 +43,32 @@ function regenerateIdsAndLinks<T extends object>(node: T): T {
     }
   });
   return node;
+}
+
+/**
+ * After a pasted cell's action IDs are regenerated, re-keys each action's timed
+ * actions to the new IDs, so timing within the cell is kept. Actions keep
+ * their order, so old and new IDs pair up by position. Timing for anything
+ * outside the cell is dropped.
+ *
+ * @param {Cell} cell - The pasted cell, with regenerated action IDs.
+ * @param {Array<string>} oldActionIds - The cell's action IDs before regenerating, in order.
+ */
+function relinkTimedActions(cell: Cell, oldActionIds: Array<string>) {
+  const newIds = new Map<string, string>();
+  oldActionIds.forEach((oldId, i) => {
+    const action = cell.actions[i];
+    if (action) newIds.set(oldId, action.id);
+  });
+  cell.actions.forEach((action: Action) => {
+    if (!action.timedActions) return;
+    const timedActions: NonNullable<Action["timedActions"]> = {};
+    Object.entries(action.timedActions).forEach(([oldId, timing]) => {
+      const newId = newIds.get(oldId);
+      if (newId) timedActions[newId] = timing;
+    });
+    action.timedActions = timedActions;
+  });
 }
 
 /**
@@ -101,7 +120,7 @@ function handleCutCopy(action: string, update: UpdateFunction) {
 }
 
 /**
- * Checks clipboard contents for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links, then runs `handleCreateNode` to add them to the current sequence.
+ * Checks clipboard contents for Choicelab nodes. If so, creates new nodes with fresh IDs and cleared links (keeping timing between a cell's actions), then runs `handleCreateNode` to add them to the current sequence.
  *
  * @param {object} data - The clipboard contents, parsed from JSON (see readClipboardJson()).
  * @param {UpdateFunction} update - A React handler that traverses back to the app root, triggering a refresh.
@@ -115,9 +134,15 @@ function handlePaste(data: Record<string, unknown>, update: UpdateFunction): voi
   nodes.forEach((node: AnyNode) => {
     // Clone node, removing the `position` prop
     let newNode = cloneObjectWithExclusion(node, "position");
+    // Record action IDs first: regenerating changes them in place
+    const oldActionIds =
+      newNode.type === "cell" ? newNode.actions.map((action) => action.id) : [];
     newNode = regenerateIdsAndLinks(newNode);
-    // Nodes copied from an older version may have plain text where rich text is expected
-    if (newNode.type === "cell") newNode.actions.forEach(upgradeRichTextProps);
+    if (newNode.type === "cell") {
+      relinkTimedActions(newNode, oldActionIds);
+      // Nodes copied from an older version may have plain text where rich text is expected
+      newNode.actions.forEach(upgradeRichTextProps);
+    }
     processedNodes.push(newNode);
   });
   // Create new nodes — use a no-op so each insertion mutates the store
