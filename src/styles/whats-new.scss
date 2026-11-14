@@ -1,4 +1,3 @@
-$toolbar-offset: 32px;
 // The poster's width, fixed so it doesn't shrink when a scrollbar takes up
 // room (classic scrollbars, or a reserved gutter). The version and date are
 // placed over it in pixels, so it must stay this size to line up with them.
@@ -25,14 +24,20 @@ $poster-image-width: 510px;
   @media (prefers-color-scheme: dark) {
     color: white;
   }
+  // Room for the title bar. Only macOS draws it over the window's contents
+  // (an overlay title bar); elsewhere it sits above them, so no room is needed.
+  --toolbar-offset: 0px;
+  [data-platform="macos"] & {
+    --toolbar-offset: 32px;
+  }
   $padding-left: 42px;
   $padding-right: 66px;
   .inner {
     -webkit-app-region: no-drag;
     position: relative;
-    top: $toolbar-offset;
+    top: var(--toolbar-offset);
     width: 100%;
-    height: calc(100% - #{$toolbar-offset});
+    height: calc(100% - var(--toolbar-offset));
     // margin: 0 5px;
     margin-bottom: 10px;
     padding: 0 42px;
@@ -42,108 +47,119 @@ $poster-image-width: 510px;
     padding-right: $padding-right;
     overflow-y: auto;
     overflow-x: hidden;
-    .poster {
-      margin-left: #{$padding-left * -1};
-      margin-right: #{$padding-right * -1};
-      background-color: #153638;
-      padding-bottom: 22px;
-      margin-bottom: 27px;
-      @media (prefers-color-scheme: dark) {
-        background-color: #151818;
-      }
-      img {
-        display: block;
-        width: $poster-image-width;
-        height: auto;
-        margin-left: 26px;
-        margin-top: -57px;
-        pointer-events: none;
-      }
-      h1 {
-        position: absolute;
-        left: -9999px;
-        width: 0;
-        height: 0;
-        visibility: hidden;
-      }
+  }
+  .poster {
+    margin-left: #{$padding-left * -1};
+    margin-right: #{$padding-right * -1};
+    background-color: #153638;
+    padding-bottom: 22px;
+    margin-bottom: 27px;
+    @media (prefers-color-scheme: dark) {
+      background-color: #151818;
     }
-    /* 
+    img {
+      display: block;
+      width: $poster-image-width;
+      height: auto;
+      margin-left: 26px;
+      margin-top: -57px;
+      pointer-events: none;
+    }
+    h1 {
+      position: absolute;
+      left: -9999px;
+      width: 0;
+      height: 0;
+      visibility: hidden;
+    }
+  }
+  /* 
 	 * Important: Because h2 and h3 come from the changelog, .markup should not adopt relative positioning. Otherwise, those elements won't be able to sit inside the poster. 
 	 *
 	 */
 
-    /* Version number */
-    h2 {
-      position: absolute;
-      top: 134px;
-      left: 268px;
-      font-family: "Inter Variable", system-ui, sans-serif;
-      font-weight: 900;
-      display: inline-block;
-      background: radial-gradient(#ffd332 0%, #ff9e81 100%);
-      font-size: 52px;
-      line-height: 1;
-      letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums;
-      padding-right: 6px;
-      color: transparent;
-      background-clip: text;
-    }
+  /* Version number */
+  h2 {
+    position: absolute;
+    top: 134px;
+    left: 268px;
+    font-family: "Inter Variable", system-ui, sans-serif;
+    font-weight: 900;
+    display: inline-block;
+    background: radial-gradient(#ffd332 0%, #ff9e81 100%);
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    padding-right: 6px;
+    color: transparent;
+    background-clip: text;
+  }
 
-    /* Date */
-    h3 {
-      position: absolute;
-      font-style: italic;
-      font-weight: 220;
-      top: 148px;
-      left: 406px;
-      font-size: 16px;
-      letter-spacing: 0.01em;
-      color: #8ab7ba;
-      @media (prefers-color-scheme: dark) {
-        color: #aab2b3;
-      }
+  /* Date */
+  h3 {
+    position: absolute;
+    font-style: italic;
+    font-weight: 220;
+    top: 148px;
+    left: 406px;
+    font-size: 16px;
+    letter-spacing: 0.01em;
+    color: #8ab7ba;
+    @media (prefers-color-scheme: dark) {
+      color: #aab2b3;
     }
+  }
 
-    /*
+  /*
 	 * Markup
 	 */
-    .markup {
-      margin-left: 45px;
+  .markup {
+    margin-left: 45px;
+  }
+  h4,
+  p,
+  li {
+    @media (prefers-color-scheme: dark) {
+      color: white;
     }
-    h4,
-    p,
-    li {
-      @media (prefers-color-scheme: dark) {
-        color: white;
-      }
+  }
+  h4 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-left: -17px;
+    font-style: italic;
+    letter-spacing: -0.02em;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  /* First heading of changelog notes */
+  h3 + h4 {
+    margin-top: 0;
+  }
+  ul {
+    padding-left: 18px;
+  }
+  p,
+  li {
+    font-size: 17px;
+    font-weight: 300;
+    strong {
+      font-weight: 700;
     }
-    h4 {
-      font-size: 28px;
-      font-weight: 800;
-      margin-left: -17px;
-      font-style: italic;
-      letter-spacing: -0.02em;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-    /* First heading of changelog notes */
-    h3 + h4 {
-      margin-top: 0;
-    }
-    ul {
-      padding-left: 18px;
-    }
-    p,
-    li {
-      font-size: 17px;
-      font-weight: 300;
-      strong {
-        font-weight: 700;
-      }
-    }
-    li:not(:last-of-type) {
-      margin-bottom: 1rem;
-    }
+  }
+  li:not(:last-of-type) {
+    margin-bottom: 1rem;
+  }
+}
+
+#App[data-platform="windows"] #whats-new {
+  // Windows-only styles
+  h4 {
+    font-style: normal;
+    font-weight: 700;
+  }
+  p, li {
+    font-weight: 400;
   }
 }
