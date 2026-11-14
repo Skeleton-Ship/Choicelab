@@ -16,7 +16,7 @@
 - Opening a project that was saved with a newer version of Choicelab now explains that an update is needed, instead of opening it incorrectly.
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
-- Body text now shows as separate paragraphs, with **Shift-Return** adding a line break within one. Existing text looks the same as before.
+- Body text now shows as separate paragraphs, with **Shift-Return** adding a line break within one.
 - New variables and rules now scroll into view and auto-select their name for easier input.
 - Deleting a variable that's used by actions, text, or branch stems
   now asks for confirmation first, and shows how many places use it.

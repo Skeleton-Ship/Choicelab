@@ -6,9 +6,12 @@ import WhatsNewPoster from "../assets/whats-new/WhatsNew-Poster.png";
 
 export function WhatsNew() {
   useEffect(() => {
-    emitWindowReady({
-      label: "whatsNew",
-    });
+    // Load the version number's font before showing the window. It only
+    // starts loading once laid out, which a hidden window may not have done.
+    document.fonts
+      .load('900 52px "Inter Variable"', "1.2")
+      .catch(() => {})
+      .finally(() => emitWindowReady({ label: "whatsNew" }));
   }, []);
   const el = Markdown(whatsNewContent);
   return (

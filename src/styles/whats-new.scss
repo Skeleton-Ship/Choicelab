@@ -1,4 +1,18 @@
 $toolbar-offset: 32px;
+// The poster's width, fixed so it doesn't shrink when a scrollbar takes up
+// room (classic scrollbars, or a reserved gutter). The version and date are
+// placed over it in pixels, so it must stay this size to line up with them.
+// 85% of the window's 600px width.
+$poster-image-width: 510px;
+
+// For the version number, so it looks the same on every OS
+@font-face {
+  font-family: "Inter Variable";
+  src: url("../fonts/inter/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
 
 #whats-new {
   width: 100%;
@@ -39,7 +53,7 @@ $toolbar-offset: 32px;
       }
       img {
         display: block;
-        width: 85%;
+        width: $poster-image-width;
         height: auto;
         margin-left: 26px;
         margin-top: -57px;
@@ -53,21 +67,29 @@ $toolbar-offset: 32px;
         visibility: hidden;
       }
     }
-    /* Important: Because h2 and h3 come from the changelog, .markup should not adopt relative positioning. Otherwise, those elements won't be able to sit inside the poster. */
+    /* 
+	 * Important: Because h2 and h3 come from the changelog, .markup should not adopt relative positioning. Otherwise, those elements won't be able to sit inside the poster. 
+	 *
+	 */
+
     /* Version number */
     h2 {
       position: absolute;
-      top: 123px;
-      left: 265px;
-      font-weight: 999;
+      top: 134px;
+      left: 268px;
+      font-family: "Inter Variable", system-ui, sans-serif;
+      font-weight: 900;
       display: inline-block;
       background: radial-gradient(#ffd332 0%, #ff9e81 100%);
       font-size: 52px;
-      letter-spacing: -0.06em;
+      line-height: 1;
+      letter-spacing: -0.04em;
       font-variant-numeric: tabular-nums;
+      padding-right: 6px;
       color: transparent;
       background-clip: text;
     }
+
     /* Date */
     h3 {
       position: absolute;
@@ -78,7 +100,11 @@ $toolbar-offset: 32px;
       font-size: 16px;
       letter-spacing: 0.01em;
       color: #8ab7ba;
+      @media (prefers-color-scheme: dark) {
+        color: #aab2b3;
+      }
     }
+
     /*
 	 * Markup
 	 */
