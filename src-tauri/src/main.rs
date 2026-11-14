@@ -370,6 +370,13 @@ fn main() {
                 native_bridge_macos::set_app_handle(app.handle().clone());
                 native_bridge_macos::init_project_title_bar_layout();
             }
+            // The launcher's title is hidden on macOS, but shown elsewhere. It
+            // also can't be resized there, so it shouldn't be maximized either.
+            #[cfg(not(target_os = "macos"))]
+            if let Some(launcher) = app.get_webview_window("launcher") {
+                let _ = launcher.set_title("Choicelab");
+                let _ = launcher.set_maximizable(false);
+            }
             // Windows cold-start: file path arrives as a command-line argument
             #[cfg(target_os = "windows")]
             {

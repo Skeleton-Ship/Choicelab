@@ -133,13 +133,16 @@ fn open_static_window(app: &tauri::AppHandle, config: StaticWindow) {
 		return;
 	}
 	let url = format!("index.html?window_type={}", config.label);
+	// Outside macOS, a window that can't be resized can't be maximized either
+	// (on macOS, maximizable is the green button, which also handles full screen)
+	let maximizable = config.maximizable && (cfg!(target_os = "macos") || config.resizable);
 	let mut builder =
 		tauri::WebviewWindowBuilder::new(app, config.label, tauri::WebviewUrl::App(url.into()))
 			.title(config.title)
 			.inner_size(config.size.0, config.size.1)
 			.resizable(config.resizable)
 			.minimizable(config.minimizable)
-			.maximizable(config.maximizable)
+			.maximizable(maximizable)
 			.transparent(true)
 			// Shown once its contents are ready (see reveal_window())
 			.visible(false)

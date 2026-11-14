@@ -10,6 +10,11 @@
   @media (prefers-color-scheme: dark) {
     color: white;
   }
+  // On Windows, the menu bar takes about this much height from the window,
+  // so shift the contents up by the same amount
+  [data-platform="windows"] & > * {
+    translate: 0 -20px;
+  }
   figure {
     margin: 0;
     margin-top: 2rem;

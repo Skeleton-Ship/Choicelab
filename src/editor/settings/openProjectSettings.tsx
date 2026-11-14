@@ -33,6 +33,8 @@ export async function openProjectSettings(
     titleBarStyle: "overlay",
     transparent: platform === "macos" ? true : false,
     resizable: false,
+    // Outside macOS, it can't be resized, so it shouldn't be maximized either
+    maximizable: platform === "macos",
     // Shown once its contents are ready (see emitWindowReady.ts)
     visible: false,
   });

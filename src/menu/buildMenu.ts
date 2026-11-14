@@ -420,8 +420,9 @@ async function buildMenuNow(windowType: WindowType, recentFiles: string[]) {
   switch (platform) {
     case "windows":
     case "linux":
-      // On Windows and Linux, only show the menu in project windows
-      if (windowType === "project") {
+      // On Windows and Linux, only show the menu in project windows and the
+      // launcher. As on macOS, setMenu disables the launcher's project items.
+      if (windowType === "project" || windowType === "launcher") {
         const items = [
           fileSubmenu,
           editSubmenu,
