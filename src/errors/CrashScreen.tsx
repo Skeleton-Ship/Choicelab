@@ -1,5 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import { getVersion } from "@tauri-apps/api/app";
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { WindowType } from "../typings";
@@ -84,6 +85,12 @@ export function CrashScreen({ error, windowType }: CrashScreenProps) {
   );
   const [details, setDetails] = useState(describeError(error));
   const [copied, setCopied] = useState(false);
+
+  // Windows stay hidden until they're ready, which a crashed one may never
+  // report; show it (if it isn't already) so the crash isn't invisible
+  useEffect(() => {
+    invoke("reveal_window").catch(() => {});
+  }, []);
 
   // The editor's re-render callbacks belong to components that are gone now;
   // make saving (which calls them) leave the crash screen alone

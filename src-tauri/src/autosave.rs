@@ -77,34 +77,5 @@ pub async fn show_autosave_recovery_dialog(
     title: String,
     body: String,
 ) -> Result<bool, String> {
-    let (tx, rx) = tokio::sync::oneshot::channel::<bool>();
-    #[cfg(target_os = "macos")]
-    {
-        let _ = app;
-        std::thread::spawn(move || {
-            let result = crate::native_bridge_macos::show_guard_dialog(
-                &title,
-                &body,
-                "Auto-saved",
-                "Saved",
-            );
-            let _ = tx.send(result);
-        });
-    }
-    #[cfg(not(target_os = "macos"))]
-    {
-        use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
-        app.dialog()
-            .message(&body)
-            .title(&title)
-            .kind(MessageDialogKind::Info)
-            .buttons(MessageDialogButtons::OkCancelCustom(
-                "Auto-saved".into(),
-                "Saved".into(),
-            ))
-            .show(move |result| {
-                let _ = tx.send(result);
-            });
-    }
-    rx.await.map_err(|e| e.to_string())
+    crate::app_dialog(app, title, body, "Auto-saved".into(), Some("Saved".into()), false).await
 }

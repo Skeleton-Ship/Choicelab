@@ -5,7 +5,7 @@ import { Acknowledgments } from "./acknowledgments/Acknowledgments";
 import { License } from "./license/License";
 import { About } from "./about/About";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { message, confirm, save } from "@tauri-apps/plugin-dialog";
+import { save } from "@tauri-apps/plugin-dialog";
 import loadProjectData from "./fs/loadProjectData";
 import { ProjectSettings } from "./editor/ProjectSettings";
 import newProject from "./fs/newProject";
@@ -49,7 +49,6 @@ import { ErrorBoundary } from "./errors/ErrorBoundary";
 import { installGlobalErrorHandlers } from "./errors/globalErrorHandlers";
 import { handleStartupError } from "./errors/startupError";
 import { checkForUpdatesFromMenu } from "./utils/checkForUpdates";
-import { invalidateWindowShadowAfterPaint } from "./utils/invalidateWindowShadow";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -70,6 +69,26 @@ function formatAutosaveTime(ms: number): string {
   const day = d.getDate();
   const yr = String(d.getFullYear()).slice(2);
   return `on ${m}/${day}/${yr} at ${timeStr}`;
+}
+
+/**
+ * Shows an alert while a window is starting up. Windows stay hidden until
+ * their contents are ready, so this isn't attached to the window as a sheet
+ * (where it would be hidden too). Returns whether OK was chosen.
+ */
+function showStartupDialog(
+  title: string,
+  body: string,
+  okLabel = "OK",
+  cancelLabel?: string
+) {
+  return invoke<boolean>("show_app_dialog", {
+    title,
+    body,
+    okLabel,
+    cancelLabel: cancelLabel ?? null,
+    warning: true,
+  });
 }
 
 async function init() {
@@ -278,8 +297,8 @@ async function init() {
     const projectPath = decodeURIComponent(projectPathRaw);
     const fileName = decodeURIComponent(fileNameRaw);
     if (projectPath === "" || fileName === "") {
-      console.error("No project found.");
-      return;
+      // Shows the crash screen; otherwise this hidden window would never appear
+      throw new Error("No project found.");
     }
     // Load project data
     let projectData = await loadProjectData(
@@ -302,7 +321,7 @@ async function init() {
           contents =
             "Make sure the selected folder is a Choicelab project folder downloaded to your computer, then try again.";
       }
-      await message(contents, title);
+      await showStartupDialog(title, contents);
       appWindow.close();
       return;
     }
@@ -354,7 +373,7 @@ async function init() {
         "This project was saved with a newer version of Choicelab.",
         "To open it, update Choicelab to the latest version."
       );
-      await message(dialog.message, { title: dialog.title, kind: "warning" });
+      await showStartupDialog(dialog.title, dialog.message);
       appWindow.close();
       return;
     }
@@ -366,11 +385,12 @@ async function init() {
         "This project needs to be updated for this version of Choicelab.",
         "Once updated, this project can't be opened in older versions."
       );
-      const confirmed = await confirm(dialog.message, {
-        title: dialog.title,
-        okLabel: "Update",
-        cancelLabel: "Cancel",
-      });
+      const confirmed = await showStartupDialog(
+        dialog.title,
+        dialog.message,
+        "Update",
+        "Cancel"
+      );
       if (!confirmed) {
         appWindow.close();
         return;
@@ -443,7 +463,6 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
-  if (platform === "macos") invalidateWindowShadowAfterPaint();
   installMenuShortcuts();
   buildMenu(windowType, recentFiles);
 }

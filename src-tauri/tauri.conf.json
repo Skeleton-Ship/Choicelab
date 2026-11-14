@@ -59,7 +59,8 @@
         "height": 375,
         "resizable": false,
         "titleBarStyle": "Overlay",
-        "transparent": true
+        "transparent": true,
+        "visible": false
       }
     ]
   }

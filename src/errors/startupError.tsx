@@ -1,5 +1,4 @@
 import { render } from "preact";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { platform as getPlatform } from "@tauri-apps/plugin-os";
 import { WindowType } from "../typings";
 import { CrashScreen } from "./CrashScreen";
@@ -28,8 +27,4 @@ export function handleStartupError(error: unknown) {
     </div>,
     root
   );
-  // Some windows stay hidden until their contents are ready
-  getCurrentWebviewWindow()
-    .show()
-    .catch(() => {});
 }

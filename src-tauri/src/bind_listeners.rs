@@ -32,14 +32,40 @@ struct HistoryPayload {
     version_id: String,
 }
 
-fn apply_project_vibrancy(_window: WebviewWindow) {
+fn apply_project_vibrancy(_window: &WebviewWindow) {
+    #[cfg(target_os = "macos")]
+    apply_vibrancy(_window, NSVisualEffectMaterial::HudWindow, None, None)
+        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+}
+
+/// Shows a window that was created hidden, once its contents are ready (every
+/// window is, so none appear blank), with vibrancy applied first so it never
+/// appears without it. This includes a window showing the crash screen, which
+/// is styled for vibrancy too. Does nothing to a window that's already
+/// showing, so it doesn't steal focus or add vibrancy twice, e.g. when the
+/// frontend reloads. Must run on the main thread.
+pub fn reveal_window(window: &WebviewWindow) {
+    if window.is_visible().unwrap_or(false) {
+        return;
+    }
+    apply_project_vibrancy(window);
+    let _ = window.show();
+    let _ = window.set_focus();
+    // Windows are transparent on macOS, and AppKit shapes a transparent
+    // window's shadow from what it shows when it appears. The webview draws
+    // its first frame a moment after that, so refresh the shadow once it has.
     #[cfg(target_os = "macos")]
     {
-        apply_vibrancy(&_window, NSVisualEffectMaterial::HudWindow, None, None)
-            .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
-        // The vibrancy view changes the window's shape, so the shadow needs
-        // recomputing to match
-        crate::native_bridge_macos::invalidate_shadow(&_window);
+        let window = window.clone();
+        std::thread::spawn(move || {
+            for delay_ms in [50, 300] {
+                std::thread::sleep(std::time::Duration::from_millis(delay_ms));
+                let target = window.clone();
+                let _ = window.run_on_main_thread(move || {
+                    crate::native_bridge_macos::invalidate_shadow(&target)
+                });
+            }
+        });
     }
 }
 
@@ -115,6 +141,8 @@ fn open_static_window(app: &tauri::AppHandle, config: StaticWindow) {
 			.minimizable(config.minimizable)
 			.maximizable(config.maximizable)
 			.transparent(true)
+			// Shown once its contents are ready (see reveal_window())
+			.visible(false)
 			// Links open in the default browser (see openExternalLinks.ts);
 			// never load them in the window itself
 			.on_navigation(|url| crate::is_allowed_navigation(url));
@@ -127,12 +155,8 @@ fn open_static_window(app: &tauri::AppHandle, config: StaticWindow) {
 			.hidden_title(config.hidden_title)
 			.title_bar_style(tauri::TitleBarStyle::Overlay);
 	}
-	match builder.build() {
-		Ok(window) => {
-			let _ = window.show();
-			let _ = window.set_focus();
-		}
-		Err(e) => eprintln!("Failed to open window: {}", e),
+	if let Err(e) = builder.build() {
+		eprintln!("Failed to open window: {}", e);
 	}
 }
 
@@ -287,9 +311,9 @@ pub fn bind_listeners(app: &tauri::App) {
                     eprintln!("window-ready: window not found: {}", window_label);
                     return;
                 };
-                let vibrancy_window = project_window.clone();
+                let reveal_target = project_window.clone();
                 let _ = handle_project_open
-                    .run_on_main_thread(move || apply_project_vibrancy(vibrancy_window));
+                    .run_on_main_thread(move || reveal_window(&reveal_target));
 
                 // If the window label indicates a project, start a preview server for it
                 if window_label.starts_with("project_")

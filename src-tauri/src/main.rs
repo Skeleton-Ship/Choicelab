@@ -67,17 +67,13 @@ fn trigger_menu_item(app: tauri::AppHandle, window: tauri::WebviewWindow, id: St
     });
 }
 
-/// Called by the frontend once a window's content has drawn, so its shadow
-/// matches it (see `native_bridge_macos::invalidate_shadow`).
+/// Shows the calling window (with vibrancy) if it's still hidden. Windows
+/// normally appear once they report `window-ready`; this is for ones that
+/// can't, like a window that crashed while starting.
 #[tauri::command]
-fn invalidate_window_shadow(window: tauri::WebviewWindow) {
-    #[cfg(target_os = "macos")]
-    {
-        let target = window.clone();
-        let _ = window.run_on_main_thread(move || native_bridge_macos::invalidate_shadow(&target));
-    }
-    #[cfg(not(target_os = "macos"))]
-    let _ = window;
+fn reveal_window(window: tauri::WebviewWindow) {
+    let target = window.clone();
+    let _ = window.run_on_main_thread(move || bind_listeners::reveal_window(&target));
 }
 
 #[tauri::command]
@@ -188,7 +184,8 @@ fn project_window_builder<'a, R: tauri::Runtime, M: tauri::Manager<R>>(
         .inner_size(width, height)
         .min_inner_size(700.0, 360.0)
         .transparent(transparent)
-        .visible(true)
+        // Shown once its contents are ready (see bind_listeners::reveal_window())
+        .visible(false)
         .on_navigation(|url| is_allowed_navigation(url)))
 }
 
@@ -223,6 +220,64 @@ fn create_project_window(
             eprintln!("Failed to create project window: {}", e);
         }
     });
+}
+
+/// Shows an alert that isn't attached to any window, and returns whether the
+/// OK button was chosen. For alerts a window shows before it appears (windows
+/// stay hidden until their contents are ready), which as a sheet on that
+/// window would be hidden too. Leave `cancel_label` out for an OK button only.
+#[tauri::command]
+async fn show_app_dialog(
+    app: tauri::AppHandle,
+    title: String,
+    body: String,
+    ok_label: String,
+    cancel_label: Option<String>,
+    warning: bool,
+) -> Result<bool, String> {
+    app_dialog(app, title, body, ok_label, cancel_label, warning).await
+}
+
+/// See `show_app_dialog`.
+pub async fn app_dialog(
+    app: tauri::AppHandle,
+    title: String,
+    body: String,
+    ok_label: String,
+    cancel_label: Option<String>,
+    warning: bool,
+) -> Result<bool, String> {
+    let (tx, rx) = tokio::sync::oneshot::channel::<bool>();
+    #[cfg(target_os = "macos")]
+    {
+        let _ = (app, warning);
+        std::thread::spawn(move || {
+            let result = native_bridge_macos::show_guard_dialog(
+                &title,
+                &body,
+                &ok_label,
+                cancel_label.as_deref().unwrap_or(""),
+            );
+            let _ = tx.send(result);
+        });
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+        let buttons = match cancel_label {
+            Some(cancel_label) => MessageDialogButtons::OkCancelCustom(ok_label, cancel_label),
+            None => MessageDialogButtons::OkCustom(ok_label),
+        };
+        app.dialog()
+            .message(&body)
+            .title(&title)
+            .kind(if warning { MessageDialogKind::Warning } else { MessageDialogKind::Info })
+            .buttons(buttons)
+            .show(move |result| {
+                let _ = tx.send(result);
+            });
+    }
+    rx.await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -333,7 +388,8 @@ fn main() {
             get_pending_files,
             open_folder,
             set_focused_window,
-            invalidate_window_shadow,
+            reveal_window,
+            show_app_dialog,
             trigger_menu_item,
             print_focused_window,
             create_project_window,
