@@ -236,14 +236,21 @@ BOOL get_volume_display_name(const char *path, char *out, size_t out_len) {
     return ok;
 }
 
-// Gap between the close button's bottom edge and the bottom of the title bar
-// in a window styled like a project window (overlay title bar), in points.
-// Tauri's traffic_light_position() measures from there, and the gap differs
-// between macOS versions, so the app needs it to place the buttons in the
-// same spot on all of them. Returns -1 if it can't be measured. Must be
-// called on the main thread.
-double get_window_button_bottom_gap(void) {
-    double gap = -1;
+// Measurements of the close button in a window styled like a project window
+// (overlay title bar), in points. Both differ between macOS versions:
+// - bottom_gap: between the button's bottom edge and the bottom of the title
+//   bar, which Tauri's traffic_light_position() measures from.
+// - height: the button's frame, which is taller than its circle on some
+//   versions (e.g. 16pt around a 12pt circle), so the app centers by it.
+typedef struct {
+    double bottom_gap;
+    double height;
+} WindowButtonMetrics;
+
+// Returns -1 for both if they can't be measured. Must be called on the main
+// thread.
+WindowButtonMetrics get_window_button_metrics(void) {
+    WindowButtonMetrics metrics = { -1, -1 };
     @autoreleasepool {
         NSWindowStyleMask style = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
             NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable |
@@ -262,13 +269,14 @@ double get_window_button_bottom_gap(void) {
         NSView *container = close.superview.superview;
         if (close && container) {
             NSRect closeInContainer = [close convertRect:close.bounds toView:container];
-            gap = container.isFlipped
+            metrics.bottom_gap = container.isFlipped
                 ? NSHeight(container.bounds) - NSMaxY(closeInContainer)
                 : NSMinY(closeInContainer);
+            metrics.height = NSHeight(close.frame);
         }
         [window release];
     }
-    return gap;
+    return metrics;
 }
 
 // Moves the window's traffic lights to (x, y), the same way Tauri does for

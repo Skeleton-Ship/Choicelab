@@ -140,17 +140,26 @@ pub extern "C" fn menu_acknowledgments_clicked() {
         eprintln!("ERROR: AppHandle not set. Call set_app_handle() early in your Tauri main function.");
     }
 }
+/// Mirrors `WindowButtonMetrics` in NativeBridge.m.
+#[repr(C)]
+struct WindowButtonMetrics {
+    bottom_gap: f64,
+    height: f64,
+}
+
 extern "C" {
-    fn get_window_button_bottom_gap() -> f64;
+    fn get_window_button_metrics() -> WindowButtonMetrics;
     fn set_window_button_position(ns_window: *mut std::ffi::c_void, x: f64, y: f64);
 }
 
 // Where the project window's traffic lights and title go, in points from the
 // window's top-left corner. Fixed rather than following the system default,
 // since they sit in Choicelab's own toolbar, which looks the same on every
-// macOS version.
+// macOS version. The traffic lights are placed by their vertical center,
+// since their frames are different heights on different macOS versions, with
+// the circle centered in each (19 puts a 14pt button's top edge at 12).
 const TRAFFIC_LIGHT_LEFT: f64 = 12.0;
-const TRAFFIC_LIGHT_TOP: f64 = 12.0;
+const TRAFFIC_LIGHT_CENTER_Y: f64 = 19.0;
 const TITLE_LEFT: f64 = 85.0;
 const TITLE_TOP: f64 = 10.75;
 
@@ -176,19 +185,21 @@ static PROJECT_TITLE_BAR_LAYOUT: OnceLock<Option<ProjectTitleBarLayout>> = OnceL
 /// (project windows opened earlier keep the system layout).
 pub fn init_project_title_bar_layout() {
     PROJECT_TITLE_BAR_LAYOUT.get_or_init(|| {
-        let bottom_gap = unsafe { get_window_button_bottom_gap() };
-        // Anything outside this range means AppKit's title bar isn't laid
+        let WindowButtonMetrics { bottom_gap, height } =
+            unsafe { get_window_button_metrics() };
+        // Anything outside these ranges means AppKit's title bar isn't laid
         // out the way this expects (e.g. a future macOS changed it)
-        if !(bottom_gap > 0.0 && bottom_gap < 30.0) {
+        if !(bottom_gap > 0.0 && bottom_gap < 30.0 && height > 0.0 && height < 30.0) {
             eprintln!(
-                "Unexpected title bar measurement ({}); using the system layout.",
-                bottom_gap
+                "Unexpected title bar measurement (gap {}, height {}); using the system layout.",
+                bottom_gap, height
             );
             return None;
         }
+        let button_top = TRAFFIC_LIGHT_CENTER_Y - height / 2.0;
         Some(ProjectTitleBarLayout {
             traffic_light_x: TRAFFIC_LIGHT_LEFT,
-            traffic_light_y: TRAFFIC_LIGHT_TOP + bottom_gap,
+            traffic_light_y: button_top + bottom_gap,
             title_left: TITLE_LEFT,
             title_top: TITLE_TOP,
         })
