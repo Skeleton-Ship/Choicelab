@@ -13,7 +13,7 @@
   // On Windows, the menu bar takes about this much height from the window,
   // so shift the contents up by the same amount
   [data-platform="windows"] & > * {
-    translate: 0 -20px;
+    translate: 0 -10px;
   }
   figure {
     margin: 0;
