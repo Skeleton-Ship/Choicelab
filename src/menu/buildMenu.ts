@@ -250,9 +250,11 @@ async function buildMenuNow(windowType: WindowType, recentFiles: string[]) {
         accelerator: "CmdOrCtrl+G",
         enabled: false,
       }),
-      await PredefinedMenuItem.new({
-        item: "Separator",
-      }),
+      // On macOS, this separates our items from the system's standard View
+      // items; elsewhere nothing follows it
+      ...(platform === "macos"
+        ? [await PredefinedMenuItem.new({ item: "Separator" })]
+        : []),
     ],
   });
 
