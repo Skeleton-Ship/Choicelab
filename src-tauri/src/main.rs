@@ -67,6 +67,19 @@ fn trigger_menu_item(app: tauri::AppHandle, window: tauri::WebviewWindow, id: St
     });
 }
 
+/// Called by the frontend once a window's content has drawn, so its shadow
+/// matches it (see `native_bridge_macos::invalidate_shadow`).
+#[tauri::command]
+fn invalidate_window_shadow(window: tauri::WebviewWindow) {
+    #[cfg(target_os = "macos")]
+    {
+        let target = window.clone();
+        let _ = window.run_on_main_thread(move || native_bridge_macos::invalidate_shadow(&target));
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = window;
+}
+
 #[tauri::command]
 fn set_focused_window(label: String) {
     *FOCUSED_WINDOW.lock().unwrap() = label;
@@ -320,6 +333,7 @@ fn main() {
             get_pending_files,
             open_folder,
             set_focused_window,
+            invalidate_window_shadow,
             trigger_menu_item,
             print_focused_window,
             create_project_window,

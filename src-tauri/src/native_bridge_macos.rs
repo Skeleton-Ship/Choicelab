@@ -33,6 +33,21 @@ pub fn set_document_edited_for_window(window: &WebviewWindow, edited: bool) {
     }
 }
 
+/// Recomputes the window's shadow from what's drawn in it now. Choicelab's
+/// windows are transparent, and AppKit shapes a transparent window's shadow
+/// from its pixels when it's first shown, which can be before the webview has
+/// drawn anything (leaving no shadow), and doesn't update it until a resize.
+/// Must run on the main thread.
+pub fn invalidate_shadow(window: &WebviewWindow) {
+    use objc::runtime::Object;
+    if let Ok(ns_window_ptr) = window.ns_window() {
+        unsafe {
+            let ns_window = ns_window_ptr as *mut Object;
+            let _: () = msg_send![ns_window, invalidateShadow];
+        }
+    }
+}
+
 static APP_HANDLE: OnceLock<tauri::AppHandle> = OnceLock::new();
 
 pub fn set_app_handle(handle: tauri::AppHandle) {

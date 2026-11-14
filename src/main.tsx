@@ -49,6 +49,7 @@ import { ErrorBoundary } from "./errors/ErrorBoundary";
 import { installGlobalErrorHandlers } from "./errors/globalErrorHandlers";
 import { handleStartupError } from "./errors/startupError";
 import { checkForUpdatesFromMenu } from "./utils/checkForUpdates";
+import { invalidateWindowShadowAfterPaint } from "./utils/invalidateWindowShadow";
 const platform = getPlatform();
 const appWindow = getCurrentWebviewWindow();
 
@@ -442,6 +443,7 @@ async function init() {
   );
   const root = document.getElementById("root") as HTMLElement;
   render(appDOM, root);
+  if (platform === "macos") invalidateWindowShadowAfterPaint();
   installMenuShortcuts();
   buildMenu(windowType, recentFiles);
 }

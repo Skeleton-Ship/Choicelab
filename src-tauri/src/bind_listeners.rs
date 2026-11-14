@@ -34,8 +34,13 @@ struct HistoryPayload {
 
 fn apply_project_vibrancy(_window: WebviewWindow) {
     #[cfg(target_os = "macos")]
-    apply_vibrancy(&_window, NSVisualEffectMaterial::HudWindow, None, None)
-        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+    {
+        apply_vibrancy(&_window, NSVisualEffectMaterial::HudWindow, None, None)
+            .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+        // The vibrancy view changes the window's shape, so the shadow needs
+        // recomputing to match
+        crate::native_bridge_macos::invalidate_shadow(&_window);
+    }
 }
 
 // Global port tracker for preview servers (4090–4099)
