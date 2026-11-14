@@ -6,10 +6,10 @@
 
 #### New features
 
-- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
+- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit → Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
 - You can now **cut, copy, and paste individual actions** within the same cell or to a different one.
-- You can now check for updates at any time with **Choicelab -> Check for Updates...** on macOS, or **Help -> Check for Updates...** on Windows.
+- You can now check for updates at any time with **Choicelab → Check for Updates...** on macOS, or **Help → Check for Updates...** on Windows.
 
 #### Enhancements
 
@@ -154,7 +154,7 @@
 ### 2025-07-16
 
 - The app now supports **automatic updates**, and will prompt when a new version is available.
-- You can see what's new in Choicelab by going to Help -> Release Notes.
+- You can see what's new in Choicelab by going to Help → Release Notes.
 - Now in beta: Visual elements (like text) can be positioned in a 3x3 grid, using the Position control.
 - **Important**: Choicelab projects now end in `.clx` instead of `.json`, and the `assets` folder has been renamed `Assets`. In Choicelab, the CLX file is now what you select when opening a project.
 - You can also now open CLX files from the Finder (as long as Choicelab is currently closed).

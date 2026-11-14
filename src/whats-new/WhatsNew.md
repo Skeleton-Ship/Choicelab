@@ -4,9 +4,10 @@
 
 #### New features
 
-- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit -> Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
+- You can now **insert a variable into Text and Button labels.** Type _{_ or choose _Edit → Insert Variable_ to insert one, and it will fill in the value in the player. Variable names will stay up to date even if the variable is renamed.
 - Variable names are more flexible — allowing spaces and capital letters — and appear as regular text instead of code.
-- You can now check for updates at any time with **Choicelab -> Check for Updates...** on macOS, or **Help -> Check for Updates...** on Windows.
+- You can now **cut, copy, and paste individual actions** within the same cell or to a different one.
+- You can now check for updates at any time with **Choicelab → Check for Updates...** on macOS, or **Help → Check for Updates...** on Windows.
 
 #### Enhancements
 
@@ -28,7 +29,8 @@
 - You can now undo and redo project settings.
 - Various improvements to reliability of auto-save, export, and project creation and loading.
 - Choicelab no longer offers an update that your computer's operating system can't run. **Check for Updates...** explains when this is the case.
-- Various under-the-hood improvements to project handling, undo/redo, app update security, as well as app frameworks and dependencies.
+- A new About window (the Choicelab menu on Mac, Help on Windows) will show you the current version of the app.
+- Various under-the-hood improvements to project handling, undo/redo, copy/paste, app update security, as well as app frameworks and dependencies.
 
 #### Fixes
 
