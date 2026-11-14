@@ -169,7 +169,7 @@ pub fn open_about_window(app: tauri::AppHandle) {
 		StaticWindow {
 			label: "about",
 			title: "About Choicelab",
-			size: (520.0, 300.0),
+			size: (295.0, 310.0),
 			position: None,
 			resizable: false,
 			minimizable: false,

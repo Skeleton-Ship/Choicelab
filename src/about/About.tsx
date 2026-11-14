@@ -1,12 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import { emit } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
-import Markdown from "preact-markdown";
+// import Markdown from "preact-markdown";
 import LogoSvg from "../assets/launcher/Logo-Text.svg?react";
 import appIcon from "../../src-tauri/icons/128x128@2x.png";
-import credits from "./Credits.md?raw";
+// import credits from "./Credits.md?raw";
 import releaseNotes from "../whats-new/WhatsNew.md?raw";
-import { openExternalLinks } from "../utils/openExternalLinks";
+// import { openExternalLinks } from "../utils/openExternalLinks";
 
 // "1.2" and "1.2.0" are the same version
 function normalizeVersion(version: string): string {
@@ -74,11 +74,13 @@ export function About() {
         )}
         <p class="copyright">Copyright © {copyrightYear} Austin Heller</p>
       </div>
+      {/* 
       <div class="credits">
         <div class="credits-inner" onClick={openExternalLinks}>
           {Markdown(credits)}
         </div>
       </div>
+	  */}
     </div>
   );
 }

@@ -6,12 +6,13 @@ $toolbar-offset: 28px;
   box-sizing: border-box;
   -webkit-app-region: drag;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
+  // grid-template-columns: 1fr 1fr;
   // Only the info column sets the row height; the credits scroll within it
   align-items: stretch;
   align-content: center;
   column-gap: 32px;
-  padding: $toolbar-offset 36px 32px;
+  padding: $toolbar-offset 36px 18px;
   background-color: var(--standard-window-bg-color);
   @media (prefers-color-scheme: dark) {
     color: white;
@@ -24,15 +25,14 @@ $toolbar-offset: 28px;
   }
 
   .app-icon {
-    width: 96px;
-    height: 96px;
-    margin-left: -8px;
+    width: 120px;
+    height: 120px;
     margin-bottom: 6px;
     pointer-events: none;
   }
 
   h1 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     line-height: 1;
     svg {
       display: block;
@@ -67,7 +67,7 @@ $toolbar-offset: 28px;
 
   .release-date,
   .copyright {
-    margin-top: 4px;
+    margin-top: 24px;
     font-size: 12px;
     opacity: 0.7;
   }
