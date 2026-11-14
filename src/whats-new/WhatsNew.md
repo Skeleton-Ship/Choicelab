@@ -14,7 +14,7 @@
 - Opening a project that was saved with a newer version of Choicelab now explains that an update is needed, instead of opening it incorrectly.
 - Scrollbars throughout the app are now smaller and cleaner, and respect the system's increase-contrast setting.
 - Adding media files to a project, previewing them in the editor, and opening projects that contain media are faster and use much less memory and disk space.
-- Body text now shows as separate paragraphs, with **Shift-Return** adding a line break within one. Existing text looks the same as before.
+- Body text now shows as separate paragraphs, with **Shift-Return** adding a line break within one.
 - New variables and rules now scroll into view and auto-select their name for easier input.
 - Deleting a variable that's used by actions, text, or branch stems
   now asks for confirmation first, and shows how many places use it.
@@ -37,7 +37,7 @@
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - The preview no longer flashes when opened or refreshed.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
-- On Windows, keyboard shortcuts for menu commands now work reliably (after, uh, not working not very well at all).
+- On Windows, keyboard shortcuts for menu commands now work reliably (after, uh, not working at all).
 - Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
 - Deleting a variable now removes the variable from any actions or rules that used it.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.

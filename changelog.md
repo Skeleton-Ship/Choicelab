@@ -39,7 +39,7 @@
 - Choosing the currently open project from **Open Recent** no longer prompts you to close and reopen it.
 - The preview no longer flashes when opened or refreshed.
 - Fixed an issue on macOS where opening a project with media could leave the app unresponsive and lead to an unexpected window appearance.
-- On Windows, keyboard shortcuts for menu commands now work reliably (after, uh, not working not very well at all).
+- On Windows, keyboard shortcuts for menu commands now work reliably (after, uh, not working at all).
 - Changing a variable's type to Number no longer incorrectly keeps its previous starting value, and will now reset to 0.
 - Deleting a variable now removes the variable from any actions or rules that used it.
 - Fixed an issue where a rule using **!=** with a number variable matched when the values were equal, instead of when they were different.
