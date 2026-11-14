@@ -1,6 +1,10 @@
-$toolbar-offset: 28px;
-
 #about {
+  // Room for the title bar. Only macOS draws it over the window's contents
+  // (an overlay title bar); elsewhere it sits above them, so no room is needed.
+  --toolbar-offset: 0px;
+  [data-platform="macos"] & {
+    --toolbar-offset: 28px;
+  }
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -12,7 +16,7 @@ $toolbar-offset: 28px;
   align-items: stretch;
   align-content: center;
   column-gap: 32px;
-  padding: $toolbar-offset 36px 18px;
+  padding: var(--toolbar-offset) 36px 18px;
   background-color: var(--standard-window-bg-color);
   @media (prefers-color-scheme: dark) {
     color: white;

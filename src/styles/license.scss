@@ -1,6 +1,10 @@
-$toolbar-offset: 32px;
-
 #license {
+  // Room for the title bar. Only macOS draws it over the window's contents
+  // (an overlay title bar); elsewhere it sits above them, so no room is needed.
+  --toolbar-offset: 0px;
+  [data-platform="macos"] & {
+    --toolbar-offset: 32px;
+  }
   width: 100%;
   height: 100%;
   outline: none;
@@ -13,9 +17,9 @@ $toolbar-offset: 32px;
 
   .inner {
     position: relative;
-    top: $toolbar-offset;
+    top: var(--toolbar-offset);
     width: calc(100% - 10px);
-    height: calc(100% - #{$toolbar-offset});
+    height: calc(100% - var(--toolbar-offset));
     margin: 0 5px;
     padding: 24px 48px 32px;
     overflow-y: auto;
