@@ -1,6 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 import { v4 as uuidv4 } from "uuid";
-import { emit, emitTo, listen } from "@tauri-apps/api/event";
+import { emitTo, listen } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import { getProjectWindowLabel } from "../utils/getProjectWindowLabel";
 import { getStore, setStore } from "../data/dataStore";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -26,24 +27,25 @@ function isZKey(e: KeyboardEvent) {
   return /^[a-z]$/.test(key) ? key === "z" : e.code === "KeyZ";
 }
 
+/** The window's height for each pane. */
+export const PANE_HEIGHTS: Record<PaneId, number> = {
+  general: 210,
+  appearance: 600,
+};
+
 async function setWindowSize(paneId: PaneId) {
-  const heights: { general: number; appearance: number } = {
-    general: 210,
-    appearance: 600,
-  };
   const currentSize = await appWindow.size();
   const scaleFactor = await appWindow.scaleFactor();
   const width = currentSize.width / scaleFactor;
-  appWindow.setSize(new LogicalSize(width, heights[paneId]));
+  appWindow.setSize(new LogicalSize(width, PANE_HEIGHTS[paneId]));
 }
 
 export function ProjectSettings(props: { startingPane: PaneId }) {
   const store = getStore();
   useEffect(() => {
     appWindow.setTitle(`${store.project.name} — Project Settings`);
-    appWindow.show();
-    // Let Tauri know the window is ready
-    emit("window-ready", {
+    // Let Tauri know the window is ready, which shows it
+    emitWindowReady({
       label: getProjectWindowLabel(store.projectPath, "settings"),
     });
     const unlistenStore = listen<string>("editor-store-updated", (event) => {

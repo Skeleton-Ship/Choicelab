@@ -1,12 +1,12 @@
 import { useEffect } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import Markdown from "preact-markdown";
 import whatsNewContent from "./WhatsNew.md?raw";
 import WhatsNewPoster from "../assets/whats-new/WhatsNew-Poster.png";
 
 export function WhatsNew() {
   useEffect(() => {
-    emit("window-ready", {
+    emitWindowReady({
       label: "whatsNew",
     });
   }, []);

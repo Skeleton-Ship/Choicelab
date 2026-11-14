@@ -1,11 +1,11 @@
 import { useEffect } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import editorLicense from "../../LICENSE?raw";
 import playerLicense from "../../src/player/LICENSE?raw";
 
 export function License() {
   useEffect(() => {
-    emit("window-ready", { label: "license" });
+    emitWindowReady({ label: "license" });
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import { useEffect } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import data from "./data.json";
 import { openExternalLinks } from "../utils/openExternalLinks";
 
@@ -52,7 +52,7 @@ function PackageSection({
 
 export function Acknowledgments() {
   useEffect(() => {
-    emit("window-ready", { label: "acknowledgments" });
+    emitWindowReady({ label: "acknowledgments" });
   }, []);
 
   return (

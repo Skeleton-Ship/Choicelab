@@ -1,5 +1,6 @@
 // Libraries
-import { listen, emit, emitTo } from "@tauri-apps/api/event";
+import { listen, emitTo } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { open } from "@tauri-apps/plugin-shell";
 import { v4 as uuidv4 } from "uuid";
@@ -95,7 +96,7 @@ export default function MainEditor() {
       }
     }).then((unlisten) => {
       setProjectWindowTitle(store.project.name);
-      emit("window-ready", { label, projectPath: store.projectPath });
+      emitWindowReady({ label, projectPath: store.projectPath });
       return unlisten;
     });
     // Set up cut/copy/paste listeners. A selected action in the inspector
@@ -351,7 +352,6 @@ export default function MainEditor() {
         });
       }
     );
-    appWindow.show();
     // Once ready, check for updates
     checkForUpdates();
     return () => {

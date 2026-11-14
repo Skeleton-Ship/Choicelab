@@ -1,6 +1,6 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useState, useEffect } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import newProject from "../fs/newProject";
 import openProject from "../fs/openProject";
 import { NewProjectIcon, OpenProjectIcon } from "../editor/shared/ColorIcon";
@@ -14,13 +14,15 @@ const appWindow = getCurrentWebviewWindow();
 function Launcher() {
   const [theme, setTheme] = useState("light");
   useEffect(() => {
-    appWindow.theme().then((thisTheme) => {
-      if (!thisTheme) return;
-      setTheme(thisTheme);
-    });
-    emit("window-ready", {
-      label: "launcher",
-    });
+    // Wait for the theme before showing the window, so it doesn't show the
+    // wrong splash image first
+    appWindow
+      .theme()
+      .then((thisTheme) => {
+        if (thisTheme) setTheme(thisTheme);
+      })
+      .catch(() => {})
+      .finally(() => emitWindowReady({ label: "launcher" }));
     showReleaseNotes();
     let unlisten: (() => void) | null = null;
     appWindow

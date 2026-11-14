@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { emit } from "@tauri-apps/api/event";
+import { emitWindowReady } from "../utils/emitWindowReady";
 import { getVersion } from "@tauri-apps/api/app";
 // import Markdown from "preact-markdown";
 import LogoSvg from "../assets/launcher/Logo-Text.svg?react";
@@ -53,7 +53,7 @@ export function About() {
     getVersion()
       .then(setVersion)
       .catch((error) => console.error("Couldn't get the app version:", error))
-      .finally(() => emit("window-ready", { label: "about" }));
+      .finally(() => emitWindowReady({ label: "about" }));
   }, []);
 
   return (
